@@ -74,7 +74,7 @@ public final class ObjectChecksums extends com.google.protobuf.GeneratedMessageV
    * <pre>
    * CRC32C digest of the object data. Computed by the Cloud Storage service for
    * all written objects.
-   * If set in a WriteObjectRequest, service will validate that the stored
+   * If set in a WriteObjectRequest, service validates that the stored
    * object matches this checksum.
    * </pre>
    *
@@ -93,7 +93,7 @@ public final class ObjectChecksums extends com.google.protobuf.GeneratedMessageV
    * <pre>
    * CRC32C digest of the object data. Computed by the Cloud Storage service for
    * all written objects.
-   * If set in a WriteObjectRequest, service will validate that the stored
+   * If set in a WriteObjectRequest, service validates that the stored
    * object matches this checksum.
    * </pre>
    *
@@ -113,13 +113,12 @@ public final class ObjectChecksums extends com.google.protobuf.GeneratedMessageV
    *
    *
    * <pre>
-   * Optional. 128 bit MD5 hash of the object data.
-   * For more information about using the MD5 hash, see
-   * [https://cloud.google.com/storage/docs/hashes-etags#json-api][Hashes and
-   * ETags: Best Practices].
-   * Not all objects will provide an MD5 hash. For example, composite objects
-   * provide only crc32c hashes. This value is equivalent to running `cat
-   * object.txt | openssl md5 -binary`
+   * Optional. 128 bit MD5 hash of the object data. For more information about
+   * using the MD5 hash, see [Data validation and change
+   * detection](https://cloud.google.com/storage/docs/data-validation). Not all
+   * objects provide an MD5 hash. For example, composite objects provide only
+   * crc32c hashes. This value is equivalent to running `cat object.txt |
+   * openssl md5 -binary`
    * </pre>
    *
    * <code>bytes md5_hash = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -507,7 +506,7 @@ public final class ObjectChecksums extends com.google.protobuf.GeneratedMessageV
      * <pre>
      * CRC32C digest of the object data. Computed by the Cloud Storage service for
      * all written objects.
-     * If set in a WriteObjectRequest, service will validate that the stored
+     * If set in a WriteObjectRequest, service validates that the stored
      * object matches this checksum.
      * </pre>
      *
@@ -526,7 +525,7 @@ public final class ObjectChecksums extends com.google.protobuf.GeneratedMessageV
      * <pre>
      * CRC32C digest of the object data. Computed by the Cloud Storage service for
      * all written objects.
-     * If set in a WriteObjectRequest, service will validate that the stored
+     * If set in a WriteObjectRequest, service validates that the stored
      * object matches this checksum.
      * </pre>
      *
@@ -545,7 +544,7 @@ public final class ObjectChecksums extends com.google.protobuf.GeneratedMessageV
      * <pre>
      * CRC32C digest of the object data. Computed by the Cloud Storage service for
      * all written objects.
-     * If set in a WriteObjectRequest, service will validate that the stored
+     * If set in a WriteObjectRequest, service validates that the stored
      * object matches this checksum.
      * </pre>
      *
@@ -568,7 +567,7 @@ public final class ObjectChecksums extends com.google.protobuf.GeneratedMessageV
      * <pre>
      * CRC32C digest of the object data. Computed by the Cloud Storage service for
      * all written objects.
-     * If set in a WriteObjectRequest, service will validate that the stored
+     * If set in a WriteObjectRequest, service validates that the stored
      * object matches this checksum.
      * </pre>
      *
@@ -589,13 +588,12 @@ public final class ObjectChecksums extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * Optional. 128 bit MD5 hash of the object data.
-     * For more information about using the MD5 hash, see
-     * [https://cloud.google.com/storage/docs/hashes-etags#json-api][Hashes and
-     * ETags: Best Practices].
-     * Not all objects will provide an MD5 hash. For example, composite objects
-     * provide only crc32c hashes. This value is equivalent to running `cat
-     * object.txt | openssl md5 -binary`
+     * Optional. 128 bit MD5 hash of the object data. For more information about
+     * using the MD5 hash, see [Data validation and change
+     * detection](https://cloud.google.com/storage/docs/data-validation). Not all
+     * objects provide an MD5 hash. For example, composite objects provide only
+     * crc32c hashes. This value is equivalent to running `cat object.txt |
+     * openssl md5 -binary`
      * </pre>
      *
      * <code>bytes md5_hash = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -611,13 +609,12 @@ public final class ObjectChecksums extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * Optional. 128 bit MD5 hash of the object data.
-     * For more information about using the MD5 hash, see
-     * [https://cloud.google.com/storage/docs/hashes-etags#json-api][Hashes and
-     * ETags: Best Practices].
-     * Not all objects will provide an MD5 hash. For example, composite objects
-     * provide only crc32c hashes. This value is equivalent to running `cat
-     * object.txt | openssl md5 -binary`
+     * Optional. 128 bit MD5 hash of the object data. For more information about
+     * using the MD5 hash, see [Data validation and change
+     * detection](https://cloud.google.com/storage/docs/data-validation). Not all
+     * objects provide an MD5 hash. For example, composite objects provide only
+     * crc32c hashes. This value is equivalent to running `cat object.txt |
+     * openssl md5 -binary`
      * </pre>
      *
      * <code>bytes md5_hash = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -639,13 +636,12 @@ public final class ObjectChecksums extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * Optional. 128 bit MD5 hash of the object data.
-     * For more information about using the MD5 hash, see
-     * [https://cloud.google.com/storage/docs/hashes-etags#json-api][Hashes and
-     * ETags: Best Practices].
-     * Not all objects will provide an MD5 hash. For example, composite objects
-     * provide only crc32c hashes. This value is equivalent to running `cat
-     * object.txt | openssl md5 -binary`
+     * Optional. 128 bit MD5 hash of the object data. For more information about
+     * using the MD5 hash, see [Data validation and change
+     * detection](https://cloud.google.com/storage/docs/data-validation). Not all
+     * objects provide an MD5 hash. For example, composite objects provide only
+     * crc32c hashes. This value is equivalent to running `cat object.txt |
+     * openssl md5 -binary`
      * </pre>
      *
      * <code>bytes md5_hash = 2 [(.google.api.field_behavior) = OPTIONAL];</code>

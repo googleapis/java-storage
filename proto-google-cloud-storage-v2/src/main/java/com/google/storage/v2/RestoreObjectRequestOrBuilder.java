@@ -249,7 +249,7 @@ public interface RestoreObjectRequestOrBuilder
    *
    *
    * <pre>
-   * If false or unset, the bucket's default object ACL will be used.
+   * If false or unset, the bucket's default object ACL is used.
    * If true, copy the source object's access controls.
    * Return an error if bucket has UBLA enabled.
    * </pre>
@@ -264,7 +264,7 @@ public interface RestoreObjectRequestOrBuilder
    *
    *
    * <pre>
-   * If false or unset, the bucket's default object ACL will be used.
+   * If false or unset, the bucket's default object ACL is used.
    * If true, copy the source object's access controls.
    * Return an error if bucket has UBLA enabled.
    * </pre>

@@ -637,9 +637,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The list of Origins eligible to receive CORS response headers.
-     * See [https://tools.ietf.org/html/rfc6454][RFC 6454] for more on origins.
-     * Note: "*" is permitted in the list of origins, and means "any Origin".
+     * Optional. The list of origins eligible to receive CORS response headers.
+     * For more information about origins, see [RFC
+     * 6454](https://tools.ietf.org/html/rfc6454). Note: `*` is permitted in the
+     * list of origins, and means `any origin`.
      * </pre>
      *
      * <code>repeated string origin = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -652,9 +653,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The list of Origins eligible to receive CORS response headers.
-     * See [https://tools.ietf.org/html/rfc6454][RFC 6454] for more on origins.
-     * Note: "*" is permitted in the list of origins, and means "any Origin".
+     * Optional. The list of origins eligible to receive CORS response headers.
+     * For more information about origins, see [RFC
+     * 6454](https://tools.ietf.org/html/rfc6454). Note: `*` is permitted in the
+     * list of origins, and means `any origin`.
      * </pre>
      *
      * <code>repeated string origin = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -667,9 +669,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The list of Origins eligible to receive CORS response headers.
-     * See [https://tools.ietf.org/html/rfc6454][RFC 6454] for more on origins.
-     * Note: "*" is permitted in the list of origins, and means "any Origin".
+     * Optional. The list of origins eligible to receive CORS response headers.
+     * For more information about origins, see [RFC
+     * 6454](https://tools.ietf.org/html/rfc6454). Note: `*` is permitted in the
+     * list of origins, and means `any origin`.
      * </pre>
      *
      * <code>repeated string origin = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -683,9 +686,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The list of Origins eligible to receive CORS response headers.
-     * See [https://tools.ietf.org/html/rfc6454][RFC 6454] for more on origins.
-     * Note: "*" is permitted in the list of origins, and means "any Origin".
+     * Optional. The list of origins eligible to receive CORS response headers.
+     * For more information about origins, see [RFC
+     * 6454](https://tools.ietf.org/html/rfc6454). Note: `*` is permitted in the
+     * list of origins, and means `any origin`.
      * </pre>
      *
      * <code>repeated string origin = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -701,7 +705,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * <pre>
      * Optional. The list of HTTP methods on which to include CORS response
      * headers,
-     * (`GET`, `OPTIONS`, `POST`, etc) Note: "*" is permitted in the list of
+     * (`GET`, `OPTIONS`, `POST`, etc) Note: `*` is permitted in the list of
      * methods, and means "any method".
      * </pre>
      *
@@ -717,7 +721,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * <pre>
      * Optional. The list of HTTP methods on which to include CORS response
      * headers,
-     * (`GET`, `OPTIONS`, `POST`, etc) Note: "*" is permitted in the list of
+     * (`GET`, `OPTIONS`, `POST`, etc) Note: `*` is permitted in the list of
      * methods, and means "any method".
      * </pre>
      *
@@ -733,7 +737,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * <pre>
      * Optional. The list of HTTP methods on which to include CORS response
      * headers,
-     * (`GET`, `OPTIONS`, `POST`, etc) Note: "*" is permitted in the list of
+     * (`GET`, `OPTIONS`, `POST`, etc) Note: `*` is permitted in the list of
      * methods, and means "any method".
      * </pre>
      *
@@ -750,7 +754,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * <pre>
      * Optional. The list of HTTP methods on which to include CORS response
      * headers,
-     * (`GET`, `OPTIONS`, `POST`, etc) Note: "*" is permitted in the list of
+     * (`GET`, `OPTIONS`, `POST`, etc) Note: `*` is permitted in the list of
      * methods, and means "any method".
      * </pre>
      *
@@ -765,9 +769,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The list of HTTP headers other than the
-     * [https://www.w3.org/TR/cors/#simple-response-header][simple response
-     * headers] to give permission for the user-agent to share across domains.
+     * Optional. The list of HTTP headers other than the [simple response
+     * headers](https://www.w3.org/TR/cors/#simple-response-headers) to give
+     * permission for the user-agent to share across domains.
      * </pre>
      *
      * <code>repeated string response_header = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -780,9 +784,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The list of HTTP headers other than the
-     * [https://www.w3.org/TR/cors/#simple-response-header][simple response
-     * headers] to give permission for the user-agent to share across domains.
+     * Optional. The list of HTTP headers other than the [simple response
+     * headers](https://www.w3.org/TR/cors/#simple-response-headers) to give
+     * permission for the user-agent to share across domains.
      * </pre>
      *
      * <code>repeated string response_header = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -795,9 +799,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The list of HTTP headers other than the
-     * [https://www.w3.org/TR/cors/#simple-response-header][simple response
-     * headers] to give permission for the user-agent to share across domains.
+     * Optional. The list of HTTP headers other than the [simple response
+     * headers](https://www.w3.org/TR/cors/#simple-response-headers) to give
+     * permission for the user-agent to share across domains.
      * </pre>
      *
      * <code>repeated string response_header = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -811,9 +815,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The list of HTTP headers other than the
-     * [https://www.w3.org/TR/cors/#simple-response-header][simple response
-     * headers] to give permission for the user-agent to share across domains.
+     * Optional. The list of HTTP headers other than the [simple response
+     * headers](https://www.w3.org/TR/cors/#simple-response-headers) to give
+     * permission for the user-agent to share across domains.
      * </pre>
      *
      * <code>repeated string response_header = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -827,9 +831,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The value, in seconds, to return in the
-     * [https://www.w3.org/TR/cors/#access-control-max-age-response-header][Access-Control-Max-Age
-     * header] used in preflight responses.
+     * Optional. The value, in seconds, to return in the [Access-Control-Max-Age
+     * header](https://www.w3.org/TR/cors/#access-control-max-age-response-header)
+     * used in preflight responses.
      * </pre>
      *
      * <code>int32 max_age_seconds = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -899,9 +903,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The list of Origins eligible to receive CORS response headers.
-     * See [https://tools.ietf.org/html/rfc6454][RFC 6454] for more on origins.
-     * Note: "*" is permitted in the list of origins, and means "any Origin".
+     * Optional. The list of origins eligible to receive CORS response headers.
+     * For more information about origins, see [RFC
+     * 6454](https://tools.ietf.org/html/rfc6454). Note: `*` is permitted in the
+     * list of origins, and means `any origin`.
      * </pre>
      *
      * <code>repeated string origin = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -916,9 +921,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The list of Origins eligible to receive CORS response headers.
-     * See [https://tools.ietf.org/html/rfc6454][RFC 6454] for more on origins.
-     * Note: "*" is permitted in the list of origins, and means "any Origin".
+     * Optional. The list of origins eligible to receive CORS response headers.
+     * For more information about origins, see [RFC
+     * 6454](https://tools.ietf.org/html/rfc6454). Note: `*` is permitted in the
+     * list of origins, and means `any origin`.
      * </pre>
      *
      * <code>repeated string origin = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -933,9 +939,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The list of Origins eligible to receive CORS response headers.
-     * See [https://tools.ietf.org/html/rfc6454][RFC 6454] for more on origins.
-     * Note: "*" is permitted in the list of origins, and means "any Origin".
+     * Optional. The list of origins eligible to receive CORS response headers.
+     * For more information about origins, see [RFC
+     * 6454](https://tools.ietf.org/html/rfc6454). Note: `*` is permitted in the
+     * list of origins, and means `any origin`.
      * </pre>
      *
      * <code>repeated string origin = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -951,9 +958,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The list of Origins eligible to receive CORS response headers.
-     * See [https://tools.ietf.org/html/rfc6454][RFC 6454] for more on origins.
-     * Note: "*" is permitted in the list of origins, and means "any Origin".
+     * Optional. The list of origins eligible to receive CORS response headers.
+     * For more information about origins, see [RFC
+     * 6454](https://tools.ietf.org/html/rfc6454). Note: `*` is permitted in the
+     * list of origins, and means `any origin`.
      * </pre>
      *
      * <code>repeated string origin = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -977,7 +985,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * <pre>
      * Optional. The list of HTTP methods on which to include CORS response
      * headers,
-     * (`GET`, `OPTIONS`, `POST`, etc) Note: "*" is permitted in the list of
+     * (`GET`, `OPTIONS`, `POST`, etc) Note: `*` is permitted in the list of
      * methods, and means "any method".
      * </pre>
      *
@@ -995,7 +1003,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * <pre>
      * Optional. The list of HTTP methods on which to include CORS response
      * headers,
-     * (`GET`, `OPTIONS`, `POST`, etc) Note: "*" is permitted in the list of
+     * (`GET`, `OPTIONS`, `POST`, etc) Note: `*` is permitted in the list of
      * methods, and means "any method".
      * </pre>
      *
@@ -1013,7 +1021,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * <pre>
      * Optional. The list of HTTP methods on which to include CORS response
      * headers,
-     * (`GET`, `OPTIONS`, `POST`, etc) Note: "*" is permitted in the list of
+     * (`GET`, `OPTIONS`, `POST`, etc) Note: `*` is permitted in the list of
      * methods, and means "any method".
      * </pre>
      *
@@ -1032,7 +1040,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * <pre>
      * Optional. The list of HTTP methods on which to include CORS response
      * headers,
-     * (`GET`, `OPTIONS`, `POST`, etc) Note: "*" is permitted in the list of
+     * (`GET`, `OPTIONS`, `POST`, etc) Note: `*` is permitted in the list of
      * methods, and means "any method".
      * </pre>
      *
@@ -1055,9 +1063,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The list of HTTP headers other than the
-     * [https://www.w3.org/TR/cors/#simple-response-header][simple response
-     * headers] to give permission for the user-agent to share across domains.
+     * Optional. The list of HTTP headers other than the [simple response
+     * headers](https://www.w3.org/TR/cors/#simple-response-headers) to give
+     * permission for the user-agent to share across domains.
      * </pre>
      *
      * <code>repeated string response_header = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -1072,9 +1080,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The list of HTTP headers other than the
-     * [https://www.w3.org/TR/cors/#simple-response-header][simple response
-     * headers] to give permission for the user-agent to share across domains.
+     * Optional. The list of HTTP headers other than the [simple response
+     * headers](https://www.w3.org/TR/cors/#simple-response-headers) to give
+     * permission for the user-agent to share across domains.
      * </pre>
      *
      * <code>repeated string response_header = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -1089,9 +1097,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The list of HTTP headers other than the
-     * [https://www.w3.org/TR/cors/#simple-response-header][simple response
-     * headers] to give permission for the user-agent to share across domains.
+     * Optional. The list of HTTP headers other than the [simple response
+     * headers](https://www.w3.org/TR/cors/#simple-response-headers) to give
+     * permission for the user-agent to share across domains.
      * </pre>
      *
      * <code>repeated string response_header = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -1107,9 +1115,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The list of HTTP headers other than the
-     * [https://www.w3.org/TR/cors/#simple-response-header][simple response
-     * headers] to give permission for the user-agent to share across domains.
+     * Optional. The list of HTTP headers other than the [simple response
+     * headers](https://www.w3.org/TR/cors/#simple-response-headers) to give
+     * permission for the user-agent to share across domains.
      * </pre>
      *
      * <code>repeated string response_header = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -1128,9 +1136,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The value, in seconds, to return in the
-     * [https://www.w3.org/TR/cors/#access-control-max-age-response-header][Access-Control-Max-Age
-     * header] used in preflight responses.
+     * Optional. The value, in seconds, to return in the [Access-Control-Max-Age
+     * header](https://www.w3.org/TR/cors/#access-control-max-age-response-header)
+     * used in preflight responses.
      * </pre>
      *
      * <code>int32 max_age_seconds = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -1614,9 +1622,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Optional. The list of Origins eligible to receive CORS response headers.
-       * See [https://tools.ietf.org/html/rfc6454][RFC 6454] for more on origins.
-       * Note: "*" is permitted in the list of origins, and means "any Origin".
+       * Optional. The list of origins eligible to receive CORS response headers.
+       * For more information about origins, see [RFC
+       * 6454](https://tools.ietf.org/html/rfc6454). Note: `*` is permitted in the
+       * list of origins, and means `any origin`.
        * </pre>
        *
        * <code>repeated string origin = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -1632,9 +1641,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Optional. The list of Origins eligible to receive CORS response headers.
-       * See [https://tools.ietf.org/html/rfc6454][RFC 6454] for more on origins.
-       * Note: "*" is permitted in the list of origins, and means "any Origin".
+       * Optional. The list of origins eligible to receive CORS response headers.
+       * For more information about origins, see [RFC
+       * 6454](https://tools.ietf.org/html/rfc6454). Note: `*` is permitted in the
+       * list of origins, and means `any origin`.
        * </pre>
        *
        * <code>repeated string origin = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -1649,9 +1659,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Optional. The list of Origins eligible to receive CORS response headers.
-       * See [https://tools.ietf.org/html/rfc6454][RFC 6454] for more on origins.
-       * Note: "*" is permitted in the list of origins, and means "any Origin".
+       * Optional. The list of origins eligible to receive CORS response headers.
+       * For more information about origins, see [RFC
+       * 6454](https://tools.ietf.org/html/rfc6454). Note: `*` is permitted in the
+       * list of origins, and means `any origin`.
        * </pre>
        *
        * <code>repeated string origin = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -1667,9 +1678,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Optional. The list of Origins eligible to receive CORS response headers.
-       * See [https://tools.ietf.org/html/rfc6454][RFC 6454] for more on origins.
-       * Note: "*" is permitted in the list of origins, and means "any Origin".
+       * Optional. The list of origins eligible to receive CORS response headers.
+       * For more information about origins, see [RFC
+       * 6454](https://tools.ietf.org/html/rfc6454). Note: `*` is permitted in the
+       * list of origins, and means `any origin`.
        * </pre>
        *
        * <code>repeated string origin = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -1685,9 +1697,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Optional. The list of Origins eligible to receive CORS response headers.
-       * See [https://tools.ietf.org/html/rfc6454][RFC 6454] for more on origins.
-       * Note: "*" is permitted in the list of origins, and means "any Origin".
+       * Optional. The list of origins eligible to receive CORS response headers.
+       * For more information about origins, see [RFC
+       * 6454](https://tools.ietf.org/html/rfc6454). Note: `*` is permitted in the
+       * list of origins, and means `any origin`.
        * </pre>
        *
        * <code>repeated string origin = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -1711,9 +1724,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Optional. The list of Origins eligible to receive CORS response headers.
-       * See [https://tools.ietf.org/html/rfc6454][RFC 6454] for more on origins.
-       * Note: "*" is permitted in the list of origins, and means "any Origin".
+       * Optional. The list of origins eligible to receive CORS response headers.
+       * For more information about origins, see [RFC
+       * 6454](https://tools.ietf.org/html/rfc6454). Note: `*` is permitted in the
+       * list of origins, and means `any origin`.
        * </pre>
        *
        * <code>repeated string origin = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -1736,9 +1750,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Optional. The list of Origins eligible to receive CORS response headers.
-       * See [https://tools.ietf.org/html/rfc6454][RFC 6454] for more on origins.
-       * Note: "*" is permitted in the list of origins, and means "any Origin".
+       * Optional. The list of origins eligible to receive CORS response headers.
+       * For more information about origins, see [RFC
+       * 6454](https://tools.ietf.org/html/rfc6454). Note: `*` is permitted in the
+       * list of origins, and means `any origin`.
        * </pre>
        *
        * <code>repeated string origin = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -1758,9 +1773,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Optional. The list of Origins eligible to receive CORS response headers.
-       * See [https://tools.ietf.org/html/rfc6454][RFC 6454] for more on origins.
-       * Note: "*" is permitted in the list of origins, and means "any Origin".
+       * Optional. The list of origins eligible to receive CORS response headers.
+       * For more information about origins, see [RFC
+       * 6454](https://tools.ietf.org/html/rfc6454). Note: `*` is permitted in the
+       * list of origins, and means `any origin`.
        * </pre>
        *
        * <code>repeated string origin = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -1779,9 +1795,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Optional. The list of Origins eligible to receive CORS response headers.
-       * See [https://tools.ietf.org/html/rfc6454][RFC 6454] for more on origins.
-       * Note: "*" is permitted in the list of origins, and means "any Origin".
+       * Optional. The list of origins eligible to receive CORS response headers.
+       * For more information about origins, see [RFC
+       * 6454](https://tools.ietf.org/html/rfc6454). Note: `*` is permitted in the
+       * list of origins, and means `any origin`.
        * </pre>
        *
        * <code>repeated string origin = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -1817,7 +1834,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        * <pre>
        * Optional. The list of HTTP methods on which to include CORS response
        * headers,
-       * (`GET`, `OPTIONS`, `POST`, etc) Note: "*" is permitted in the list of
+       * (`GET`, `OPTIONS`, `POST`, etc) Note: `*` is permitted in the list of
        * methods, and means "any method".
        * </pre>
        *
@@ -1836,7 +1853,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        * <pre>
        * Optional. The list of HTTP methods on which to include CORS response
        * headers,
-       * (`GET`, `OPTIONS`, `POST`, etc) Note: "*" is permitted in the list of
+       * (`GET`, `OPTIONS`, `POST`, etc) Note: `*` is permitted in the list of
        * methods, and means "any method".
        * </pre>
        *
@@ -1854,7 +1871,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        * <pre>
        * Optional. The list of HTTP methods on which to include CORS response
        * headers,
-       * (`GET`, `OPTIONS`, `POST`, etc) Note: "*" is permitted in the list of
+       * (`GET`, `OPTIONS`, `POST`, etc) Note: `*` is permitted in the list of
        * methods, and means "any method".
        * </pre>
        *
@@ -1873,7 +1890,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        * <pre>
        * Optional. The list of HTTP methods on which to include CORS response
        * headers,
-       * (`GET`, `OPTIONS`, `POST`, etc) Note: "*" is permitted in the list of
+       * (`GET`, `OPTIONS`, `POST`, etc) Note: `*` is permitted in the list of
        * methods, and means "any method".
        * </pre>
        *
@@ -1892,7 +1909,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        * <pre>
        * Optional. The list of HTTP methods on which to include CORS response
        * headers,
-       * (`GET`, `OPTIONS`, `POST`, etc) Note: "*" is permitted in the list of
+       * (`GET`, `OPTIONS`, `POST`, etc) Note: `*` is permitted in the list of
        * methods, and means "any method".
        * </pre>
        *
@@ -1919,7 +1936,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        * <pre>
        * Optional. The list of HTTP methods on which to include CORS response
        * headers,
-       * (`GET`, `OPTIONS`, `POST`, etc) Note: "*" is permitted in the list of
+       * (`GET`, `OPTIONS`, `POST`, etc) Note: `*` is permitted in the list of
        * methods, and means "any method".
        * </pre>
        *
@@ -1945,7 +1962,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        * <pre>
        * Optional. The list of HTTP methods on which to include CORS response
        * headers,
-       * (`GET`, `OPTIONS`, `POST`, etc) Note: "*" is permitted in the list of
+       * (`GET`, `OPTIONS`, `POST`, etc) Note: `*` is permitted in the list of
        * methods, and means "any method".
        * </pre>
        *
@@ -1968,7 +1985,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        * <pre>
        * Optional. The list of HTTP methods on which to include CORS response
        * headers,
-       * (`GET`, `OPTIONS`, `POST`, etc) Note: "*" is permitted in the list of
+       * (`GET`, `OPTIONS`, `POST`, etc) Note: `*` is permitted in the list of
        * methods, and means "any method".
        * </pre>
        *
@@ -1990,7 +2007,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        * <pre>
        * Optional. The list of HTTP methods on which to include CORS response
        * headers,
-       * (`GET`, `OPTIONS`, `POST`, etc) Note: "*" is permitted in the list of
+       * (`GET`, `OPTIONS`, `POST`, etc) Note: `*` is permitted in the list of
        * methods, and means "any method".
        * </pre>
        *
@@ -2025,9 +2042,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Optional. The list of HTTP headers other than the
-       * [https://www.w3.org/TR/cors/#simple-response-header][simple response
-       * headers] to give permission for the user-agent to share across domains.
+       * Optional. The list of HTTP headers other than the [simple response
+       * headers](https://www.w3.org/TR/cors/#simple-response-headers) to give
+       * permission for the user-agent to share across domains.
        * </pre>
        *
        * <code>repeated string response_header = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -2043,9 +2060,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Optional. The list of HTTP headers other than the
-       * [https://www.w3.org/TR/cors/#simple-response-header][simple response
-       * headers] to give permission for the user-agent to share across domains.
+       * Optional. The list of HTTP headers other than the [simple response
+       * headers](https://www.w3.org/TR/cors/#simple-response-headers) to give
+       * permission for the user-agent to share across domains.
        * </pre>
        *
        * <code>repeated string response_header = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -2060,9 +2077,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Optional. The list of HTTP headers other than the
-       * [https://www.w3.org/TR/cors/#simple-response-header][simple response
-       * headers] to give permission for the user-agent to share across domains.
+       * Optional. The list of HTTP headers other than the [simple response
+       * headers](https://www.w3.org/TR/cors/#simple-response-headers) to give
+       * permission for the user-agent to share across domains.
        * </pre>
        *
        * <code>repeated string response_header = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -2078,9 +2095,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Optional. The list of HTTP headers other than the
-       * [https://www.w3.org/TR/cors/#simple-response-header][simple response
-       * headers] to give permission for the user-agent to share across domains.
+       * Optional. The list of HTTP headers other than the [simple response
+       * headers](https://www.w3.org/TR/cors/#simple-response-headers) to give
+       * permission for the user-agent to share across domains.
        * </pre>
        *
        * <code>repeated string response_header = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -2096,9 +2113,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Optional. The list of HTTP headers other than the
-       * [https://www.w3.org/TR/cors/#simple-response-header][simple response
-       * headers] to give permission for the user-agent to share across domains.
+       * Optional. The list of HTTP headers other than the [simple response
+       * headers](https://www.w3.org/TR/cors/#simple-response-headers) to give
+       * permission for the user-agent to share across domains.
        * </pre>
        *
        * <code>repeated string response_header = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -2122,9 +2139,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Optional. The list of HTTP headers other than the
-       * [https://www.w3.org/TR/cors/#simple-response-header][simple response
-       * headers] to give permission for the user-agent to share across domains.
+       * Optional. The list of HTTP headers other than the [simple response
+       * headers](https://www.w3.org/TR/cors/#simple-response-headers) to give
+       * permission for the user-agent to share across domains.
        * </pre>
        *
        * <code>repeated string response_header = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -2147,9 +2164,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Optional. The list of HTTP headers other than the
-       * [https://www.w3.org/TR/cors/#simple-response-header][simple response
-       * headers] to give permission for the user-agent to share across domains.
+       * Optional. The list of HTTP headers other than the [simple response
+       * headers](https://www.w3.org/TR/cors/#simple-response-headers) to give
+       * permission for the user-agent to share across domains.
        * </pre>
        *
        * <code>repeated string response_header = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -2169,9 +2186,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Optional. The list of HTTP headers other than the
-       * [https://www.w3.org/TR/cors/#simple-response-header][simple response
-       * headers] to give permission for the user-agent to share across domains.
+       * Optional. The list of HTTP headers other than the [simple response
+       * headers](https://www.w3.org/TR/cors/#simple-response-headers) to give
+       * permission for the user-agent to share across domains.
        * </pre>
        *
        * <code>repeated string response_header = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -2190,9 +2207,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Optional. The list of HTTP headers other than the
-       * [https://www.w3.org/TR/cors/#simple-response-header][simple response
-       * headers] to give permission for the user-agent to share across domains.
+       * Optional. The list of HTTP headers other than the [simple response
+       * headers](https://www.w3.org/TR/cors/#simple-response-headers) to give
+       * permission for the user-agent to share across domains.
        * </pre>
        *
        * <code>repeated string response_header = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -2218,9 +2235,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Optional. The value, in seconds, to return in the
-       * [https://www.w3.org/TR/cors/#access-control-max-age-response-header][Access-Control-Max-Age
-       * header] used in preflight responses.
+       * Optional. The value, in seconds, to return in the [Access-Control-Max-Age
+       * header](https://www.w3.org/TR/cors/#access-control-max-age-response-header)
+       * used in preflight responses.
        * </pre>
        *
        * <code>int32 max_age_seconds = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -2236,9 +2253,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Optional. The value, in seconds, to return in the
-       * [https://www.w3.org/TR/cors/#access-control-max-age-response-header][Access-Control-Max-Age
-       * header] used in preflight responses.
+       * Optional. The value, in seconds, to return in the [Access-Control-Max-Age
+       * header](https://www.w3.org/TR/cors/#access-control-max-age-response-header)
+       * used in preflight responses.
        * </pre>
        *
        * <code>int32 max_age_seconds = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -2258,9 +2275,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Optional. The value, in seconds, to return in the
-       * [https://www.w3.org/TR/cors/#access-control-max-age-response-header][Access-Control-Max-Age
-       * header] used in preflight responses.
+       * Optional. The value, in seconds, to return in the [Access-Control-Max-Age
+       * header](https://www.w3.org/TR/cors/#access-control-max-age-response-header)
+       * used in preflight responses.
        * </pre>
        *
        * <code>int32 max_age_seconds = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -2347,8 +2364,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The name of the Cloud KMS key that will be used to encrypt
-     * objects inserted into this bucket, if no encryption method is specified.
+     * Optional. The name of the Cloud KMS key that is used to encrypt objects
+     * inserted into this bucket, if no encryption method is specified.
      * </pre>
      *
      * <code>
@@ -2363,8 +2380,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The name of the Cloud KMS key that will be used to encrypt
-     * objects inserted into this bucket, if no encryption method is specified.
+     * Optional. The name of the Cloud KMS key that is used to encrypt objects
+     * inserted into this bucket, if no encryption method is specified.
      * </pre>
      *
      * <code>
@@ -2593,7 +2610,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * Restriction mode for google-managed encryption for new objects within
-       * the bucket. Valid values are: "NotRestricted", "FullyRestricted".
+       * the bucket. Valid values are: `NotRestricted` and `FullyRestricted`.
        * If `NotRestricted` or unset, creation of new objects with
        * google-managed encryption is allowed.
        * If `FullyRestricted`, new objects can't be created using google-managed
@@ -2611,7 +2628,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * Restriction mode for google-managed encryption for new objects within
-       * the bucket. Valid values are: "NotRestricted", "FullyRestricted".
+       * the bucket. Valid values are: `NotRestricted` and `FullyRestricted`.
        * If `NotRestricted` or unset, creation of new objects with
        * google-managed encryption is allowed.
        * If `FullyRestricted`, new objects can't be created using google-managed
@@ -2629,7 +2646,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * Restriction mode for google-managed encryption for new objects within
-       * the bucket. Valid values are: "NotRestricted", "FullyRestricted".
+       * the bucket. Valid values are: `NotRestricted` and `FullyRestricted`.
        * If `NotRestricted` or unset, creation of new objects with
        * google-managed encryption is allowed.
        * If `FullyRestricted`, new objects can't be created using google-managed
@@ -2741,7 +2758,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * Restriction mode for google-managed encryption for new objects within
-       * the bucket. Valid values are: "NotRestricted", "FullyRestricted".
+       * the bucket. Valid values are: `NotRestricted` and `FullyRestricted`.
        * If `NotRestricted` or unset, creation of new objects with
        * google-managed encryption is allowed.
        * If `FullyRestricted`, new objects can't be created using google-managed
@@ -2762,7 +2779,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * Restriction mode for google-managed encryption for new objects within
-       * the bucket. Valid values are: "NotRestricted", "FullyRestricted".
+       * the bucket. Valid values are: `NotRestricted` and `FullyRestricted`.
        * If `NotRestricted` or unset, creation of new objects with
        * google-managed encryption is allowed.
        * If `FullyRestricted`, new objects can't be created using google-managed
@@ -2791,7 +2808,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * Restriction mode for google-managed encryption for new objects within
-       * the bucket. Valid values are: "NotRestricted", "FullyRestricted".
+       * the bucket. Valid values are: `NotRestricted` and `FullyRestricted`.
        * If `NotRestricted` or unset, creation of new objects with
        * google-managed encryption is allowed.
        * If `FullyRestricted`, new objects can't be created using google-managed
@@ -3305,7 +3322,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          * <pre>
          * Restriction mode for google-managed encryption for new objects within
-         * the bucket. Valid values are: "NotRestricted", "FullyRestricted".
+         * the bucket. Valid values are: `NotRestricted` and `FullyRestricted`.
          * If `NotRestricted` or unset, creation of new objects with
          * google-managed encryption is allowed.
          * If `FullyRestricted`, new objects can't be created using google-managed
@@ -3325,7 +3342,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          * <pre>
          * Restriction mode for google-managed encryption for new objects within
-         * the bucket. Valid values are: "NotRestricted", "FullyRestricted".
+         * the bucket. Valid values are: `NotRestricted` and `FullyRestricted`.
          * If `NotRestricted` or unset, creation of new objects with
          * google-managed encryption is allowed.
          * If `FullyRestricted`, new objects can't be created using google-managed
@@ -3353,7 +3370,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          * <pre>
          * Restriction mode for google-managed encryption for new objects within
-         * the bucket. Valid values are: "NotRestricted", "FullyRestricted".
+         * the bucket. Valid values are: `NotRestricted` and `FullyRestricted`.
          * If `NotRestricted` or unset, creation of new objects with
          * google-managed encryption is allowed.
          * If `FullyRestricted`, new objects can't be created using google-managed
@@ -3381,7 +3398,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          * <pre>
          * Restriction mode for google-managed encryption for new objects within
-         * the bucket. Valid values are: "NotRestricted", "FullyRestricted".
+         * the bucket. Valid values are: `NotRestricted` and `FullyRestricted`.
          * If `NotRestricted` or unset, creation of new objects with
          * google-managed encryption is allowed.
          * If `FullyRestricted`, new objects can't be created using google-managed
@@ -3408,7 +3425,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          * <pre>
          * Restriction mode for google-managed encryption for new objects within
-         * the bucket. Valid values are: "NotRestricted", "FullyRestricted".
+         * the bucket. Valid values are: `NotRestricted` and `FullyRestricted`.
          * If `NotRestricted` or unset, creation of new objects with
          * google-managed encryption is allowed.
          * If `FullyRestricted`, new objects can't be created using google-managed
@@ -3431,7 +3448,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          * <pre>
          * Restriction mode for google-managed encryption for new objects within
-         * the bucket. Valid values are: "NotRestricted", "FullyRestricted".
+         * the bucket. Valid values are: `NotRestricted` and `FullyRestricted`.
          * If `NotRestricted` or unset, creation of new objects with
          * google-managed encryption is allowed.
          * If `FullyRestricted`, new objects can't be created using google-managed
@@ -3729,7 +3746,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * Restriction mode for customer-managed encryption for new objects within
-       * the bucket. Valid values are: "NotRestricted", "FullyRestricted".
+       * the bucket. Valid values are: `NotRestricted` and `FullyRestricted`.
        * If `NotRestricted` or unset, creation of new objects with
        * customer-managed encryption is allowed.
        * If `FullyRestricted`, new objects can't be created using
@@ -3747,7 +3764,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * Restriction mode for customer-managed encryption for new objects within
-       * the bucket. Valid values are: "NotRestricted", "FullyRestricted".
+       * the bucket. Valid values are: `NotRestricted` and `FullyRestricted`.
        * If `NotRestricted` or unset, creation of new objects with
        * customer-managed encryption is allowed.
        * If `FullyRestricted`, new objects can't be created using
@@ -3765,7 +3782,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * Restriction mode for customer-managed encryption for new objects within
-       * the bucket. Valid values are: "NotRestricted", "FullyRestricted".
+       * the bucket. Valid values are: `NotRestricted` and `FullyRestricted`.
        * If `NotRestricted` or unset, creation of new objects with
        * customer-managed encryption is allowed.
        * If `FullyRestricted`, new objects can't be created using
@@ -3877,7 +3894,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * Restriction mode for customer-managed encryption for new objects within
-       * the bucket. Valid values are: "NotRestricted", "FullyRestricted".
+       * the bucket. Valid values are: `NotRestricted` and `FullyRestricted`.
        * If `NotRestricted` or unset, creation of new objects with
        * customer-managed encryption is allowed.
        * If `FullyRestricted`, new objects can't be created using
@@ -3898,7 +3915,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * Restriction mode for customer-managed encryption for new objects within
-       * the bucket. Valid values are: "NotRestricted", "FullyRestricted".
+       * the bucket. Valid values are: `NotRestricted` and `FullyRestricted`.
        * If `NotRestricted` or unset, creation of new objects with
        * customer-managed encryption is allowed.
        * If `FullyRestricted`, new objects can't be created using
@@ -3927,7 +3944,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * Restriction mode for customer-managed encryption for new objects within
-       * the bucket. Valid values are: "NotRestricted", "FullyRestricted".
+       * the bucket. Valid values are: `NotRestricted` and `FullyRestricted`.
        * If `NotRestricted` or unset, creation of new objects with
        * customer-managed encryption is allowed.
        * If `FullyRestricted`, new objects can't be created using
@@ -4455,7 +4472,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          * <pre>
          * Restriction mode for customer-managed encryption for new objects within
-         * the bucket. Valid values are: "NotRestricted", "FullyRestricted".
+         * the bucket. Valid values are: `NotRestricted` and `FullyRestricted`.
          * If `NotRestricted` or unset, creation of new objects with
          * customer-managed encryption is allowed.
          * If `FullyRestricted`, new objects can't be created using
@@ -4475,7 +4492,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          * <pre>
          * Restriction mode for customer-managed encryption for new objects within
-         * the bucket. Valid values are: "NotRestricted", "FullyRestricted".
+         * the bucket. Valid values are: `NotRestricted` and `FullyRestricted`.
          * If `NotRestricted` or unset, creation of new objects with
          * customer-managed encryption is allowed.
          * If `FullyRestricted`, new objects can't be created using
@@ -4503,7 +4520,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          * <pre>
          * Restriction mode for customer-managed encryption for new objects within
-         * the bucket. Valid values are: "NotRestricted", "FullyRestricted".
+         * the bucket. Valid values are: `NotRestricted` and `FullyRestricted`.
          * If `NotRestricted` or unset, creation of new objects with
          * customer-managed encryption is allowed.
          * If `FullyRestricted`, new objects can't be created using
@@ -4531,7 +4548,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          * <pre>
          * Restriction mode for customer-managed encryption for new objects within
-         * the bucket. Valid values are: "NotRestricted", "FullyRestricted".
+         * the bucket. Valid values are: `NotRestricted` and `FullyRestricted`.
          * If `NotRestricted` or unset, creation of new objects with
          * customer-managed encryption is allowed.
          * If `FullyRestricted`, new objects can't be created using
@@ -4558,7 +4575,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          * <pre>
          * Restriction mode for customer-managed encryption for new objects within
-         * the bucket. Valid values are: "NotRestricted", "FullyRestricted".
+         * the bucket. Valid values are: `NotRestricted` and `FullyRestricted`.
          * If `NotRestricted` or unset, creation of new objects with
          * customer-managed encryption is allowed.
          * If `FullyRestricted`, new objects can't be created using
@@ -4581,7 +4598,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          * <pre>
          * Restriction mode for customer-managed encryption for new objects within
-         * the bucket. Valid values are: "NotRestricted", "FullyRestricted".
+         * the bucket. Valid values are: `NotRestricted` and `FullyRestricted`.
          * If `NotRestricted` or unset, creation of new objects with
          * customer-managed encryption is allowed.
          * If `FullyRestricted`, new objects can't be created using
@@ -4882,8 +4899,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * Restriction mode for customer-supplied encryption for new objects
-       * within the bucket. Valid values are: "NotRestricted",
-       * "FullyRestricted".
+       * within the bucket. Valid values are: `NotRestricted` and
+       * `FullyRestricted`.
        * If `NotRestricted` or unset, creation of new objects with
        * customer-supplied encryption is allowed.
        * If `FullyRestricted`, new objects can't be created using
@@ -4901,8 +4918,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * Restriction mode for customer-supplied encryption for new objects
-       * within the bucket. Valid values are: "NotRestricted",
-       * "FullyRestricted".
+       * within the bucket. Valid values are: `NotRestricted` and
+       * `FullyRestricted`.
        * If `NotRestricted` or unset, creation of new objects with
        * customer-supplied encryption is allowed.
        * If `FullyRestricted`, new objects can't be created using
@@ -4920,8 +4937,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * Restriction mode for customer-supplied encryption for new objects
-       * within the bucket. Valid values are: "NotRestricted",
-       * "FullyRestricted".
+       * within the bucket. Valid values are: `NotRestricted` and
+       * `FullyRestricted`.
        * If `NotRestricted` or unset, creation of new objects with
        * customer-supplied encryption is allowed.
        * If `FullyRestricted`, new objects can't be created using
@@ -5033,8 +5050,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * Restriction mode for customer-supplied encryption for new objects
-       * within the bucket. Valid values are: "NotRestricted",
-       * "FullyRestricted".
+       * within the bucket. Valid values are: `NotRestricted` and
+       * `FullyRestricted`.
        * If `NotRestricted` or unset, creation of new objects with
        * customer-supplied encryption is allowed.
        * If `FullyRestricted`, new objects can't be created using
@@ -5055,8 +5072,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * Restriction mode for customer-supplied encryption for new objects
-       * within the bucket. Valid values are: "NotRestricted",
-       * "FullyRestricted".
+       * within the bucket. Valid values are: `NotRestricted` and
+       * `FullyRestricted`.
        * If `NotRestricted` or unset, creation of new objects with
        * customer-supplied encryption is allowed.
        * If `FullyRestricted`, new objects can't be created using
@@ -5085,8 +5102,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * Restriction mode for customer-supplied encryption for new objects
-       * within the bucket. Valid values are: "NotRestricted",
-       * "FullyRestricted".
+       * within the bucket. Valid values are: `NotRestricted` and
+       * `FullyRestricted`.
        * If `NotRestricted` or unset, creation of new objects with
        * customer-supplied encryption is allowed.
        * If `FullyRestricted`, new objects can't be created using
@@ -5615,8 +5632,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          * <pre>
          * Restriction mode for customer-supplied encryption for new objects
-         * within the bucket. Valid values are: "NotRestricted",
-         * "FullyRestricted".
+         * within the bucket. Valid values are: `NotRestricted` and
+         * `FullyRestricted`.
          * If `NotRestricted` or unset, creation of new objects with
          * customer-supplied encryption is allowed.
          * If `FullyRestricted`, new objects can't be created using
@@ -5636,8 +5653,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          * <pre>
          * Restriction mode for customer-supplied encryption for new objects
-         * within the bucket. Valid values are: "NotRestricted",
-         * "FullyRestricted".
+         * within the bucket. Valid values are: `NotRestricted` and
+         * `FullyRestricted`.
          * If `NotRestricted` or unset, creation of new objects with
          * customer-supplied encryption is allowed.
          * If `FullyRestricted`, new objects can't be created using
@@ -5665,8 +5682,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          * <pre>
          * Restriction mode for customer-supplied encryption for new objects
-         * within the bucket. Valid values are: "NotRestricted",
-         * "FullyRestricted".
+         * within the bucket. Valid values are: `NotRestricted` and
+         * `FullyRestricted`.
          * If `NotRestricted` or unset, creation of new objects with
          * customer-supplied encryption is allowed.
          * If `FullyRestricted`, new objects can't be created using
@@ -5694,8 +5711,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          * <pre>
          * Restriction mode for customer-supplied encryption for new objects
-         * within the bucket. Valid values are: "NotRestricted",
-         * "FullyRestricted".
+         * within the bucket. Valid values are: `NotRestricted` and
+         * `FullyRestricted`.
          * If `NotRestricted` or unset, creation of new objects with
          * customer-supplied encryption is allowed.
          * If `FullyRestricted`, new objects can't be created using
@@ -5722,8 +5739,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          * <pre>
          * Restriction mode for customer-supplied encryption for new objects
-         * within the bucket. Valid values are: "NotRestricted",
-         * "FullyRestricted".
+         * within the bucket. Valid values are: `NotRestricted` and
+         * `FullyRestricted`.
          * If `NotRestricted` or unset, creation of new objects with
          * customer-supplied encryption is allowed.
          * If `FullyRestricted`, new objects can't be created using
@@ -5746,8 +5763,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          * <pre>
          * Restriction mode for customer-supplied encryption for new objects
-         * within the bucket. Valid values are: "NotRestricted",
-         * "FullyRestricted".
+         * within the bucket. Valid values are: `NotRestricted` and
+         * `FullyRestricted`.
          * If `NotRestricted` or unset, creation of new objects with
          * customer-supplied encryption is allowed.
          * If `FullyRestricted`, new objects can't be created using
@@ -6049,8 +6066,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The name of the Cloud KMS key that will be used to encrypt
-     * objects inserted into this bucket, if no encryption method is specified.
+     * Optional. The name of the Cloud KMS key that is used to encrypt objects
+     * inserted into this bucket, if no encryption method is specified.
      * </pre>
      *
      * <code>
@@ -6076,8 +6093,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The name of the Cloud KMS key that will be used to encrypt
-     * objects inserted into this bucket, if no encryption method is specified.
+     * Optional. The name of the Cloud KMS key that is used to encrypt objects
+     * inserted into this bucket, if no encryption method is specified.
      * </pre>
      *
      * <code>
@@ -6810,8 +6827,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Optional. The name of the Cloud KMS key that will be used to encrypt
-       * objects inserted into this bucket, if no encryption method is specified.
+       * Optional. The name of the Cloud KMS key that is used to encrypt objects
+       * inserted into this bucket, if no encryption method is specified.
        * </pre>
        *
        * <code>
@@ -6836,8 +6853,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Optional. The name of the Cloud KMS key that will be used to encrypt
-       * objects inserted into this bucket, if no encryption method is specified.
+       * Optional. The name of the Cloud KMS key that is used to encrypt objects
+       * inserted into this bucket, if no encryption method is specified.
        * </pre>
        *
        * <code>
@@ -6862,8 +6879,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Optional. The name of the Cloud KMS key that will be used to encrypt
-       * objects inserted into this bucket, if no encryption method is specified.
+       * Optional. The name of the Cloud KMS key that is used to encrypt objects
+       * inserted into this bucket, if no encryption method is specified.
        * </pre>
        *
        * <code>
@@ -6887,8 +6904,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Optional. The name of the Cloud KMS key that will be used to encrypt
-       * objects inserted into this bucket, if no encryption method is specified.
+       * Optional. The name of the Cloud KMS key that is used to encrypt objects
+       * inserted into this bucket, if no encryption method is specified.
        * </pre>
        *
        * <code>
@@ -6908,8 +6925,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Optional. The name of the Cloud KMS key that will be used to encrypt
-       * objects inserted into this bucket, if no encryption method is specified.
+       * Optional. The name of the Cloud KMS key that is used to encrypt objects
+       * inserted into this bucket, if no encryption method is specified.
        * </pre>
        *
        * <code>
@@ -7835,8 +7852,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. Whether IAM will enforce public access prevention. Valid values
-     * are "enforced" or "inherited".
+     * Optional. Whether IAM enforces public access prevention. Valid values are
+     * `enforced` or `inherited`.
      * </pre>
      *
      * <code>string public_access_prevention = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -7849,8 +7866,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. Whether IAM will enforce public access prevention. Valid values
-     * are "enforced" or "inherited".
+     * Optional. Whether IAM enforces public access prevention. Valid values are
+     * `enforced` or `inherited`.
      * </pre>
      *
      * <code>string public_access_prevention = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -8928,8 +8945,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. Whether IAM will enforce public access prevention. Valid values
-     * are "enforced" or "inherited".
+     * Optional. Whether IAM enforces public access prevention. Valid values are
+     * `enforced` or `inherited`.
      * </pre>
      *
      * <code>string public_access_prevention = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -8953,8 +8970,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. Whether IAM will enforce public access prevention. Valid values
-     * are "enforced" or "inherited".
+     * Optional. Whether IAM enforces public access prevention. Valid values are
+     * `enforced` or `inherited`.
      * </pre>
      *
      * <code>string public_access_prevention = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -9597,8 +9614,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Optional. Whether IAM will enforce public access prevention. Valid values
-       * are "enforced" or "inherited".
+       * Optional. Whether IAM enforces public access prevention. Valid values are
+       * `enforced` or `inherited`.
        * </pre>
        *
        * <code>string public_access_prevention = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -9621,8 +9638,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Optional. Whether IAM will enforce public access prevention. Valid values
-       * are "enforced" or "inherited".
+       * Optional. Whether IAM enforces public access prevention. Valid values are
+       * `enforced` or `inherited`.
        * </pre>
        *
        * <code>string public_access_prevention = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -9645,8 +9662,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Optional. Whether IAM will enforce public access prevention. Valid values
-       * are "enforced" or "inherited".
+       * Optional. Whether IAM enforces public access prevention. Valid values are
+       * `enforced` or `inherited`.
        * </pre>
        *
        * <code>string public_access_prevention = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -9668,8 +9685,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Optional. Whether IAM will enforce public access prevention. Valid values
-       * are "enforced" or "inherited".
+       * Optional. Whether IAM enforces public access prevention. Valid values are
+       * `enforced` or `inherited`.
        * </pre>
        *
        * <code>string public_access_prevention = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -9687,8 +9704,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Optional. Whether IAM will enforce public access prevention. Valid values
-       * are "enforced" or "inherited".
+       * Optional. Whether IAM enforces public access prevention. Valid values are
+       * `enforced` or `inherited`.
        * </pre>
        *
        * <code>string public_access_prevention = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -9781,7 +9798,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. A lifecycle management rule, which is made of an action to take
-     * and the condition(s) under which the action will be taken.
+     * and the condition under which the action is taken.
      * </pre>
      *
      * <code>
@@ -9795,7 +9812,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. A lifecycle management rule, which is made of an action to take
-     * and the condition(s) under which the action will be taken.
+     * and the condition under which the action is taken.
      * </pre>
      *
      * <code>
@@ -9809,7 +9826,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. A lifecycle management rule, which is made of an action to take
-     * and the condition(s) under which the action will be taken.
+     * and the condition under which the action is taken.
      * </pre>
      *
      * <code>
@@ -9823,7 +9840,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. A lifecycle management rule, which is made of an action to take
-     * and the condition(s) under which the action will be taken.
+     * and the condition under which the action is taken.
      * </pre>
      *
      * <code>
@@ -9838,7 +9855,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. A lifecycle management rule, which is made of an action to take
-     * and the condition(s) under which the action will be taken.
+     * and the condition under which the action is taken.
      * </pre>
      *
      * <code>
@@ -9853,7 +9870,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Lifecycle properties of a bucket.
-   * For more information, see https://cloud.google.com/storage/docs/lifecycle.
+   * For more information, see [Object Lifecycle
+   * Management](https://cloud.google.com/storage/docs/lifecycle).
    * </pre>
    *
    * Protobuf type {@code google.storage.v2.Bucket.Lifecycle}
@@ -9946,7 +9964,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Optional. The condition(s) under which the action will be taken.
+       * Optional. The condition under which the action is taken.
        * </pre>
        *
        * <code>
@@ -9961,7 +9979,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Optional. The condition(s) under which the action will be taken.
+       * Optional. The condition under which the action is taken.
        * </pre>
        *
        * <code>
@@ -9976,7 +9994,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Optional. The condition(s) under which the action will be taken.
+       * Optional. The condition under which the action is taken.
        * </pre>
        *
        * <code>
@@ -9991,7 +10009,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * A lifecycle Rule, combining an action to take on an object and a
-     * condition which will trigger that action.
+     * condition which triggers that action.
      * </pre>
      *
      * Protobuf type {@code google.storage.v2.Bucket.Lifecycle.Rule}
@@ -11072,8 +11090,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          * <pre>
          * Optional. Objects having any of the storage classes specified by this
-         * condition will be matched. Values include `MULTI_REGIONAL`,
-         * `REGIONAL`, `NEARLINE`, `COLDLINE`, `STANDARD`, and
+         * condition are matched. Values include `MULTI_REGIONAL`, `REGIONAL`,
+         * `NEARLINE`, `COLDLINE`, `STANDARD`, and
          * `DURABLE_REDUCED_AVAILABILITY`.
          * </pre>
          *
@@ -11090,8 +11108,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          * <pre>
          * Optional. Objects having any of the storage classes specified by this
-         * condition will be matched. Values include `MULTI_REGIONAL`,
-         * `REGIONAL`, `NEARLINE`, `COLDLINE`, `STANDARD`, and
+         * condition are matched. Values include `MULTI_REGIONAL`, `REGIONAL`,
+         * `NEARLINE`, `COLDLINE`, `STANDARD`, and
          * `DURABLE_REDUCED_AVAILABILITY`.
          * </pre>
          *
@@ -11108,8 +11126,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          * <pre>
          * Optional. Objects having any of the storage classes specified by this
-         * condition will be matched. Values include `MULTI_REGIONAL`,
-         * `REGIONAL`, `NEARLINE`, `COLDLINE`, `STANDARD`, and
+         * condition are matched. Values include `MULTI_REGIONAL`, `REGIONAL`,
+         * `NEARLINE`, `COLDLINE`, `STANDARD`, and
          * `DURABLE_REDUCED_AVAILABILITY`.
          * </pre>
          *
@@ -11127,8 +11145,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          * <pre>
          * Optional. Objects having any of the storage classes specified by this
-         * condition will be matched. Values include `MULTI_REGIONAL`,
-         * `REGIONAL`, `NEARLINE`, `COLDLINE`, `STANDARD`, and
+         * condition are matched. Values include `MULTI_REGIONAL`, `REGIONAL`,
+         * `NEARLINE`, `COLDLINE`, `STANDARD`, and
          * `DURABLE_REDUCED_AVAILABILITY`.
          * </pre>
          *
@@ -11221,7 +11239,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          * This condition is relevant only for versioned objects. An object
          * version satisfies this condition only if these many days have been
          * passed since it became noncurrent. The value of the field must be a
-         * nonnegative integer. If it's zero, the object version will become
+         * nonnegative integer. If it's zero, the object version becomes
          * eligible for Lifecycle action as soon as it becomes noncurrent.
          * </pre>
          *
@@ -11238,7 +11256,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          * This condition is relevant only for versioned objects. An object
          * version satisfies this condition only if these many days have been
          * passed since it became noncurrent. The value of the field must be a
-         * nonnegative integer. If it's zero, the object version will become
+         * nonnegative integer. If it's zero, the object version becomes
          * eligible for Lifecycle action as soon as it becomes noncurrent.
          * </pre>
          *
@@ -11659,8 +11677,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          * <pre>
          * Optional. Objects having any of the storage classes specified by this
-         * condition will be matched. Values include `MULTI_REGIONAL`,
-         * `REGIONAL`, `NEARLINE`, `COLDLINE`, `STANDARD`, and
+         * condition are matched. Values include `MULTI_REGIONAL`, `REGIONAL`,
+         * `NEARLINE`, `COLDLINE`, `STANDARD`, and
          * `DURABLE_REDUCED_AVAILABILITY`.
          * </pre>
          *
@@ -11679,8 +11697,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          * <pre>
          * Optional. Objects having any of the storage classes specified by this
-         * condition will be matched. Values include `MULTI_REGIONAL`,
-         * `REGIONAL`, `NEARLINE`, `COLDLINE`, `STANDARD`, and
+         * condition are matched. Values include `MULTI_REGIONAL`, `REGIONAL`,
+         * `NEARLINE`, `COLDLINE`, `STANDARD`, and
          * `DURABLE_REDUCED_AVAILABILITY`.
          * </pre>
          *
@@ -11699,8 +11717,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          * <pre>
          * Optional. Objects having any of the storage classes specified by this
-         * condition will be matched. Values include `MULTI_REGIONAL`,
-         * `REGIONAL`, `NEARLINE`, `COLDLINE`, `STANDARD`, and
+         * condition are matched. Values include `MULTI_REGIONAL`, `REGIONAL`,
+         * `NEARLINE`, `COLDLINE`, `STANDARD`, and
          * `DURABLE_REDUCED_AVAILABILITY`.
          * </pre>
          *
@@ -11720,8 +11738,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          * <pre>
          * Optional. Objects having any of the storage classes specified by this
-         * condition will be matched. Values include `MULTI_REGIONAL`,
-         * `REGIONAL`, `NEARLINE`, `COLDLINE`, `STANDARD`, and
+         * condition are matched. Values include `MULTI_REGIONAL`, `REGIONAL`,
+         * `NEARLINE`, `COLDLINE`, `STANDARD`, and
          * `DURABLE_REDUCED_AVAILABILITY`.
          * </pre>
          *
@@ -11844,7 +11862,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          * This condition is relevant only for versioned objects. An object
          * version satisfies this condition only if these many days have been
          * passed since it became noncurrent. The value of the field must be a
-         * nonnegative integer. If it's zero, the object version will become
+         * nonnegative integer. If it's zero, the object version becomes
          * eligible for Lifecycle action as soon as it becomes noncurrent.
          * </pre>
          *
@@ -11864,7 +11882,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          * This condition is relevant only for versioned objects. An object
          * version satisfies this condition only if these many days have been
          * passed since it became noncurrent. The value of the field must be a
-         * nonnegative integer. If it's zero, the object version will become
+         * nonnegative integer. If it's zero, the object version becomes
          * eligible for Lifecycle action as soon as it becomes noncurrent.
          * </pre>
          *
@@ -13269,8 +13287,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            * <pre>
            * Optional. Objects having any of the storage classes specified by this
-           * condition will be matched. Values include `MULTI_REGIONAL`,
-           * `REGIONAL`, `NEARLINE`, `COLDLINE`, `STANDARD`, and
+           * condition are matched. Values include `MULTI_REGIONAL`, `REGIONAL`,
+           * `NEARLINE`, `COLDLINE`, `STANDARD`, and
            * `DURABLE_REDUCED_AVAILABILITY`.
            * </pre>
            *
@@ -13290,8 +13308,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            * <pre>
            * Optional. Objects having any of the storage classes specified by this
-           * condition will be matched. Values include `MULTI_REGIONAL`,
-           * `REGIONAL`, `NEARLINE`, `COLDLINE`, `STANDARD`, and
+           * condition are matched. Values include `MULTI_REGIONAL`, `REGIONAL`,
+           * `NEARLINE`, `COLDLINE`, `STANDARD`, and
            * `DURABLE_REDUCED_AVAILABILITY`.
            * </pre>
            *
@@ -13310,8 +13328,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            * <pre>
            * Optional. Objects having any of the storage classes specified by this
-           * condition will be matched. Values include `MULTI_REGIONAL`,
-           * `REGIONAL`, `NEARLINE`, `COLDLINE`, `STANDARD`, and
+           * condition are matched. Values include `MULTI_REGIONAL`, `REGIONAL`,
+           * `NEARLINE`, `COLDLINE`, `STANDARD`, and
            * `DURABLE_REDUCED_AVAILABILITY`.
            * </pre>
            *
@@ -13331,8 +13349,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            * <pre>
            * Optional. Objects having any of the storage classes specified by this
-           * condition will be matched. Values include `MULTI_REGIONAL`,
-           * `REGIONAL`, `NEARLINE`, `COLDLINE`, `STANDARD`, and
+           * condition are matched. Values include `MULTI_REGIONAL`, `REGIONAL`,
+           * `NEARLINE`, `COLDLINE`, `STANDARD`, and
            * `DURABLE_REDUCED_AVAILABILITY`.
            * </pre>
            *
@@ -13352,8 +13370,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            * <pre>
            * Optional. Objects having any of the storage classes specified by this
-           * condition will be matched. Values include `MULTI_REGIONAL`,
-           * `REGIONAL`, `NEARLINE`, `COLDLINE`, `STANDARD`, and
+           * condition are matched. Values include `MULTI_REGIONAL`, `REGIONAL`,
+           * `NEARLINE`, `COLDLINE`, `STANDARD`, and
            * `DURABLE_REDUCED_AVAILABILITY`.
            * </pre>
            *
@@ -13381,8 +13399,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            * <pre>
            * Optional. Objects having any of the storage classes specified by this
-           * condition will be matched. Values include `MULTI_REGIONAL`,
-           * `REGIONAL`, `NEARLINE`, `COLDLINE`, `STANDARD`, and
+           * condition are matched. Values include `MULTI_REGIONAL`, `REGIONAL`,
+           * `NEARLINE`, `COLDLINE`, `STANDARD`, and
            * `DURABLE_REDUCED_AVAILABILITY`.
            * </pre>
            *
@@ -13409,8 +13427,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            * <pre>
            * Optional. Objects having any of the storage classes specified by this
-           * condition will be matched. Values include `MULTI_REGIONAL`,
-           * `REGIONAL`, `NEARLINE`, `COLDLINE`, `STANDARD`, and
+           * condition are matched. Values include `MULTI_REGIONAL`, `REGIONAL`,
+           * `NEARLINE`, `COLDLINE`, `STANDARD`, and
            * `DURABLE_REDUCED_AVAILABILITY`.
            * </pre>
            *
@@ -13434,8 +13452,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            * <pre>
            * Optional. Objects having any of the storage classes specified by this
-           * condition will be matched. Values include `MULTI_REGIONAL`,
-           * `REGIONAL`, `NEARLINE`, `COLDLINE`, `STANDARD`, and
+           * condition are matched. Values include `MULTI_REGIONAL`, `REGIONAL`,
+           * `NEARLINE`, `COLDLINE`, `STANDARD`, and
            * `DURABLE_REDUCED_AVAILABILITY`.
            * </pre>
            *
@@ -13458,8 +13476,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            * <pre>
            * Optional. Objects having any of the storage classes specified by this
-           * condition will be matched. Values include `MULTI_REGIONAL`,
-           * `REGIONAL`, `NEARLINE`, `COLDLINE`, `STANDARD`, and
+           * condition are matched. Values include `MULTI_REGIONAL`, `REGIONAL`,
+           * `NEARLINE`, `COLDLINE`, `STANDARD`, and
            * `DURABLE_REDUCED_AVAILABILITY`.
            * </pre>
            *
@@ -13788,7 +13806,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            * This condition is relevant only for versioned objects. An object
            * version satisfies this condition only if these many days have been
            * passed since it became noncurrent. The value of the field must be a
-           * nonnegative integer. If it's zero, the object version will become
+           * nonnegative integer. If it's zero, the object version becomes
            * eligible for Lifecycle action as soon as it becomes noncurrent.
            * </pre>
            *
@@ -13808,7 +13826,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            * This condition is relevant only for versioned objects. An object
            * version satisfies this condition only if these many days have been
            * passed since it became noncurrent. The value of the field must be a
-           * nonnegative integer. If it's zero, the object version will become
+           * nonnegative integer. If it's zero, the object version becomes
            * eligible for Lifecycle action as soon as it becomes noncurrent.
            * </pre>
            *
@@ -13828,7 +13846,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            * This condition is relevant only for versioned objects. An object
            * version satisfies this condition only if these many days have been
            * passed since it became noncurrent. The value of the field must be a
-           * nonnegative integer. If it's zero, the object version will become
+           * nonnegative integer. If it's zero, the object version becomes
            * eligible for Lifecycle action as soon as it becomes noncurrent.
            * </pre>
            *
@@ -13852,7 +13870,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            * This condition is relevant only for versioned objects. An object
            * version satisfies this condition only if these many days have been
            * passed since it became noncurrent. The value of the field must be a
-           * nonnegative integer. If it's zero, the object version will become
+           * nonnegative integer. If it's zero, the object version becomes
            * eligible for Lifecycle action as soon as it becomes noncurrent.
            * </pre>
            *
@@ -14626,7 +14644,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Optional. The condition(s) under which the action will be taken.
+       * Optional. The condition under which the action is taken.
        * </pre>
        *
        * <code>
@@ -14644,7 +14662,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Optional. The condition(s) under which the action will be taken.
+       * Optional. The condition under which the action is taken.
        * </pre>
        *
        * <code>
@@ -14664,7 +14682,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Optional. The condition(s) under which the action will be taken.
+       * Optional. The condition under which the action is taken.
        * </pre>
        *
        * <code>
@@ -14864,7 +14882,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * A lifecycle Rule, combining an action to take on an object and a
-       * condition which will trigger that action.
+       * condition which triggers that action.
        * </pre>
        *
        * Protobuf type {@code google.storage.v2.Bucket.Lifecycle.Rule}
@@ -15304,7 +15322,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * Optional. The condition(s) under which the action will be taken.
+         * Optional. The condition under which the action is taken.
          * </pre>
          *
          * <code>
@@ -15321,7 +15339,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * Optional. The condition(s) under which the action will be taken.
+         * Optional. The condition under which the action is taken.
          * </pre>
          *
          * <code>
@@ -15344,7 +15362,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * Optional. The condition(s) under which the action will be taken.
+         * Optional. The condition under which the action is taken.
          * </pre>
          *
          * <code>
@@ -15369,7 +15387,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * Optional. The condition(s) under which the action will be taken.
+         * Optional. The condition under which the action is taken.
          * </pre>
          *
          * <code>
@@ -15392,7 +15410,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * Optional. The condition(s) under which the action will be taken.
+         * Optional. The condition under which the action is taken.
          * </pre>
          *
          * <code>
@@ -15423,7 +15441,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * Optional. The condition(s) under which the action will be taken.
+         * Optional. The condition under which the action is taken.
          * </pre>
          *
          * <code>
@@ -15445,7 +15463,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * Optional. The condition(s) under which the action will be taken.
+         * Optional. The condition under which the action is taken.
          * </pre>
          *
          * <code>
@@ -15462,7 +15480,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * Optional. The condition(s) under which the action will be taken.
+         * Optional. The condition under which the action is taken.
          * </pre>
          *
          * <code>
@@ -15484,7 +15502,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * Optional. The condition(s) under which the action will be taken.
+         * Optional. The condition under which the action is taken.
          * </pre>
          *
          * <code>
@@ -15582,7 +15600,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. A lifecycle management rule, which is made of an action to take
-     * and the condition(s) under which the action will be taken.
+     * and the condition under which the action is taken.
      * </pre>
      *
      * <code>
@@ -15599,7 +15617,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. A lifecycle management rule, which is made of an action to take
-     * and the condition(s) under which the action will be taken.
+     * and the condition under which the action is taken.
      * </pre>
      *
      * <code>
@@ -15617,7 +15635,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. A lifecycle management rule, which is made of an action to take
-     * and the condition(s) under which the action will be taken.
+     * and the condition under which the action is taken.
      * </pre>
      *
      * <code>
@@ -15634,7 +15652,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. A lifecycle management rule, which is made of an action to take
-     * and the condition(s) under which the action will be taken.
+     * and the condition under which the action is taken.
      * </pre>
      *
      * <code>
@@ -15651,7 +15669,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. A lifecycle management rule, which is made of an action to take
-     * and the condition(s) under which the action will be taken.
+     * and the condition under which the action is taken.
      * </pre>
      *
      * <code>
@@ -15830,7 +15848,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Lifecycle properties of a bucket.
-     * For more information, see https://cloud.google.com/storage/docs/lifecycle.
+     * For more information, see [Object Lifecycle
+     * Management](https://cloud.google.com/storage/docs/lifecycle).
      * </pre>
      *
      * Protobuf type {@code google.storage.v2.Bucket.Lifecycle}
@@ -16077,7 +16096,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * Optional. A lifecycle management rule, which is made of an action to take
-       * and the condition(s) under which the action will be taken.
+       * and the condition under which the action is taken.
        * </pre>
        *
        * <code>
@@ -16097,7 +16116,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * Optional. A lifecycle management rule, which is made of an action to take
-       * and the condition(s) under which the action will be taken.
+       * and the condition under which the action is taken.
        * </pre>
        *
        * <code>
@@ -16117,7 +16136,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * Optional. A lifecycle management rule, which is made of an action to take
-       * and the condition(s) under which the action will be taken.
+       * and the condition under which the action is taken.
        * </pre>
        *
        * <code>
@@ -16137,7 +16156,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * Optional. A lifecycle management rule, which is made of an action to take
-       * and the condition(s) under which the action will be taken.
+       * and the condition under which the action is taken.
        * </pre>
        *
        * <code>
@@ -16163,7 +16182,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * Optional. A lifecycle management rule, which is made of an action to take
-       * and the condition(s) under which the action will be taken.
+       * and the condition under which the action is taken.
        * </pre>
        *
        * <code>
@@ -16187,7 +16206,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * Optional. A lifecycle management rule, which is made of an action to take
-       * and the condition(s) under which the action will be taken.
+       * and the condition under which the action is taken.
        * </pre>
        *
        * <code>
@@ -16213,7 +16232,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * Optional. A lifecycle management rule, which is made of an action to take
-       * and the condition(s) under which the action will be taken.
+       * and the condition under which the action is taken.
        * </pre>
        *
        * <code>
@@ -16239,7 +16258,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * Optional. A lifecycle management rule, which is made of an action to take
-       * and the condition(s) under which the action will be taken.
+       * and the condition under which the action is taken.
        * </pre>
        *
        * <code>
@@ -16262,7 +16281,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * Optional. A lifecycle management rule, which is made of an action to take
-       * and the condition(s) under which the action will be taken.
+       * and the condition under which the action is taken.
        * </pre>
        *
        * <code>
@@ -16286,7 +16305,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * Optional. A lifecycle management rule, which is made of an action to take
-       * and the condition(s) under which the action will be taken.
+       * and the condition under which the action is taken.
        * </pre>
        *
        * <code>
@@ -16310,7 +16329,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * Optional. A lifecycle management rule, which is made of an action to take
-       * and the condition(s) under which the action will be taken.
+       * and the condition under which the action is taken.
        * </pre>
        *
        * <code>
@@ -16333,7 +16352,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * Optional. A lifecycle management rule, which is made of an action to take
-       * and the condition(s) under which the action will be taken.
+       * and the condition under which the action is taken.
        * </pre>
        *
        * <code>
@@ -16356,7 +16375,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * Optional. A lifecycle management rule, which is made of an action to take
-       * and the condition(s) under which the action will be taken.
+       * and the condition under which the action is taken.
        * </pre>
        *
        * <code>
@@ -16372,7 +16391,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * Optional. A lifecycle management rule, which is made of an action to take
-       * and the condition(s) under which the action will be taken.
+       * and the condition under which the action is taken.
        * </pre>
        *
        * <code>
@@ -16392,7 +16411,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * Optional. A lifecycle management rule, which is made of an action to take
-       * and the condition(s) under which the action will be taken.
+       * and the condition under which the action is taken.
        * </pre>
        *
        * <code>
@@ -16413,7 +16432,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * Optional. A lifecycle management rule, which is made of an action to take
-       * and the condition(s) under which the action will be taken.
+       * and the condition under which the action is taken.
        * </pre>
        *
        * <code>
@@ -16430,7 +16449,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * Optional. A lifecycle management rule, which is made of an action to take
-       * and the condition(s) under which the action will be taken.
+       * and the condition under which the action is taken.
        * </pre>
        *
        * <code>
@@ -16447,7 +16466,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * Optional. A lifecycle management rule, which is made of an action to take
-       * and the condition(s) under which the action will be taken.
+       * and the condition under which the action is taken.
        * </pre>
        *
        * <code>
@@ -18046,7 +18065,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * duration must be greater than zero and less than 100 years. Note that
      * enforcement of retention periods less than a day is not guaranteed. Such
      * periods should only be used for testing purposes. Any `nanos` value
-     * specified will be rounded down to the nearest second.
+     * specified is rounded down to the nearest second.
      * </pre>
      *
      * <code>
@@ -18065,7 +18084,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * duration must be greater than zero and less than 100 years. Note that
      * enforcement of retention periods less than a day is not guaranteed. Such
      * periods should only be used for testing purposes. Any `nanos` value
-     * specified will be rounded down to the nearest second.
+     * specified is rounded down to the nearest second.
      * </pre>
      *
      * <code>
@@ -18084,7 +18103,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * duration must be greater than zero and less than 100 years. Note that
      * enforcement of retention periods less than a day is not guaranteed. Such
      * periods should only be used for testing purposes. Any `nanos` value
-     * specified will be rounded down to the nearest second.
+     * specified is rounded down to the nearest second.
      * </pre>
      *
      * <code>
@@ -18230,7 +18249,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * duration must be greater than zero and less than 100 years. Note that
      * enforcement of retention periods less than a day is not guaranteed. Such
      * periods should only be used for testing purposes. Any `nanos` value
-     * specified will be rounded down to the nearest second.
+     * specified is rounded down to the nearest second.
      * </pre>
      *
      * <code>
@@ -18252,7 +18271,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * duration must be greater than zero and less than 100 years. Note that
      * enforcement of retention periods less than a day is not guaranteed. Such
      * periods should only be used for testing purposes. Any `nanos` value
-     * specified will be rounded down to the nearest second.
+     * specified is rounded down to the nearest second.
      * </pre>
      *
      * <code>
@@ -18276,7 +18295,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * duration must be greater than zero and less than 100 years. Note that
      * enforcement of retention periods less than a day is not guaranteed. Such
      * periods should only be used for testing purposes. Any `nanos` value
-     * specified will be rounded down to the nearest second.
+     * specified is rounded down to the nearest second.
      * </pre>
      *
      * <code>
@@ -19007,7 +19026,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        * duration must be greater than zero and less than 100 years. Note that
        * enforcement of retention periods less than a day is not guaranteed. Such
        * periods should only be used for testing purposes. Any `nanos` value
-       * specified will be rounded down to the nearest second.
+       * specified is rounded down to the nearest second.
        * </pre>
        *
        * <code>
@@ -19028,7 +19047,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        * duration must be greater than zero and less than 100 years. Note that
        * enforcement of retention periods less than a day is not guaranteed. Such
        * periods should only be used for testing purposes. Any `nanos` value
-       * specified will be rounded down to the nearest second.
+       * specified is rounded down to the nearest second.
        * </pre>
        *
        * <code>
@@ -19055,7 +19074,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        * duration must be greater than zero and less than 100 years. Note that
        * enforcement of retention periods less than a day is not guaranteed. Such
        * periods should only be used for testing purposes. Any `nanos` value
-       * specified will be rounded down to the nearest second.
+       * specified is rounded down to the nearest second.
        * </pre>
        *
        * <code>
@@ -19084,7 +19103,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        * duration must be greater than zero and less than 100 years. Note that
        * enforcement of retention periods less than a day is not guaranteed. Such
        * periods should only be used for testing purposes. Any `nanos` value
-       * specified will be rounded down to the nearest second.
+       * specified is rounded down to the nearest second.
        * </pre>
        *
        * <code>
@@ -19110,7 +19129,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        * duration must be greater than zero and less than 100 years. Note that
        * enforcement of retention periods less than a day is not guaranteed. Such
        * periods should only be used for testing purposes. Any `nanos` value
-       * specified will be rounded down to the nearest second.
+       * specified is rounded down to the nearest second.
        * </pre>
        *
        * <code>
@@ -19144,7 +19163,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        * duration must be greater than zero and less than 100 years. Note that
        * enforcement of retention periods less than a day is not guaranteed. Such
        * periods should only be used for testing purposes. Any `nanos` value
-       * specified will be rounded down to the nearest second.
+       * specified is rounded down to the nearest second.
        * </pre>
        *
        * <code>
@@ -19170,7 +19189,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        * duration must be greater than zero and less than 100 years. Note that
        * enforcement of retention periods less than a day is not guaranteed. Such
        * periods should only be used for testing purposes. Any `nanos` value
-       * specified will be rounded down to the nearest second.
+       * specified is rounded down to the nearest second.
        * </pre>
        *
        * <code>
@@ -19191,7 +19210,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        * duration must be greater than zero and less than 100 years. Note that
        * enforcement of retention periods less than a day is not guaranteed. Such
        * periods should only be used for testing purposes. Any `nanos` value
-       * specified will be rounded down to the nearest second.
+       * specified is rounded down to the nearest second.
        * </pre>
        *
        * <code>
@@ -19216,7 +19235,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        * duration must be greater than zero and less than 100 years. Note that
        * enforcement of retention periods less than a day is not guaranteed. Such
        * periods should only be used for testing purposes. Any `nanos` value
-       * specified will be rounded down to the nearest second.
+       * specified is rounded down to the nearest second.
        * </pre>
        *
        * <code>
@@ -20444,8 +20463,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Properties of a bucket related to versioning.
-   * For more on Cloud Storage versioning, see
-   * https://cloud.google.com/storage/docs/object-versioning.
+   * For more information about Cloud Storage versioning, see [Object
+   * versioning](https://cloud.google.com/storage/docs/object-versioning).
    * </pre>
    *
    * Protobuf type {@code google.storage.v2.Bucket.Versioning}
@@ -20668,8 +20687,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Properties of a bucket related to versioning.
-     * For more on Cloud Storage versioning, see
-     * https://cloud.google.com/storage/docs/object-versioning.
+     * For more information about Cloud Storage versioning, see [Object
+     * versioning](https://cloud.google.com/storage/docs/object-versioning).
      * </pre>
      *
      * Protobuf type {@code google.storage.v2.Bucket.Versioning}
@@ -20977,10 +20996,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. If the requested object path is missing, the service will
-     * ensure the path has a trailing '/', append this suffix, and attempt to
-     * retrieve the resulting object. This allows the creation of `index.html`
-     * objects to represent directory pages.
+     * Optional. If the requested object path is missing, the service ensures
+     * the path has a trailing '/', append this suffix, and attempt to retrieve
+     * the resulting object. This allows the creation of `index.html` objects to
+     * represent directory pages.
      * </pre>
      *
      * <code>string main_page_suffix = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -20993,10 +21012,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. If the requested object path is missing, the service will
-     * ensure the path has a trailing '/', append this suffix, and attempt to
-     * retrieve the resulting object. This allows the creation of `index.html`
-     * objects to represent directory pages.
+     * Optional. If the requested object path is missing, the service ensures
+     * the path has a trailing '/', append this suffix, and attempt to retrieve
+     * the resulting object. This allows the creation of `index.html` objects to
+     * represent directory pages.
      * </pre>
      *
      * <code>string main_page_suffix = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -21011,8 +21030,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * <pre>
      * Optional. If the requested object path is missing, and any
      * `mainPageSuffix` object is missing, if applicable, the service
-     * will return the named object from this bucket as the content for a
-     * [https://tools.ietf.org/html/rfc7231#section-6.5.4][404 Not Found]
+     * returns the named object from this bucket as the content for a
+     * [404 Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)
      * result.
      * </pre>
      *
@@ -21028,8 +21047,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * <pre>
      * Optional. If the requested object path is missing, and any
      * `mainPageSuffix` object is missing, if applicable, the service
-     * will return the named object from this bucket as the content for a
-     * [https://tools.ietf.org/html/rfc7231#section-6.5.4][404 Not Found]
+     * returns the named object from this bucket as the content for a
+     * [404 Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)
      * result.
      * </pre>
      *
@@ -21045,8 +21064,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Properties of a bucket related to accessing the contents as a static
-   * website. For more on hosting a static website via Cloud Storage, see
-   * https://cloud.google.com/storage/docs/hosting-static-website.
+   * website. For details, see [hosting a static website using Cloud
+   * Storage](https://cloud.google.com/storage/docs/hosting-static-website).
    * </pre>
    *
    * Protobuf type {@code google.storage.v2.Bucket.Website}
@@ -21097,10 +21116,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. If the requested object path is missing, the service will
-     * ensure the path has a trailing '/', append this suffix, and attempt to
-     * retrieve the resulting object. This allows the creation of `index.html`
-     * objects to represent directory pages.
+     * Optional. If the requested object path is missing, the service ensures
+     * the path has a trailing '/', append this suffix, and attempt to retrieve
+     * the resulting object. This allows the creation of `index.html` objects to
+     * represent directory pages.
      * </pre>
      *
      * <code>string main_page_suffix = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -21124,10 +21143,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. If the requested object path is missing, the service will
-     * ensure the path has a trailing '/', append this suffix, and attempt to
-     * retrieve the resulting object. This allows the creation of `index.html`
-     * objects to represent directory pages.
+     * Optional. If the requested object path is missing, the service ensures
+     * the path has a trailing '/', append this suffix, and attempt to retrieve
+     * the resulting object. This allows the creation of `index.html` objects to
+     * represent directory pages.
      * </pre>
      *
      * <code>string main_page_suffix = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -21158,8 +21177,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * <pre>
      * Optional. If the requested object path is missing, and any
      * `mainPageSuffix` object is missing, if applicable, the service
-     * will return the named object from this bucket as the content for a
-     * [https://tools.ietf.org/html/rfc7231#section-6.5.4][404 Not Found]
+     * returns the named object from this bucket as the content for a
+     * [404 Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)
      * result.
      * </pre>
      *
@@ -21186,8 +21205,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * <pre>
      * Optional. If the requested object path is missing, and any
      * `mainPageSuffix` object is missing, if applicable, the service
-     * will return the named object from this bucket as the content for a
-     * [https://tools.ietf.org/html/rfc7231#section-6.5.4][404 Not Found]
+     * returns the named object from this bucket as the content for a
+     * [404 Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)
      * result.
      * </pre>
      *
@@ -21382,8 +21401,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Properties of a bucket related to accessing the contents as a static
-     * website. For more on hosting a static website via Cloud Storage, see
-     * https://cloud.google.com/storage/docs/hosting-static-website.
+     * website. For details, see [hosting a static website using Cloud
+     * Storage](https://cloud.google.com/storage/docs/hosting-static-website).
      * </pre>
      *
      * Protobuf type {@code google.storage.v2.Bucket.Website}
@@ -21585,10 +21604,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Optional. If the requested object path is missing, the service will
-       * ensure the path has a trailing '/', append this suffix, and attempt to
-       * retrieve the resulting object. This allows the creation of `index.html`
-       * objects to represent directory pages.
+       * Optional. If the requested object path is missing, the service ensures
+       * the path has a trailing '/', append this suffix, and attempt to retrieve
+       * the resulting object. This allows the creation of `index.html` objects to
+       * represent directory pages.
        * </pre>
        *
        * <code>string main_page_suffix = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -21611,10 +21630,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Optional. If the requested object path is missing, the service will
-       * ensure the path has a trailing '/', append this suffix, and attempt to
-       * retrieve the resulting object. This allows the creation of `index.html`
-       * objects to represent directory pages.
+       * Optional. If the requested object path is missing, the service ensures
+       * the path has a trailing '/', append this suffix, and attempt to retrieve
+       * the resulting object. This allows the creation of `index.html` objects to
+       * represent directory pages.
        * </pre>
        *
        * <code>string main_page_suffix = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -21637,10 +21656,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Optional. If the requested object path is missing, the service will
-       * ensure the path has a trailing '/', append this suffix, and attempt to
-       * retrieve the resulting object. This allows the creation of `index.html`
-       * objects to represent directory pages.
+       * Optional. If the requested object path is missing, the service ensures
+       * the path has a trailing '/', append this suffix, and attempt to retrieve
+       * the resulting object. This allows the creation of `index.html` objects to
+       * represent directory pages.
        * </pre>
        *
        * <code>string main_page_suffix = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -21662,10 +21681,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Optional. If the requested object path is missing, the service will
-       * ensure the path has a trailing '/', append this suffix, and attempt to
-       * retrieve the resulting object. This allows the creation of `index.html`
-       * objects to represent directory pages.
+       * Optional. If the requested object path is missing, the service ensures
+       * the path has a trailing '/', append this suffix, and attempt to retrieve
+       * the resulting object. This allows the creation of `index.html` objects to
+       * represent directory pages.
        * </pre>
        *
        * <code>string main_page_suffix = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -21683,10 +21702,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Optional. If the requested object path is missing, the service will
-       * ensure the path has a trailing '/', append this suffix, and attempt to
-       * retrieve the resulting object. This allows the creation of `index.html`
-       * objects to represent directory pages.
+       * Optional. If the requested object path is missing, the service ensures
+       * the path has a trailing '/', append this suffix, and attempt to retrieve
+       * the resulting object. This allows the creation of `index.html` objects to
+       * represent directory pages.
        * </pre>
        *
        * <code>string main_page_suffix = 1 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -21713,8 +21732,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        * <pre>
        * Optional. If the requested object path is missing, and any
        * `mainPageSuffix` object is missing, if applicable, the service
-       * will return the named object from this bucket as the content for a
-       * [https://tools.ietf.org/html/rfc7231#section-6.5.4][404 Not Found]
+       * returns the named object from this bucket as the content for a
+       * [404 Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)
        * result.
        * </pre>
        *
@@ -21740,8 +21759,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        * <pre>
        * Optional. If the requested object path is missing, and any
        * `mainPageSuffix` object is missing, if applicable, the service
-       * will return the named object from this bucket as the content for a
-       * [https://tools.ietf.org/html/rfc7231#section-6.5.4][404 Not Found]
+       * returns the named object from this bucket as the content for a
+       * [404 Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)
        * result.
        * </pre>
        *
@@ -21767,8 +21786,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        * <pre>
        * Optional. If the requested object path is missing, and any
        * `mainPageSuffix` object is missing, if applicable, the service
-       * will return the named object from this bucket as the content for a
-       * [https://tools.ietf.org/html/rfc7231#section-6.5.4][404 Not Found]
+       * returns the named object from this bucket as the content for a
+       * [404 Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)
        * result.
        * </pre>
        *
@@ -21793,8 +21812,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        * <pre>
        * Optional. If the requested object path is missing, and any
        * `mainPageSuffix` object is missing, if applicable, the service
-       * will return the named object from this bucket as the content for a
-       * [https://tools.ietf.org/html/rfc7231#section-6.5.4][404 Not Found]
+       * returns the named object from this bucket as the content for a
+       * [404 Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)
        * result.
        * </pre>
        *
@@ -21815,8 +21834,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        * <pre>
        * Optional. If the requested object path is missing, and any
        * `mainPageSuffix` object is missing, if applicable, the service
-       * will return the named object from this bucket as the content for a
-       * [https://tools.ietf.org/html/rfc7231#section-6.5.4][404 Not Found]
+       * returns the named object from this bucket as the content for a
+       * [404 Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)
        * result.
        * </pre>
        *
@@ -21964,9 +21983,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Configuration for Custom Dual Regions.  It should specify precisely two
-   * eligible regions within the same Multiregion. More information on regions
-   * may be found [here](https://cloud.google.com/storage/docs/locations).
+   * Configuration for [configurable dual-
+   * regions](https://cloud.google.com/storage/docs/locations#configurable). It
+   * should specify precisely two eligible regions within the same multi-region.
+   * For details, see
+   * [locations](https://cloud.google.com/storage/docs/locations).
    * </pre>
    *
    * Protobuf type {@code google.storage.v2.Bucket.CustomPlacementConfig}
@@ -22247,9 +22268,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Configuration for Custom Dual Regions.  It should specify precisely two
-     * eligible regions within the same Multiregion. More information on regions
-     * may be found [here](https://cloud.google.com/storage/docs/locations).
+     * Configuration for [configurable dual-
+     * regions](https://cloud.google.com/storage/docs/locations#configurable). It
+     * should specify precisely two eligible regions within the same multi-region.
+     * For details, see
+     * [locations](https://cloud.google.com/storage/docs/locations).
      * </pre>
      *
      * Protobuf type {@code google.storage.v2.Bucket.CustomPlacementConfig}
@@ -22709,8 +22732,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * <pre>
      * Output only. Latest instant at which the `enabled` field was set to true
      * after being disabled/unconfigured or set to false after being enabled. If
-     * Autoclass is enabled when the bucket is created, the toggle_time is set
-     * to the bucket creation time.
+     * Autoclass is enabled when the bucket is created, the value of the
+     * `toggle_time` field is set to the bucket `create_time`.
      * </pre>
      *
      * <code>
@@ -22727,8 +22750,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * <pre>
      * Output only. Latest instant at which the `enabled` field was set to true
      * after being disabled/unconfigured or set to false after being enabled. If
-     * Autoclass is enabled when the bucket is created, the toggle_time is set
-     * to the bucket creation time.
+     * Autoclass is enabled when the bucket is created, the value of the
+     * `toggle_time` field is set to the bucket `create_time`.
      * </pre>
      *
      * <code>
@@ -22745,8 +22768,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * <pre>
      * Output only. Latest instant at which the `enabled` field was set to true
      * after being disabled/unconfigured or set to false after being enabled. If
-     * Autoclass is enabled when the bucket is created, the toggle_time is set
-     * to the bucket creation time.
+     * Autoclass is enabled when the bucket is created, the value of the
+     * `toggle_time` field is set to the bucket `create_time`.
      * </pre>
      *
      * <code>
@@ -22759,7 +22782,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * An object in an Autoclass bucket will eventually cool down to the
+     * An object in an Autoclass bucket eventually cools down to the
      * terminal storage class if there is no access to the object.
      * The only valid values are NEARLINE and ARCHIVE.
      * </pre>
@@ -22774,7 +22797,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * An object in an Autoclass bucket will eventually cool down to the
+     * An object in an Autoclass bucket eventually cools down to the
      * terminal storage class if there is no access to the object.
      * The only valid values are NEARLINE and ARCHIVE.
      * </pre>
@@ -22789,7 +22812,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * An object in an Autoclass bucket will eventually cool down to the
+     * An object in an Autoclass bucket eventually cools down to the
      * terminal storage class if there is no access to the object.
      * The only valid values are NEARLINE and ARCHIVE.
      * </pre>
@@ -22921,8 +22944,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * <pre>
      * Output only. Latest instant at which the `enabled` field was set to true
      * after being disabled/unconfigured or set to false after being enabled. If
-     * Autoclass is enabled when the bucket is created, the toggle_time is set
-     * to the bucket creation time.
+     * Autoclass is enabled when the bucket is created, the value of the
+     * `toggle_time` field is set to the bucket `create_time`.
      * </pre>
      *
      * <code>
@@ -22942,8 +22965,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * <pre>
      * Output only. Latest instant at which the `enabled` field was set to true
      * after being disabled/unconfigured or set to false after being enabled. If
-     * Autoclass is enabled when the bucket is created, the toggle_time is set
-     * to the bucket creation time.
+     * Autoclass is enabled when the bucket is created, the value of the
+     * `toggle_time` field is set to the bucket `create_time`.
      * </pre>
      *
      * <code>
@@ -22963,8 +22986,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * <pre>
      * Output only. Latest instant at which the `enabled` field was set to true
      * after being disabled/unconfigured or set to false after being enabled. If
-     * Autoclass is enabled when the bucket is created, the toggle_time is set
-     * to the bucket creation time.
+     * Autoclass is enabled when the bucket is created, the value of the
+     * `toggle_time` field is set to the bucket `create_time`.
      * </pre>
      *
      * <code>
@@ -22985,7 +23008,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * An object in an Autoclass bucket will eventually cool down to the
+     * An object in an Autoclass bucket eventually cools down to the
      * terminal storage class if there is no access to the object.
      * The only valid values are NEARLINE and ARCHIVE.
      * </pre>
@@ -23003,7 +23026,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * An object in an Autoclass bucket will eventually cool down to the
+     * An object in an Autoclass bucket eventually cools down to the
      * terminal storage class if there is no access to the object.
      * The only valid values are NEARLINE and ARCHIVE.
      * </pre>
@@ -23029,7 +23052,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * An object in an Autoclass bucket will eventually cool down to the
+     * An object in an Autoclass bucket eventually cools down to the
      * terminal storage class if there is no access to the object.
      * The only valid values are NEARLINE and ARCHIVE.
      * </pre>
@@ -23641,8 +23664,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        * <pre>
        * Output only. Latest instant at which the `enabled` field was set to true
        * after being disabled/unconfigured or set to false after being enabled. If
-       * Autoclass is enabled when the bucket is created, the toggle_time is set
-       * to the bucket creation time.
+       * Autoclass is enabled when the bucket is created, the value of the
+       * `toggle_time` field is set to the bucket `create_time`.
        * </pre>
        *
        * <code>
@@ -23661,8 +23684,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        * <pre>
        * Output only. Latest instant at which the `enabled` field was set to true
        * after being disabled/unconfigured or set to false after being enabled. If
-       * Autoclass is enabled when the bucket is created, the toggle_time is set
-       * to the bucket creation time.
+       * Autoclass is enabled when the bucket is created, the value of the
+       * `toggle_time` field is set to the bucket `create_time`.
        * </pre>
        *
        * <code>
@@ -23687,8 +23710,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        * <pre>
        * Output only. Latest instant at which the `enabled` field was set to true
        * after being disabled/unconfigured or set to false after being enabled. If
-       * Autoclass is enabled when the bucket is created, the toggle_time is set
-       * to the bucket creation time.
+       * Autoclass is enabled when the bucket is created, the value of the
+       * `toggle_time` field is set to the bucket `create_time`.
        * </pre>
        *
        * <code>
@@ -23715,8 +23738,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        * <pre>
        * Output only. Latest instant at which the `enabled` field was set to true
        * after being disabled/unconfigured or set to false after being enabled. If
-       * Autoclass is enabled when the bucket is created, the toggle_time is set
-       * to the bucket creation time.
+       * Autoclass is enabled when the bucket is created, the value of the
+       * `toggle_time` field is set to the bucket `create_time`.
        * </pre>
        *
        * <code>
@@ -23740,8 +23763,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        * <pre>
        * Output only. Latest instant at which the `enabled` field was set to true
        * after being disabled/unconfigured or set to false after being enabled. If
-       * Autoclass is enabled when the bucket is created, the toggle_time is set
-       * to the bucket creation time.
+       * Autoclass is enabled when the bucket is created, the value of the
+       * `toggle_time` field is set to the bucket `create_time`.
        * </pre>
        *
        * <code>
@@ -23773,8 +23796,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        * <pre>
        * Output only. Latest instant at which the `enabled` field was set to true
        * after being disabled/unconfigured or set to false after being enabled. If
-       * Autoclass is enabled when the bucket is created, the toggle_time is set
-       * to the bucket creation time.
+       * Autoclass is enabled when the bucket is created, the value of the
+       * `toggle_time` field is set to the bucket `create_time`.
        * </pre>
        *
        * <code>
@@ -23798,8 +23821,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        * <pre>
        * Output only. Latest instant at which the `enabled` field was set to true
        * after being disabled/unconfigured or set to false after being enabled. If
-       * Autoclass is enabled when the bucket is created, the toggle_time is set
-       * to the bucket creation time.
+       * Autoclass is enabled when the bucket is created, the value of the
+       * `toggle_time` field is set to the bucket `create_time`.
        * </pre>
        *
        * <code>
@@ -23818,8 +23841,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        * <pre>
        * Output only. Latest instant at which the `enabled` field was set to true
        * after being disabled/unconfigured or set to false after being enabled. If
-       * Autoclass is enabled when the bucket is created, the toggle_time is set
-       * to the bucket creation time.
+       * Autoclass is enabled when the bucket is created, the value of the
+       * `toggle_time` field is set to the bucket `create_time`.
        * </pre>
        *
        * <code>
@@ -23842,8 +23865,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        * <pre>
        * Output only. Latest instant at which the `enabled` field was set to true
        * after being disabled/unconfigured or set to false after being enabled. If
-       * Autoclass is enabled when the bucket is created, the toggle_time is set
-       * to the bucket creation time.
+       * Autoclass is enabled when the bucket is created, the value of the
+       * `toggle_time` field is set to the bucket `create_time`.
        * </pre>
        *
        * <code>
@@ -23873,7 +23896,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * An object in an Autoclass bucket will eventually cool down to the
+       * An object in an Autoclass bucket eventually cools down to the
        * terminal storage class if there is no access to the object.
        * The only valid values are NEARLINE and ARCHIVE.
        * </pre>
@@ -23890,7 +23913,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * An object in an Autoclass bucket will eventually cool down to the
+       * An object in an Autoclass bucket eventually cools down to the
        * terminal storage class if there is no access to the object.
        * The only valid values are NEARLINE and ARCHIVE.
        * </pre>
@@ -23915,7 +23938,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * An object in an Autoclass bucket will eventually cool down to the
+       * An object in an Autoclass bucket eventually cools down to the
        * terminal storage class if there is no access to the object.
        * The only valid values are NEARLINE and ARCHIVE.
        * </pre>
@@ -23940,7 +23963,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * An object in an Autoclass bucket will eventually cool down to the
+       * An object in an Autoclass bucket eventually cools down to the
        * terminal storage class if there is no access to the object.
        * The only valid values are NEARLINE and ARCHIVE.
        * </pre>
@@ -23964,7 +23987,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * An object in an Autoclass bucket will eventually cool down to the
+       * An object in an Autoclass bucket eventually cools down to the
        * terminal storage class if there is no access to the object.
        * The only valid values are NEARLINE and ARCHIVE.
        * </pre>
@@ -23984,7 +24007,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * An object in an Autoclass bucket will eventually cool down to the
+       * An object in an Autoclass bucket eventually cools down to the
        * terminal storage class if there is no access to the object.
        * The only valid values are NEARLINE and ARCHIVE.
        * </pre>
@@ -24305,7 +24328,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * `Disabled`. When set to `Enabled`, IP filtering rules are applied to a
      * bucket and all incoming requests to the bucket are evaluated against
      * these rules. When set to `Disabled`, IP filtering rules are not applied
-     * to a bucket.".
+     * to a bucket.
      * </pre>
      *
      * <code>optional string mode = 1;</code>
@@ -24322,7 +24345,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * `Disabled`. When set to `Enabled`, IP filtering rules are applied to a
      * bucket and all incoming requests to the bucket are evaluated against
      * these rules. When set to `Disabled`, IP filtering rules are not applied
-     * to a bucket.".
+     * to a bucket.
      * </pre>
      *
      * <code>optional string mode = 1;</code>
@@ -24339,7 +24362,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * `Disabled`. When set to `Enabled`, IP filtering rules are applied to a
      * bucket and all incoming requests to the bucket are evaluated against
      * these rules. When set to `Disabled`, IP filtering rules are not applied
-     * to a bucket.".
+     * to a bucket.
      * </pre>
      *
      * <code>optional string mode = 1;</code>
@@ -24472,8 +24495,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * Optional. Whether or not to allow VPCs from orgs different than the
      * bucket's parent org to access the bucket. When set to true, validations
      * on the existence of the VPCs won't be performed. If set to false, each
-     * VPC network source will be checked to belong to the same org as the
-     * bucket as well as validated for existence.
+     * VPC network source is checked to belong to the same org as the bucket as
+     * well as validated for existence.
      * </pre>
      *
      * <code>bool allow_cross_org_vpcs = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -24487,7 +24510,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Whether or not to allow all P4SA access to the bucket. When set to true,
-     * IP filter config validation will not apply.
+     * IP filter config validation doesn't apply.
      * </pre>
      *
      * <code>optional bool allow_all_service_agent_access = 5;</code>
@@ -24501,7 +24524,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Whether or not to allow all P4SA access to the bucket. When set to true,
-     * IP filter config validation will not apply.
+     * IP filter config validation doesn't apply.
      * </pre>
      *
      * <code>optional bool allow_all_service_agent_access = 5;</code>
@@ -26594,7 +26617,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * `Disabled`. When set to `Enabled`, IP filtering rules are applied to a
      * bucket and all incoming requests to the bucket are evaluated against
      * these rules. When set to `Disabled`, IP filtering rules are not applied
-     * to a bucket.".
+     * to a bucket.
      * </pre>
      *
      * <code>optional string mode = 1;</code>
@@ -26614,7 +26637,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * `Disabled`. When set to `Enabled`, IP filtering rules are applied to a
      * bucket and all incoming requests to the bucket are evaluated against
      * these rules. When set to `Disabled`, IP filtering rules are not applied
-     * to a bucket.".
+     * to a bucket.
      * </pre>
      *
      * <code>optional string mode = 1;</code>
@@ -26642,7 +26665,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * `Disabled`. When set to `Enabled`, IP filtering rules are applied to a
      * bucket and all incoming requests to the bucket are evaluated against
      * these rules. When set to `Disabled`, IP filtering rules are not applied
-     * to a bucket.".
+     * to a bucket.
      * </pre>
      *
      * <code>optional string mode = 1;</code>
@@ -26826,8 +26849,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * Optional. Whether or not to allow VPCs from orgs different than the
      * bucket's parent org to access the bucket. When set to true, validations
      * on the existence of the VPCs won't be performed. If set to false, each
-     * VPC network source will be checked to belong to the same org as the
-     * bucket as well as validated for existence.
+     * VPC network source is checked to belong to the same org as the bucket as
+     * well as validated for existence.
      * </pre>
      *
      * <code>bool allow_cross_org_vpcs = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -26847,7 +26870,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Whether or not to allow all P4SA access to the bucket. When set to true,
-     * IP filter config validation will not apply.
+     * IP filter config validation doesn't apply.
      * </pre>
      *
      * <code>optional bool allow_all_service_agent_access = 5;</code>
@@ -26864,7 +26887,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Whether or not to allow all P4SA access to the bucket. When set to true,
-     * IP filter config validation will not apply.
+     * IP filter config validation doesn't apply.
      * </pre>
      *
      * <code>optional bool allow_all_service_agent_access = 5;</code>
@@ -27414,7 +27437,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        * `Disabled`. When set to `Enabled`, IP filtering rules are applied to a
        * bucket and all incoming requests to the bucket are evaluated against
        * these rules. When set to `Disabled`, IP filtering rules are not applied
-       * to a bucket.".
+       * to a bucket.
        * </pre>
        *
        * <code>optional string mode = 1;</code>
@@ -27433,7 +27456,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        * `Disabled`. When set to `Enabled`, IP filtering rules are applied to a
        * bucket and all incoming requests to the bucket are evaluated against
        * these rules. When set to `Disabled`, IP filtering rules are not applied
-       * to a bucket.".
+       * to a bucket.
        * </pre>
        *
        * <code>optional string mode = 1;</code>
@@ -27460,7 +27483,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        * `Disabled`. When set to `Enabled`, IP filtering rules are applied to a
        * bucket and all incoming requests to the bucket are evaluated against
        * these rules. When set to `Disabled`, IP filtering rules are not applied
-       * to a bucket.".
+       * to a bucket.
        * </pre>
        *
        * <code>optional string mode = 1;</code>
@@ -27487,7 +27510,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        * `Disabled`. When set to `Enabled`, IP filtering rules are applied to a
        * bucket and all incoming requests to the bucket are evaluated against
        * these rules. When set to `Disabled`, IP filtering rules are not applied
-       * to a bucket.".
+       * to a bucket.
        * </pre>
        *
        * <code>optional string mode = 1;</code>
@@ -27513,7 +27536,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        * `Disabled`. When set to `Enabled`, IP filtering rules are applied to a
        * bucket and all incoming requests to the bucket are evaluated against
        * these rules. When set to `Disabled`, IP filtering rules are not applied
-       * to a bucket.".
+       * to a bucket.
        * </pre>
        *
        * <code>optional string mode = 1;</code>
@@ -27535,7 +27558,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        * `Disabled`. When set to `Enabled`, IP filtering rules are applied to a
        * bucket and all incoming requests to the bucket are evaluated against
        * these rules. When set to `Disabled`, IP filtering rules are not applied
-       * to a bucket.".
+       * to a bucket.
        * </pre>
        *
        * <code>optional string mode = 1;</code>
@@ -28223,8 +28246,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        * Optional. Whether or not to allow VPCs from orgs different than the
        * bucket's parent org to access the bucket. When set to true, validations
        * on the existence of the VPCs won't be performed. If set to false, each
-       * VPC network source will be checked to belong to the same org as the
-       * bucket as well as validated for existence.
+       * VPC network source is checked to belong to the same org as the bucket as
+       * well as validated for existence.
        * </pre>
        *
        * <code>bool allow_cross_org_vpcs = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -28243,8 +28266,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        * Optional. Whether or not to allow VPCs from orgs different than the
        * bucket's parent org to access the bucket. When set to true, validations
        * on the existence of the VPCs won't be performed. If set to false, each
-       * VPC network source will be checked to belong to the same org as the
-       * bucket as well as validated for existence.
+       * VPC network source is checked to belong to the same org as the bucket as
+       * well as validated for existence.
        * </pre>
        *
        * <code>bool allow_cross_org_vpcs = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -28267,8 +28290,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        * Optional. Whether or not to allow VPCs from orgs different than the
        * bucket's parent org to access the bucket. When set to true, validations
        * on the existence of the VPCs won't be performed. If set to false, each
-       * VPC network source will be checked to belong to the same org as the
-       * bucket as well as validated for existence.
+       * VPC network source is checked to belong to the same org as the bucket as
+       * well as validated for existence.
        * </pre>
        *
        * <code>bool allow_cross_org_vpcs = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -28289,7 +28312,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * Whether or not to allow all P4SA access to the bucket. When set to true,
-       * IP filter config validation will not apply.
+       * IP filter config validation doesn't apply.
        * </pre>
        *
        * <code>optional bool allow_all_service_agent_access = 5;</code>
@@ -28306,7 +28329,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * Whether or not to allow all P4SA access to the bucket. When set to true,
-       * IP filter config validation will not apply.
+       * IP filter config validation doesn't apply.
        * </pre>
        *
        * <code>optional bool allow_all_service_agent_access = 5;</code>
@@ -28323,7 +28346,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * Whether or not to allow all P4SA access to the bucket. When set to true,
-       * IP filter config validation will not apply.
+       * IP filter config validation doesn't apply.
        * </pre>
        *
        * <code>optional bool allow_all_service_agent_access = 5;</code>
@@ -28344,7 +28367,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * Whether or not to allow all P4SA access to the bucket. When set to true,
-       * IP filter config validation will not apply.
+       * IP filter config validation doesn't apply.
        * </pre>
        *
        * <code>optional bool allow_all_service_agent_access = 5;</code>
@@ -29035,7 +29058,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    * <pre>
    * Output only. The user-chosen part of the bucket name. The `{bucket}`
    * portion of the `name` field. For globally unique buckets, this is equal to
-   * the "bucket name" of other Cloud Storage APIs. Example: "pub".
+   * the `bucket name` of other Cloud Storage APIs. Example: `pub`.
    * </pre>
    *
    * <code>string bucket_id = 2 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -29061,7 +29084,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    * <pre>
    * Output only. The user-chosen part of the bucket name. The `{bucket}`
    * portion of the `name` field. For globally unique buckets, this is equal to
-   * the "bucket name" of other Cloud Storage APIs. Example: "pub".
+   * the `bucket name` of other Cloud Storage APIs. Example: `pub`.
    * </pre>
    *
    * <code>string bucket_id = 2 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -29091,8 +29114,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * The etag of the bucket.
-   * If included in the metadata of an UpdateBucketRequest, the operation will
-   * only be performed if the etag matches that of the bucket.
+   * If included in the metadata of an `UpdateBucketRequest`, the operation is
+   * only performed if the `etag` matches that of the bucket.
    * </pre>
    *
    * <code>string etag = 29;</code>
@@ -29117,8 +29140,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * The etag of the bucket.
-   * If included in the metadata of an UpdateBucketRequest, the operation will
-   * only be performed if the etag matches that of the bucket.
+   * If included in the metadata of an `UpdateBucketRequest`, the operation is
+   * only performed if the `etag` matches that of the bucket.
    * </pre>
    *
    * <code>string etag = 29;</code>
@@ -29148,9 +29171,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Immutable. The project which owns this bucket, in the format of
-   * "projects/{projectIdentifier}".
-   * {projectIdentifier} can be the project ID or project number.
-   * Output values will always be in project number format.
+   * `projects/{projectIdentifier}`.
+   * `{projectIdentifier}` can be the project ID or project number.
+   * Output values are always in the project number format.
    * </pre>
    *
    * <code>
@@ -29177,9 +29200,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Immutable. The project which owns this bucket, in the format of
-   * "projects/{projectIdentifier}".
-   * {projectIdentifier} can be the project ID or project number.
-   * Output values will always be in project number format.
+   * `projects/{projectIdentifier}`.
+   * `{projectIdentifier}` can be the project ID or project number.
+   * Output values are always in the project number format.
    * </pre>
    *
    * <code>
@@ -29231,10 +29254,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    * <pre>
    * Immutable. The location of the bucket. Object data for objects in the
    * bucket resides in physical storage within this region.  Defaults to `US`.
-   * See the
-   * [https://developers.google.com/storage/docs/concepts-techniques#specifyinglocations"][developer's
-   * guide] for the authoritative list. Attempting to update this field after
-   * the bucket is created will result in an error.
+   * Attempting to update this field after the bucket is created results in an
+   * error.
    * </pre>
    *
    * <code>string location = 5 [(.google.api.field_behavior) = IMMUTABLE];</code>
@@ -29260,10 +29281,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    * <pre>
    * Immutable. The location of the bucket. Object data for objects in the
    * bucket resides in physical storage within this region.  Defaults to `US`.
-   * See the
-   * [https://developers.google.com/storage/docs/concepts-techniques#specifyinglocations"][developer's
-   * guide] for the authoritative list. Attempting to update this field after
-   * the bucket is created will result in an error.
+   * Attempting to update this field after the bucket is created results in an
+   * error.
    * </pre>
    *
    * <code>string location = 5 [(.google.api.field_behavior) = IMMUTABLE];</code>
@@ -29350,9 +29369,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    * Optional. The bucket's default storage class, used whenever no storageClass
    * is specified for a newly-created object. This defines how objects in the
    * bucket are stored and determines the SLA and the cost of storage.
-   * If this value is not specified when the bucket is created, it will default
-   * to `STANDARD`. For more information, see
-   * https://developers.google.com/storage/docs/storage-classes.
+   * If this value is not specified when the bucket is created, it defaults
+   * to `STANDARD`. For more information, see [Storage
+   * classes](https://developers.google.com/storage/docs/storage-classes).
    * </pre>
    *
    * <code>string storage_class = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -29379,9 +29398,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    * Optional. The bucket's default storage class, used whenever no storageClass
    * is specified for a newly-created object. This defines how objects in the
    * bucket are stored and determines the SLA and the cost of storage.
-   * If this value is not specified when the bucket is created, it will default
-   * to `STANDARD`. For more information, see
-   * https://developers.google.com/storage/docs/storage-classes.
+   * If this value is not specified when the bucket is created, it defaults
+   * to `STANDARD`. For more information, see [Storage
+   * classes](https://developers.google.com/storage/docs/storage-classes).
    * </pre>
    *
    * <code>string storage_class = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -29411,11 +29430,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Optional. The recovery point objective for cross-region replication of the
-   * bucket. Applicable only for dual- and multi-region buckets. "DEFAULT" uses
-   * default replication. "ASYNC_TURBO" enables turbo replication, valid for
+   * bucket. Applicable only for dual- and multi-region buckets. `DEFAULT` uses
+   * default replication. `ASYNC_TURBO` enables turbo replication, valid for
    * dual-region buckets only. If rpo is not specified when the bucket is
-   * created, it defaults to "DEFAULT". For more information, see
-   * https://cloud.google.com/storage/docs/availability-durability#turbo-replication.
+   * created, it defaults to `DEFAULT`. For more information, see [Turbo
+   * replication](https://cloud.google.com/storage/docs/availability-durability#turbo-replication).
    * </pre>
    *
    * <code>string rpo = 27 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -29440,11 +29459,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Optional. The recovery point objective for cross-region replication of the
-   * bucket. Applicable only for dual- and multi-region buckets. "DEFAULT" uses
-   * default replication. "ASYNC_TURBO" enables turbo replication, valid for
+   * bucket. Applicable only for dual- and multi-region buckets. `DEFAULT` uses
+   * default replication. `ASYNC_TURBO` enables turbo replication, valid for
    * dual-region buckets only. If rpo is not specified when the bucket is
-   * created, it defaults to "DEFAULT". For more information, see
-   * https://cloud.google.com/storage/docs/availability-durability#turbo-replication.
+   * created, it defaults to `DEFAULT`. For more information, see [Turbo
+   * replication](https://cloud.google.com/storage/docs/availability-durability#turbo-replication).
    * </pre>
    *
    * <code>string rpo = 27 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -29474,7 +29493,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Optional. Access controls on the bucket.
-   * If iam_config.uniform_bucket_level_access is enabled on this bucket,
+   * If `iam_config.uniform_bucket_level_access` is enabled on this bucket,
    * requests to set, read, or modify acl is an error.
    * </pre>
    *
@@ -29492,7 +29511,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Optional. Access controls on the bucket.
-   * If iam_config.uniform_bucket_level_access is enabled on this bucket,
+   * If `iam_config.uniform_bucket_level_access` is enabled on this bucket,
    * requests to set, read, or modify acl is an error.
    * </pre>
    *
@@ -29511,7 +29530,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Optional. Access controls on the bucket.
-   * If iam_config.uniform_bucket_level_access is enabled on this bucket,
+   * If `iam_config.uniform_bucket_level_access` is enabled on this bucket,
    * requests to set, read, or modify acl is an error.
    * </pre>
    *
@@ -29529,7 +29548,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Optional. Access controls on the bucket.
-   * If iam_config.uniform_bucket_level_access is enabled on this bucket,
+   * If `iam_config.uniform_bucket_level_access` is enabled on this bucket,
    * requests to set, read, or modify acl is an error.
    * </pre>
    *
@@ -29547,7 +29566,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Optional. Access controls on the bucket.
-   * If iam_config.uniform_bucket_level_access is enabled on this bucket,
+   * If `iam_config.uniform_bucket_level_access` is enabled on this bucket,
    * requests to set, read, or modify acl is an error.
    * </pre>
    *
@@ -29570,7 +29589,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Optional. Default access controls to apply to new objects when no ACL is
-   * provided. If iam_config.uniform_bucket_level_access is enabled on this
+   * provided. If `iam_config.uniform_bucket_level_access` is enabled on this
    * bucket, requests to set, read, or modify acl is an error.
    * </pre>
    *
@@ -29588,7 +29607,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Optional. Default access controls to apply to new objects when no ACL is
-   * provided. If iam_config.uniform_bucket_level_access is enabled on this
+   * provided. If `iam_config.uniform_bucket_level_access` is enabled on this
    * bucket, requests to set, read, or modify acl is an error.
    * </pre>
    *
@@ -29607,7 +29626,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Optional. Default access controls to apply to new objects when no ACL is
-   * provided. If iam_config.uniform_bucket_level_access is enabled on this
+   * provided. If `iam_config.uniform_bucket_level_access` is enabled on this
    * bucket, requests to set, read, or modify acl is an error.
    * </pre>
    *
@@ -29625,7 +29644,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Optional. Default access controls to apply to new objects when no ACL is
-   * provided. If iam_config.uniform_bucket_level_access is enabled on this
+   * provided. If `iam_config.uniform_bucket_level_access` is enabled on this
    * bucket, requests to set, read, or modify acl is an error.
    * </pre>
    *
@@ -29643,7 +29662,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Optional. Default access controls to apply to new objects when no ACL is
-   * provided. If iam_config.uniform_bucket_level_access is enabled on this
+   * provided. If `iam_config.uniform_bucket_level_access` is enabled on this
    * bucket, requests to set, read, or modify acl is an error.
    * </pre>
    *
@@ -29664,9 +29683,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Optional. The bucket's lifecycle config. See
-   * [https://developers.google.com/storage/docs/lifecycle]Lifecycle Management]
-   * for more information.
+   * Optional. The bucket's lifecycle configuration. See [Lifecycle
+   * Management](https://developers.google.com/storage/docs/lifecycle) for more
+   * information.
    * </pre>
    *
    * <code>
@@ -29684,9 +29703,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Optional. The bucket's lifecycle config. See
-   * [https://developers.google.com/storage/docs/lifecycle]Lifecycle Management]
-   * for more information.
+   * Optional. The bucket's lifecycle configuration. See [Lifecycle
+   * Management](https://developers.google.com/storage/docs/lifecycle) for more
+   * information.
    * </pre>
    *
    * <code>
@@ -29706,9 +29725,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Optional. The bucket's lifecycle config. See
-   * [https://developers.google.com/storage/docs/lifecycle]Lifecycle Management]
-   * for more information.
+   * Optional. The bucket's lifecycle configuration. See [Lifecycle
+   * Management](https://developers.google.com/storage/docs/lifecycle) for more
+   * information.
    * </pre>
    *
    * <code>
@@ -29783,8 +29802,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Optional. The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource
-   * Sharing] (CORS) config.
+   * Optional. The bucket's [CORS](https://www.w3.org/TR/cors/)
+   * configuration.
    * </pre>
    *
    * <code>
@@ -29800,8 +29819,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Optional. The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource
-   * Sharing] (CORS) config.
+   * Optional. The bucket's [CORS](https://www.w3.org/TR/cors/)
+   * configuration.
    * </pre>
    *
    * <code>
@@ -29818,8 +29837,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Optional. The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource
-   * Sharing] (CORS) config.
+   * Optional. The bucket's [CORS](https://www.w3.org/TR/cors/)
+   * configuration.
    * </pre>
    *
    * <code>
@@ -29835,8 +29854,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Optional. The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource
-   * Sharing] (CORS) config.
+   * Optional. The bucket's [CORS](https://www.w3.org/TR/cors/)
+   * configuration.
    * </pre>
    *
    * <code>
@@ -29852,8 +29871,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Optional. The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource
-   * Sharing] (CORS) config.
+   * Optional. The bucket's [CORS](https://www.w3.org/TR/cors/)
+   * configuration.
    * </pre>
    *
    * <code>
@@ -29927,11 +29946,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    * Optional. The default value for event-based hold on newly created objects
    * in this bucket.  Event-based hold is a way to retain objects indefinitely
    * until an event occurs, signified by the hold's release. After being
-   * released, such objects will be subject to bucket-level retention (if any).
-   * One sample use case of this flag is for banks to hold loan documents for at
+   * released, such objects are subject to bucket-level retention (if any).  One
+   * sample use case of this flag is for banks to hold loan documents for at
    * least 3 years after loan is paid in full. Here, bucket-level retention is 3
    * years and the event is loan being paid in full. In this example, these
-   * objects will be held intact for any number of years until the event has
+   * objects are held intact for any number of years until the event has
    * occurred (event-based hold on the object is released) and then 3 more years
    * after that. That means retention duration of the objects begins from the
    * moment event-based hold transitioned from true to false.  Objects under
@@ -30063,9 +30082,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Optional. The bucket's website config, controlling how the service behaves
-   * when accessing bucket contents as a web site. See the
-   * [https://cloud.google.com/storage/docs/static-website][Static Website
-   * Examples] for more information.
+   * when accessing bucket contents as a web site. See the [Static website
+   * examples](https://cloud.google.com/storage/docs/static-website) for more
+   * information.
    * </pre>
    *
    * <code>.google.storage.v2.Bucket.Website website = 16 [(.google.api.field_behavior) = OPTIONAL];
@@ -30083,9 +30102,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Optional. The bucket's website config, controlling how the service behaves
-   * when accessing bucket contents as a web site. See the
-   * [https://cloud.google.com/storage/docs/static-website][Static Website
-   * Examples] for more information.
+   * when accessing bucket contents as a web site. See the [Static website
+   * examples](https://cloud.google.com/storage/docs/static-website) for more
+   * information.
    * </pre>
    *
    * <code>.google.storage.v2.Bucket.Website website = 16 [(.google.api.field_behavior) = OPTIONAL];
@@ -30103,9 +30122,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Optional. The bucket's website config, controlling how the service behaves
-   * when accessing bucket contents as a web site. See the
-   * [https://cloud.google.com/storage/docs/static-website][Static Website
-   * Examples] for more information.
+   * when accessing bucket contents as a web site. See the [Static website
+   * examples](https://cloud.google.com/storage/docs/static-website) for more
+   * information.
    * </pre>
    *
    * <code>.google.storage.v2.Bucket.Website website = 16 [(.google.api.field_behavior) = OPTIONAL];
@@ -30123,7 +30142,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Optional. The bucket's versioning config.
+   * Optional. The bucket's versioning configuration.
    * </pre>
    *
    * <code>
@@ -30141,7 +30160,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Optional. The bucket's versioning config.
+   * Optional. The bucket's versioning configuration.
    * </pre>
    *
    * <code>
@@ -30161,7 +30180,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Optional. The bucket's versioning config.
+   * Optional. The bucket's versioning configuration.
    * </pre>
    *
    * <code>
@@ -30348,7 +30367,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Optional. The bucket's billing config.
+   * Optional. The bucket's billing configuration.
    * </pre>
    *
    * <code>.google.storage.v2.Bucket.Billing billing = 21 [(.google.api.field_behavior) = OPTIONAL];
@@ -30365,7 +30384,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Optional. The bucket's billing config.
+   * Optional. The bucket's billing configuration.
    * </pre>
    *
    * <code>.google.storage.v2.Bucket.Billing billing = 21 [(.google.api.field_behavior) = OPTIONAL];
@@ -30382,7 +30401,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Optional. The bucket's billing config.
+   * Optional. The bucket's billing configuration.
    * </pre>
    *
    * <code>.google.storage.v2.Bucket.Billing billing = 21 [(.google.api.field_behavior) = OPTIONAL];
@@ -30403,12 +30422,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    * Optional. The bucket's retention policy. The retention policy enforces a
    * minimum retention time for all objects contained in the bucket, based on
    * their creation time. Any attempt to overwrite or delete objects younger
-   * than the retention period will result in a PERMISSION_DENIED error.  An
+   * than the retention period results in a `PERMISSION_DENIED` error.  An
    * unlocked retention policy can be modified or removed from the bucket via a
    * storage.buckets.update operation. A locked retention policy cannot be
    * removed or shortened in duration for the lifetime of the bucket.
-   * Attempting to remove or decrease period of a locked retention policy will
-   * result in a PERMISSION_DENIED error.
+   * Attempting to remove or decrease period of a locked retention policy
+   * results in a `PERMISSION_DENIED` error.
    * </pre>
    *
    * <code>
@@ -30429,12 +30448,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    * Optional. The bucket's retention policy. The retention policy enforces a
    * minimum retention time for all objects contained in the bucket, based on
    * their creation time. Any attempt to overwrite or delete objects younger
-   * than the retention period will result in a PERMISSION_DENIED error.  An
+   * than the retention period results in a `PERMISSION_DENIED` error.  An
    * unlocked retention policy can be modified or removed from the bucket via a
    * storage.buckets.update operation. A locked retention policy cannot be
    * removed or shortened in duration for the lifetime of the bucket.
-   * Attempting to remove or decrease period of a locked retention policy will
-   * result in a PERMISSION_DENIED error.
+   * Attempting to remove or decrease period of a locked retention policy
+   * results in a `PERMISSION_DENIED` error.
    * </pre>
    *
    * <code>
@@ -30457,12 +30476,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    * Optional. The bucket's retention policy. The retention policy enforces a
    * minimum retention time for all objects contained in the bucket, based on
    * their creation time. Any attempt to overwrite or delete objects younger
-   * than the retention period will result in a PERMISSION_DENIED error.  An
+   * than the retention period results in a `PERMISSION_DENIED` error.  An
    * unlocked retention policy can be modified or removed from the bucket via a
    * storage.buckets.update operation. A locked retention policy cannot be
    * removed or shortened in duration for the lifetime of the bucket.
-   * Attempting to remove or decrease period of a locked retention policy will
-   * result in a PERMISSION_DENIED error.
+   * Attempting to remove or decrease period of a locked retention policy
+   * results in a `PERMISSION_DENIED` error.
    * </pre>
    *
    * <code>
@@ -30483,7 +30502,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Optional. The bucket's IAM config.
+   * Optional. The bucket's IAM configuration.
    * </pre>
    *
    * <code>
@@ -30501,7 +30520,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Optional. The bucket's IAM config.
+   * Optional. The bucket's IAM configuration.
    * </pre>
    *
    * <code>
@@ -30521,7 +30540,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Optional. The bucket's IAM config.
+   * Optional. The bucket's IAM configuration.
    * </pre>
    *
    * <code>
@@ -30562,9 +30581,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Optional. Configuration that, if present, specifies the data placement for
-   * a
-   * [https://cloud.google.com/storage/docs/locations#location-dr][configurable
-   * dual-region].
+   * a [configurable
+   * dual-region](https://cloud.google.com/storage/docs/locations#location-dr).
    * </pre>
    *
    * <code>
@@ -30583,9 +30601,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Optional. Configuration that, if present, specifies the data placement for
-   * a
-   * [https://cloud.google.com/storage/docs/locations#location-dr][configurable
-   * dual-region].
+   * a [configurable
+   * dual-region](https://cloud.google.com/storage/docs/locations#location-dr).
    * </pre>
    *
    * <code>
@@ -30606,9 +30623,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Optional. Configuration that, if present, specifies the data placement for
-   * a
-   * [https://cloud.google.com/storage/docs/locations#location-dr][configurable
-   * dual-region].
+   * a [configurable
+   * dual-region](https://cloud.google.com/storage/docs/locations#location-dr).
    * </pre>
    *
    * <code>
@@ -30631,8 +30647,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Optional. The bucket's Autoclass configuration. If there is no
-   * configuration, the Autoclass feature will be disabled and have no effect on
-   * the bucket.
+   * configuration, the Autoclass feature is disabled and has no effect on the
+   * bucket.
    * </pre>
    *
    * <code>
@@ -30651,8 +30667,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Optional. The bucket's Autoclass configuration. If there is no
-   * configuration, the Autoclass feature will be disabled and have no effect on
-   * the bucket.
+   * configuration, the Autoclass feature is disabled and has no effect on the
+   * bucket.
    * </pre>
    *
    * <code>
@@ -30673,8 +30689,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Optional. The bucket's Autoclass configuration. If there is no
-   * configuration, the Autoclass feature will be disabled and have no effect on
-   * the bucket.
+   * configuration, the Autoclass feature is disabled and has no effect on the
+   * bucket.
    * </pre>
    *
    * <code>
@@ -30696,7 +30712,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Optional. The bucket's hierarchical namespace configuration. If there is no
-   * configuration, the hierarchical namespace feature will be disabled and have
+   * configuration, the hierarchical namespace feature is disabled and has
    * no effect on the bucket.
    * </pre>
    *
@@ -30716,7 +30732,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Optional. The bucket's hierarchical namespace configuration. If there is no
-   * configuration, the hierarchical namespace feature will be disabled and have
+   * configuration, the hierarchical namespace feature is disabled and has
    * no effect on the bucket.
    * </pre>
    *
@@ -30738,7 +30754,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Optional. The bucket's hierarchical namespace configuration. If there is no
-   * configuration, the hierarchical namespace feature will be disabled and have
+   * configuration, the hierarchical namespace feature is disabled and has
    * no effect on the bucket.
    * </pre>
    *
@@ -30824,7 +30840,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Optional. The bucket's object retention configuration. Must be enabled
-   * before objects in the bucket may have retention configured.
+   * before objects in the bucket might have retention configured.
    * </pre>
    *
    * <code>
@@ -30843,7 +30859,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Optional. The bucket's object retention configuration. Must be enabled
-   * before objects in the bucket may have retention configured.
+   * before objects in the bucket might have retention configured.
    * </pre>
    *
    * <code>
@@ -30864,7 +30880,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Optional. The bucket's object retention configuration. Must be enabled
-   * before objects in the bucket may have retention configured.
+   * before objects in the bucket might have retention configured.
    * </pre>
    *
    * <code>
@@ -32482,7 +32498,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * <pre>
      * Output only. The user-chosen part of the bucket name. The `{bucket}`
      * portion of the `name` field. For globally unique buckets, this is equal to
-     * the "bucket name" of other Cloud Storage APIs. Example: "pub".
+     * the `bucket name` of other Cloud Storage APIs. Example: `pub`.
      * </pre>
      *
      * <code>string bucket_id = 2 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -32507,7 +32523,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * <pre>
      * Output only. The user-chosen part of the bucket name. The `{bucket}`
      * portion of the `name` field. For globally unique buckets, this is equal to
-     * the "bucket name" of other Cloud Storage APIs. Example: "pub".
+     * the `bucket name` of other Cloud Storage APIs. Example: `pub`.
      * </pre>
      *
      * <code>string bucket_id = 2 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -32532,7 +32548,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * <pre>
      * Output only. The user-chosen part of the bucket name. The `{bucket}`
      * portion of the `name` field. For globally unique buckets, this is equal to
-     * the "bucket name" of other Cloud Storage APIs. Example: "pub".
+     * the `bucket name` of other Cloud Storage APIs. Example: `pub`.
      * </pre>
      *
      * <code>string bucket_id = 2 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -32556,7 +32572,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * <pre>
      * Output only. The user-chosen part of the bucket name. The `{bucket}`
      * portion of the `name` field. For globally unique buckets, this is equal to
-     * the "bucket name" of other Cloud Storage APIs. Example: "pub".
+     * the `bucket name` of other Cloud Storage APIs. Example: `pub`.
      * </pre>
      *
      * <code>string bucket_id = 2 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -32576,7 +32592,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * <pre>
      * Output only. The user-chosen part of the bucket name. The `{bucket}`
      * portion of the `name` field. For globally unique buckets, this is equal to
-     * the "bucket name" of other Cloud Storage APIs. Example: "pub".
+     * the `bucket name` of other Cloud Storage APIs. Example: `pub`.
      * </pre>
      *
      * <code>string bucket_id = 2 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -32602,8 +32618,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * The etag of the bucket.
-     * If included in the metadata of an UpdateBucketRequest, the operation will
-     * only be performed if the etag matches that of the bucket.
+     * If included in the metadata of an `UpdateBucketRequest`, the operation is
+     * only performed if the `etag` matches that of the bucket.
      * </pre>
      *
      * <code>string etag = 29;</code>
@@ -32627,8 +32643,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * The etag of the bucket.
-     * If included in the metadata of an UpdateBucketRequest, the operation will
-     * only be performed if the etag matches that of the bucket.
+     * If included in the metadata of an `UpdateBucketRequest`, the operation is
+     * only performed if the `etag` matches that of the bucket.
      * </pre>
      *
      * <code>string etag = 29;</code>
@@ -32652,8 +32668,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * The etag of the bucket.
-     * If included in the metadata of an UpdateBucketRequest, the operation will
-     * only be performed if the etag matches that of the bucket.
+     * If included in the metadata of an `UpdateBucketRequest`, the operation is
+     * only performed if the `etag` matches that of the bucket.
      * </pre>
      *
      * <code>string etag = 29;</code>
@@ -32676,8 +32692,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * The etag of the bucket.
-     * If included in the metadata of an UpdateBucketRequest, the operation will
-     * only be performed if the etag matches that of the bucket.
+     * If included in the metadata of an `UpdateBucketRequest`, the operation is
+     * only performed if the `etag` matches that of the bucket.
      * </pre>
      *
      * <code>string etag = 29;</code>
@@ -32696,8 +32712,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * The etag of the bucket.
-     * If included in the metadata of an UpdateBucketRequest, the operation will
-     * only be performed if the etag matches that of the bucket.
+     * If included in the metadata of an `UpdateBucketRequest`, the operation is
+     * only performed if the `etag` matches that of the bucket.
      * </pre>
      *
      * <code>string etag = 29;</code>
@@ -32723,9 +32739,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Immutable. The project which owns this bucket, in the format of
-     * "projects/{projectIdentifier}".
-     * {projectIdentifier} can be the project ID or project number.
-     * Output values will always be in project number format.
+     * `projects/{projectIdentifier}`.
+     * `{projectIdentifier}` can be the project ID or project number.
+     * Output values are always in the project number format.
      * </pre>
      *
      * <code>
@@ -32751,9 +32767,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Immutable. The project which owns this bucket, in the format of
-     * "projects/{projectIdentifier}".
-     * {projectIdentifier} can be the project ID or project number.
-     * Output values will always be in project number format.
+     * `projects/{projectIdentifier}`.
+     * `{projectIdentifier}` can be the project ID or project number.
+     * Output values are always in the project number format.
      * </pre>
      *
      * <code>
@@ -32779,9 +32795,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Immutable. The project which owns this bucket, in the format of
-     * "projects/{projectIdentifier}".
-     * {projectIdentifier} can be the project ID or project number.
-     * Output values will always be in project number format.
+     * `projects/{projectIdentifier}`.
+     * `{projectIdentifier}` can be the project ID or project number.
+     * Output values are always in the project number format.
      * </pre>
      *
      * <code>
@@ -32806,9 +32822,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Immutable. The project which owns this bucket, in the format of
-     * "projects/{projectIdentifier}".
-     * {projectIdentifier} can be the project ID or project number.
-     * Output values will always be in project number format.
+     * `projects/{projectIdentifier}`.
+     * `{projectIdentifier}` can be the project ID or project number.
+     * Output values are always in the project number format.
      * </pre>
      *
      * <code>
@@ -32829,9 +32845,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Immutable. The project which owns this bucket, in the format of
-     * "projects/{projectIdentifier}".
-     * {projectIdentifier} can be the project ID or project number.
-     * Output values will always be in project number format.
+     * `projects/{projectIdentifier}`.
+     * `{projectIdentifier}` can be the project ID or project number.
+     * Output values are always in the project number format.
      * </pre>
      *
      * <code>
@@ -32916,10 +32932,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * <pre>
      * Immutable. The location of the bucket. Object data for objects in the
      * bucket resides in physical storage within this region.  Defaults to `US`.
-     * See the
-     * [https://developers.google.com/storage/docs/concepts-techniques#specifyinglocations"][developer's
-     * guide] for the authoritative list. Attempting to update this field after
-     * the bucket is created will result in an error.
+     * Attempting to update this field after the bucket is created results in an
+     * error.
      * </pre>
      *
      * <code>string location = 5 [(.google.api.field_behavior) = IMMUTABLE];</code>
@@ -32944,10 +32958,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * <pre>
      * Immutable. The location of the bucket. Object data for objects in the
      * bucket resides in physical storage within this region.  Defaults to `US`.
-     * See the
-     * [https://developers.google.com/storage/docs/concepts-techniques#specifyinglocations"][developer's
-     * guide] for the authoritative list. Attempting to update this field after
-     * the bucket is created will result in an error.
+     * Attempting to update this field after the bucket is created results in an
+     * error.
      * </pre>
      *
      * <code>string location = 5 [(.google.api.field_behavior) = IMMUTABLE];</code>
@@ -32972,10 +32984,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * <pre>
      * Immutable. The location of the bucket. Object data for objects in the
      * bucket resides in physical storage within this region.  Defaults to `US`.
-     * See the
-     * [https://developers.google.com/storage/docs/concepts-techniques#specifyinglocations"][developer's
-     * guide] for the authoritative list. Attempting to update this field after
-     * the bucket is created will result in an error.
+     * Attempting to update this field after the bucket is created results in an
+     * error.
      * </pre>
      *
      * <code>string location = 5 [(.google.api.field_behavior) = IMMUTABLE];</code>
@@ -32999,10 +33009,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * <pre>
      * Immutable. The location of the bucket. Object data for objects in the
      * bucket resides in physical storage within this region.  Defaults to `US`.
-     * See the
-     * [https://developers.google.com/storage/docs/concepts-techniques#specifyinglocations"][developer's
-     * guide] for the authoritative list. Attempting to update this field after
-     * the bucket is created will result in an error.
+     * Attempting to update this field after the bucket is created results in an
+     * error.
      * </pre>
      *
      * <code>string location = 5 [(.google.api.field_behavior) = IMMUTABLE];</code>
@@ -33022,10 +33030,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * <pre>
      * Immutable. The location of the bucket. Object data for objects in the
      * bucket resides in physical storage within this region.  Defaults to `US`.
-     * See the
-     * [https://developers.google.com/storage/docs/concepts-techniques#specifyinglocations"][developer's
-     * guide] for the authoritative list. Attempting to update this field after
-     * the bucket is created will result in an error.
+     * Attempting to update this field after the bucket is created results in an
+     * error.
      * </pre>
      *
      * <code>string location = 5 [(.google.api.field_behavior) = IMMUTABLE];</code>
@@ -33169,9 +33175,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * Optional. The bucket's default storage class, used whenever no storageClass
      * is specified for a newly-created object. This defines how objects in the
      * bucket are stored and determines the SLA and the cost of storage.
-     * If this value is not specified when the bucket is created, it will default
-     * to `STANDARD`. For more information, see
-     * https://developers.google.com/storage/docs/storage-classes.
+     * If this value is not specified when the bucket is created, it defaults
+     * to `STANDARD`. For more information, see [Storage
+     * classes](https://developers.google.com/storage/docs/storage-classes).
      * </pre>
      *
      * <code>string storage_class = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -33197,9 +33203,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * Optional. The bucket's default storage class, used whenever no storageClass
      * is specified for a newly-created object. This defines how objects in the
      * bucket are stored and determines the SLA and the cost of storage.
-     * If this value is not specified when the bucket is created, it will default
-     * to `STANDARD`. For more information, see
-     * https://developers.google.com/storage/docs/storage-classes.
+     * If this value is not specified when the bucket is created, it defaults
+     * to `STANDARD`. For more information, see [Storage
+     * classes](https://developers.google.com/storage/docs/storage-classes).
      * </pre>
      *
      * <code>string storage_class = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -33225,9 +33231,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * Optional. The bucket's default storage class, used whenever no storageClass
      * is specified for a newly-created object. This defines how objects in the
      * bucket are stored and determines the SLA and the cost of storage.
-     * If this value is not specified when the bucket is created, it will default
-     * to `STANDARD`. For more information, see
-     * https://developers.google.com/storage/docs/storage-classes.
+     * If this value is not specified when the bucket is created, it defaults
+     * to `STANDARD`. For more information, see [Storage
+     * classes](https://developers.google.com/storage/docs/storage-classes).
      * </pre>
      *
      * <code>string storage_class = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -33252,9 +33258,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * Optional. The bucket's default storage class, used whenever no storageClass
      * is specified for a newly-created object. This defines how objects in the
      * bucket are stored and determines the SLA and the cost of storage.
-     * If this value is not specified when the bucket is created, it will default
-     * to `STANDARD`. For more information, see
-     * https://developers.google.com/storage/docs/storage-classes.
+     * If this value is not specified when the bucket is created, it defaults
+     * to `STANDARD`. For more information, see [Storage
+     * classes](https://developers.google.com/storage/docs/storage-classes).
      * </pre>
      *
      * <code>string storage_class = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -33275,9 +33281,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * Optional. The bucket's default storage class, used whenever no storageClass
      * is specified for a newly-created object. This defines how objects in the
      * bucket are stored and determines the SLA and the cost of storage.
-     * If this value is not specified when the bucket is created, it will default
-     * to `STANDARD`. For more information, see
-     * https://developers.google.com/storage/docs/storage-classes.
+     * If this value is not specified when the bucket is created, it defaults
+     * to `STANDARD`. For more information, see [Storage
+     * classes](https://developers.google.com/storage/docs/storage-classes).
      * </pre>
      *
      * <code>string storage_class = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -33303,11 +33309,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. The recovery point objective for cross-region replication of the
-     * bucket. Applicable only for dual- and multi-region buckets. "DEFAULT" uses
-     * default replication. "ASYNC_TURBO" enables turbo replication, valid for
+     * bucket. Applicable only for dual- and multi-region buckets. `DEFAULT` uses
+     * default replication. `ASYNC_TURBO` enables turbo replication, valid for
      * dual-region buckets only. If rpo is not specified when the bucket is
-     * created, it defaults to "DEFAULT". For more information, see
-     * https://cloud.google.com/storage/docs/availability-durability#turbo-replication.
+     * created, it defaults to `DEFAULT`. For more information, see [Turbo
+     * replication](https://cloud.google.com/storage/docs/availability-durability#turbo-replication).
      * </pre>
      *
      * <code>string rpo = 27 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -33331,11 +33337,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. The recovery point objective for cross-region replication of the
-     * bucket. Applicable only for dual- and multi-region buckets. "DEFAULT" uses
-     * default replication. "ASYNC_TURBO" enables turbo replication, valid for
+     * bucket. Applicable only for dual- and multi-region buckets. `DEFAULT` uses
+     * default replication. `ASYNC_TURBO` enables turbo replication, valid for
      * dual-region buckets only. If rpo is not specified when the bucket is
-     * created, it defaults to "DEFAULT". For more information, see
-     * https://cloud.google.com/storage/docs/availability-durability#turbo-replication.
+     * created, it defaults to `DEFAULT`. For more information, see [Turbo
+     * replication](https://cloud.google.com/storage/docs/availability-durability#turbo-replication).
      * </pre>
      *
      * <code>string rpo = 27 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -33359,11 +33365,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. The recovery point objective for cross-region replication of the
-     * bucket. Applicable only for dual- and multi-region buckets. "DEFAULT" uses
-     * default replication. "ASYNC_TURBO" enables turbo replication, valid for
+     * bucket. Applicable only for dual- and multi-region buckets. `DEFAULT` uses
+     * default replication. `ASYNC_TURBO` enables turbo replication, valid for
      * dual-region buckets only. If rpo is not specified when the bucket is
-     * created, it defaults to "DEFAULT". For more information, see
-     * https://cloud.google.com/storage/docs/availability-durability#turbo-replication.
+     * created, it defaults to `DEFAULT`. For more information, see [Turbo
+     * replication](https://cloud.google.com/storage/docs/availability-durability#turbo-replication).
      * </pre>
      *
      * <code>string rpo = 27 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -33386,11 +33392,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. The recovery point objective for cross-region replication of the
-     * bucket. Applicable only for dual- and multi-region buckets. "DEFAULT" uses
-     * default replication. "ASYNC_TURBO" enables turbo replication, valid for
+     * bucket. Applicable only for dual- and multi-region buckets. `DEFAULT` uses
+     * default replication. `ASYNC_TURBO` enables turbo replication, valid for
      * dual-region buckets only. If rpo is not specified when the bucket is
-     * created, it defaults to "DEFAULT". For more information, see
-     * https://cloud.google.com/storage/docs/availability-durability#turbo-replication.
+     * created, it defaults to `DEFAULT`. For more information, see [Turbo
+     * replication](https://cloud.google.com/storage/docs/availability-durability#turbo-replication).
      * </pre>
      *
      * <code>string rpo = 27 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -33409,11 +33415,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. The recovery point objective for cross-region replication of the
-     * bucket. Applicable only for dual- and multi-region buckets. "DEFAULT" uses
-     * default replication. "ASYNC_TURBO" enables turbo replication, valid for
+     * bucket. Applicable only for dual- and multi-region buckets. `DEFAULT` uses
+     * default replication. `ASYNC_TURBO` enables turbo replication, valid for
      * dual-region buckets only. If rpo is not specified when the bucket is
-     * created, it defaults to "DEFAULT". For more information, see
-     * https://cloud.google.com/storage/docs/availability-durability#turbo-replication.
+     * created, it defaults to `DEFAULT`. For more information, see [Turbo
+     * replication](https://cloud.google.com/storage/docs/availability-durability#turbo-replication).
      * </pre>
      *
      * <code>string rpo = 27 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -33453,7 +33459,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Access controls on the bucket.
-     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
+     * If `iam_config.uniform_bucket_level_access` is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -33474,7 +33480,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Access controls on the bucket.
-     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
+     * If `iam_config.uniform_bucket_level_access` is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -33495,7 +33501,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Access controls on the bucket.
-     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
+     * If `iam_config.uniform_bucket_level_access` is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -33516,7 +33522,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Access controls on the bucket.
-     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
+     * If `iam_config.uniform_bucket_level_access` is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -33543,7 +33549,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Access controls on the bucket.
-     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
+     * If `iam_config.uniform_bucket_level_access` is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -33568,7 +33574,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Access controls on the bucket.
-     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
+     * If `iam_config.uniform_bucket_level_access` is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -33595,7 +33601,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Access controls on the bucket.
-     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
+     * If `iam_config.uniform_bucket_level_access` is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -33622,7 +33628,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Access controls on the bucket.
-     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
+     * If `iam_config.uniform_bucket_level_access` is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -33646,7 +33652,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Access controls on the bucket.
-     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
+     * If `iam_config.uniform_bucket_level_access` is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -33671,7 +33677,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Access controls on the bucket.
-     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
+     * If `iam_config.uniform_bucket_level_access` is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -33696,7 +33702,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Access controls on the bucket.
-     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
+     * If `iam_config.uniform_bucket_level_access` is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -33720,7 +33726,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Access controls on the bucket.
-     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
+     * If `iam_config.uniform_bucket_level_access` is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -33744,7 +33750,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Access controls on the bucket.
-     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
+     * If `iam_config.uniform_bucket_level_access` is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -33761,7 +33767,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Access controls on the bucket.
-     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
+     * If `iam_config.uniform_bucket_level_access` is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -33782,7 +33788,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Access controls on the bucket.
-     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
+     * If `iam_config.uniform_bucket_level_access` is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -33804,7 +33810,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Access controls on the bucket.
-     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
+     * If `iam_config.uniform_bucket_level_access` is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -33822,7 +33828,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Access controls on the bucket.
-     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
+     * If `iam_config.uniform_bucket_level_access` is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -33840,7 +33846,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Access controls on the bucket.
-     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
+     * If `iam_config.uniform_bucket_level_access` is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -33891,7 +33897,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Default access controls to apply to new objects when no ACL is
-     * provided. If iam_config.uniform_bucket_level_access is enabled on this
+     * provided. If `iam_config.uniform_bucket_level_access` is enabled on this
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -33912,7 +33918,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Default access controls to apply to new objects when no ACL is
-     * provided. If iam_config.uniform_bucket_level_access is enabled on this
+     * provided. If `iam_config.uniform_bucket_level_access` is enabled on this
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -33933,7 +33939,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Default access controls to apply to new objects when no ACL is
-     * provided. If iam_config.uniform_bucket_level_access is enabled on this
+     * provided. If `iam_config.uniform_bucket_level_access` is enabled on this
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -33954,7 +33960,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Default access controls to apply to new objects when no ACL is
-     * provided. If iam_config.uniform_bucket_level_access is enabled on this
+     * provided. If `iam_config.uniform_bucket_level_access` is enabled on this
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -33981,7 +33987,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Default access controls to apply to new objects when no ACL is
-     * provided. If iam_config.uniform_bucket_level_access is enabled on this
+     * provided. If `iam_config.uniform_bucket_level_access` is enabled on this
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -34006,7 +34012,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Default access controls to apply to new objects when no ACL is
-     * provided. If iam_config.uniform_bucket_level_access is enabled on this
+     * provided. If `iam_config.uniform_bucket_level_access` is enabled on this
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -34033,7 +34039,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Default access controls to apply to new objects when no ACL is
-     * provided. If iam_config.uniform_bucket_level_access is enabled on this
+     * provided. If `iam_config.uniform_bucket_level_access` is enabled on this
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -34060,7 +34066,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Default access controls to apply to new objects when no ACL is
-     * provided. If iam_config.uniform_bucket_level_access is enabled on this
+     * provided. If `iam_config.uniform_bucket_level_access` is enabled on this
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -34085,7 +34091,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Default access controls to apply to new objects when no ACL is
-     * provided. If iam_config.uniform_bucket_level_access is enabled on this
+     * provided. If `iam_config.uniform_bucket_level_access` is enabled on this
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -34110,7 +34116,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Default access controls to apply to new objects when no ACL is
-     * provided. If iam_config.uniform_bucket_level_access is enabled on this
+     * provided. If `iam_config.uniform_bucket_level_access` is enabled on this
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -34135,7 +34141,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Default access controls to apply to new objects when no ACL is
-     * provided. If iam_config.uniform_bucket_level_access is enabled on this
+     * provided. If `iam_config.uniform_bucket_level_access` is enabled on this
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -34159,7 +34165,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Default access controls to apply to new objects when no ACL is
-     * provided. If iam_config.uniform_bucket_level_access is enabled on this
+     * provided. If `iam_config.uniform_bucket_level_access` is enabled on this
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -34183,7 +34189,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Default access controls to apply to new objects when no ACL is
-     * provided. If iam_config.uniform_bucket_level_access is enabled on this
+     * provided. If `iam_config.uniform_bucket_level_access` is enabled on this
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -34200,7 +34206,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Default access controls to apply to new objects when no ACL is
-     * provided. If iam_config.uniform_bucket_level_access is enabled on this
+     * provided. If `iam_config.uniform_bucket_level_access` is enabled on this
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -34222,7 +34228,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Default access controls to apply to new objects when no ACL is
-     * provided. If iam_config.uniform_bucket_level_access is enabled on this
+     * provided. If `iam_config.uniform_bucket_level_access` is enabled on this
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -34244,7 +34250,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Default access controls to apply to new objects when no ACL is
-     * provided. If iam_config.uniform_bucket_level_access is enabled on this
+     * provided. If `iam_config.uniform_bucket_level_access` is enabled on this
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -34262,7 +34268,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Default access controls to apply to new objects when no ACL is
-     * provided. If iam_config.uniform_bucket_level_access is enabled on this
+     * provided. If `iam_config.uniform_bucket_level_access` is enabled on this
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -34280,7 +34286,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Default access controls to apply to new objects when no ACL is
-     * provided. If iam_config.uniform_bucket_level_access is enabled on this
+     * provided. If `iam_config.uniform_bucket_level_access` is enabled on this
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -34324,9 +34330,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The bucket's lifecycle config. See
-     * [https://developers.google.com/storage/docs/lifecycle]Lifecycle Management]
-     * for more information.
+     * Optional. The bucket's lifecycle configuration. See [Lifecycle
+     * Management](https://developers.google.com/storage/docs/lifecycle) for more
+     * information.
      * </pre>
      *
      * <code>
@@ -34343,9 +34349,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The bucket's lifecycle config. See
-     * [https://developers.google.com/storage/docs/lifecycle]Lifecycle Management]
-     * for more information.
+     * Optional. The bucket's lifecycle configuration. See [Lifecycle
+     * Management](https://developers.google.com/storage/docs/lifecycle) for more
+     * information.
      * </pre>
      *
      * <code>
@@ -34368,9 +34374,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The bucket's lifecycle config. See
-     * [https://developers.google.com/storage/docs/lifecycle]Lifecycle Management]
-     * for more information.
+     * Optional. The bucket's lifecycle configuration. See [Lifecycle
+     * Management](https://developers.google.com/storage/docs/lifecycle) for more
+     * information.
      * </pre>
      *
      * <code>
@@ -34395,9 +34401,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The bucket's lifecycle config. See
-     * [https://developers.google.com/storage/docs/lifecycle]Lifecycle Management]
-     * for more information.
+     * Optional. The bucket's lifecycle configuration. See [Lifecycle
+     * Management](https://developers.google.com/storage/docs/lifecycle) for more
+     * information.
      * </pre>
      *
      * <code>
@@ -34419,9 +34425,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The bucket's lifecycle config. See
-     * [https://developers.google.com/storage/docs/lifecycle]Lifecycle Management]
-     * for more information.
+     * Optional. The bucket's lifecycle configuration. See [Lifecycle
+     * Management](https://developers.google.com/storage/docs/lifecycle) for more
+     * information.
      * </pre>
      *
      * <code>
@@ -34451,9 +34457,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The bucket's lifecycle config. See
-     * [https://developers.google.com/storage/docs/lifecycle]Lifecycle Management]
-     * for more information.
+     * Optional. The bucket's lifecycle configuration. See [Lifecycle
+     * Management](https://developers.google.com/storage/docs/lifecycle) for more
+     * information.
      * </pre>
      *
      * <code>
@@ -34475,9 +34481,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The bucket's lifecycle config. See
-     * [https://developers.google.com/storage/docs/lifecycle]Lifecycle Management]
-     * for more information.
+     * Optional. The bucket's lifecycle configuration. See [Lifecycle
+     * Management](https://developers.google.com/storage/docs/lifecycle) for more
+     * information.
      * </pre>
      *
      * <code>
@@ -34494,9 +34500,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The bucket's lifecycle config. See
-     * [https://developers.google.com/storage/docs/lifecycle]Lifecycle Management]
-     * for more information.
+     * Optional. The bucket's lifecycle configuration. See [Lifecycle
+     * Management](https://developers.google.com/storage/docs/lifecycle) for more
+     * information.
      * </pre>
      *
      * <code>
@@ -34517,9 +34523,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The bucket's lifecycle config. See
-     * [https://developers.google.com/storage/docs/lifecycle]Lifecycle Management]
-     * for more information.
+     * Optional. The bucket's lifecycle configuration. See [Lifecycle
+     * Management](https://developers.google.com/storage/docs/lifecycle) for more
+     * information.
      * </pre>
      *
      * <code>
@@ -34775,8 +34781,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource
-     * Sharing] (CORS) config.
+     * Optional. The bucket's [CORS](https://www.w3.org/TR/cors/)
+     * configuration.
      * </pre>
      *
      * <code>
@@ -34795,8 +34801,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource
-     * Sharing] (CORS) config.
+     * Optional. The bucket's [CORS](https://www.w3.org/TR/cors/)
+     * configuration.
      * </pre>
      *
      * <code>
@@ -34815,8 +34821,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource
-     * Sharing] (CORS) config.
+     * Optional. The bucket's [CORS](https://www.w3.org/TR/cors/)
+     * configuration.
      * </pre>
      *
      * <code>
@@ -34835,8 +34841,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource
-     * Sharing] (CORS) config.
+     * Optional. The bucket's [CORS](https://www.w3.org/TR/cors/)
+     * configuration.
      * </pre>
      *
      * <code>
@@ -34861,8 +34867,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource
-     * Sharing] (CORS) config.
+     * Optional. The bucket's [CORS](https://www.w3.org/TR/cors/)
+     * configuration.
      * </pre>
      *
      * <code>
@@ -34884,8 +34890,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource
-     * Sharing] (CORS) config.
+     * Optional. The bucket's [CORS](https://www.w3.org/TR/cors/)
+     * configuration.
      * </pre>
      *
      * <code>
@@ -34910,8 +34916,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource
-     * Sharing] (CORS) config.
+     * Optional. The bucket's [CORS](https://www.w3.org/TR/cors/)
+     * configuration.
      * </pre>
      *
      * <code>
@@ -34936,8 +34942,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource
-     * Sharing] (CORS) config.
+     * Optional. The bucket's [CORS](https://www.w3.org/TR/cors/)
+     * configuration.
      * </pre>
      *
      * <code>
@@ -34959,8 +34965,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource
-     * Sharing] (CORS) config.
+     * Optional. The bucket's [CORS](https://www.w3.org/TR/cors/)
+     * configuration.
      * </pre>
      *
      * <code>
@@ -34982,8 +34988,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource
-     * Sharing] (CORS) config.
+     * Optional. The bucket's [CORS](https://www.w3.org/TR/cors/)
+     * configuration.
      * </pre>
      *
      * <code>
@@ -35006,8 +35012,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource
-     * Sharing] (CORS) config.
+     * Optional. The bucket's [CORS](https://www.w3.org/TR/cors/)
+     * configuration.
      * </pre>
      *
      * <code>
@@ -35029,8 +35035,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource
-     * Sharing] (CORS) config.
+     * Optional. The bucket's [CORS](https://www.w3.org/TR/cors/)
+     * configuration.
      * </pre>
      *
      * <code>
@@ -35052,8 +35058,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource
-     * Sharing] (CORS) config.
+     * Optional. The bucket's [CORS](https://www.w3.org/TR/cors/)
+     * configuration.
      * </pre>
      *
      * <code>
@@ -35068,8 +35074,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource
-     * Sharing] (CORS) config.
+     * Optional. The bucket's [CORS](https://www.w3.org/TR/cors/)
+     * configuration.
      * </pre>
      *
      * <code>
@@ -35088,8 +35094,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource
-     * Sharing] (CORS) config.
+     * Optional. The bucket's [CORS](https://www.w3.org/TR/cors/)
+     * configuration.
      * </pre>
      *
      * <code>
@@ -35109,8 +35115,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource
-     * Sharing] (CORS) config.
+     * Optional. The bucket's [CORS](https://www.w3.org/TR/cors/)
+     * configuration.
      * </pre>
      *
      * <code>
@@ -35126,8 +35132,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource
-     * Sharing] (CORS) config.
+     * Optional. The bucket's [CORS](https://www.w3.org/TR/cors/)
+     * configuration.
      * </pre>
      *
      * <code>
@@ -35143,8 +35149,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource
-     * Sharing] (CORS) config.
+     * Optional. The bucket's [CORS](https://www.w3.org/TR/cors/)
+     * configuration.
      * </pre>
      *
      * <code>
@@ -35393,11 +35399,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * Optional. The default value for event-based hold on newly created objects
      * in this bucket.  Event-based hold is a way to retain objects indefinitely
      * until an event occurs, signified by the hold's release. After being
-     * released, such objects will be subject to bucket-level retention (if any).
-     * One sample use case of this flag is for banks to hold loan documents for at
+     * released, such objects are subject to bucket-level retention (if any).  One
+     * sample use case of this flag is for banks to hold loan documents for at
      * least 3 years after loan is paid in full. Here, bucket-level retention is 3
      * years and the event is loan being paid in full. In this example, these
-     * objects will be held intact for any number of years until the event has
+     * objects are held intact for any number of years until the event has
      * occurred (event-based hold on the object is released) and then 3 more years
      * after that. That means retention duration of the objects begins from the
      * moment event-based hold transitioned from true to false.  Objects under
@@ -35421,11 +35427,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * Optional. The default value for event-based hold on newly created objects
      * in this bucket.  Event-based hold is a way to retain objects indefinitely
      * until an event occurs, signified by the hold's release. After being
-     * released, such objects will be subject to bucket-level retention (if any).
-     * One sample use case of this flag is for banks to hold loan documents for at
+     * released, such objects are subject to bucket-level retention (if any).  One
+     * sample use case of this flag is for banks to hold loan documents for at
      * least 3 years after loan is paid in full. Here, bucket-level retention is 3
      * years and the event is loan being paid in full. In this example, these
-     * objects will be held intact for any number of years until the event has
+     * objects are held intact for any number of years until the event has
      * occurred (event-based hold on the object is released) and then 3 more years
      * after that. That means retention duration of the objects begins from the
      * moment event-based hold transitioned from true to false.  Objects under
@@ -35453,11 +35459,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * Optional. The default value for event-based hold on newly created objects
      * in this bucket.  Event-based hold is a way to retain objects indefinitely
      * until an event occurs, signified by the hold's release. After being
-     * released, such objects will be subject to bucket-level retention (if any).
-     * One sample use case of this flag is for banks to hold loan documents for at
+     * released, such objects are subject to bucket-level retention (if any).  One
+     * sample use case of this flag is for banks to hold loan documents for at
      * least 3 years after loan is paid in full. Here, bucket-level retention is 3
      * years and the event is loan being paid in full. In this example, these
-     * objects will be held intact for any number of years until the event has
+     * objects are held intact for any number of years until the event has
      * occurred (event-based hold on the object is released) and then 3 more years
      * after that. That means retention duration of the objects begins from the
      * moment event-based hold transitioned from true to false.  Objects under
@@ -35660,9 +35666,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. The bucket's website config, controlling how the service behaves
-     * when accessing bucket contents as a web site. See the
-     * [https://cloud.google.com/storage/docs/static-website][Static Website
-     * Examples] for more information.
+     * when accessing bucket contents as a web site. See the [Static website
+     * examples](https://cloud.google.com/storage/docs/static-website) for more
+     * information.
      * </pre>
      *
      * <code>
@@ -35680,9 +35686,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. The bucket's website config, controlling how the service behaves
-     * when accessing bucket contents as a web site. See the
-     * [https://cloud.google.com/storage/docs/static-website][Static Website
-     * Examples] for more information.
+     * when accessing bucket contents as a web site. See the [Static website
+     * examples](https://cloud.google.com/storage/docs/static-website) for more
+     * information.
      * </pre>
      *
      * <code>
@@ -35706,9 +35712,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. The bucket's website config, controlling how the service behaves
-     * when accessing bucket contents as a web site. See the
-     * [https://cloud.google.com/storage/docs/static-website][Static Website
-     * Examples] for more information.
+     * when accessing bucket contents as a web site. See the [Static website
+     * examples](https://cloud.google.com/storage/docs/static-website) for more
+     * information.
      * </pre>
      *
      * <code>
@@ -35734,9 +35740,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. The bucket's website config, controlling how the service behaves
-     * when accessing bucket contents as a web site. See the
-     * [https://cloud.google.com/storage/docs/static-website][Static Website
-     * Examples] for more information.
+     * when accessing bucket contents as a web site. See the [Static website
+     * examples](https://cloud.google.com/storage/docs/static-website) for more
+     * information.
      * </pre>
      *
      * <code>
@@ -35759,9 +35765,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. The bucket's website config, controlling how the service behaves
-     * when accessing bucket contents as a web site. See the
-     * [https://cloud.google.com/storage/docs/static-website][Static Website
-     * Examples] for more information.
+     * when accessing bucket contents as a web site. See the [Static website
+     * examples](https://cloud.google.com/storage/docs/static-website) for more
+     * information.
      * </pre>
      *
      * <code>
@@ -35792,9 +35798,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. The bucket's website config, controlling how the service behaves
-     * when accessing bucket contents as a web site. See the
-     * [https://cloud.google.com/storage/docs/static-website][Static Website
-     * Examples] for more information.
+     * when accessing bucket contents as a web site. See the [Static website
+     * examples](https://cloud.google.com/storage/docs/static-website) for more
+     * information.
      * </pre>
      *
      * <code>
@@ -35817,9 +35823,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. The bucket's website config, controlling how the service behaves
-     * when accessing bucket contents as a web site. See the
-     * [https://cloud.google.com/storage/docs/static-website][Static Website
-     * Examples] for more information.
+     * when accessing bucket contents as a web site. See the [Static website
+     * examples](https://cloud.google.com/storage/docs/static-website) for more
+     * information.
      * </pre>
      *
      * <code>
@@ -35837,9 +35843,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. The bucket's website config, controlling how the service behaves
-     * when accessing bucket contents as a web site. See the
-     * [https://cloud.google.com/storage/docs/static-website][Static Website
-     * Examples] for more information.
+     * when accessing bucket contents as a web site. See the [Static website
+     * examples](https://cloud.google.com/storage/docs/static-website) for more
+     * information.
      * </pre>
      *
      * <code>
@@ -35861,9 +35867,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. The bucket's website config, controlling how the service behaves
-     * when accessing bucket contents as a web site. See the
-     * [https://cloud.google.com/storage/docs/static-website][Static Website
-     * Examples] for more information.
+     * when accessing bucket contents as a web site. See the [Static website
+     * examples](https://cloud.google.com/storage/docs/static-website) for more
+     * information.
      * </pre>
      *
      * <code>
@@ -35898,7 +35904,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The bucket's versioning config.
+     * Optional. The bucket's versioning configuration.
      * </pre>
      *
      * <code>
@@ -35915,7 +35921,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The bucket's versioning config.
+     * Optional. The bucket's versioning configuration.
      * </pre>
      *
      * <code>
@@ -35938,7 +35944,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The bucket's versioning config.
+     * Optional. The bucket's versioning configuration.
      * </pre>
      *
      * <code>
@@ -35963,7 +35969,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The bucket's versioning config.
+     * Optional. The bucket's versioning configuration.
      * </pre>
      *
      * <code>
@@ -35985,7 +35991,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The bucket's versioning config.
+     * Optional. The bucket's versioning configuration.
      * </pre>
      *
      * <code>
@@ -36015,7 +36021,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The bucket's versioning config.
+     * Optional. The bucket's versioning configuration.
      * </pre>
      *
      * <code>
@@ -36037,7 +36043,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The bucket's versioning config.
+     * Optional. The bucket's versioning configuration.
      * </pre>
      *
      * <code>
@@ -36054,7 +36060,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The bucket's versioning config.
+     * Optional. The bucket's versioning configuration.
      * </pre>
      *
      * <code>
@@ -36075,7 +36081,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The bucket's versioning config.
+     * Optional. The bucket's versioning configuration.
      * </pre>
      *
      * <code>
@@ -36751,7 +36757,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The bucket's billing config.
+     * Optional. The bucket's billing configuration.
      * </pre>
      *
      * <code>
@@ -36768,7 +36774,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The bucket's billing config.
+     * Optional. The bucket's billing configuration.
      * </pre>
      *
      * <code>
@@ -36791,7 +36797,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The bucket's billing config.
+     * Optional. The bucket's billing configuration.
      * </pre>
      *
      * <code>
@@ -36816,7 +36822,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The bucket's billing config.
+     * Optional. The bucket's billing configuration.
      * </pre>
      *
      * <code>
@@ -36838,7 +36844,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The bucket's billing config.
+     * Optional. The bucket's billing configuration.
      * </pre>
      *
      * <code>
@@ -36868,7 +36874,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The bucket's billing config.
+     * Optional. The bucket's billing configuration.
      * </pre>
      *
      * <code>
@@ -36890,7 +36896,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The bucket's billing config.
+     * Optional. The bucket's billing configuration.
      * </pre>
      *
      * <code>
@@ -36907,7 +36913,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The bucket's billing config.
+     * Optional. The bucket's billing configuration.
      * </pre>
      *
      * <code>
@@ -36928,7 +36934,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The bucket's billing config.
+     * Optional. The bucket's billing configuration.
      * </pre>
      *
      * <code>
@@ -36966,12 +36972,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * Optional. The bucket's retention policy. The retention policy enforces a
      * minimum retention time for all objects contained in the bucket, based on
      * their creation time. Any attempt to overwrite or delete objects younger
-     * than the retention period will result in a PERMISSION_DENIED error.  An
+     * than the retention period results in a `PERMISSION_DENIED` error.  An
      * unlocked retention policy can be modified or removed from the bucket via a
      * storage.buckets.update operation. A locked retention policy cannot be
      * removed or shortened in duration for the lifetime of the bucket.
-     * Attempting to remove or decrease period of a locked retention policy will
-     * result in a PERMISSION_DENIED error.
+     * Attempting to remove or decrease period of a locked retention policy
+     * results in a `PERMISSION_DENIED` error.
      * </pre>
      *
      * <code>
@@ -36991,12 +36997,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * Optional. The bucket's retention policy. The retention policy enforces a
      * minimum retention time for all objects contained in the bucket, based on
      * their creation time. Any attempt to overwrite or delete objects younger
-     * than the retention period will result in a PERMISSION_DENIED error.  An
+     * than the retention period results in a `PERMISSION_DENIED` error.  An
      * unlocked retention policy can be modified or removed from the bucket via a
      * storage.buckets.update operation. A locked retention policy cannot be
      * removed or shortened in duration for the lifetime of the bucket.
-     * Attempting to remove or decrease period of a locked retention policy will
-     * result in a PERMISSION_DENIED error.
+     * Attempting to remove or decrease period of a locked retention policy
+     * results in a `PERMISSION_DENIED` error.
      * </pre>
      *
      * <code>
@@ -37022,12 +37028,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * Optional. The bucket's retention policy. The retention policy enforces a
      * minimum retention time for all objects contained in the bucket, based on
      * their creation time. Any attempt to overwrite or delete objects younger
-     * than the retention period will result in a PERMISSION_DENIED error.  An
+     * than the retention period results in a `PERMISSION_DENIED` error.  An
      * unlocked retention policy can be modified or removed from the bucket via a
      * storage.buckets.update operation. A locked retention policy cannot be
      * removed or shortened in duration for the lifetime of the bucket.
-     * Attempting to remove or decrease period of a locked retention policy will
-     * result in a PERMISSION_DENIED error.
+     * Attempting to remove or decrease period of a locked retention policy
+     * results in a `PERMISSION_DENIED` error.
      * </pre>
      *
      * <code>
@@ -37055,12 +37061,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * Optional. The bucket's retention policy. The retention policy enforces a
      * minimum retention time for all objects contained in the bucket, based on
      * their creation time. Any attempt to overwrite or delete objects younger
-     * than the retention period will result in a PERMISSION_DENIED error.  An
+     * than the retention period results in a `PERMISSION_DENIED` error.  An
      * unlocked retention policy can be modified or removed from the bucket via a
      * storage.buckets.update operation. A locked retention policy cannot be
      * removed or shortened in duration for the lifetime of the bucket.
-     * Attempting to remove or decrease period of a locked retention policy will
-     * result in a PERMISSION_DENIED error.
+     * Attempting to remove or decrease period of a locked retention policy
+     * results in a `PERMISSION_DENIED` error.
      * </pre>
      *
      * <code>
@@ -37086,12 +37092,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * Optional. The bucket's retention policy. The retention policy enforces a
      * minimum retention time for all objects contained in the bucket, based on
      * their creation time. Any attempt to overwrite or delete objects younger
-     * than the retention period will result in a PERMISSION_DENIED error.  An
+     * than the retention period results in a `PERMISSION_DENIED` error.  An
      * unlocked retention policy can be modified or removed from the bucket via a
      * storage.buckets.update operation. A locked retention policy cannot be
      * removed or shortened in duration for the lifetime of the bucket.
-     * Attempting to remove or decrease period of a locked retention policy will
-     * result in a PERMISSION_DENIED error.
+     * Attempting to remove or decrease period of a locked retention policy
+     * results in a `PERMISSION_DENIED` error.
      * </pre>
      *
      * <code>
@@ -37125,12 +37131,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * Optional. The bucket's retention policy. The retention policy enforces a
      * minimum retention time for all objects contained in the bucket, based on
      * their creation time. Any attempt to overwrite or delete objects younger
-     * than the retention period will result in a PERMISSION_DENIED error.  An
+     * than the retention period results in a `PERMISSION_DENIED` error.  An
      * unlocked retention policy can be modified or removed from the bucket via a
      * storage.buckets.update operation. A locked retention policy cannot be
      * removed or shortened in duration for the lifetime of the bucket.
-     * Attempting to remove or decrease period of a locked retention policy will
-     * result in a PERMISSION_DENIED error.
+     * Attempting to remove or decrease period of a locked retention policy
+     * results in a `PERMISSION_DENIED` error.
      * </pre>
      *
      * <code>
@@ -37155,12 +37161,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * Optional. The bucket's retention policy. The retention policy enforces a
      * minimum retention time for all objects contained in the bucket, based on
      * their creation time. Any attempt to overwrite or delete objects younger
-     * than the retention period will result in a PERMISSION_DENIED error.  An
+     * than the retention period results in a `PERMISSION_DENIED` error.  An
      * unlocked retention policy can be modified or removed from the bucket via a
      * storage.buckets.update operation. A locked retention policy cannot be
      * removed or shortened in duration for the lifetime of the bucket.
-     * Attempting to remove or decrease period of a locked retention policy will
-     * result in a PERMISSION_DENIED error.
+     * Attempting to remove or decrease period of a locked retention policy
+     * results in a `PERMISSION_DENIED` error.
      * </pre>
      *
      * <code>
@@ -37180,12 +37186,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * Optional. The bucket's retention policy. The retention policy enforces a
      * minimum retention time for all objects contained in the bucket, based on
      * their creation time. Any attempt to overwrite or delete objects younger
-     * than the retention period will result in a PERMISSION_DENIED error.  An
+     * than the retention period results in a `PERMISSION_DENIED` error.  An
      * unlocked retention policy can be modified or removed from the bucket via a
      * storage.buckets.update operation. A locked retention policy cannot be
      * removed or shortened in duration for the lifetime of the bucket.
-     * Attempting to remove or decrease period of a locked retention policy will
-     * result in a PERMISSION_DENIED error.
+     * Attempting to remove or decrease period of a locked retention policy
+     * results in a `PERMISSION_DENIED` error.
      * </pre>
      *
      * <code>
@@ -37209,12 +37215,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * Optional. The bucket's retention policy. The retention policy enforces a
      * minimum retention time for all objects contained in the bucket, based on
      * their creation time. Any attempt to overwrite or delete objects younger
-     * than the retention period will result in a PERMISSION_DENIED error.  An
+     * than the retention period results in a `PERMISSION_DENIED` error.  An
      * unlocked retention policy can be modified or removed from the bucket via a
      * storage.buckets.update operation. A locked retention policy cannot be
      * removed or shortened in duration for the lifetime of the bucket.
-     * Attempting to remove or decrease period of a locked retention policy will
-     * result in a PERMISSION_DENIED error.
+     * Attempting to remove or decrease period of a locked retention policy
+     * results in a `PERMISSION_DENIED` error.
      * </pre>
      *
      * <code>
@@ -37249,7 +37255,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The bucket's IAM config.
+     * Optional. The bucket's IAM configuration.
      * </pre>
      *
      * <code>
@@ -37266,7 +37272,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The bucket's IAM config.
+     * Optional. The bucket's IAM configuration.
      * </pre>
      *
      * <code>
@@ -37289,7 +37295,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The bucket's IAM config.
+     * Optional. The bucket's IAM configuration.
      * </pre>
      *
      * <code>
@@ -37314,7 +37320,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The bucket's IAM config.
+     * Optional. The bucket's IAM configuration.
      * </pre>
      *
      * <code>
@@ -37336,7 +37342,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The bucket's IAM config.
+     * Optional. The bucket's IAM configuration.
      * </pre>
      *
      * <code>
@@ -37366,7 +37372,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The bucket's IAM config.
+     * Optional. The bucket's IAM configuration.
      * </pre>
      *
      * <code>
@@ -37388,7 +37394,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The bucket's IAM config.
+     * Optional. The bucket's IAM configuration.
      * </pre>
      *
      * <code>
@@ -37405,7 +37411,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The bucket's IAM config.
+     * Optional. The bucket's IAM configuration.
      * </pre>
      *
      * <code>
@@ -37426,7 +37432,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The bucket's IAM config.
+     * Optional. The bucket's IAM configuration.
      * </pre>
      *
      * <code>
@@ -37518,9 +37524,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Configuration that, if present, specifies the data placement for
-     * a
-     * [https://cloud.google.com/storage/docs/locations#location-dr][configurable
-     * dual-region].
+     * a [configurable
+     * dual-region](https://cloud.google.com/storage/docs/locations#location-dr).
      * </pre>
      *
      * <code>
@@ -37538,9 +37543,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Configuration that, if present, specifies the data placement for
-     * a
-     * [https://cloud.google.com/storage/docs/locations#location-dr][configurable
-     * dual-region].
+     * a [configurable
+     * dual-region](https://cloud.google.com/storage/docs/locations#location-dr).
      * </pre>
      *
      * <code>
@@ -37564,9 +37568,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Configuration that, if present, specifies the data placement for
-     * a
-     * [https://cloud.google.com/storage/docs/locations#location-dr][configurable
-     * dual-region].
+     * a [configurable
+     * dual-region](https://cloud.google.com/storage/docs/locations#location-dr).
      * </pre>
      *
      * <code>
@@ -37593,9 +37596,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Configuration that, if present, specifies the data placement for
-     * a
-     * [https://cloud.google.com/storage/docs/locations#location-dr][configurable
-     * dual-region].
+     * a [configurable
+     * dual-region](https://cloud.google.com/storage/docs/locations#location-dr).
      * </pre>
      *
      * <code>
@@ -37619,9 +37621,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Configuration that, if present, specifies the data placement for
-     * a
-     * [https://cloud.google.com/storage/docs/locations#location-dr][configurable
-     * dual-region].
+     * a [configurable
+     * dual-region](https://cloud.google.com/storage/docs/locations#location-dr).
      * </pre>
      *
      * <code>
@@ -37654,9 +37655,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Configuration that, if present, specifies the data placement for
-     * a
-     * [https://cloud.google.com/storage/docs/locations#location-dr][configurable
-     * dual-region].
+     * a [configurable
+     * dual-region](https://cloud.google.com/storage/docs/locations#location-dr).
      * </pre>
      *
      * <code>
@@ -37679,9 +37679,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Configuration that, if present, specifies the data placement for
-     * a
-     * [https://cloud.google.com/storage/docs/locations#location-dr][configurable
-     * dual-region].
+     * a [configurable
+     * dual-region](https://cloud.google.com/storage/docs/locations#location-dr).
      * </pre>
      *
      * <code>
@@ -37700,9 +37699,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Configuration that, if present, specifies the data placement for
-     * a
-     * [https://cloud.google.com/storage/docs/locations#location-dr][configurable
-     * dual-region].
+     * a [configurable
+     * dual-region](https://cloud.google.com/storage/docs/locations#location-dr).
      * </pre>
      *
      * <code>
@@ -37725,9 +37723,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Configuration that, if present, specifies the data placement for
-     * a
-     * [https://cloud.google.com/storage/docs/locations#location-dr][configurable
-     * dual-region].
+     * a [configurable
+     * dual-region](https://cloud.google.com/storage/docs/locations#location-dr).
      * </pre>
      *
      * <code>
@@ -37763,8 +37760,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. The bucket's Autoclass configuration. If there is no
-     * configuration, the Autoclass feature will be disabled and have no effect on
-     * the bucket.
+     * configuration, the Autoclass feature is disabled and has no effect on the
+     * bucket.
      * </pre>
      *
      * <code>
@@ -37782,8 +37779,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. The bucket's Autoclass configuration. If there is no
-     * configuration, the Autoclass feature will be disabled and have no effect on
-     * the bucket.
+     * configuration, the Autoclass feature is disabled and has no effect on the
+     * bucket.
      * </pre>
      *
      * <code>
@@ -37807,8 +37804,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. The bucket's Autoclass configuration. If there is no
-     * configuration, the Autoclass feature will be disabled and have no effect on
-     * the bucket.
+     * configuration, the Autoclass feature is disabled and has no effect on the
+     * bucket.
      * </pre>
      *
      * <code>
@@ -37834,8 +37831,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. The bucket's Autoclass configuration. If there is no
-     * configuration, the Autoclass feature will be disabled and have no effect on
-     * the bucket.
+     * configuration, the Autoclass feature is disabled and has no effect on the
+     * bucket.
      * </pre>
      *
      * <code>
@@ -37858,8 +37855,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. The bucket's Autoclass configuration. If there is no
-     * configuration, the Autoclass feature will be disabled and have no effect on
-     * the bucket.
+     * configuration, the Autoclass feature is disabled and has no effect on the
+     * bucket.
      * </pre>
      *
      * <code>
@@ -37890,8 +37887,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. The bucket's Autoclass configuration. If there is no
-     * configuration, the Autoclass feature will be disabled and have no effect on
-     * the bucket.
+     * configuration, the Autoclass feature is disabled and has no effect on the
+     * bucket.
      * </pre>
      *
      * <code>
@@ -37914,8 +37911,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. The bucket's Autoclass configuration. If there is no
-     * configuration, the Autoclass feature will be disabled and have no effect on
-     * the bucket.
+     * configuration, the Autoclass feature is disabled and has no effect on the
+     * bucket.
      * </pre>
      *
      * <code>
@@ -37933,8 +37930,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. The bucket's Autoclass configuration. If there is no
-     * configuration, the Autoclass feature will be disabled and have no effect on
-     * the bucket.
+     * configuration, the Autoclass feature is disabled and has no effect on the
+     * bucket.
      * </pre>
      *
      * <code>
@@ -37956,8 +37953,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. The bucket's Autoclass configuration. If there is no
-     * configuration, the Autoclass feature will be disabled and have no effect on
-     * the bucket.
+     * configuration, the Autoclass feature is disabled and has no effect on the
+     * bucket.
      * </pre>
      *
      * <code>
@@ -37993,7 +37990,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. The bucket's hierarchical namespace configuration. If there is no
-     * configuration, the hierarchical namespace feature will be disabled and have
+     * configuration, the hierarchical namespace feature is disabled and has
      * no effect on the bucket.
      * </pre>
      *
@@ -38012,7 +38009,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. The bucket's hierarchical namespace configuration. If there is no
-     * configuration, the hierarchical namespace feature will be disabled and have
+     * configuration, the hierarchical namespace feature is disabled and has
      * no effect on the bucket.
      * </pre>
      *
@@ -38037,7 +38034,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. The bucket's hierarchical namespace configuration. If there is no
-     * configuration, the hierarchical namespace feature will be disabled and have
+     * configuration, the hierarchical namespace feature is disabled and has
      * no effect on the bucket.
      * </pre>
      *
@@ -38065,7 +38062,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. The bucket's hierarchical namespace configuration. If there is no
-     * configuration, the hierarchical namespace feature will be disabled and have
+     * configuration, the hierarchical namespace feature is disabled and has
      * no effect on the bucket.
      * </pre>
      *
@@ -38090,7 +38087,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. The bucket's hierarchical namespace configuration. If there is no
-     * configuration, the hierarchical namespace feature will be disabled and have
+     * configuration, the hierarchical namespace feature is disabled and has
      * no effect on the bucket.
      * </pre>
      *
@@ -38124,7 +38121,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. The bucket's hierarchical namespace configuration. If there is no
-     * configuration, the hierarchical namespace feature will be disabled and have
+     * configuration, the hierarchical namespace feature is disabled and has
      * no effect on the bucket.
      * </pre>
      *
@@ -38148,7 +38145,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. The bucket's hierarchical namespace configuration. If there is no
-     * configuration, the hierarchical namespace feature will be disabled and have
+     * configuration, the hierarchical namespace feature is disabled and has
      * no effect on the bucket.
      * </pre>
      *
@@ -38168,7 +38165,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. The bucket's hierarchical namespace configuration. If there is no
-     * configuration, the hierarchical namespace feature will be disabled and have
+     * configuration, the hierarchical namespace feature is disabled and has
      * no effect on the bucket.
      * </pre>
      *
@@ -38192,7 +38189,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. The bucket's hierarchical namespace configuration. If there is no
-     * configuration, the hierarchical namespace feature will be disabled and have
+     * configuration, the hierarchical namespace feature is disabled and has
      * no effect on the bucket.
      * </pre>
      *
@@ -38452,7 +38449,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. The bucket's object retention configuration. Must be enabled
-     * before objects in the bucket may have retention configured.
+     * before objects in the bucket might have retention configured.
      * </pre>
      *
      * <code>
@@ -38470,7 +38467,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. The bucket's object retention configuration. Must be enabled
-     * before objects in the bucket may have retention configured.
+     * before objects in the bucket might have retention configured.
      * </pre>
      *
      * <code>
@@ -38494,7 +38491,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. The bucket's object retention configuration. Must be enabled
-     * before objects in the bucket may have retention configured.
+     * before objects in the bucket might have retention configured.
      * </pre>
      *
      * <code>
@@ -38520,7 +38517,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. The bucket's object retention configuration. Must be enabled
-     * before objects in the bucket may have retention configured.
+     * before objects in the bucket might have retention configured.
      * </pre>
      *
      * <code>
@@ -38544,7 +38541,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. The bucket's object retention configuration. Must be enabled
-     * before objects in the bucket may have retention configured.
+     * before objects in the bucket might have retention configured.
      * </pre>
      *
      * <code>
@@ -38576,7 +38573,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. The bucket's object retention configuration. Must be enabled
-     * before objects in the bucket may have retention configured.
+     * before objects in the bucket might have retention configured.
      * </pre>
      *
      * <code>
@@ -38599,7 +38596,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. The bucket's object retention configuration. Must be enabled
-     * before objects in the bucket may have retention configured.
+     * before objects in the bucket might have retention configured.
      * </pre>
      *
      * <code>
@@ -38617,7 +38614,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. The bucket's object retention configuration. Must be enabled
-     * before objects in the bucket may have retention configured.
+     * before objects in the bucket might have retention configured.
      * </pre>
      *
      * <code>
@@ -38639,7 +38636,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. The bucket's object retention configuration. Must be enabled
-     * before objects in the bucket may have retention configured.
+     * before objects in the bucket might have retention configured.
      * </pre>
      *
      * <code>

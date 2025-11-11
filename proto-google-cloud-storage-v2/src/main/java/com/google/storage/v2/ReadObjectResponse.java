@@ -23,7 +23,7 @@ package com.google.storage.v2;
  *
  *
  * <pre>
- * Response message for ReadObject.
+ * Response message for [ReadObject][google.storage.v2.Storage.ReadObject].
  * </pre>
  *
  * Protobuf type {@code google.storage.v2.ReadObjectResponse}
@@ -70,7 +70,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
    *
    *
    * <pre>
-   * A portion of the data for the object. The service **may** leave `data`
+   * A portion of the data for the object. The service might leave `data`
    * empty for any given `ReadResponse`. This enables the service to inform the
    * client that the request is still live while it is running an operation to
    * generate more data.
@@ -89,7 +89,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
    *
    *
    * <pre>
-   * A portion of the data for the object. The service **may** leave `data`
+   * A portion of the data for the object. The service might leave `data`
    * empty for any given `ReadResponse`. This enables the service to inform the
    * client that the request is still live while it is running an operation to
    * generate more data.
@@ -110,7 +110,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
    *
    *
    * <pre>
-   * A portion of the data for the object. The service **may** leave `data`
+   * A portion of the data for the object. The service might leave `data`
    * empty for any given `ReadResponse`. This enables the service to inform the
    * client that the request is still live while it is running an operation to
    * generate more data.
@@ -191,9 +191,9 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
    *
    *
    * <pre>
-   * If read_offset and or read_limit was specified on the
-   * ReadObjectRequest, ContentRange will be populated on the first
-   * ReadObjectResponse message of the read stream.
+   * If `read_offset` and or `read_limit` is specified on the
+   * `ReadObjectRequest`, `ContentRange` is populated on the first
+   * `ReadObjectResponse` message of the read stream.
    * </pre>
    *
    * <code>.google.storage.v2.ContentRange content_range = 3;</code>
@@ -209,9 +209,9 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
    *
    *
    * <pre>
-   * If read_offset and or read_limit was specified on the
-   * ReadObjectRequest, ContentRange will be populated on the first
-   * ReadObjectResponse message of the read stream.
+   * If `read_offset` and or `read_limit` is specified on the
+   * `ReadObjectRequest`, `ContentRange` is populated on the first
+   * `ReadObjectResponse` message of the read stream.
    * </pre>
    *
    * <code>.google.storage.v2.ContentRange content_range = 3;</code>
@@ -229,9 +229,9 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
    *
    *
    * <pre>
-   * If read_offset and or read_limit was specified on the
-   * ReadObjectRequest, ContentRange will be populated on the first
-   * ReadObjectResponse message of the read stream.
+   * If `read_offset` and or `read_limit` is specified on the
+   * `ReadObjectRequest`, `ContentRange` is populated on the first
+   * `ReadObjectResponse` message of the read stream.
    * </pre>
    *
    * <code>.google.storage.v2.ContentRange content_range = 3;</code>
@@ -505,7 +505,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
    *
    *
    * <pre>
-   * Response message for ReadObject.
+   * Response message for [ReadObject][google.storage.v2.Storage.ReadObject].
    * </pre>
    *
    * Protobuf type {@code google.storage.v2.ReadObjectResponse}
@@ -768,7 +768,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * A portion of the data for the object. The service **may** leave `data`
+     * A portion of the data for the object. The service might leave `data`
      * empty for any given `ReadResponse`. This enables the service to inform the
      * client that the request is still live while it is running an operation to
      * generate more data.
@@ -786,7 +786,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * A portion of the data for the object. The service **may** leave `data`
+     * A portion of the data for the object. The service might leave `data`
      * empty for any given `ReadResponse`. This enables the service to inform the
      * client that the request is still live while it is running an operation to
      * generate more data.
@@ -810,7 +810,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * A portion of the data for the object. The service **may** leave `data`
+     * A portion of the data for the object. The service might leave `data`
      * empty for any given `ReadResponse`. This enables the service to inform the
      * client that the request is still live while it is running an operation to
      * generate more data.
@@ -836,7 +836,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * A portion of the data for the object. The service **may** leave `data`
+     * A portion of the data for the object. The service might leave `data`
      * empty for any given `ReadResponse`. This enables the service to inform the
      * client that the request is still live while it is running an operation to
      * generate more data.
@@ -860,7 +860,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * A portion of the data for the object. The service **may** leave `data`
+     * A portion of the data for the object. The service might leave `data`
      * empty for any given `ReadResponse`. This enables the service to inform the
      * client that the request is still live while it is running an operation to
      * generate more data.
@@ -891,7 +891,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * A portion of the data for the object. The service **may** leave `data`
+     * A portion of the data for the object. The service might leave `data`
      * empty for any given `ReadResponse`. This enables the service to inform the
      * client that the request is still live while it is running an operation to
      * generate more data.
@@ -914,7 +914,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * A portion of the data for the object. The service **may** leave `data`
+     * A portion of the data for the object. The service might leave `data`
      * empty for any given `ReadResponse`. This enables the service to inform the
      * client that the request is still live while it is running an operation to
      * generate more data.
@@ -932,7 +932,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * A portion of the data for the object. The service **may** leave `data`
+     * A portion of the data for the object. The service might leave `data`
      * empty for any given `ReadResponse`. This enables the service to inform the
      * client that the request is still live while it is running an operation to
      * generate more data.
@@ -954,7 +954,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * A portion of the data for the object. The service **may** leave `data`
+     * A portion of the data for the object. The service might leave `data`
      * empty for any given `ReadResponse`. This enables the service to inform the
      * client that the request is still live while it is running an operation to
      * generate more data.
@@ -1203,9 +1203,9 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * If read_offset and or read_limit was specified on the
-     * ReadObjectRequest, ContentRange will be populated on the first
-     * ReadObjectResponse message of the read stream.
+     * If `read_offset` and or `read_limit` is specified on the
+     * `ReadObjectRequest`, `ContentRange` is populated on the first
+     * `ReadObjectResponse` message of the read stream.
      * </pre>
      *
      * <code>.google.storage.v2.ContentRange content_range = 3;</code>
@@ -1220,9 +1220,9 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * If read_offset and or read_limit was specified on the
-     * ReadObjectRequest, ContentRange will be populated on the first
-     * ReadObjectResponse message of the read stream.
+     * If `read_offset` and or `read_limit` is specified on the
+     * `ReadObjectRequest`, `ContentRange` is populated on the first
+     * `ReadObjectResponse` message of the read stream.
      * </pre>
      *
      * <code>.google.storage.v2.ContentRange content_range = 3;</code>
@@ -1243,9 +1243,9 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * If read_offset and or read_limit was specified on the
-     * ReadObjectRequest, ContentRange will be populated on the first
-     * ReadObjectResponse message of the read stream.
+     * If `read_offset` and or `read_limit` is specified on the
+     * `ReadObjectRequest`, `ContentRange` is populated on the first
+     * `ReadObjectResponse` message of the read stream.
      * </pre>
      *
      * <code>.google.storage.v2.ContentRange content_range = 3;</code>
@@ -1268,9 +1268,9 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * If read_offset and or read_limit was specified on the
-     * ReadObjectRequest, ContentRange will be populated on the first
-     * ReadObjectResponse message of the read stream.
+     * If `read_offset` and or `read_limit` is specified on the
+     * `ReadObjectRequest`, `ContentRange` is populated on the first
+     * `ReadObjectResponse` message of the read stream.
      * </pre>
      *
      * <code>.google.storage.v2.ContentRange content_range = 3;</code>
@@ -1290,9 +1290,9 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * If read_offset and or read_limit was specified on the
-     * ReadObjectRequest, ContentRange will be populated on the first
-     * ReadObjectResponse message of the read stream.
+     * If `read_offset` and or `read_limit` is specified on the
+     * `ReadObjectRequest`, `ContentRange` is populated on the first
+     * `ReadObjectResponse` message of the read stream.
      * </pre>
      *
      * <code>.google.storage.v2.ContentRange content_range = 3;</code>
@@ -1320,9 +1320,9 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * If read_offset and or read_limit was specified on the
-     * ReadObjectRequest, ContentRange will be populated on the first
-     * ReadObjectResponse message of the read stream.
+     * If `read_offset` and or `read_limit` is specified on the
+     * `ReadObjectRequest`, `ContentRange` is populated on the first
+     * `ReadObjectResponse` message of the read stream.
      * </pre>
      *
      * <code>.google.storage.v2.ContentRange content_range = 3;</code>
@@ -1342,9 +1342,9 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * If read_offset and or read_limit was specified on the
-     * ReadObjectRequest, ContentRange will be populated on the first
-     * ReadObjectResponse message of the read stream.
+     * If `read_offset` and or `read_limit` is specified on the
+     * `ReadObjectRequest`, `ContentRange` is populated on the first
+     * `ReadObjectResponse` message of the read stream.
      * </pre>
      *
      * <code>.google.storage.v2.ContentRange content_range = 3;</code>
@@ -1359,9 +1359,9 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * If read_offset and or read_limit was specified on the
-     * ReadObjectRequest, ContentRange will be populated on the first
-     * ReadObjectResponse message of the read stream.
+     * If `read_offset` and or `read_limit` is specified on the
+     * `ReadObjectRequest`, `ContentRange` is populated on the first
+     * `ReadObjectResponse` message of the read stream.
      * </pre>
      *
      * <code>.google.storage.v2.ContentRange content_range = 3;</code>
@@ -1380,9 +1380,9 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * If read_offset and or read_limit was specified on the
-     * ReadObjectRequest, ContentRange will be populated on the first
-     * ReadObjectResponse message of the read stream.
+     * If `read_offset` and or `read_limit` is specified on the
+     * `ReadObjectRequest`, `ContentRange` is populated on the first
+     * `ReadObjectResponse` message of the read stream.
      * </pre>
      *
      * <code>.google.storage.v2.ContentRange content_range = 3;</code>

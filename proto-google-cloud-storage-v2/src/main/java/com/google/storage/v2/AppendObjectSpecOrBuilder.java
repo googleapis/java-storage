@@ -166,7 +166,7 @@ public interface AppendObjectSpecOrBuilder
    *
    * <pre>
    * An optional routing token that influences request routing for the stream.
-   * Must be provided if a BidiWriteObjectRedirectedError is returned.
+   * Must be provided if a `BidiWriteObjectRedirectedError` is returned.
    * </pre>
    *
    * <code>optional string routing_token = 6;</code>
@@ -180,7 +180,7 @@ public interface AppendObjectSpecOrBuilder
    *
    * <pre>
    * An optional routing token that influences request routing for the stream.
-   * Must be provided if a BidiWriteObjectRedirectedError is returned.
+   * Must be provided if a `BidiWriteObjectRedirectedError` is returned.
    * </pre>
    *
    * <code>optional string routing_token = 6;</code>
@@ -194,7 +194,7 @@ public interface AppendObjectSpecOrBuilder
    *
    * <pre>
    * An optional routing token that influences request routing for the stream.
-   * Must be provided if a BidiWriteObjectRedirectedError is returned.
+   * Must be provided if a `BidiWriteObjectRedirectedError` is returned.
    * </pre>
    *
    * <code>optional string routing_token = 6;</code>

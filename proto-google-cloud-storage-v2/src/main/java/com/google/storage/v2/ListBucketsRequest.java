@@ -23,7 +23,7 @@ package com.google.storage.v2;
  *
  *
  * <pre>
- * Request message for ListBuckets.
+ * Request message for [ListBuckets][google.storage.v2.Storage.ListBuckets].
  * </pre>
  *
  * Protobuf type {@code google.storage.v2.ListBucketsRequest}
@@ -132,9 +132,9 @@ public final class ListBucketsRequest extends com.google.protobuf.GeneratedMessa
    *
    * <pre>
    * Optional. Maximum number of buckets to return in a single response. The
-   * service will use this parameter or 1,000 items, whichever is smaller. If
-   * "acl" is present in the read_mask, the service will use this parameter of
-   * 200 items, whichever is smaller.
+   * service uses this parameter or `1,000` items, whichever is smaller. If
+   * `acl` is present in the `read_mask`, the service uses this parameter of
+   * `200` items, whichever is smaller.
    * </pre>
    *
    * <code>int32 page_size = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -262,9 +262,9 @@ public final class ListBucketsRequest extends com.google.protobuf.GeneratedMessa
    *
    * <pre>
    * Mask specifying which fields to read from each result.
-   * If no mask is specified, will default to all fields except items.owner,
-   * items.acl, and items.default_object_acl.
-   * * may be used to mean "all fields".
+   * If no mask is specified, it defaults to all fields except `items.
+   * owner`, `items.acl`, and `items.default_object_acl`.
+   * `*` might be used to mean "all fields".
    * </pre>
    *
    * <code>optional .google.protobuf.FieldMask read_mask = 5;</code>
@@ -281,9 +281,9 @@ public final class ListBucketsRequest extends com.google.protobuf.GeneratedMessa
    *
    * <pre>
    * Mask specifying which fields to read from each result.
-   * If no mask is specified, will default to all fields except items.owner,
-   * items.acl, and items.default_object_acl.
-   * * may be used to mean "all fields".
+   * If no mask is specified, it defaults to all fields except `items.
+   * owner`, `items.acl`, and `items.default_object_acl`.
+   * `*` might be used to mean "all fields".
    * </pre>
    *
    * <code>optional .google.protobuf.FieldMask read_mask = 5;</code>
@@ -300,9 +300,9 @@ public final class ListBucketsRequest extends com.google.protobuf.GeneratedMessa
    *
    * <pre>
    * Mask specifying which fields to read from each result.
-   * If no mask is specified, will default to all fields except items.owner,
-   * items.acl, and items.default_object_acl.
-   * * may be used to mean "all fields".
+   * If no mask is specified, it defaults to all fields except `items.
+   * owner`, `items.acl`, and `items.default_object_acl`.
+   * `*` might be used to mean "all fields".
    * </pre>
    *
    * <code>optional .google.protobuf.FieldMask read_mask = 5;</code>
@@ -310,6 +310,26 @@ public final class ListBucketsRequest extends com.google.protobuf.GeneratedMessa
   @java.lang.Override
   public com.google.protobuf.FieldMaskOrBuilder getReadMaskOrBuilder() {
     return readMask_ == null ? com.google.protobuf.FieldMask.getDefaultInstance() : readMask_;
+  }
+
+  public static final int RETURN_PARTIAL_SUCCESS_FIELD_NUMBER = 9;
+  private boolean returnPartialSuccess_ = false;
+
+  /**
+   *
+   *
+   * <pre>
+   * Optional. Allows listing of buckets, even if there are buckets that are
+   * unreachable.
+   * </pre>
+   *
+   * <code>bool return_partial_success = 9 [(.google.api.field_behavior) = OPTIONAL];</code>
+   *
+   * @return The returnPartialSuccess.
+   */
+  @java.lang.Override
+  public boolean getReturnPartialSuccess() {
+    return returnPartialSuccess_;
   }
 
   private byte memoizedIsInitialized = -1;
@@ -341,6 +361,9 @@ public final class ListBucketsRequest extends com.google.protobuf.GeneratedMessa
     if (((bitField0_ & 0x00000001) != 0)) {
       output.writeMessage(5, getReadMask());
     }
+    if (returnPartialSuccess_ != false) {
+      output.writeBool(9, returnPartialSuccess_);
+    }
     getUnknownFields().writeTo(output);
   }
 
@@ -365,6 +388,9 @@ public final class ListBucketsRequest extends com.google.protobuf.GeneratedMessa
     if (((bitField0_ & 0x00000001) != 0)) {
       size += com.google.protobuf.CodedOutputStream.computeMessageSize(5, getReadMask());
     }
+    if (returnPartialSuccess_ != false) {
+      size += com.google.protobuf.CodedOutputStream.computeBoolSize(9, returnPartialSuccess_);
+    }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
     return size;
@@ -388,6 +414,7 @@ public final class ListBucketsRequest extends com.google.protobuf.GeneratedMessa
     if (hasReadMask()) {
       if (!getReadMask().equals(other.getReadMask())) return false;
     }
+    if (getReturnPartialSuccess() != other.getReturnPartialSuccess()) return false;
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -411,6 +438,8 @@ public final class ListBucketsRequest extends com.google.protobuf.GeneratedMessa
       hash = (37 * hash) + READ_MASK_FIELD_NUMBER;
       hash = (53 * hash) + getReadMask().hashCode();
     }
+    hash = (37 * hash) + RETURN_PARTIAL_SUCCESS_FIELD_NUMBER;
+    hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getReturnPartialSuccess());
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -516,7 +545,7 @@ public final class ListBucketsRequest extends com.google.protobuf.GeneratedMessa
    *
    *
    * <pre>
-   * Request message for ListBuckets.
+   * Request message for [ListBuckets][google.storage.v2.Storage.ListBuckets].
    * </pre>
    *
    * Protobuf type {@code google.storage.v2.ListBucketsRequest}
@@ -569,6 +598,7 @@ public final class ListBucketsRequest extends com.google.protobuf.GeneratedMessa
         readMaskBuilder_.dispose();
         readMaskBuilder_ = null;
       }
+      returnPartialSuccess_ = false;
       return this;
     }
 
@@ -621,6 +651,9 @@ public final class ListBucketsRequest extends com.google.protobuf.GeneratedMessa
       if (((from_bitField0_ & 0x00000010) != 0)) {
         result.readMask_ = readMaskBuilder_ == null ? readMask_ : readMaskBuilder_.build();
         to_bitField0_ |= 0x00000001;
+      }
+      if (((from_bitField0_ & 0x00000020) != 0)) {
+        result.returnPartialSuccess_ = returnPartialSuccess_;
       }
       result.bitField0_ |= to_bitField0_;
     }
@@ -691,6 +724,9 @@ public final class ListBucketsRequest extends com.google.protobuf.GeneratedMessa
       if (other.hasReadMask()) {
         mergeReadMask(other.getReadMask());
       }
+      if (other.getReturnPartialSuccess() != false) {
+        setReturnPartialSuccess(other.getReturnPartialSuccess());
+      }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
       return this;
@@ -747,6 +783,12 @@ public final class ListBucketsRequest extends com.google.protobuf.GeneratedMessa
                 bitField0_ |= 0x00000010;
                 break;
               } // case 42
+            case 72:
+              {
+                returnPartialSuccess_ = input.readBool();
+                bitField0_ |= 0x00000020;
+                break;
+              } // case 72
             default:
               {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
@@ -894,9 +936,9 @@ public final class ListBucketsRequest extends com.google.protobuf.GeneratedMessa
      *
      * <pre>
      * Optional. Maximum number of buckets to return in a single response. The
-     * service will use this parameter or 1,000 items, whichever is smaller. If
-     * "acl" is present in the read_mask, the service will use this parameter of
-     * 200 items, whichever is smaller.
+     * service uses this parameter or `1,000` items, whichever is smaller. If
+     * `acl` is present in the `read_mask`, the service uses this parameter of
+     * `200` items, whichever is smaller.
      * </pre>
      *
      * <code>int32 page_size = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -913,9 +955,9 @@ public final class ListBucketsRequest extends com.google.protobuf.GeneratedMessa
      *
      * <pre>
      * Optional. Maximum number of buckets to return in a single response. The
-     * service will use this parameter or 1,000 items, whichever is smaller. If
-     * "acl" is present in the read_mask, the service will use this parameter of
-     * 200 items, whichever is smaller.
+     * service uses this parameter or `1,000` items, whichever is smaller. If
+     * `acl` is present in the `read_mask`, the service uses this parameter of
+     * `200` items, whichever is smaller.
      * </pre>
      *
      * <code>int32 page_size = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -936,9 +978,9 @@ public final class ListBucketsRequest extends com.google.protobuf.GeneratedMessa
      *
      * <pre>
      * Optional. Maximum number of buckets to return in a single response. The
-     * service will use this parameter or 1,000 items, whichever is smaller. If
-     * "acl" is present in the read_mask, the service will use this parameter of
-     * 200 items, whichever is smaller.
+     * service uses this parameter or `1,000` items, whichever is smaller. If
+     * `acl` is present in the `read_mask`, the service uses this parameter of
+     * `200` items, whichever is smaller.
      * </pre>
      *
      * <code>int32 page_size = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -1191,9 +1233,9 @@ public final class ListBucketsRequest extends com.google.protobuf.GeneratedMessa
      *
      * <pre>
      * Mask specifying which fields to read from each result.
-     * If no mask is specified, will default to all fields except items.owner,
-     * items.acl, and items.default_object_acl.
-     * * may be used to mean "all fields".
+     * If no mask is specified, it defaults to all fields except `items.
+     * owner`, `items.acl`, and `items.default_object_acl`.
+     * `*` might be used to mean "all fields".
      * </pre>
      *
      * <code>optional .google.protobuf.FieldMask read_mask = 5;</code>
@@ -1209,9 +1251,9 @@ public final class ListBucketsRequest extends com.google.protobuf.GeneratedMessa
      *
      * <pre>
      * Mask specifying which fields to read from each result.
-     * If no mask is specified, will default to all fields except items.owner,
-     * items.acl, and items.default_object_acl.
-     * * may be used to mean "all fields".
+     * If no mask is specified, it defaults to all fields except `items.
+     * owner`, `items.acl`, and `items.default_object_acl`.
+     * `*` might be used to mean "all fields".
      * </pre>
      *
      * <code>optional .google.protobuf.FieldMask read_mask = 5;</code>
@@ -1231,9 +1273,9 @@ public final class ListBucketsRequest extends com.google.protobuf.GeneratedMessa
      *
      * <pre>
      * Mask specifying which fields to read from each result.
-     * If no mask is specified, will default to all fields except items.owner,
-     * items.acl, and items.default_object_acl.
-     * * may be used to mean "all fields".
+     * If no mask is specified, it defaults to all fields except `items.
+     * owner`, `items.acl`, and `items.default_object_acl`.
+     * `*` might be used to mean "all fields".
      * </pre>
      *
      * <code>optional .google.protobuf.FieldMask read_mask = 5;</code>
@@ -1257,9 +1299,9 @@ public final class ListBucketsRequest extends com.google.protobuf.GeneratedMessa
      *
      * <pre>
      * Mask specifying which fields to read from each result.
-     * If no mask is specified, will default to all fields except items.owner,
-     * items.acl, and items.default_object_acl.
-     * * may be used to mean "all fields".
+     * If no mask is specified, it defaults to all fields except `items.
+     * owner`, `items.acl`, and `items.default_object_acl`.
+     * `*` might be used to mean "all fields".
      * </pre>
      *
      * <code>optional .google.protobuf.FieldMask read_mask = 5;</code>
@@ -1280,9 +1322,9 @@ public final class ListBucketsRequest extends com.google.protobuf.GeneratedMessa
      *
      * <pre>
      * Mask specifying which fields to read from each result.
-     * If no mask is specified, will default to all fields except items.owner,
-     * items.acl, and items.default_object_acl.
-     * * may be used to mean "all fields".
+     * If no mask is specified, it defaults to all fields except `items.
+     * owner`, `items.acl`, and `items.default_object_acl`.
+     * `*` might be used to mean "all fields".
      * </pre>
      *
      * <code>optional .google.protobuf.FieldMask read_mask = 5;</code>
@@ -1311,9 +1353,9 @@ public final class ListBucketsRequest extends com.google.protobuf.GeneratedMessa
      *
      * <pre>
      * Mask specifying which fields to read from each result.
-     * If no mask is specified, will default to all fields except items.owner,
-     * items.acl, and items.default_object_acl.
-     * * may be used to mean "all fields".
+     * If no mask is specified, it defaults to all fields except `items.
+     * owner`, `items.acl`, and `items.default_object_acl`.
+     * `*` might be used to mean "all fields".
      * </pre>
      *
      * <code>optional .google.protobuf.FieldMask read_mask = 5;</code>
@@ -1334,9 +1376,9 @@ public final class ListBucketsRequest extends com.google.protobuf.GeneratedMessa
      *
      * <pre>
      * Mask specifying which fields to read from each result.
-     * If no mask is specified, will default to all fields except items.owner,
-     * items.acl, and items.default_object_acl.
-     * * may be used to mean "all fields".
+     * If no mask is specified, it defaults to all fields except `items.
+     * owner`, `items.acl`, and `items.default_object_acl`.
+     * `*` might be used to mean "all fields".
      * </pre>
      *
      * <code>optional .google.protobuf.FieldMask read_mask = 5;</code>
@@ -1352,9 +1394,9 @@ public final class ListBucketsRequest extends com.google.protobuf.GeneratedMessa
      *
      * <pre>
      * Mask specifying which fields to read from each result.
-     * If no mask is specified, will default to all fields except items.owner,
-     * items.acl, and items.default_object_acl.
-     * * may be used to mean "all fields".
+     * If no mask is specified, it defaults to all fields except `items.
+     * owner`, `items.acl`, and `items.default_object_acl`.
+     * `*` might be used to mean "all fields".
      * </pre>
      *
      * <code>optional .google.protobuf.FieldMask read_mask = 5;</code>
@@ -1372,9 +1414,9 @@ public final class ListBucketsRequest extends com.google.protobuf.GeneratedMessa
      *
      * <pre>
      * Mask specifying which fields to read from each result.
-     * If no mask is specified, will default to all fields except items.owner,
-     * items.acl, and items.default_object_acl.
-     * * may be used to mean "all fields".
+     * If no mask is specified, it defaults to all fields except `items.
+     * owner`, `items.acl`, and `items.default_object_acl`.
+     * `*` might be used to mean "all fields".
      * </pre>
      *
      * <code>optional .google.protobuf.FieldMask read_mask = 5;</code>
@@ -1394,6 +1436,65 @@ public final class ListBucketsRequest extends com.google.protobuf.GeneratedMessa
         readMask_ = null;
       }
       return readMaskBuilder_;
+    }
+
+    private boolean returnPartialSuccess_;
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. Allows listing of buckets, even if there are buckets that are
+     * unreachable.
+     * </pre>
+     *
+     * <code>bool return_partial_success = 9 [(.google.api.field_behavior) = OPTIONAL];</code>
+     *
+     * @return The returnPartialSuccess.
+     */
+    @java.lang.Override
+    public boolean getReturnPartialSuccess() {
+      return returnPartialSuccess_;
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. Allows listing of buckets, even if there are buckets that are
+     * unreachable.
+     * </pre>
+     *
+     * <code>bool return_partial_success = 9 [(.google.api.field_behavior) = OPTIONAL];</code>
+     *
+     * @param value The returnPartialSuccess to set.
+     * @return This builder for chaining.
+     */
+    public Builder setReturnPartialSuccess(boolean value) {
+
+      returnPartialSuccess_ = value;
+      bitField0_ |= 0x00000020;
+      onChanged();
+      return this;
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Optional. Allows listing of buckets, even if there are buckets that are
+     * unreachable.
+     * </pre>
+     *
+     * <code>bool return_partial_success = 9 [(.google.api.field_behavior) = OPTIONAL];</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearReturnPartialSuccess() {
+      bitField0_ = (bitField0_ & ~0x00000020);
+      returnPartialSuccess_ = false;
+      onChanged();
+      return this;
     }
 
     @java.lang.Override

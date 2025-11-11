@@ -23,9 +23,9 @@ package com.google.storage.v2;
  *
  *
  * <pre>
- * BidiWriteHandle contains a handle from a previous BidiWriteObject
- * invocation. The client can use this as an optimized way of opening subsequent
- * bidirectional streams to the same object.
+ * `BidiWriteHandle` contains a handle from a previous `BidiWriteObject`
+ * invocation. The client can use this instead of `BidiReadObjectSpec` as an
+ * optimized way of opening subsequent bidirectional streams to the same object.
  * </pre>
  *
  * Protobuf type {@code google.storage.v2.BidiWriteHandle}
@@ -247,9 +247,9 @@ public final class BidiWriteHandle extends com.google.protobuf.GeneratedMessageV
    *
    *
    * <pre>
-   * BidiWriteHandle contains a handle from a previous BidiWriteObject
-   * invocation. The client can use this as an optimized way of opening subsequent
-   * bidirectional streams to the same object.
+   * `BidiWriteHandle` contains a handle from a previous `BidiWriteObject`
+   * invocation. The client can use this instead of `BidiReadObjectSpec` as an
+   * optimized way of opening subsequent bidirectional streams to the same object.
    * </pre>
    *
    * Protobuf type {@code google.storage.v2.BidiWriteHandle}

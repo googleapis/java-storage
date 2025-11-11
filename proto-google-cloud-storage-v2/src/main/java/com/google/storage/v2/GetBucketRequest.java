@@ -23,7 +23,7 @@ package com.google.storage.v2;
  *
  *
  * <pre>
- * Request message for GetBucket.
+ * Request message for [GetBucket][google.storage.v2.Storage.GetBucket].
  * </pre>
  *
  * Protobuf type {@code google.storage.v2.GetBucketRequest}
@@ -129,8 +129,8 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
    *
    *
    * <pre>
-   * If set, and if the bucket's current metageneration does not match the
-   * specified value, the request will return an error.
+   * If set, only gets the bucket metadata if its metageneration matches this
+   * value.
    * </pre>
    *
    * <code>optional int64 if_metageneration_match = 2;</code>
@@ -146,8 +146,8 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
    *
    *
    * <pre>
-   * If set, and if the bucket's current metageneration does not match the
-   * specified value, the request will return an error.
+   * If set, only gets the bucket metadata if its metageneration matches this
+   * value.
    * </pre>
    *
    * <code>optional int64 if_metageneration_match = 2;</code>
@@ -167,7 +167,7 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
    *
    * <pre>
    * If set, and if the bucket's current metageneration matches the specified
-   * value, the request will return an error.
+   * value, the request returns an error.
    * </pre>
    *
    * <code>optional int64 if_metageneration_not_match = 3;</code>
@@ -184,7 +184,7 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
    *
    * <pre>
    * If set, and if the bucket's current metageneration matches the specified
-   * value, the request will return an error.
+   * value, the request returns an error.
    * </pre>
    *
    * <code>optional int64 if_metageneration_not_match = 3;</code>
@@ -204,8 +204,8 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
    *
    * <pre>
    * Mask specifying which fields to read.
-   * A "*" field may be used to indicate all fields.
-   * If no mask is specified, will default to all fields.
+   * A `*` field might be used to indicate all fields.
+   * If no mask is specified, it defaults to all fields.
    * </pre>
    *
    * <code>optional .google.protobuf.FieldMask read_mask = 5;</code>
@@ -222,8 +222,8 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
    *
    * <pre>
    * Mask specifying which fields to read.
-   * A "*" field may be used to indicate all fields.
-   * If no mask is specified, will default to all fields.
+   * A `*` field might be used to indicate all fields.
+   * If no mask is specified, it defaults to all fields.
    * </pre>
    *
    * <code>optional .google.protobuf.FieldMask read_mask = 5;</code>
@@ -240,8 +240,8 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
    *
    * <pre>
    * Mask specifying which fields to read.
-   * A "*" field may be used to indicate all fields.
-   * If no mask is specified, will default to all fields.
+   * A `*` field might be used to indicate all fields.
+   * If no mask is specified, it defaults to all fields.
    * </pre>
    *
    * <code>optional .google.protobuf.FieldMask read_mask = 5;</code>
@@ -456,7 +456,7 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
    *
    *
    * <pre>
-   * Request message for GetBucket.
+   * Request message for [GetBucket][google.storage.v2.Storage.GetBucket].
    * </pre>
    *
    * Protobuf type {@code google.storage.v2.GetBucketRequest}
@@ -818,8 +818,8 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
      *
      *
      * <pre>
-     * If set, and if the bucket's current metageneration does not match the
-     * specified value, the request will return an error.
+     * If set, only gets the bucket metadata if its metageneration matches this
+     * value.
      * </pre>
      *
      * <code>optional int64 if_metageneration_match = 2;</code>
@@ -835,8 +835,8 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
      *
      *
      * <pre>
-     * If set, and if the bucket's current metageneration does not match the
-     * specified value, the request will return an error.
+     * If set, only gets the bucket metadata if its metageneration matches this
+     * value.
      * </pre>
      *
      * <code>optional int64 if_metageneration_match = 2;</code>
@@ -852,8 +852,8 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
      *
      *
      * <pre>
-     * If set, and if the bucket's current metageneration does not match the
-     * specified value, the request will return an error.
+     * If set, only gets the bucket metadata if its metageneration matches this
+     * value.
      * </pre>
      *
      * <code>optional int64 if_metageneration_match = 2;</code>
@@ -873,8 +873,8 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
      *
      *
      * <pre>
-     * If set, and if the bucket's current metageneration does not match the
-     * specified value, the request will return an error.
+     * If set, only gets the bucket metadata if its metageneration matches this
+     * value.
      * </pre>
      *
      * <code>optional int64 if_metageneration_match = 2;</code>
@@ -895,7 +895,7 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
      *
      * <pre>
      * If set, and if the bucket's current metageneration matches the specified
-     * value, the request will return an error.
+     * value, the request returns an error.
      * </pre>
      *
      * <code>optional int64 if_metageneration_not_match = 3;</code>
@@ -912,7 +912,7 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
      *
      * <pre>
      * If set, and if the bucket's current metageneration matches the specified
-     * value, the request will return an error.
+     * value, the request returns an error.
      * </pre>
      *
      * <code>optional int64 if_metageneration_not_match = 3;</code>
@@ -929,7 +929,7 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
      *
      * <pre>
      * If set, and if the bucket's current metageneration matches the specified
-     * value, the request will return an error.
+     * value, the request returns an error.
      * </pre>
      *
      * <code>optional int64 if_metageneration_not_match = 3;</code>
@@ -950,7 +950,7 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
      *
      * <pre>
      * If set, and if the bucket's current metageneration matches the specified
-     * value, the request will return an error.
+     * value, the request returns an error.
      * </pre>
      *
      * <code>optional int64 if_metageneration_not_match = 3;</code>
@@ -976,8 +976,8 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
      *
      * <pre>
      * Mask specifying which fields to read.
-     * A "*" field may be used to indicate all fields.
-     * If no mask is specified, will default to all fields.
+     * A `*` field might be used to indicate all fields.
+     * If no mask is specified, it defaults to all fields.
      * </pre>
      *
      * <code>optional .google.protobuf.FieldMask read_mask = 5;</code>
@@ -993,8 +993,8 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
      *
      * <pre>
      * Mask specifying which fields to read.
-     * A "*" field may be used to indicate all fields.
-     * If no mask is specified, will default to all fields.
+     * A `*` field might be used to indicate all fields.
+     * If no mask is specified, it defaults to all fields.
      * </pre>
      *
      * <code>optional .google.protobuf.FieldMask read_mask = 5;</code>
@@ -1014,8 +1014,8 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
      *
      * <pre>
      * Mask specifying which fields to read.
-     * A "*" field may be used to indicate all fields.
-     * If no mask is specified, will default to all fields.
+     * A `*` field might be used to indicate all fields.
+     * If no mask is specified, it defaults to all fields.
      * </pre>
      *
      * <code>optional .google.protobuf.FieldMask read_mask = 5;</code>
@@ -1039,8 +1039,8 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
      *
      * <pre>
      * Mask specifying which fields to read.
-     * A "*" field may be used to indicate all fields.
-     * If no mask is specified, will default to all fields.
+     * A `*` field might be used to indicate all fields.
+     * If no mask is specified, it defaults to all fields.
      * </pre>
      *
      * <code>optional .google.protobuf.FieldMask read_mask = 5;</code>
@@ -1061,8 +1061,8 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
      *
      * <pre>
      * Mask specifying which fields to read.
-     * A "*" field may be used to indicate all fields.
-     * If no mask is specified, will default to all fields.
+     * A `*` field might be used to indicate all fields.
+     * If no mask is specified, it defaults to all fields.
      * </pre>
      *
      * <code>optional .google.protobuf.FieldMask read_mask = 5;</code>
@@ -1091,8 +1091,8 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
      *
      * <pre>
      * Mask specifying which fields to read.
-     * A "*" field may be used to indicate all fields.
-     * If no mask is specified, will default to all fields.
+     * A `*` field might be used to indicate all fields.
+     * If no mask is specified, it defaults to all fields.
      * </pre>
      *
      * <code>optional .google.protobuf.FieldMask read_mask = 5;</code>
@@ -1113,8 +1113,8 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
      *
      * <pre>
      * Mask specifying which fields to read.
-     * A "*" field may be used to indicate all fields.
-     * If no mask is specified, will default to all fields.
+     * A `*` field might be used to indicate all fields.
+     * If no mask is specified, it defaults to all fields.
      * </pre>
      *
      * <code>optional .google.protobuf.FieldMask read_mask = 5;</code>
@@ -1130,8 +1130,8 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
      *
      * <pre>
      * Mask specifying which fields to read.
-     * A "*" field may be used to indicate all fields.
-     * If no mask is specified, will default to all fields.
+     * A `*` field might be used to indicate all fields.
+     * If no mask is specified, it defaults to all fields.
      * </pre>
      *
      * <code>optional .google.protobuf.FieldMask read_mask = 5;</code>
@@ -1149,8 +1149,8 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
      *
      * <pre>
      * Mask specifying which fields to read.
-     * A "*" field may be used to indicate all fields.
-     * If no mask is specified, will default to all fields.
+     * A `*` field might be used to indicate all fields.
+     * If no mask is specified, it defaults to all fields.
      * </pre>
      *
      * <code>optional .google.protobuf.FieldMask read_mask = 5;</code>
