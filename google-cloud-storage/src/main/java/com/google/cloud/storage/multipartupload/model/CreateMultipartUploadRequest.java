@@ -115,7 +115,7 @@ public final class CreateMultipartUploadRequest {
    * Returns the presentational information about how the object data is to be transmitted.
    *
    * @return The Content-Disposition
-   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.61.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
   public String getContentDisposition() {
@@ -126,7 +126,7 @@ public final class CreateMultipartUploadRequest {
    * Returns the compression algorithm that was used to compress the data being uploaded.
    *
    * @return The Content-Encoding
-   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.61.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
   public String getContentEncoding() {
@@ -137,7 +137,7 @@ public final class CreateMultipartUploadRequest {
    * Returns the language code of the content.
    *
    * @return The Content-Language
-   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.61.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
   public String getContentLanguage() {
@@ -149,7 +149,7 @@ public final class CreateMultipartUploadRequest {
    * accessible.
    *
    * @return The Cache-Control
-   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.61.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
   public String getCacheControl() {
@@ -226,7 +226,7 @@ public final class CreateMultipartUploadRequest {
    * Returns the project to be billed for charges associated with this request.
    *
    * @return The user project
-   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.61.0 This new api is in preview and is subject to breaking changes.
    */
   public String getUserProject() {
     return userProject;
@@ -393,7 +393,7 @@ public final class CreateMultipartUploadRequest {
      *
      * @param contentDisposition The content disposition for the object.
      * @return this builder
-     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.61.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
     public Builder contentDisposition(String contentDisposition) {
@@ -406,7 +406,7 @@ public final class CreateMultipartUploadRequest {
      *
      * @param contentEncoding The content encoding for the object.
      * @return this builder
-     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.61.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
     public Builder contentEncoding(String contentEncoding) {
@@ -419,7 +419,7 @@ public final class CreateMultipartUploadRequest {
      *
      * @param contentLanguage The content language for the object.
      * @return this builder
-     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.61.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
     public Builder contentLanguage(String contentLanguage) {
@@ -432,7 +432,7 @@ public final class CreateMultipartUploadRequest {
      *
      * @param cacheControl The cache control settings for the object.
      * @return this builder
-     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.61.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
     public Builder cacheControl(String cacheControl) {
@@ -527,7 +527,7 @@ public final class CreateMultipartUploadRequest {
      *
      * @param userProject The project ID to bill for this request.
      * @return this builder
-     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.61.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
     public Builder userProject(String userProject) {
