@@ -211,8 +211,8 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
    * `group-example&#64;googlegroups.com`.
    * * All members of the Google Apps for Business domain `example.com` would be
    * `domain-example.com`.
-   * For project entities, `project-{team}-{projectnumber}` format will be
-   * returned on response.
+   * For project entities, `project-{team}-{projectnumber}` format is
+   * returned in the response.
    * </pre>
    *
    * <code>string entity = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -252,8 +252,8 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
    * `group-example&#64;googlegroups.com`.
    * * All members of the Google Apps for Business domain `example.com` would be
    * `domain-example.com`.
-   * For project entities, `project-{team}-{projectnumber}` format will be
-   * returned on response.
+   * For project entities, `project-{team}-{projectnumber}` format is
+   * returned in the response.
    * </pre>
    *
    * <code>string entity = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -283,7 +283,7 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
    *
    * <pre>
    * Output only. The alternative entity format, if exists. For project
-   * entities, `project-{team}-{projectid}` format will be returned on response.
+   * entities, `project-{team}-{projectid}` format is returned in the response.
    * </pre>
    *
    * <code>string entity_alt = 9 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -308,7 +308,7 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
    *
    * <pre>
    * Output only. The alternative entity format, if exists. For project
-   * entities, `project-{team}-{projectid}` format will be returned on response.
+   * entities, `project-{team}-{projectid}` format is returned in the response.
    * </pre>
    *
    * <code>string entity_alt = 9 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -392,7 +392,7 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
    * <pre>
    * Optional. The etag of the ObjectAccessControl.
    * If included in the metadata of an update or delete request message, the
-   * operation will only be performed if the etag matches that of the live
+   * operation is only performed if the etag matches that of the live
    * object's ObjectAccessControl.
    * </pre>
    *
@@ -419,7 +419,7 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
    * <pre>
    * Optional. The etag of the ObjectAccessControl.
    * If included in the metadata of an update or delete request message, the
-   * operation will only be performed if the etag matches that of the live
+   * operation is only performed if the etag matches that of the live
    * object's ObjectAccessControl.
    * </pre>
    *
@@ -1423,8 +1423,8 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      * `group-example&#64;googlegroups.com`.
      * * All members of the Google Apps for Business domain `example.com` would be
      * `domain-example.com`.
-     * For project entities, `project-{team}-{projectnumber}` format will be
-     * returned on response.
+     * For project entities, `project-{team}-{projectnumber}` format is
+     * returned in the response.
      * </pre>
      *
      * <code>string entity = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -1463,8 +1463,8 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      * `group-example&#64;googlegroups.com`.
      * * All members of the Google Apps for Business domain `example.com` would be
      * `domain-example.com`.
-     * For project entities, `project-{team}-{projectnumber}` format will be
-     * returned on response.
+     * For project entities, `project-{team}-{projectnumber}` format is
+     * returned in the response.
      * </pre>
      *
      * <code>string entity = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -1503,8 +1503,8 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      * `group-example&#64;googlegroups.com`.
      * * All members of the Google Apps for Business domain `example.com` would be
      * `domain-example.com`.
-     * For project entities, `project-{team}-{projectnumber}` format will be
-     * returned on response.
+     * For project entities, `project-{team}-{projectnumber}` format is
+     * returned in the response.
      * </pre>
      *
      * <code>string entity = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -1542,8 +1542,8 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      * `group-example&#64;googlegroups.com`.
      * * All members of the Google Apps for Business domain `example.com` would be
      * `domain-example.com`.
-     * For project entities, `project-{team}-{projectnumber}` format will be
-     * returned on response.
+     * For project entities, `project-{team}-{projectnumber}` format is
+     * returned in the response.
      * </pre>
      *
      * <code>string entity = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -1577,8 +1577,8 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      * `group-example&#64;googlegroups.com`.
      * * All members of the Google Apps for Business domain `example.com` would be
      * `domain-example.com`.
-     * For project entities, `project-{team}-{projectnumber}` format will be
-     * returned on response.
+     * For project entities, `project-{team}-{projectnumber}` format is
+     * returned in the response.
      * </pre>
      *
      * <code>string entity = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -1604,7 +1604,7 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      *
      * <pre>
      * Output only. The alternative entity format, if exists. For project
-     * entities, `project-{team}-{projectid}` format will be returned on response.
+     * entities, `project-{team}-{projectid}` format is returned in the response.
      * </pre>
      *
      * <code>string entity_alt = 9 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -1628,7 +1628,7 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      *
      * <pre>
      * Output only. The alternative entity format, if exists. For project
-     * entities, `project-{team}-{projectid}` format will be returned on response.
+     * entities, `project-{team}-{projectid}` format is returned in the response.
      * </pre>
      *
      * <code>string entity_alt = 9 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -1652,7 +1652,7 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      *
      * <pre>
      * Output only. The alternative entity format, if exists. For project
-     * entities, `project-{team}-{projectid}` format will be returned on response.
+     * entities, `project-{team}-{projectid}` format is returned in the response.
      * </pre>
      *
      * <code>string entity_alt = 9 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -1675,7 +1675,7 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      *
      * <pre>
      * Output only. The alternative entity format, if exists. For project
-     * entities, `project-{team}-{projectid}` format will be returned on response.
+     * entities, `project-{team}-{projectid}` format is returned in the response.
      * </pre>
      *
      * <code>string entity_alt = 9 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -1694,7 +1694,7 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      *
      * <pre>
      * Output only. The alternative entity format, if exists. For project
-     * entities, `project-{team}-{projectid}` format will be returned on response.
+     * entities, `project-{team}-{projectid}` format is returned in the response.
      * </pre>
      *
      * <code>string entity_alt = 9 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -1832,7 +1832,7 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      * <pre>
      * Optional. The etag of the ObjectAccessControl.
      * If included in the metadata of an update or delete request message, the
-     * operation will only be performed if the etag matches that of the live
+     * operation is only performed if the etag matches that of the live
      * object's ObjectAccessControl.
      * </pre>
      *
@@ -1858,7 +1858,7 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      * <pre>
      * Optional. The etag of the ObjectAccessControl.
      * If included in the metadata of an update or delete request message, the
-     * operation will only be performed if the etag matches that of the live
+     * operation is only performed if the etag matches that of the live
      * object's ObjectAccessControl.
      * </pre>
      *
@@ -1884,7 +1884,7 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      * <pre>
      * Optional. The etag of the ObjectAccessControl.
      * If included in the metadata of an update or delete request message, the
-     * operation will only be performed if the etag matches that of the live
+     * operation is only performed if the etag matches that of the live
      * object's ObjectAccessControl.
      * </pre>
      *
@@ -1909,7 +1909,7 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      * <pre>
      * Optional. The etag of the ObjectAccessControl.
      * If included in the metadata of an update or delete request message, the
-     * operation will only be performed if the etag matches that of the live
+     * operation is only performed if the etag matches that of the live
      * object's ObjectAccessControl.
      * </pre>
      *
@@ -1930,7 +1930,7 @@ public final class ObjectAccessControl extends com.google.protobuf.GeneratedMess
      * <pre>
      * Optional. The etag of the ObjectAccessControl.
      * If included in the metadata of an update or delete request message, the
-     * operation will only be performed if the etag matches that of the live
+     * operation is only performed if the etag matches that of the live
      * object's ObjectAccessControl.
      * </pre>
      *

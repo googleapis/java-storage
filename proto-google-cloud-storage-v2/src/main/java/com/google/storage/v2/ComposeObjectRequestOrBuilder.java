@@ -68,8 +68,8 @@ public interface ComposeObjectRequestOrBuilder
    *
    *
    * <pre>
-   * Optional. The list of source objects that will be concatenated into a
-   * single object.
+   * Optional. The list of source objects that is concatenated into a single
+   * object.
    * </pre>
    *
    * <code>
@@ -82,8 +82,8 @@ public interface ComposeObjectRequestOrBuilder
    *
    *
    * <pre>
-   * Optional. The list of source objects that will be concatenated into a
-   * single object.
+   * Optional. The list of source objects that is concatenated into a single
+   * object.
    * </pre>
    *
    * <code>
@@ -96,8 +96,8 @@ public interface ComposeObjectRequestOrBuilder
    *
    *
    * <pre>
-   * Optional. The list of source objects that will be concatenated into a
-   * single object.
+   * Optional. The list of source objects that is concatenated into a single
+   * object.
    * </pre>
    *
    * <code>
@@ -110,8 +110,8 @@ public interface ComposeObjectRequestOrBuilder
    *
    *
    * <pre>
-   * Optional. The list of source objects that will be concatenated into a
-   * single object.
+   * Optional. The list of source objects that is concatenated into a single
+   * object.
    * </pre>
    *
    * <code>
@@ -125,8 +125,8 @@ public interface ComposeObjectRequestOrBuilder
    *
    *
    * <pre>
-   * Optional. The list of source objects that will be concatenated into a
-   * single object.
+   * Optional. The list of source objects that is concatenated into a single
+   * object.
    * </pre>
    *
    * <code>
@@ -141,8 +141,8 @@ public interface ComposeObjectRequestOrBuilder
    *
    * <pre>
    * Optional. Apply a predefined set of access controls to the destination
-   * object. Valid values are "authenticatedRead", "bucketOwnerFullControl",
-   * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
+   * object. Valid values are `authenticatedRead`, `bucketOwnerFullControl`,
+   * `bucketOwnerRead`, `private`, `projectPrivate`, or `publicRead`.
    * </pre>
    *
    * <code>string destination_predefined_acl = 9 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -156,8 +156,8 @@ public interface ComposeObjectRequestOrBuilder
    *
    * <pre>
    * Optional. Apply a predefined set of access controls to the destination
-   * object. Valid values are "authenticatedRead", "bucketOwnerFullControl",
-   * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
+   * object. Valid values are `authenticatedRead`, `bucketOwnerFullControl`,
+   * `bucketOwnerRead`, `private`, `projectPrivate`, or `publicRead`.
    * </pre>
    *
    * <code>string destination_predefined_acl = 9 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -230,7 +230,7 @@ public interface ComposeObjectRequestOrBuilder
    * <pre>
    * Optional. Resource name of the Cloud KMS key, of the form
    * `projects/my-project/locations/my-location/keyRings/my-kr/cryptoKeys/my-key`,
-   * that will be used to encrypt the object. Overrides the object
+   * that is used to encrypt the object. Overrides the object
    * metadata's `kms_key_name` value, if any.
    * </pre>
    *
@@ -248,7 +248,7 @@ public interface ComposeObjectRequestOrBuilder
    * <pre>
    * Optional. Resource name of the Cloud KMS key, of the form
    * `projects/my-project/locations/my-location/keyRings/my-kr/cryptoKeys/my-key`,
-   * that will be used to encrypt the object. Overrides the object
+   * that is used to encrypt the object. Overrides the object
    * metadata's `kms_key_name` value, if any.
    * </pre>
    *
@@ -310,8 +310,8 @@ public interface ComposeObjectRequestOrBuilder
    *
    *
    * <pre>
-   * Optional. The checksums of the complete object. This will be validated
-   * against the combined checksums of the component objects.
+   * Optional. The checksums of the complete object. This is validated against
+   * the combined checksums of the component objects.
    * </pre>
    *
    * <code>
@@ -326,8 +326,8 @@ public interface ComposeObjectRequestOrBuilder
    *
    *
    * <pre>
-   * Optional. The checksums of the complete object. This will be validated
-   * against the combined checksums of the component objects.
+   * Optional. The checksums of the complete object. This is validated against
+   * the combined checksums of the component objects.
    * </pre>
    *
    * <code>
@@ -342,8 +342,8 @@ public interface ComposeObjectRequestOrBuilder
    *
    *
    * <pre>
-   * Optional. The checksums of the complete object. This will be validated
-   * against the combined checksums of the component objects.
+   * Optional. The checksums of the complete object. This is validated against
+   * the combined checksums of the component objects.
    * </pre>
    *
    * <code>

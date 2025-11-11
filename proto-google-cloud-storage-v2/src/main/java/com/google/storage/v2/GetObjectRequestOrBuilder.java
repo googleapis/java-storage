@@ -289,9 +289,9 @@ public interface GetObjectRequestOrBuilder
    *
    * <pre>
    * Mask specifying which fields to read.
-   * If no mask is specified, will default to all fields except metadata.acl and
-   * metadata.owner.
-   * * may be used to mean "all fields".
+   * If no mask is specified, it defaults to all fields except `metadata.
+   * acl` and `metadata.owner`.
+   * `*` might be used to mean "all fields".
    * </pre>
    *
    * <code>optional .google.protobuf.FieldMask read_mask = 10;</code>
@@ -305,9 +305,9 @@ public interface GetObjectRequestOrBuilder
    *
    * <pre>
    * Mask specifying which fields to read.
-   * If no mask is specified, will default to all fields except metadata.acl and
-   * metadata.owner.
-   * * may be used to mean "all fields".
+   * If no mask is specified, it defaults to all fields except `metadata.
+   * acl` and `metadata.owner`.
+   * `*` might be used to mean "all fields".
    * </pre>
    *
    * <code>optional .google.protobuf.FieldMask read_mask = 10;</code>
@@ -321,9 +321,9 @@ public interface GetObjectRequestOrBuilder
    *
    * <pre>
    * Mask specifying which fields to read.
-   * If no mask is specified, will default to all fields except metadata.acl and
-   * metadata.owner.
-   * * may be used to mean "all fields".
+   * If no mask is specified, it defaults to all fields except `metadata.
+   * acl` and `metadata.owner`.
+   * `*` might be used to mean "all fields".
    * </pre>
    *
    * <code>optional .google.protobuf.FieldMask read_mask = 10;</code>
@@ -336,9 +336,9 @@ public interface GetObjectRequestOrBuilder
    * <pre>
    * Optional. Restore token used to differentiate soft-deleted objects with the
    * same name and generation. Only applicable for hierarchical namespace
-   * buckets and if soft_deleted is set to true. This parameter is optional, and
-   * is only required in the rare case when there are multiple soft-deleted
-   * objects with the same name and generation.
+   * buckets and if `soft_deleted` is set to `true`. This parameter is optional,
+   * and is only required in the rare case when there are multiple soft-deleted
+   * objects with the same `name` and `generation`.
    * </pre>
    *
    * <code>string restore_token = 12 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -353,9 +353,9 @@ public interface GetObjectRequestOrBuilder
    * <pre>
    * Optional. Restore token used to differentiate soft-deleted objects with the
    * same name and generation. Only applicable for hierarchical namespace
-   * buckets and if soft_deleted is set to true. This parameter is optional, and
-   * is only required in the rare case when there are multiple soft-deleted
-   * objects with the same name and generation.
+   * buckets and if `soft_deleted` is set to `true`. This parameter is optional,
+   * and is only required in the rare case when there are multiple soft-deleted
+   * objects with the same `name` and `generation`.
    * </pre>
    *
    * <code>string restore_token = 12 [(.google.api.field_behavior) = OPTIONAL];</code>

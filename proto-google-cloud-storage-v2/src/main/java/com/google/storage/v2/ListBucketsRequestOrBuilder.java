@@ -59,9 +59,9 @@ public interface ListBucketsRequestOrBuilder
    *
    * <pre>
    * Optional. Maximum number of buckets to return in a single response. The
-   * service will use this parameter or 1,000 items, whichever is smaller. If
-   * "acl" is present in the read_mask, the service will use this parameter of
-   * 200 items, whichever is smaller.
+   * service uses this parameter or `1,000` items, whichever is smaller. If
+   * `acl` is present in the `read_mask`, the service uses this parameter of
+   * `200` items, whichever is smaller.
    * </pre>
    *
    * <code>int32 page_size = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -129,9 +129,9 @@ public interface ListBucketsRequestOrBuilder
    *
    * <pre>
    * Mask specifying which fields to read from each result.
-   * If no mask is specified, will default to all fields except items.owner,
-   * items.acl, and items.default_object_acl.
-   * * may be used to mean "all fields".
+   * If no mask is specified, it defaults to all fields except `items.
+   * owner`, `items.acl`, and `items.default_object_acl`.
+   * `*` might be used to mean "all fields".
    * </pre>
    *
    * <code>optional .google.protobuf.FieldMask read_mask = 5;</code>
@@ -145,9 +145,9 @@ public interface ListBucketsRequestOrBuilder
    *
    * <pre>
    * Mask specifying which fields to read from each result.
-   * If no mask is specified, will default to all fields except items.owner,
-   * items.acl, and items.default_object_acl.
-   * * may be used to mean "all fields".
+   * If no mask is specified, it defaults to all fields except `items.
+   * owner`, `items.acl`, and `items.default_object_acl`.
+   * `*` might be used to mean "all fields".
    * </pre>
    *
    * <code>optional .google.protobuf.FieldMask read_mask = 5;</code>
@@ -161,12 +161,26 @@ public interface ListBucketsRequestOrBuilder
    *
    * <pre>
    * Mask specifying which fields to read from each result.
-   * If no mask is specified, will default to all fields except items.owner,
-   * items.acl, and items.default_object_acl.
-   * * may be used to mean "all fields".
+   * If no mask is specified, it defaults to all fields except `items.
+   * owner`, `items.acl`, and `items.default_object_acl`.
+   * `*` might be used to mean "all fields".
    * </pre>
    *
    * <code>optional .google.protobuf.FieldMask read_mask = 5;</code>
    */
   com.google.protobuf.FieldMaskOrBuilder getReadMaskOrBuilder();
+
+  /**
+   *
+   *
+   * <pre>
+   * Optional. Allows listing of buckets, even if there are buckets that are
+   * unreachable.
+   * </pre>
+   *
+   * <code>bool return_partial_success = 9 [(.google.api.field_behavior) = OPTIONAL];</code>
+   *
+   * @return The returnPartialSuccess.
+   */
+  boolean getReturnPartialSuccess();
 }
