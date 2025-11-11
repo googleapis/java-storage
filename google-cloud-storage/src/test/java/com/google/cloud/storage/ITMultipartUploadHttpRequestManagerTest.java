@@ -25,6 +25,7 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.api.client.http.HttpResponseException;
 import com.google.cloud.NoCredentials;
+import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.cloud.storage.FakeHttpServer.HttpRequestHandler;
 import com.google.cloud.storage.it.runner.StorageITRunner;
 import com.google.cloud.storage.it.runner.annotations.Backend;
@@ -802,6 +803,48 @@ public final class ITMultipartUploadHttpRequestManagerTest {
               .key("test-key")
               .uploadId("test-upload-id")
               .partNumber(1)
+              .build();
+
+      UploadPartResponse response =
+          multipartUploadHttpRequestManager.sendUploadPartRequest(
+              endpoint, request, RewindableContent.of(ByteBuffer.wrap(contentBytes)));
+
+      assertThat(response).isNotNull();
+      assertThat(response.eTag()).isEqualTo(etag);
+    }
+  }
+
+  @Test
+  public void sendUploadPartRequest_withCustomChecksum() throws Exception {
+    String etag = "\"af1ed31420542285653c803a34aa839a\"";
+    String content = "hello world";
+    byte[] contentBytes = content.getBytes(StandardCharsets.UTF_8);
+
+    String customCrc32cString = "CustomCrc32";
+
+    HttpRequestHandler handler =
+        req -> {
+          assertThat(req.headers().get("x-goog-hash")).isEqualTo("crc32c=" + customCrc32cString);
+          FullHttpRequest fullReq = (FullHttpRequest) req;
+          ByteBuf requestContent = fullReq.content();
+          byte[] receivedBytes = new byte[requestContent.readableBytes()];
+          requestContent.readBytes(receivedBytes);
+          assertThat(receivedBytes).isEqualTo(contentBytes);
+
+          DefaultFullHttpResponse resp = new DefaultFullHttpResponse(req.protocolVersion(), OK);
+          resp.headers().set("ETag", etag);
+          return resp;
+        };
+
+    try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
+      URI endpoint = URI.create(fakeHttpServer.getEndpoint() + "/");
+      UploadPartRequest request =
+          UploadPartRequest.builder()
+              .bucket("test-bucket")
+              .key("test-key")
+              .uploadId("test-upload-id")
+              .partNumber(1)
+              .crc32c(customCrc32cString)
               .build();
 
       UploadPartResponse response =

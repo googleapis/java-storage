@@ -19,6 +19,7 @@ package com.google.cloud.storage.multipartupload.model;
 import com.google.api.core.BetaApi;
 import com.google.common.base.MoreObjects;
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * An object to represent an upload part request. An upload part request is used to upload a single
@@ -33,12 +34,14 @@ public final class UploadPartRequest {
   private final String key;
   private final int partNumber;
   private final String uploadId;
+  @Nullable private final String crc32c;
 
   private UploadPartRequest(Builder builder) {
     this.bucket = builder.bucket;
     this.key = builder.key;
     this.partNumber = builder.partNumber;
     this.uploadId = builder.uploadId;
+    this.crc32c = builder.crc32c;
   }
 
   /**
@@ -85,6 +88,18 @@ public final class UploadPartRequest {
     return uploadId;
   }
 
+  /**
+   * Returns the CRC32C checksum of the part to upload.
+   *
+   * @return The CRC32C checksum of the part to upload.
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+   */
+  @BetaApi
+  @Nullable
+  public String getCrc32c() {
+    return crc32c;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -97,12 +112,13 @@ public final class UploadPartRequest {
     return partNumber == that.partNumber
         && Objects.equals(bucket, that.bucket)
         && Objects.equals(key, that.key)
-        && Objects.equals(uploadId, that.uploadId);
+        && Objects.equals(uploadId, that.uploadId)
+        && Objects.equals(crc32c, that.crc32c);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(bucket, key, partNumber, uploadId);
+    return Objects.hash(bucket, key, partNumber, uploadId, crc32c);
   }
 
   @Override
@@ -112,6 +128,7 @@ public final class UploadPartRequest {
         .add("key", key)
         .add("partNumber", partNumber)
         .add("uploadId", uploadId)
+        .add("crc32c", crc32c)
         .toString();
   }
 
@@ -137,6 +154,7 @@ public final class UploadPartRequest {
     private String key;
     private int partNumber;
     private String uploadId;
+    @Nullable private String crc32c;
 
     private Builder() {}
 
@@ -189,6 +207,19 @@ public final class UploadPartRequest {
     @BetaApi
     public Builder uploadId(String uploadId) {
       this.uploadId = uploadId;
+      return this;
+    }
+
+    /**
+     * Sets the CRC32C checksum of the part to upload.
+     *
+     * @param crc32c The CRC32C checksum of the part to upload.
+     * @return This builder.
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+     */
+    @BetaApi
+    public Builder crc32c(@Nullable String crc32c) {
+      this.crc32c = crc32c;
       return this;
     }
 
