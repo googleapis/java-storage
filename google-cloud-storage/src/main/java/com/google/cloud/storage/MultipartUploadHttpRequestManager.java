@@ -166,11 +166,11 @@ final class MultipartUploadHttpRequestManager {
     HttpRequest httpRequest =
         requestFactory.buildPutRequest(new GenericUrl(uploadUri), rewindableContent);
     httpRequest.getHeaders().putAll(headerProvider.getHeaders());
-   if (request.getCrc32c() != null) {
-    addChecksumHeader(request.getCrc32c(), httpRequest.getHeaders());
-  } else {
-    addChecksumHeader(rewindableContent.getCrc32c(), httpRequest.getHeaders());
-  }
+    if (request.getCrc32c() != null) {
+      addChecksumHeader(request.getCrc32c(), httpRequest.getHeaders());
+    } else {
+      addChecksumHeader(rewindableContent.getCrc32c(), httpRequest.getHeaders());
+    }
     httpRequest.setThrowExceptionOnExecuteError(true);
     return ChecksumResponseParser.parseUploadResponse(httpRequest.execute());
   }
