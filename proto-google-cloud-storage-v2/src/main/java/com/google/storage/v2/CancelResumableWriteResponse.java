@@ -23,7 +23,7 @@ package com.google.storage.v2;
  *
  *
  * <pre>
- * Empty response message for canceling an in-progress resumable upload, will be
+ * Empty response message for canceling an in-progress resumable upload, is
  * extended as needed.
  * </pre>
  *
@@ -218,7 +218,7 @@ public final class CancelResumableWriteResponse extends com.google.protobuf.Gene
    *
    *
    * <pre>
-   * Empty response message for canceling an in-progress resumable upload, will be
+   * Empty response message for canceling an in-progress resumable upload, is
    * extended as needed.
    * </pre>
    *

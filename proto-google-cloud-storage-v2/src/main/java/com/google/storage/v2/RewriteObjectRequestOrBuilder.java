@@ -102,7 +102,7 @@ public interface RewriteObjectRequestOrBuilder
    *
    *
    * <pre>
-   * Optional. The name of the Cloud KMS key that will be used to encrypt the
+   * Optional. The name of the Cloud KMS key that is used to encrypt the
    * destination object. The Cloud KMS key must be located in same location as
    * the object. If the parameter is not specified, the request uses the
    * destination bucket's default encryption key, if any, or else the
@@ -121,7 +121,7 @@ public interface RewriteObjectRequestOrBuilder
    *
    *
    * <pre>
-   * Optional. The name of the Cloud KMS key that will be used to encrypt the
+   * Optional. The name of the Cloud KMS key that is used to encrypt the
    * destination object. The Cloud KMS key must be located in same location as
    * the object. If the parameter is not specified, the request uses the
    * destination bucket's default encryption key, if any, or else the
@@ -144,8 +144,8 @@ public interface RewriteObjectRequestOrBuilder
    * The `name`, `bucket` and `kms_key` fields must not be populated (these
    * values are specified in the `destination_name`, `destination_bucket`, and
    * `destination_kms_key` fields).
-   * If `destination` is present it will be used to construct the destination
-   * object's metadata; otherwise the destination object's metadata will be
+   * If `destination` is present it is used to construct the destination
+   * object's metadata; otherwise the destination object's metadata is
    * copied from the source object.
    * </pre>
    *
@@ -164,8 +164,8 @@ public interface RewriteObjectRequestOrBuilder
    * The `name`, `bucket` and `kms_key` fields must not be populated (these
    * values are specified in the `destination_name`, `destination_bucket`, and
    * `destination_kms_key` fields).
-   * If `destination` is present it will be used to construct the destination
-   * object's metadata; otherwise the destination object's metadata will be
+   * If `destination` is present it is used to construct the destination
+   * object's metadata; otherwise the destination object's metadata is
    * copied from the source object.
    * </pre>
    *
@@ -184,8 +184,8 @@ public interface RewriteObjectRequestOrBuilder
    * The `name`, `bucket` and `kms_key` fields must not be populated (these
    * values are specified in the `destination_name`, `destination_bucket`, and
    * `destination_kms_key` fields).
-   * If `destination` is present it will be used to construct the destination
-   * object's metadata; otherwise the destination object's metadata will be
+   * If `destination` is present it is used to construct the destination
+   * object's metadata; otherwise the destination object's metadata is
    * copied from the source object.
    * </pre>
    *
@@ -303,8 +303,8 @@ public interface RewriteObjectRequestOrBuilder
    *
    * <pre>
    * Optional. Apply a predefined set of access controls to the destination
-   * object. Valid values are "authenticatedRead", "bucketOwnerFullControl",
-   * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
+   * object. Valid values are `authenticatedRead`, `bucketOwnerFullControl`,
+   * `bucketOwnerRead`, `private`, `projectPrivate`, or `publicRead`.
    * </pre>
    *
    * <code>string destination_predefined_acl = 28 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -318,8 +318,8 @@ public interface RewriteObjectRequestOrBuilder
    *
    * <pre>
    * Optional. Apply a predefined set of access controls to the destination
-   * object. Valid values are "authenticatedRead", "bucketOwnerFullControl",
-   * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
+   * object. Valid values are `authenticatedRead`, `bucketOwnerFullControl`,
+   * `bucketOwnerRead`, `private`, `projectPrivate`, or `publicRead`.
    * </pre>
    *
    * <code>string destination_predefined_acl = 28 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -562,7 +562,7 @@ public interface RewriteObjectRequestOrBuilder
    *
    *
    * <pre>
-   * Optional. The maximum number of bytes that will be rewritten per rewrite
+   * Optional. The maximum number of bytes that are rewritten per rewrite
    * request. Most callers shouldn't need to specify this parameter - it is
    * primarily in place to support testing. If specified the value must be an
    * integral multiple of 1 MiB (1048576). Also, this only applies to requests
@@ -690,8 +690,8 @@ public interface RewriteObjectRequestOrBuilder
    *
    *
    * <pre>
-   * Optional. The checksums of the complete object. This will be used to
-   * validate the destination object after rewriting.
+   * Optional. The checksums of the complete object. This is used to validate
+   * the destination object after rewriting.
    * </pre>
    *
    * <code>
@@ -706,8 +706,8 @@ public interface RewriteObjectRequestOrBuilder
    *
    *
    * <pre>
-   * Optional. The checksums of the complete object. This will be used to
-   * validate the destination object after rewriting.
+   * Optional. The checksums of the complete object. This is used to validate
+   * the destination object after rewriting.
    * </pre>
    *
    * <code>
@@ -722,8 +722,8 @@ public interface RewriteObjectRequestOrBuilder
    *
    *
    * <pre>
-   * Optional. The checksums of the complete object. This will be used to
-   * validate the destination object after rewriting.
+   * Optional. The checksums of the complete object. This is used to validate
+   * the destination object after rewriting.
    * </pre>
    *
    * <code>

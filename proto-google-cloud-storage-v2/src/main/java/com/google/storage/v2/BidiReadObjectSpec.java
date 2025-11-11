@@ -422,19 +422,18 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
    *
    * <pre>
    * Mask specifying which fields to read.
-   * The checksummed_data field and its children will always be present.
-   * If no mask is specified, will default to all fields except metadata.owner
-   * and metadata.acl.
-   * * may be used to mean "all fields".
+   * The `checksummed_data` field and its children are always present.
+   * If no mask is specified, it defaults to all fields except `metadata.
+   * owner` and `metadata.acl`.
+   * `*` might be used to mean "all fields".
    * As per https://google.aip.dev/161, this field is deprecated.
-   * As an alternative, grpc metadata can be used:
-   * https://cloud.google.com/apis/docs/system-parameters#definitions
+   * As an alternative, `grpc metadata` can be used:
    * </pre>
    *
    * <code>optional .google.protobuf.FieldMask read_mask = 12 [deprecated = true];</code>
    *
    * @deprecated google.storage.v2.BidiReadObjectSpec.read_mask is deprecated. See
-   *     google/storage/v2/storage.proto;l=1027
+   *     google/storage/v2/storage.proto;l=1187
    * @return Whether the readMask field is set.
    */
   @java.lang.Override
@@ -448,19 +447,18 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
    *
    * <pre>
    * Mask specifying which fields to read.
-   * The checksummed_data field and its children will always be present.
-   * If no mask is specified, will default to all fields except metadata.owner
-   * and metadata.acl.
-   * * may be used to mean "all fields".
+   * The `checksummed_data` field and its children are always present.
+   * If no mask is specified, it defaults to all fields except `metadata.
+   * owner` and `metadata.acl`.
+   * `*` might be used to mean "all fields".
    * As per https://google.aip.dev/161, this field is deprecated.
-   * As an alternative, grpc metadata can be used:
-   * https://cloud.google.com/apis/docs/system-parameters#definitions
+   * As an alternative, `grpc metadata` can be used:
    * </pre>
    *
    * <code>optional .google.protobuf.FieldMask read_mask = 12 [deprecated = true];</code>
    *
    * @deprecated google.storage.v2.BidiReadObjectSpec.read_mask is deprecated. See
-   *     google/storage/v2/storage.proto;l=1027
+   *     google/storage/v2/storage.proto;l=1187
    * @return The readMask.
    */
   @java.lang.Override
@@ -474,13 +472,12 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
    *
    * <pre>
    * Mask specifying which fields to read.
-   * The checksummed_data field and its children will always be present.
-   * If no mask is specified, will default to all fields except metadata.owner
-   * and metadata.acl.
-   * * may be used to mean "all fields".
+   * The `checksummed_data` field and its children are always present.
+   * If no mask is specified, it defaults to all fields except `metadata.
+   * owner` and `metadata.acl`.
+   * `*` might be used to mean "all fields".
    * As per https://google.aip.dev/161, this field is deprecated.
-   * As an alternative, grpc metadata can be used:
-   * https://cloud.google.com/apis/docs/system-parameters#definitions
+   * As an alternative, `grpc metadata` can be used:
    * </pre>
    *
    * <code>optional .google.protobuf.FieldMask read_mask = 12 [deprecated = true];</code>
@@ -2113,19 +2110,18 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
      *
      * <pre>
      * Mask specifying which fields to read.
-     * The checksummed_data field and its children will always be present.
-     * If no mask is specified, will default to all fields except metadata.owner
-     * and metadata.acl.
-     * * may be used to mean "all fields".
+     * The `checksummed_data` field and its children are always present.
+     * If no mask is specified, it defaults to all fields except `metadata.
+     * owner` and `metadata.acl`.
+     * `*` might be used to mean "all fields".
      * As per https://google.aip.dev/161, this field is deprecated.
-     * As an alternative, grpc metadata can be used:
-     * https://cloud.google.com/apis/docs/system-parameters#definitions
+     * As an alternative, `grpc metadata` can be used:
      * </pre>
      *
      * <code>optional .google.protobuf.FieldMask read_mask = 12 [deprecated = true];</code>
      *
      * @deprecated google.storage.v2.BidiReadObjectSpec.read_mask is deprecated. See
-     *     google/storage/v2/storage.proto;l=1027
+     *     google/storage/v2/storage.proto;l=1187
      * @return Whether the readMask field is set.
      */
     @java.lang.Deprecated
@@ -2138,19 +2134,18 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
      *
      * <pre>
      * Mask specifying which fields to read.
-     * The checksummed_data field and its children will always be present.
-     * If no mask is specified, will default to all fields except metadata.owner
-     * and metadata.acl.
-     * * may be used to mean "all fields".
+     * The `checksummed_data` field and its children are always present.
+     * If no mask is specified, it defaults to all fields except `metadata.
+     * owner` and `metadata.acl`.
+     * `*` might be used to mean "all fields".
      * As per https://google.aip.dev/161, this field is deprecated.
-     * As an alternative, grpc metadata can be used:
-     * https://cloud.google.com/apis/docs/system-parameters#definitions
+     * As an alternative, `grpc metadata` can be used:
      * </pre>
      *
      * <code>optional .google.protobuf.FieldMask read_mask = 12 [deprecated = true];</code>
      *
      * @deprecated google.storage.v2.BidiReadObjectSpec.read_mask is deprecated. See
-     *     google/storage/v2/storage.proto;l=1027
+     *     google/storage/v2/storage.proto;l=1187
      * @return The readMask.
      */
     @java.lang.Deprecated
@@ -2167,13 +2162,12 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
      *
      * <pre>
      * Mask specifying which fields to read.
-     * The checksummed_data field and its children will always be present.
-     * If no mask is specified, will default to all fields except metadata.owner
-     * and metadata.acl.
-     * * may be used to mean "all fields".
+     * The `checksummed_data` field and its children are always present.
+     * If no mask is specified, it defaults to all fields except `metadata.
+     * owner` and `metadata.acl`.
+     * `*` might be used to mean "all fields".
      * As per https://google.aip.dev/161, this field is deprecated.
-     * As an alternative, grpc metadata can be used:
-     * https://cloud.google.com/apis/docs/system-parameters#definitions
+     * As an alternative, `grpc metadata` can be used:
      * </pre>
      *
      * <code>optional .google.protobuf.FieldMask read_mask = 12 [deprecated = true];</code>
@@ -2198,13 +2192,12 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
      *
      * <pre>
      * Mask specifying which fields to read.
-     * The checksummed_data field and its children will always be present.
-     * If no mask is specified, will default to all fields except metadata.owner
-     * and metadata.acl.
-     * * may be used to mean "all fields".
+     * The `checksummed_data` field and its children are always present.
+     * If no mask is specified, it defaults to all fields except `metadata.
+     * owner` and `metadata.acl`.
+     * `*` might be used to mean "all fields".
      * As per https://google.aip.dev/161, this field is deprecated.
-     * As an alternative, grpc metadata can be used:
-     * https://cloud.google.com/apis/docs/system-parameters#definitions
+     * As an alternative, `grpc metadata` can be used:
      * </pre>
      *
      * <code>optional .google.protobuf.FieldMask read_mask = 12 [deprecated = true];</code>
@@ -2226,13 +2219,12 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
      *
      * <pre>
      * Mask specifying which fields to read.
-     * The checksummed_data field and its children will always be present.
-     * If no mask is specified, will default to all fields except metadata.owner
-     * and metadata.acl.
-     * * may be used to mean "all fields".
+     * The `checksummed_data` field and its children are always present.
+     * If no mask is specified, it defaults to all fields except `metadata.
+     * owner` and `metadata.acl`.
+     * `*` might be used to mean "all fields".
      * As per https://google.aip.dev/161, this field is deprecated.
-     * As an alternative, grpc metadata can be used:
-     * https://cloud.google.com/apis/docs/system-parameters#definitions
+     * As an alternative, `grpc metadata` can be used:
      * </pre>
      *
      * <code>optional .google.protobuf.FieldMask read_mask = 12 [deprecated = true];</code>
@@ -2262,13 +2254,12 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
      *
      * <pre>
      * Mask specifying which fields to read.
-     * The checksummed_data field and its children will always be present.
-     * If no mask is specified, will default to all fields except metadata.owner
-     * and metadata.acl.
-     * * may be used to mean "all fields".
+     * The `checksummed_data` field and its children are always present.
+     * If no mask is specified, it defaults to all fields except `metadata.
+     * owner` and `metadata.acl`.
+     * `*` might be used to mean "all fields".
      * As per https://google.aip.dev/161, this field is deprecated.
-     * As an alternative, grpc metadata can be used:
-     * https://cloud.google.com/apis/docs/system-parameters#definitions
+     * As an alternative, `grpc metadata` can be used:
      * </pre>
      *
      * <code>optional .google.protobuf.FieldMask read_mask = 12 [deprecated = true];</code>
@@ -2290,13 +2281,12 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
      *
      * <pre>
      * Mask specifying which fields to read.
-     * The checksummed_data field and its children will always be present.
-     * If no mask is specified, will default to all fields except metadata.owner
-     * and metadata.acl.
-     * * may be used to mean "all fields".
+     * The `checksummed_data` field and its children are always present.
+     * If no mask is specified, it defaults to all fields except `metadata.
+     * owner` and `metadata.acl`.
+     * `*` might be used to mean "all fields".
      * As per https://google.aip.dev/161, this field is deprecated.
-     * As an alternative, grpc metadata can be used:
-     * https://cloud.google.com/apis/docs/system-parameters#definitions
+     * As an alternative, `grpc metadata` can be used:
      * </pre>
      *
      * <code>optional .google.protobuf.FieldMask read_mask = 12 [deprecated = true];</code>
@@ -2313,13 +2303,12 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
      *
      * <pre>
      * Mask specifying which fields to read.
-     * The checksummed_data field and its children will always be present.
-     * If no mask is specified, will default to all fields except metadata.owner
-     * and metadata.acl.
-     * * may be used to mean "all fields".
+     * The `checksummed_data` field and its children are always present.
+     * If no mask is specified, it defaults to all fields except `metadata.
+     * owner` and `metadata.acl`.
+     * `*` might be used to mean "all fields".
      * As per https://google.aip.dev/161, this field is deprecated.
-     * As an alternative, grpc metadata can be used:
-     * https://cloud.google.com/apis/docs/system-parameters#definitions
+     * As an alternative, `grpc metadata` can be used:
      * </pre>
      *
      * <code>optional .google.protobuf.FieldMask read_mask = 12 [deprecated = true];</code>
@@ -2338,13 +2327,12 @@ public final class BidiReadObjectSpec extends com.google.protobuf.GeneratedMessa
      *
      * <pre>
      * Mask specifying which fields to read.
-     * The checksummed_data field and its children will always be present.
-     * If no mask is specified, will default to all fields except metadata.owner
-     * and metadata.acl.
-     * * may be used to mean "all fields".
+     * The `checksummed_data` field and its children are always present.
+     * If no mask is specified, it defaults to all fields except `metadata.
+     * owner` and `metadata.acl`.
+     * `*` might be used to mean "all fields".
      * As per https://google.aip.dev/161, this field is deprecated.
-     * As an alternative, grpc metadata can be used:
-     * https://cloud.google.com/apis/docs/system-parameters#definitions
+     * As an alternative, `grpc metadata` can be used:
      * </pre>
      *
      * <code>optional .google.protobuf.FieldMask read_mask = 12 [deprecated = true];</code>

@@ -28,9 +28,9 @@ public interface CreateBucketRequestOrBuilder
    *
    *
    * <pre>
-   * Required. The project to which this bucket will belong. This field must
-   * either be empty or `projects/_`. The project ID that owns this bucket
-   * should be specified in the `bucket.project` field.
+   * Required. The project to which this bucket belongs. This field must either
+   * be empty or `projects/_`. The project ID that owns this bucket should be
+   * specified in the `bucket.project` field.
    * </pre>
    *
    * <code>
@@ -45,9 +45,9 @@ public interface CreateBucketRequestOrBuilder
    *
    *
    * <pre>
-   * Required. The project to which this bucket will belong. This field must
-   * either be empty or `projects/_`. The project ID that owns this bucket
-   * should be specified in the `bucket.project` field.
+   * Required. The project to which this bucket belongs. This field must either
+   * be empty or `projects/_`. The project ID that owns this bucket should be
+   * specified in the `bucket.project` field.
    * </pre>
    *
    * <code>
@@ -64,7 +64,7 @@ public interface CreateBucketRequestOrBuilder
    * <pre>
    * Optional. Properties of the new bucket being inserted.
    * The name of the bucket is specified in the `bucket_id` field. Populating
-   * `bucket.name` field will result in an error.
+   * `bucket.name` field results in an error.
    * The project of the bucket must be specified in the `bucket.project` field.
    * This field must be in `projects/{projectIdentifier}` format,
    * {projectIdentifier} can be the project ID or project number. The `parent`
@@ -83,7 +83,7 @@ public interface CreateBucketRequestOrBuilder
    * <pre>
    * Optional. Properties of the new bucket being inserted.
    * The name of the bucket is specified in the `bucket_id` field. Populating
-   * `bucket.name` field will result in an error.
+   * `bucket.name` field results in an error.
    * The project of the bucket must be specified in the `bucket.project` field.
    * This field must be in `projects/{projectIdentifier}` format,
    * {projectIdentifier} can be the project ID or project number. The `parent`
@@ -102,7 +102,7 @@ public interface CreateBucketRequestOrBuilder
    * <pre>
    * Optional. Properties of the new bucket being inserted.
    * The name of the bucket is specified in the `bucket_id` field. Populating
-   * `bucket.name` field will result in an error.
+   * `bucket.name` field results in an error.
    * The project of the bucket must be specified in the `bucket.project` field.
    * This field must be in `projects/{projectIdentifier}` format,
    * {projectIdentifier} can be the project ID or project number. The `parent`
@@ -117,9 +117,9 @@ public interface CreateBucketRequestOrBuilder
    *
    *
    * <pre>
-   * Required. The ID to use for this bucket, which will become the final
-   * component of the bucket's resource name. For example, the value `foo` might
-   * result in a bucket with the name `projects/123456/buckets/foo`.
+   * Required. The ID to use for this bucket, which becomes the final component
+   * of the bucket's resource name. For example, the value `foo` might result in
+   * a bucket with the name `projects/123456/buckets/foo`.
    * </pre>
    *
    * <code>string bucket_id = 3 [(.google.api.field_behavior) = REQUIRED];</code>
@@ -132,9 +132,9 @@ public interface CreateBucketRequestOrBuilder
    *
    *
    * <pre>
-   * Required. The ID to use for this bucket, which will become the final
-   * component of the bucket's resource name. For example, the value `foo` might
-   * result in a bucket with the name `projects/123456/buckets/foo`.
+   * Required. The ID to use for this bucket, which becomes the final component
+   * of the bucket's resource name. For example, the value `foo` might result in
+   * a bucket with the name `projects/123456/buckets/foo`.
    * </pre>
    *
    * <code>string bucket_id = 3 [(.google.api.field_behavior) = REQUIRED];</code>
@@ -148,8 +148,8 @@ public interface CreateBucketRequestOrBuilder
    *
    * <pre>
    * Optional. Apply a predefined set of access controls to this bucket.
-   * Valid values are "authenticatedRead", "private", "projectPrivate",
-   * "publicRead", or "publicReadWrite".
+   * Valid values are `authenticatedRead`, `private`, `projectPrivate`,
+   * `publicRead`, or `publicReadWrite`.
    * </pre>
    *
    * <code>string predefined_acl = 6 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -163,8 +163,8 @@ public interface CreateBucketRequestOrBuilder
    *
    * <pre>
    * Optional. Apply a predefined set of access controls to this bucket.
-   * Valid values are "authenticatedRead", "private", "projectPrivate",
-   * "publicRead", or "publicReadWrite".
+   * Valid values are `authenticatedRead`, `private`, `projectPrivate`,
+   * `publicRead`, or `publicReadWrite`.
    * </pre>
    *
    * <code>string predefined_acl = 6 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -178,8 +178,8 @@ public interface CreateBucketRequestOrBuilder
    *
    * <pre>
    * Optional. Apply a predefined set of default object access controls to this
-   * bucket. Valid values are "authenticatedRead", "bucketOwnerFullControl",
-   * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
+   * bucket. Valid values are `authenticatedRead`, `bucketOwnerFullControl`,
+   * `bucketOwnerRead`, `private`, `projectPrivate`, or `publicRead`.
    * </pre>
    *
    * <code>string predefined_default_object_acl = 7 [(.google.api.field_behavior) = OPTIONAL];
@@ -194,8 +194,8 @@ public interface CreateBucketRequestOrBuilder
    *
    * <pre>
    * Optional. Apply a predefined set of default object access controls to this
-   * bucket. Valid values are "authenticatedRead", "bucketOwnerFullControl",
-   * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
+   * bucket. Valid values are `authenticatedRead`, `bucketOwnerFullControl`,
+   * `bucketOwnerRead`, `private`, `projectPrivate`, or `publicRead`.
    * </pre>
    *
    * <code>string predefined_default_object_acl = 7 [(.google.api.field_behavior) = OPTIONAL];

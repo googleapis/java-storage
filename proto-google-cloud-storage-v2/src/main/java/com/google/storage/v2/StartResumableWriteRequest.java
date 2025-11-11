@@ -23,7 +23,8 @@ package com.google.storage.v2;
  *
  *
  * <pre>
- * Request message StartResumableWrite.
+ * Request message for
+ * [StartResumableWrite][google.storage.v2.Storage.StartResumableWrite].
  * </pre>
  *
  * Protobuf type {@code google.storage.v2.StartResumableWriteRequest}
@@ -456,7 +457,8 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
    *
    *
    * <pre>
-   * Request message StartResumableWrite.
+   * Request message for
+   * [StartResumableWrite][google.storage.v2.Storage.StartResumableWrite].
    * </pre>
    *
    * Protobuf type {@code google.storage.v2.StartResumableWriteRequest}

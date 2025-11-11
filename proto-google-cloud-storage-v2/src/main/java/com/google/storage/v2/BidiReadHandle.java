@@ -23,8 +23,8 @@ package com.google.storage.v2;
  *
  *
  * <pre>
- * BidiReadHandle contains a handle from a previous BiDiReadObject
- * invocation. The client can use this instead of BidiReadObjectSpec as an
+ * `BidiReadHandle` contains a handle from a previous `BiDiReadObject`
+ * invocation. The client can use this instead of `BidiReadObjectSpec` as an
  * optimized way of opening subsequent bidirectional streams to the same object.
  * </pre>
  *
@@ -247,8 +247,8 @@ public final class BidiReadHandle extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * BidiReadHandle contains a handle from a previous BiDiReadObject
-   * invocation. The client can use this instead of BidiReadObjectSpec as an
+   * `BidiReadHandle` contains a handle from a previous `BiDiReadObject`
+   * invocation. The client can use this instead of `BidiReadObjectSpec` as an
    * optimized way of opening subsequent bidirectional streams to the same object.
    * </pre>
    *

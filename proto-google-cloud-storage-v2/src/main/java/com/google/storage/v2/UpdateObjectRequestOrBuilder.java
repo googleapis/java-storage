@@ -230,7 +230,7 @@ public interface UpdateObjectRequestOrBuilder
    * To specify ALL fields, equivalent to the JSON API's "update" function,
    * specify a single field with the value `*`. Note: not recommended. If a new
    * field is introduced at a later time, an older client updating with the `*`
-   * may accidentally reset the new field's value.
+   * might accidentally reset the new field's value.
    *
    * Not specifying any fields is an error.
    * </pre>
@@ -251,7 +251,7 @@ public interface UpdateObjectRequestOrBuilder
    * To specify ALL fields, equivalent to the JSON API's "update" function,
    * specify a single field with the value `*`. Note: not recommended. If a new
    * field is introduced at a later time, an older client updating with the `*`
-   * may accidentally reset the new field's value.
+   * might accidentally reset the new field's value.
    *
    * Not specifying any fields is an error.
    * </pre>
@@ -272,7 +272,7 @@ public interface UpdateObjectRequestOrBuilder
    * To specify ALL fields, equivalent to the JSON API's "update" function,
    * specify a single field with the value `*`. Note: not recommended. If a new
    * field is introduced at a later time, an older client updating with the `*`
-   * may accidentally reset the new field's value.
+   * might accidentally reset the new field's value.
    *
    * Not specifying any fields is an error.
    * </pre>
