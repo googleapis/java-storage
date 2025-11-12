@@ -36,7 +36,11 @@ final class ChecksumResponseParser {
   static UploadPartResponse parseUploadResponse(HttpResponse response) {
     String eTag = response.getHeaders().getETag();
     Map<String, String> hashes = extractHashesFromHeader(response);
-    return UploadPartResponse.builder().eTag(eTag).md5(hashes.get("md5")).crc32c(hashes.get("crc32c")).build();
+    return UploadPartResponse.builder()
+        .eTag(eTag)
+        .md5(hashes.get("md5"))
+        .crc32c(hashes.get("crc32c"))
+        .build();
   }
 
   static CompleteMultipartUploadResponse parseCompleteResponse(HttpResponse response)

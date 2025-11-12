@@ -25,7 +25,7 @@ import java.util.Objects;
 /**
  * Represents a multipart upload that is in progress.
  *
- * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+ * @since 2.61.0 This new api is in preview and is subject to breaking changes.
  */
 @BetaApi
 public final class MultipartUpload {
@@ -56,7 +56,7 @@ public final class MultipartUpload {
    * The object name for which the multipart upload was initiated.
    *
    * @return The object name.
-   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.61.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
   public String getKey() {
@@ -67,7 +67,7 @@ public final class MultipartUpload {
    * The ID of the multipart upload.
    *
    * @return The upload ID.
-   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.61.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
   public String getUploadId() {
@@ -78,7 +78,7 @@ public final class MultipartUpload {
    * The storage class of the object.
    *
    * @return The storage class.
-   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.61.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
   public StorageClass getStorageClass() {
@@ -89,7 +89,7 @@ public final class MultipartUpload {
    * The date and time at which the multipart upload was initiated.
    *
    * @return The initiation date and time.
-   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.61.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
   public OffsetDateTime getInitiated() {
@@ -118,19 +118,25 @@ public final class MultipartUpload {
 
   @Override
   public String toString() {
-    return "MultipartUpload{" +
-        "key='" + key + '\'' +
-        ", uploadId='" + uploadId + '\'' +
-        ", storageClass=" + storageClass +
-        ", initiated=" + initiated +
-        "}";
+    return "MultipartUpload{"
+        + "key='"
+        + key
+        + '\''
+        + ", uploadId='"
+        + uploadId
+        + '\''
+        + ", storageClass="
+        + storageClass
+        + ", initiated="
+        + initiated
+        + "}";
   }
 
   /**
    * Returns a new builder for this multipart upload.
    *
    * @return A new builder.
-   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.61.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
   public static Builder newBuilder() {
@@ -140,7 +146,7 @@ public final class MultipartUpload {
   /**
    * A builder for {@link MultipartUpload}.
    *
-   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.61.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
   public static final class Builder {
@@ -156,7 +162,7 @@ public final class MultipartUpload {
      *
      * @param key The object name.
      * @return This builder.
-     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.61.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
     public Builder setKey(String key) {
@@ -169,7 +175,7 @@ public final class MultipartUpload {
      *
      * @param uploadId The upload ID.
      * @return This builder.
-     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.61.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
     public Builder setUploadId(String uploadId) {
@@ -182,7 +188,7 @@ public final class MultipartUpload {
      *
      * @param storageClass The storage class.
      * @return This builder.
-     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.61.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
     public Builder setStorageClass(StorageClass storageClass) {
@@ -195,7 +201,7 @@ public final class MultipartUpload {
      *
      * @param initiated The initiation date and time.
      * @return This builder.
-     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.61.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
     public Builder setInitiated(OffsetDateTime initiated) {
@@ -207,7 +213,7 @@ public final class MultipartUpload {
      * Builds the multipart upload.
      *
      * @return The built multipart upload.
-     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.61.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
     public MultipartUpload build() {

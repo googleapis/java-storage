@@ -117,29 +117,29 @@ final class MultipartUploadHttpRequestManager {
       URI uri, ListMultipartUploadsRequest request) throws IOException {
 
     ImmutableMap.Builder<String, Object> params =
-        ImmutableMap.<String, Object>builder()
-            .put("bucket", request.bucket());
-    if(request.delimiter() != null){
+        ImmutableMap.<String, Object>builder().put("bucket", request.bucket());
+    if (request.delimiter() != null) {
       params.put("delimiter", request.delimiter());
     }
-    if(request.encodingType() != null){
+    if (request.encodingType() != null) {
       params.put("encoding-type", request.encodingType());
     }
-    if(request.keyMarker() != null){
+    if (request.keyMarker() != null) {
       params.put("key-marker", request.keyMarker());
     }
-    if(request.maxUploads() != null){
+    if (request.maxUploads() != null) {
       params.put("max-uploads", request.maxUploads());
     }
-    if(request.prefix() != null){
+    if (request.prefix() != null) {
       params.put("prefix", request.prefix());
     }
-    if(request.uploadIdMarker() != null){
+    if (request.uploadIdMarker() != null) {
       params.put("upload-id-marker", request.uploadIdMarker());
     }
     String listUri =
         UriTemplate.expand(
-            uri.toString() + "{bucket}?uploads{delimiter,encoding-type,key-marker,max-uploads,prefix,upload-id-marker}",
+            uri.toString()
+                + "{bucket}?uploads{delimiter,encoding-type,key-marker,max-uploads,prefix,upload-id-marker}",
             params.build(),
             false);
     System.out.println(listUri);

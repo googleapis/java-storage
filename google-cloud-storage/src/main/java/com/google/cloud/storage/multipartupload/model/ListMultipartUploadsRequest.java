@@ -24,7 +24,7 @@ import java.util.Objects;
  *
  * @see <a href="https://cloud.google.com/storage/docs/multipart-uploads#listing-uploads">Listing
  *     multipart uploads</a>
- * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+ * @since 2.61.0 This new api is in preview and is subject to breaking changes.
  */
 @BetaApi
 public final class ListMultipartUploadsRequest {
@@ -58,7 +58,7 @@ public final class ListMultipartUploadsRequest {
    * The bucket to list multipart uploads from.
    *
    * @return The bucket name.
-   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.61.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
   public String bucket() {
@@ -69,7 +69,7 @@ public final class ListMultipartUploadsRequest {
    * Character used to group keys.
    *
    * @return The delimiter.
-   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.61.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
   public String delimiter() {
@@ -80,7 +80,7 @@ public final class ListMultipartUploadsRequest {
    * The encoding type used by Cloud Storage to encode object names in the response.
    *
    * @return The encoding type.
-   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.61.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
   public String encodingType() {
@@ -92,7 +92,7 @@ public final class ListMultipartUploadsRequest {
    * should begin.
    *
    * @return The key marker.
-   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.61.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
   public String keyMarker() {
@@ -103,7 +103,7 @@ public final class ListMultipartUploadsRequest {
    * The maximum number of multipart uploads to return.
    *
    * @return The maximum number of uploads.
-   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.61.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
   public Integer maxUploads() {
@@ -114,7 +114,7 @@ public final class ListMultipartUploadsRequest {
    * Filters results to multipart uploads whose keys begin with this prefix.
    *
    * @return The prefix.
-   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.61.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
   public String prefix() {
@@ -126,7 +126,7 @@ public final class ListMultipartUploadsRequest {
    * begin.
    *
    * @return The upload ID marker.
-   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.61.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
   public String uploadIdMarker() {
@@ -153,7 +153,8 @@ public final class ListMultipartUploadsRequest {
 
   @Override
   public int hashCode() {
-    return Objects.hash(bucket, delimiter, encodingType, keyMarker, maxUploads, prefix, uploadIdMarker);
+    return Objects.hash(
+        bucket, delimiter, encodingType, keyMarker, maxUploads, prefix, uploadIdMarker);
   }
 
   @Override
@@ -174,7 +175,7 @@ public final class ListMultipartUploadsRequest {
    * Returns a new builder for this request.
    *
    * @return A new builder.
-   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.61.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
   public static Builder builder() {
@@ -184,7 +185,7 @@ public final class ListMultipartUploadsRequest {
   /**
    * A builder for {@link ListMultipartUploadsRequest}.
    *
-   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.61.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
   public static final class Builder {
@@ -203,7 +204,7 @@ public final class ListMultipartUploadsRequest {
      *
      * @param bucket The bucket name.
      * @return This builder.
-     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.61.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
     public Builder bucket(String bucket) {
@@ -216,7 +217,7 @@ public final class ListMultipartUploadsRequest {
      *
      * @param delimiter The delimiter.
      * @return This builder.
-     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.61.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
     public Builder delimiter(String delimiter) {
@@ -229,7 +230,7 @@ public final class ListMultipartUploadsRequest {
      *
      * @param encodingType The encoding type.
      * @return This builder.
-     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.61.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
     public Builder encodingType(String encodingType) {
@@ -242,7 +243,7 @@ public final class ListMultipartUploadsRequest {
      *
      * @param keyMarker The key marker.
      * @return This builder.
-     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.61.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
     public Builder keyMarker(String keyMarker) {
@@ -255,7 +256,7 @@ public final class ListMultipartUploadsRequest {
      *
      * @param maxUploads The maximum number of uploads.
      * @return This builder.
-     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.61.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
     public Builder maxUploads(Integer maxUploads) {
@@ -268,7 +269,7 @@ public final class ListMultipartUploadsRequest {
      *
      * @param prefix The prefix.
      * @return This builder.
-     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.61.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
     public Builder prefix(String prefix) {
@@ -281,7 +282,7 @@ public final class ListMultipartUploadsRequest {
      *
      * @param uploadIdMarker The upload ID marker.
      * @return This builder.
-     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.61.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
     public Builder uploadIdMarker(String uploadIdMarker) {
@@ -293,7 +294,7 @@ public final class ListMultipartUploadsRequest {
      * Builds the request.
      *
      * @return The built request.
-     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.61.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
     public ListMultipartUploadsRequest build() {
