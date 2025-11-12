@@ -110,8 +110,9 @@ public abstract class MultipartUploadClient {
    * @since 2.61.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  public abstract ListMultipartUploadsResponse listMultipartUploads(
-      ListMultipartUploadsRequest request);
+  public ListMultipartUploadsResponse listMultipartUploads(ListMultipartUploadsRequest request) {
+    throw new UnsupportedOperationException("This operation is not yet implemented.");
+  }
 
   /**
    * Creates a new instance of {@link MultipartUploadClient}.
