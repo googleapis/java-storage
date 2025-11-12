@@ -817,12 +817,13 @@ public final class ITMultipartUploadHttpRequestManagerTest {
   @Test
   public void sendUploadPartRequest_withCustomChecksum() throws Exception {
     String etag = "\"af1ed31420542285653c803a34aa839a\"";
-    ChecksummedTestContent content = ChecksummedTestContent.of(
-        "hello world".getBytes(StandardCharsets.UTF_8));
+    ChecksummedTestContent content =
+        ChecksummedTestContent.of("hello world".getBytes(StandardCharsets.UTF_8));
 
     HttpRequestHandler handler =
         req -> {
-          assertThat(req.headers().get("x-goog-hash")).isEqualTo("crc32c=" + content.getCrc32cBase64());
+          assertThat(req.headers().get("x-goog-hash"))
+              .isEqualTo("crc32c=" + content.getCrc32cBase64());
           FullHttpRequest fullReq = (FullHttpRequest) req;
           ByteBuf requestContent = fullReq.content();
           byte[] receivedBytes = new byte[requestContent.readableBytes()];
