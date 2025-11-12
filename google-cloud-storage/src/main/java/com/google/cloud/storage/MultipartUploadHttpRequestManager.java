@@ -199,7 +199,7 @@ final class MultipartUploadHttpRequestManager {
 
   private void addChecksumHeader(@Nullable Crc32cLengthKnown crc32c, HttpHeaders headers) {
     if (crc32c != null) {
-      headers.put("x-goog-hash", "crc32c=" + Utils.crc32cCodec.encode(crc32c.getValue()));
+      addChecksumHeader(Utils.crc32cCodec.encode(crc32c.getValue()), headers);
     }
   }
 

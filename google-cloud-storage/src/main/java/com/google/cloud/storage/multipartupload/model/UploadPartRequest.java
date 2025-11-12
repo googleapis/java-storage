@@ -92,7 +92,7 @@ public final class UploadPartRequest {
    * Returns the CRC32C checksum of the part to upload.
    *
    * @return The CRC32C checksum of the part to upload.
-   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.61.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
   @Nullable
@@ -215,7 +215,7 @@ public final class UploadPartRequest {
      *
      * @param crc32c The CRC32C checksum of the part to upload.
      * @return This builder.
-     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.61.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
     public Builder crc32c(@Nullable String crc32c) {

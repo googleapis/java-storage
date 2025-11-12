@@ -26,6 +26,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.api.client.http.HttpResponseException;
 import com.google.cloud.NoCredentials;
 import com.google.cloud.storage.FakeHttpServer.HttpRequestHandler;
+import com.google.cloud.storage.it.ChecksummedTestContent;
 import com.google.cloud.storage.it.runner.StorageITRunner;
 import com.google.cloud.storage.it.runner.annotations.Backend;
 import com.google.cloud.storage.it.runner.annotations.ParallelFriendly;
@@ -816,20 +817,17 @@ public final class ITMultipartUploadHttpRequestManagerTest {
   @Test
   public void sendUploadPartRequest_withCustomChecksum() throws Exception {
     String etag = "\"af1ed31420542285653c803a34aa839a\"";
-    String content = "hello world";
-    byte[] contentBytes = content.getBytes(StandardCharsets.UTF_8);
-
-    String customCrc32cString = "CustomCrc32";
+    ChecksummedTestContent content = ChecksummedTestContent.of(
+        "hello world".getBytes(StandardCharsets.UTF_8));
 
     HttpRequestHandler handler =
         req -> {
-          assertThat(req.headers().get("x-goog-hash")).isEqualTo("crc32c=" + customCrc32cString);
+          assertThat(req.headers().get("x-goog-hash")).isEqualTo("crc32c=" + content.getCrc32cBase64());
           FullHttpRequest fullReq = (FullHttpRequest) req;
           ByteBuf requestContent = fullReq.content();
           byte[] receivedBytes = new byte[requestContent.readableBytes()];
           requestContent.readBytes(receivedBytes);
-          assertThat(receivedBytes).isEqualTo(contentBytes);
-
+          assertThat(receivedBytes).isEqualTo(content.getBytes());
           DefaultFullHttpResponse resp = new DefaultFullHttpResponse(req.protocolVersion(), OK);
           resp.headers().set("ETag", etag);
           return resp;
@@ -843,13 +841,11 @@ public final class ITMultipartUploadHttpRequestManagerTest {
               .key("test-key")
               .uploadId("test-upload-id")
               .partNumber(1)
-              .crc32c(customCrc32cString)
+              .crc32c(content.getCrc32cBase64())
               .build();
-
       UploadPartResponse response =
           multipartUploadHttpRequestManager.sendUploadPartRequest(
-              endpoint, request, RewindableContent.of(ByteBuffer.wrap(contentBytes)));
-
+              endpoint, request, RewindableContent.of(content.asByteBuffer()));
       assertThat(response).isNotNull();
       assertThat(response.eTag()).isEqualTo(etag);
     }
