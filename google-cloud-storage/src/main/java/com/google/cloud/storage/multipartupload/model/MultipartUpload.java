@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,6 +16,7 @@
 
 package com.google.cloud.storage.multipartupload.model;
 
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.google.api.core.BetaApi;
 import com.google.cloud.storage.StorageClass;
 import java.time.OffsetDateTime;
@@ -29,10 +30,19 @@ import java.util.Objects;
 @BetaApi
 public final class MultipartUpload {
 
-  private final String key;
-  private final String uploadId;
-  private final StorageClass storageClass;
-  private final OffsetDateTime initiated;
+  @JacksonXmlProperty(localName = "Key")
+  private String key;
+
+  @JacksonXmlProperty(localName = "UploadId")
+  private String uploadId;
+
+  @JacksonXmlProperty(localName = "StorageClass")
+  private StorageClass storageClass;
+
+  @JacksonXmlProperty(localName = "Initiated")
+  private OffsetDateTime initiated;
+
+  private MultipartUpload() {}
 
   private MultipartUpload(
       String key, String uploadId, StorageClass storageClass, OffsetDateTime initiated) {

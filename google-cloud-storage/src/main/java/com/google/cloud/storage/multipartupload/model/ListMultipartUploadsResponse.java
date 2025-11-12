@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,35 +16,69 @@
 
 package com.google.cloud.storage.multipartupload.model;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.google.api.core.BetaApi;
 import com.google.common.collect.ImmutableList;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
  * A response from listing all multipart uploads in a bucket.
  *
  * @see <a href="https://cloud.google.com/storage/docs/multipart-uploads#listing-uploads">Listing
- *     multipart uploads</a>
- * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+ * multipart uploads</a>
+ * @since 2.60.1 This new api is in preview and is subject to breaking changes.
  */
 @BetaApi
 public final class ListMultipartUploadsResponse {
 
-  private ImmutableList<MultipartUpload> uploads;
+  @JacksonXmlElementWrapper(useWrapping = false)
+  @JacksonXmlProperty(localName = "Upload")
+  private List<MultipartUpload> uploads;
+
+  @JacksonXmlProperty(localName = "Bucket")
   private String bucket;
+
+  @JacksonXmlProperty(localName = "Delimiter")
   private String delimiter;
+
+  @JacksonXmlProperty(localName = "EncodingType")
   private String encodingType;
+
+  @JacksonXmlProperty(localName = "KeyMarker")
   private String keyMarker;
+
+  @JacksonXmlProperty(localName = "UploadIdMarker")
   private String uploadIdMarker;
+
+  @JacksonXmlProperty(localName = "NextKeyMarker")
   private String nextKeyMarker;
+
+  @JacksonXmlProperty(localName = "NextUploadIdMarker")
   private String nextUploadIdMarker;
+
+  @JacksonXmlProperty(localName = "MaxUploads")
   private int maxUploads;
+
+  @JacksonXmlProperty(localName = "Prefix")
   private String prefix;
+
+  @JsonAlias("truncated")
+  @JacksonXmlProperty(localName = "IsTruncated")
   private boolean isTruncated;
-  private ImmutableList<String> commonPrefixes;
+
+  @JacksonXmlElementWrapper(useWrapping = false)
+  @JacksonXmlProperty(localName = "CommonPrefixes")
+  private List<CommonPrefixHelper> commonPrefixes;
+
+  // Jackson requires a no-arg constructor
+  private ListMultipartUploadsResponse() {}
 
   private ListMultipartUploadsResponse(
-      ImmutableList<MultipartUpload> uploads,
+      List<MultipartUpload> uploads,
       String bucket,
       String delimiter,
       String encodingType,
@@ -55,7 +89,7 @@ public final class ListMultipartUploadsResponse {
       int maxUploads,
       String prefix,
       boolean isTruncated,
-      ImmutableList<String> commonPrefixes) {
+      List<String> commonPrefixes) {
     this.uploads = uploads;
     this.bucket = bucket;
     this.delimiter = delimiter;
@@ -67,28 +101,21 @@ public final class ListMultipartUploadsResponse {
     this.maxUploads = maxUploads;
     this.prefix = prefix;
     this.isTruncated = isTruncated;
-    this.commonPrefixes = commonPrefixes;
+    if (commonPrefixes != null) {
+      this.commonPrefixes = new ArrayList<>();
+      for (String p : commonPrefixes) {
+        CommonPrefixHelper h = new CommonPrefixHelper();
+        h.prefix = p;
+        this.commonPrefixes.add(h);
+      }
+    }
   }
 
-  private ListMultipartUploadsResponse() {}
-
-  /**
-   * The list of multipart uploads.
-   *
-   * @return The list of multipart uploads.
-   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
-   */
   @BetaApi
   public ImmutableList<MultipartUpload> getUploads() {
-    return uploads;
+    return uploads == null ? ImmutableList.of() : ImmutableList.copyOf(uploads);
   }
 
-  /**
-   * The bucket that contains the multipart uploads.
-   *
-   * @return The bucket name.
-   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
-   */
   @BetaApi
   public String getBucket() {
     return bucket;
@@ -201,7 +228,12 @@ public final class ListMultipartUploadsResponse {
    */
   @BetaApi
   public ImmutableList<String> getCommonPrefixes() {
-    return commonPrefixes;
+    if (commonPrefixes == null) {
+      return ImmutableList.of();
+    }
+    return commonPrefixes.stream()
+        .map(h -> h.prefix)
+        .collect(ImmutableList.toImmutableList());
   }
 
   @Override
@@ -215,7 +247,7 @@ public final class ListMultipartUploadsResponse {
     ListMultipartUploadsResponse that = (ListMultipartUploadsResponse) o;
     return isTruncated == that.isTruncated
         && maxUploads == that.maxUploads
-        && Objects.equals(uploads, that.uploads)
+        && Objects.equals(getUploads(), that.getUploads())
         && Objects.equals(bucket, that.bucket)
         && Objects.equals(delimiter, that.delimiter)
         && Objects.equals(encodingType, that.encodingType)
@@ -224,13 +256,13 @@ public final class ListMultipartUploadsResponse {
         && Objects.equals(nextKeyMarker, that.nextKeyMarker)
         && Objects.equals(nextUploadIdMarker, that.nextUploadIdMarker)
         && Objects.equals(prefix, that.prefix)
-        && Objects.equals(commonPrefixes, that.commonPrefixes);
+        && Objects.equals(getCommonPrefixes(), that.getCommonPrefixes());
   }
 
   @Override
   public int hashCode() {
     return Objects.hash(
-        uploads,
+        getUploads(),
         bucket,
         delimiter,
         encodingType,
@@ -241,13 +273,13 @@ public final class ListMultipartUploadsResponse {
         maxUploads,
         prefix,
         isTruncated,
-        commonPrefixes);
+        getCommonPrefixes());
   }
 
   @Override
   public String toString() {
     return "ListMultipartUploadsResponse{" +
-        "uploads=" + uploads +
+        "uploads=" + getUploads() +
         ", bucket='" + bucket + "'" +
         ", delimiter='" + delimiter + "'" +
         ", encodingType='" + encodingType + "'" +
@@ -258,7 +290,7 @@ public final class ListMultipartUploadsResponse {
         ", maxUploads=" + maxUploads +
         ", prefix='" + prefix + "'" +
         ", isTruncated=" + isTruncated +
-        ", commonPrefixes=" + commonPrefixes +
+        ", commonPrefixes=" + getCommonPrefixes() +
         '}';
   }
 
@@ -273,11 +305,11 @@ public final class ListMultipartUploadsResponse {
     return new Builder();
   }
 
-  /**
-   * A builder for {@link ListMultipartUploadsResponse}.
-   *
-   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
-   */
+  public static class CommonPrefixHelper {
+    @JacksonXmlProperty(localName = "Prefix")
+    public String prefix;
+  }
+
   @BetaApi
   public static final class Builder {
     private ImmutableList<MultipartUpload> uploads;

@@ -38,8 +38,11 @@ import com.google.cloud.storage.multipartupload.model.CompletedMultipartUpload;
 import com.google.cloud.storage.multipartupload.model.CompletedPart;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadRequest;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadResponse;
+import com.google.cloud.storage.multipartupload.model.ListMultipartUploadsRequest;
+import com.google.cloud.storage.multipartupload.model.ListMultipartUploadsResponse;
 import com.google.cloud.storage.multipartupload.model.ListPartsRequest;
 import com.google.cloud.storage.multipartupload.model.ListPartsResponse;
+import com.google.cloud.storage.multipartupload.model.MultipartUpload;
 import com.google.cloud.storage.multipartupload.model.ObjectLockMode;
 import com.google.cloud.storage.multipartupload.model.Part;
 import com.google.cloud.storage.multipartupload.model.UploadPartRequest;
@@ -840,4 +843,86 @@ public final class ITMultipartUploadHttpRequestManagerTest {
                   endpoint, request, RewindableContent.empty()));
     }
   }
+
+@Test
+public void sendListMultipartUploadsRequest_success() throws Exception {
+  String mockXmlResponse = 
+      "<ListMultipartUploadsResult>" +
+      "  <Bucket>test-bucket</Bucket>" +
+      "  <KeyMarker>key-marker</KeyMarker>" +
+      "  <UploadIdMarker>upload-id-marker</UploadIdMarker>" +
+      "  <NextKeyMarker>next-key-marker</NextKeyMarker>" +
+      "  <NextUploadIdMarker>next-upload-id-marker</NextUploadIdMarker>" +
+      "  <MaxUploads>1</MaxUploads>" +
+      "  <IsTruncated>false</IsTruncated>" +
+      "  <Upload>" +
+      "    <Key>test-key</Key>" +
+      "    <UploadId>test-upload-id</UploadId>" +
+      "    <StorageClass>STANDARD</StorageClass>" +
+      "    <Initiated>2025-11-11T00:00:00Z</Initiated>" +
+      "  </Upload>" +
+      "</ListMultipartUploadsResult>";
+
+  HttpRequestHandler handler =
+      req -> {
+        ByteBuf buf = Unpooled.wrappedBuffer(mockXmlResponse.getBytes(StandardCharsets.UTF_8));
+
+        DefaultFullHttpResponse resp =
+            new DefaultFullHttpResponse(req.protocolVersion(), OK, buf);
+        
+        resp.headers().set("Content-Type", "application/xml; charset=utf-8");
+        resp.headers().set("Content-Length", resp.content().readableBytes());
+        return resp;
+      };
+
+  try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
+    URI endpoint = URI.create(fakeHttpServer.getEndpoint() + "/");
+    
+    ListMultipartUploadsRequest request =
+        ListMultipartUploadsRequest.builder()
+            .bucket("test-bucket")
+            .maxUploads(1)
+            .keyMarker("key-marker")
+            .uploadIdMarker("upload-id-marker")
+            .build();
+
+    ListMultipartUploadsResponse response =
+        multipartUploadHttpRequestManager.sendListMultipartUploadsRequest(endpoint, request);
+
+    assertThat(response).isNotNull();
+    assertThat(response.getBucket()).isEqualTo("test-bucket");
+    assertThat(response.getUploads()).hasSize(1);
+    
+    MultipartUpload upload = response.getUploads().get(0);
+    assertThat(upload.getKey()).isEqualTo("test-key");
+    assertThat(upload.getStorageClass()).isEqualTo(StorageClass.STANDARD);
+    assertThat(upload.getInitiated())
+        .isEqualTo(OffsetDateTime.of(2025, 11, 11, 0, 0, 0, 0, ZoneOffset.UTC));
+  }
+}
+
+ @Test
+ public void sendListMultipartUploadsRequest_error() throws Exception {
+ HttpRequestHandler handler =
+ req -> {
+    FullHttpResponse resp =
+        new DefaultFullHttpResponse(req.protocolVersion(), HttpResponseStatus.BAD_REQUEST);
+    resp.headers().set(CONTENT_TYPE, "text/plain; charset=utf-8");
+    return resp;
+ };
+
+ try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
+    URI endpoint = URI.create(fakeHttpServer.getEndpoint() + "/");
+    ListMultipartUploadsRequest request =
+        ListMultipartUploadsRequest.builder()
+            .bucket("test-bucket")
+            .build();
+
+    assertThrows(
+        HttpResponseException.class,
+        () ->
+            multipartUploadHttpRequestManager.sendListMultipartUploadsRequest(
+                endpoint, request));
+ }
+ }
 }
