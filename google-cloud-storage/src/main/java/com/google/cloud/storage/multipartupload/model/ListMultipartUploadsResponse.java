@@ -111,11 +111,23 @@ public final class ListMultipartUploadsResponse {
     }
   }
 
+   /**
+   * The list of multipart uploads.
+   *
+   * @return The list of multipart uploads.
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+   */
   @BetaApi
   public ImmutableList<MultipartUpload> getUploads() {
     return uploads == null ? ImmutableList.of() : ImmutableList.copyOf(uploads);
   }
 
+  /**
+   * The bucket that contains the multipart uploads.
+   *
+   * @return The bucket name.
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+   */
   @BetaApi
   public String getBucket() {
     return bucket;
@@ -310,6 +322,12 @@ public final class ListMultipartUploadsResponse {
     public String prefix;
   }
 
+
+  /**
+   * A builder for {@link ListMultipartUploadsResponse}.
+   *
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+   */
   @BetaApi
   public static final class Builder {
     private ImmutableList<MultipartUpload> uploads;
