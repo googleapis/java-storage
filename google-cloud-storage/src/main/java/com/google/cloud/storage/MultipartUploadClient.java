@@ -107,7 +107,7 @@ public abstract class MultipartUploadClient {
    *
    * @param request The request object containing the details for listing the multipart uploads.
    * @return A {@link ListMultipartUploadsResponse} object containing the list of multipart uploads.
-   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.61.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
   public abstract ListMultipartUploadsResponse listMultipartUploads(
