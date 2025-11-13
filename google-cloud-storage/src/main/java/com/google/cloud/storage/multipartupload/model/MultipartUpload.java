@@ -118,18 +118,19 @@ public final class MultipartUpload {
 
   @Override
   public String toString() {
-    return "MultipartUpload{"
-        + "key='"
-        + key
-        + '\''
-        + ", uploadId='"
-        + uploadId
-        + '\''
-        + ", storageClass="
-        + storageClass
-        + ", initiated="
-        + initiated
-        + "}";
+    return new StringBuilder("MultipartUpload{")
+        .append("key='")
+        .append(key)
+        .append('\'')
+        .append(", uploadId='")
+        .append(uploadId)
+        .append('\'')
+        .append(", storageClass=")
+        .append(storageClass)
+        .append(", initiated=")
+        .append(initiated)
+        .append('}')
+        .toString();
   }
 
   /**
