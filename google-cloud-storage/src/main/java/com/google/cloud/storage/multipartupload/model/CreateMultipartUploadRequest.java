@@ -36,24 +36,34 @@ public final class CreateMultipartUploadRequest {
   private final String key;
   private final PredefinedAcl cannedAcl;
   private final String contentType;
+  private final String contentDisposition;
+  private final String contentEncoding;
+  private final String contentLanguage;
+  private final String cacheControl;
   private final Map<String, String> metadata;
   private final StorageClass storageClass;
   private final OffsetDateTime customTime;
   private final String kmsKeyName;
   private final ObjectLockMode objectLockMode;
   private final OffsetDateTime objectLockRetainUntilDate;
+  private final String userProject;
 
   private CreateMultipartUploadRequest(Builder builder) {
     this.bucket = builder.bucket;
     this.key = builder.key;
     this.cannedAcl = builder.cannedAcl;
     this.contentType = builder.contentType;
+    this.contentDisposition = builder.contentDisposition;
+    this.contentEncoding = builder.contentEncoding;
+    this.contentLanguage = builder.contentLanguage;
+    this.cacheControl = builder.cacheControl;
     this.metadata = builder.metadata;
     this.storageClass = builder.storageClass;
     this.customTime = builder.customTime;
     this.kmsKeyName = builder.kmsKeyName;
     this.objectLockMode = builder.objectLockMode;
     this.objectLockRetainUntilDate = builder.objectLockRetainUntilDate;
+    this.userProject = builder.userProject;
   }
 
   /**
@@ -99,6 +109,51 @@ public final class CreateMultipartUploadRequest {
   @BetaApi
   public String getContentType() {
     return contentType;
+  }
+
+  /**
+   * Returns the presentational information about how the object data is to be transmitted.
+   *
+   * @return The Content-Disposition
+   * @since 2.61.0 This new api is in preview and is subject to breaking changes.
+   */
+  @BetaApi
+  public String getContentDisposition() {
+    return contentDisposition;
+  }
+
+  /**
+   * Returns the compression algorithm that was used to compress the data being uploaded.
+   *
+   * @return The Content-Encoding
+   * @since 2.61.0 This new api is in preview and is subject to breaking changes.
+   */
+  @BetaApi
+  public String getContentEncoding() {
+    return contentEncoding;
+  }
+
+  /**
+   * Returns the language code of the content.
+   *
+   * @return The Content-Language
+   * @since 2.61.0 This new api is in preview and is subject to breaking changes.
+   */
+  @BetaApi
+  public String getContentLanguage() {
+    return contentLanguage;
+  }
+
+  /**
+   * Returns the conditions under which the resulting object should be cached if it is publicly
+   * accessible.
+   *
+   * @return The Cache-Control
+   * @since 2.61.0 This new api is in preview and is subject to breaking changes.
+   */
+  @BetaApi
+  public String getCacheControl() {
+    return cacheControl;
   }
 
   /**
@@ -167,6 +222,16 @@ public final class CreateMultipartUploadRequest {
     return objectLockRetainUntilDate;
   }
 
+  /**
+   * Returns the project to be billed for charges associated with this request.
+   *
+   * @return The user project
+   * @since 2.61.0 This new api is in preview and is subject to breaking changes.
+   */
+  public String getUserProject() {
+    return userProject;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -180,12 +245,17 @@ public final class CreateMultipartUploadRequest {
         && Objects.equals(key, that.key)
         && cannedAcl == that.cannedAcl
         && Objects.equals(contentType, that.contentType)
+        && Objects.equals(contentDisposition, that.contentDisposition)
+        && Objects.equals(contentEncoding, that.contentEncoding)
+        && Objects.equals(contentLanguage, that.contentLanguage)
+        && Objects.equals(cacheControl, that.cacheControl)
         && Objects.equals(metadata, that.metadata)
         && Objects.equals(storageClass, that.storageClass)
         && Objects.equals(customTime, that.customTime)
         && Objects.equals(kmsKeyName, that.kmsKeyName)
         && objectLockMode == that.objectLockMode
-        && Objects.equals(objectLockRetainUntilDate, that.objectLockRetainUntilDate);
+        && Objects.equals(objectLockRetainUntilDate, that.objectLockRetainUntilDate)
+        && Objects.equals(userProject, that.userProject);
   }
 
   @Override
@@ -195,12 +265,17 @@ public final class CreateMultipartUploadRequest {
         key,
         cannedAcl,
         contentType,
+        contentDisposition,
+        contentEncoding,
+        contentLanguage,
+        cacheControl,
         metadata,
         storageClass,
         customTime,
         kmsKeyName,
         objectLockMode,
-        objectLockRetainUntilDate);
+        objectLockRetainUntilDate,
+        userProject);
   }
 
   @Override
@@ -210,12 +285,17 @@ public final class CreateMultipartUploadRequest {
         .add("key", key)
         .add("cannedAcl", cannedAcl)
         .add("contentType", contentType)
+        .add("contentDisposition", contentDisposition)
+        .add("contentEncoding", contentEncoding)
+        .add("contentLanguage", contentLanguage)
+        .add("cacheControl", cacheControl)
         .add("metadata", metadata)
         .add("storageClass", storageClass)
         .add("customTime", customTime)
         .add("kmsKeyName", kmsKeyName)
         .add("objectLockMode", objectLockMode)
         .add("objectLockRetainUntilDate", objectLockRetainUntilDate)
+        .add("userProject", userProject)
         .toString();
   }
 
@@ -241,12 +321,17 @@ public final class CreateMultipartUploadRequest {
     private String key;
     private PredefinedAcl cannedAcl;
     private String contentType;
+    private String contentDisposition;
+    private String contentEncoding;
+    private String contentLanguage;
+    private String cacheControl;
     private Map<String, String> metadata;
     private StorageClass storageClass;
     private OffsetDateTime customTime;
     private String kmsKeyName;
     private ObjectLockMode objectLockMode;
     private OffsetDateTime objectLockRetainUntilDate;
+    private String userProject;
 
     private Builder() {}
 
@@ -300,6 +385,58 @@ public final class CreateMultipartUploadRequest {
     @BetaApi
     public Builder contentType(String contentType) {
       this.contentType = contentType;
+      return this;
+    }
+
+    /**
+     * Specifies presentational information about the object data.
+     *
+     * @param contentDisposition The content disposition for the object.
+     * @return this builder
+     * @since 2.61.0 This new api is in preview and is subject to breaking changes.
+     */
+    @BetaApi
+    public Builder contentDisposition(String contentDisposition) {
+      this.contentDisposition = contentDisposition;
+      return this;
+    }
+
+    /**
+     * Specifies the compression algorithm that was used to compress the object data.
+     *
+     * @param contentEncoding The content encoding for the object.
+     * @return this builder
+     * @since 2.61.0 This new api is in preview and is subject to breaking changes.
+     */
+    @BetaApi
+    public Builder contentEncoding(String contentEncoding) {
+      this.contentEncoding = contentEncoding;
+      return this;
+    }
+
+    /**
+     * Specifies the language of the object's content.
+     *
+     * @param contentLanguage The content language for the object.
+     * @return this builder
+     * @since 2.61.0 This new api is in preview and is subject to breaking changes.
+     */
+    @BetaApi
+    public Builder contentLanguage(String contentLanguage) {
+      this.contentLanguage = contentLanguage;
+      return this;
+    }
+
+    /**
+     * Specifies the caching behavior for the object when it is publicly accessible.
+     *
+     * @param cacheControl The cache control settings for the object.
+     * @return this builder
+     * @since 2.61.0 This new api is in preview and is subject to breaking changes.
+     */
+    @BetaApi
+    public Builder cacheControl(String cacheControl) {
+      this.cacheControl = cacheControl;
       return this;
     }
 
@@ -382,6 +519,19 @@ public final class CreateMultipartUploadRequest {
     @BetaApi
     public Builder objectLockRetainUntilDate(OffsetDateTime objectLockRetainUntilDate) {
       this.objectLockRetainUntilDate = objectLockRetainUntilDate;
+      return this;
+    }
+
+    /**
+     * Specifies the project to be billed for this request.
+     *
+     * @param userProject The project ID to bill for this request.
+     * @return this builder
+     * @since 2.61.0 This new api is in preview and is subject to breaking changes.
+     */
+    @BetaApi
+    public Builder userProject(String userProject) {
+      this.userProject = userProject;
       return this;
     }
 

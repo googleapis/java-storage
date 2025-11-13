@@ -224,6 +224,18 @@ final class MultipartUploadHttpRequestManager {
     if (request.getContentType() != null) {
       headers.put("Content-Type", request.getContentType());
     }
+    if (request.getContentDisposition() != null) {
+      headers.put("Content-Disposition", request.getContentDisposition());
+    }
+    if (request.getContentEncoding() != null) {
+      headers.put("Content-Encoding", request.getContentEncoding());
+    }
+    if (request.getContentLanguage() != null) {
+      headers.put("Content-Language", request.getContentLanguage());
+    }
+    if (request.getCacheControl() != null) {
+      headers.put("Cache-Control", request.getCacheControl());
+    }
     if (request.getStorageClass() != null) {
       headers.put("x-goog-storage-class", request.getStorageClass().toString());
     }
@@ -241,6 +253,9 @@ final class MultipartUploadHttpRequestManager {
     if (request.getCustomTime() != null) {
       headers.put(
           "x-goog-custom-time", Utils.offsetDateTimeRfc3339Codec.encode(request.getCustomTime()));
+    }
+    if (request.getUserProject() != null) {
+      headers.put("x-goog-user-project", request.getUserProject());
     }
   }
 
