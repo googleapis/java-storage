@@ -24,7 +24,6 @@ import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage.BlobTargetOption;
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -37,7 +36,7 @@ public class DownloadBytesRangeTest extends TestBase {
   @Rule public final TemporaryFolder tmp = new TemporaryFolder();
 
   @Test
-  public void testDownloadByteRange() throws IOException {
+  public void testDownloadByteRange() throws Exception {
     byte[] bytes = { // 18 elements per row
       'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r',
       's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',

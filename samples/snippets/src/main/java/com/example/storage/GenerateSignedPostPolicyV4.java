@@ -37,7 +37,7 @@ public class GenerateSignedPostPolicyV4 {
    * Storage.generateSignedPostPolicyV4 for more details.
    */
   public static void generateSignedPostPolicyV4(
-      String projectId, String bucketName, String blobName) {
+      String projectId, String bucketName, String blobName) throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
@@ -47,37 +47,39 @@ public class GenerateSignedPostPolicyV4 {
     // The name to give the object uploaded to GCS
     // String blobName = "your-object-name"
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    StorageOptions storageOptions = StorageOptions.newBuilder().setProjectId(projectId).build();
+    try (Storage storage = storageOptions.getService()) {
 
-    PostPolicyV4.PostFieldsV4 fields =
-        PostPolicyV4.PostFieldsV4.newBuilder().setCustomMetadataField("test", "data").build();
+      PostPolicyV4.PostFieldsV4 fields =
+          PostPolicyV4.PostFieldsV4.newBuilder().setCustomMetadataField("test", "data").build();
 
-    PostPolicyV4 policy =
-        storage.generateSignedPostPolicyV4(
-            BlobInfo.newBuilder(bucketName, blobName).build(), 10, TimeUnit.MINUTES, fields);
+      PostPolicyV4 policy =
+          storage.generateSignedPostPolicyV4(
+              BlobInfo.newBuilder(bucketName, blobName).build(), 10, TimeUnit.MINUTES, fields);
 
-    StringBuilder htmlForm =
-        new StringBuilder(
-            "<form action='"
-                + policy.getUrl()
-                + "' method='POST' enctype='multipart/form-data'>\n");
-    for (Map.Entry<String, String> entry : policy.getFields().entrySet()) {
-      htmlForm.append(
-          "  <input name='"
-              + entry.getKey()
-              + "' value='"
-              + entry.getValue()
-              + "' type='hidden' />\n");
+      StringBuilder htmlForm =
+          new StringBuilder(
+              "<form action='"
+                  + policy.getUrl()
+                  + "' method='POST' enctype='multipart/form-data'>\n");
+      for (Map.Entry<String, String> entry : policy.getFields().entrySet()) {
+        htmlForm.append(
+            "  <input name='"
+                + entry.getKey()
+                + "' value='"
+                + entry.getValue()
+                + "' type='hidden' />\n");
+      }
+      htmlForm.append("  <input type='file' name='file'/><br />\n");
+      htmlForm.append("  <input type='submit' value='Upload File'/><br />\n");
+      htmlForm.append("</form>\n");
+
+      System.out.println(
+          "You can use the following HTML form to upload an object to bucket "
+              + bucketName
+              + " for the next ten minutes:");
+      System.out.println(htmlForm.toString());
     }
-    htmlForm.append("  <input type='file' name='file'/><br />\n");
-    htmlForm.append("  <input type='submit' value='Upload File'/><br />\n");
-    htmlForm.append("</form>\n");
-
-    System.out.println(
-        "You can use the following HTML form to upload an object to bucket "
-            + bucketName
-            + " for the next ten minutes:");
-    System.out.println(htmlForm.toString());
   }
 }
 // [END storage_generate_signed_post_policy_v4]

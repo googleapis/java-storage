@@ -29,7 +29,6 @@ import com.google.cloud.storage.Storage.BlobTargetOption;
 import com.google.cloud.storage.TmpFile;
 import com.google.cloud.storage.it.TemporaryBucket;
 import com.google.common.collect.ImmutableList;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Stream;
@@ -119,7 +118,7 @@ public class ITTransferManagerSamples extends TestBase {
   }
 
   @Test
-  public void uploadAllowPCU() throws IOException {
+  public void uploadAllowPCU() throws Exception {
     Path baseDir = uploadDirectory.getRoot().toPath();
     try (TmpFile file1 = DataGenerator.base64Characters().tempFile(baseDir, 313 * 1024 * 1024)) {
       AllowParallelCompositeUpload.parallelCompositeUploadAllowed(
