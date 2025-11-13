@@ -139,7 +139,7 @@ final class MultipartUploadHttpRequestManager {
     String listUri =
         UriTemplate.expand(
             uri.toString()
-                + "{bucket}?uploads{delimiter,encoding-type,key-marker,max-uploads,prefix,upload-id-marker}",
+                + "{bucket}?uploads{&delimiter,encoding-type,key-marker,max-uploads,prefix,upload-id-marker}",
             params.build(),
             false);
     System.out.println(listUri);
