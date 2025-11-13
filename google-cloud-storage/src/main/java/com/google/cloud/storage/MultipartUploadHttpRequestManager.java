@@ -166,7 +166,11 @@ final class MultipartUploadHttpRequestManager {
     HttpRequest httpRequest =
         requestFactory.buildPutRequest(new GenericUrl(uploadUri), rewindableContent);
     httpRequest.getHeaders().putAll(headerProvider.getHeaders());
-    addChecksumHeader(rewindableContent.getCrc32c(), httpRequest.getHeaders());
+    if (request.getCrc32c() != null) {
+      addChecksumHeader(request.getCrc32c(), httpRequest.getHeaders());
+    } else {
+      addChecksumHeader(rewindableContent.getCrc32c(), httpRequest.getHeaders());
+    }
     httpRequest.setThrowExceptionOnExecuteError(true);
     return ChecksumResponseParser.parseUploadResponse(httpRequest.execute());
   }
@@ -195,7 +199,13 @@ final class MultipartUploadHttpRequestManager {
 
   private void addChecksumHeader(@Nullable Crc32cLengthKnown crc32c, HttpHeaders headers) {
     if (crc32c != null) {
-      headers.put("x-goog-hash", "crc32c=" + Utils.crc32cCodec.encode(crc32c.getValue()));
+      addChecksumHeader(Utils.crc32cCodec.encode(crc32c.getValue()), headers);
+    }
+  }
+
+  private void addChecksumHeader(@Nullable String crc32c, HttpHeaders headers) {
+    if (crc32c != null) {
+      headers.put("x-goog-hash", "crc32c=" + crc32c);
     }
   }
 
