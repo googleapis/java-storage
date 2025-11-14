@@ -396,6 +396,173 @@ public final class ITMultipartUploadHttpRequestManagerTest {
   }
 
   @Test
+  public void sendCreateMultipartUploadRequest_withContentDisposition() throws Exception {
+    HttpRequestHandler handler =
+        req -> {
+          assertThat(req.headers().get("Content-Disposition"))
+              .isEqualTo("attachment; filename=\"test.txt\"");
+          CreateMultipartUploadResponse response =
+              CreateMultipartUploadResponse.builder()
+                  .bucket("test-bucket")
+                  .key("test-key")
+                  .uploadId("test-upload-id")
+                  .build();
+          ByteBuf buf = Unpooled.wrappedBuffer(xmlMapper.writeValueAsBytes(response));
+
+          DefaultFullHttpResponse resp =
+              new DefaultFullHttpResponse(req.protocolVersion(), OK, buf);
+          resp.headers().set(CONTENT_TYPE, "application/xml; charset=utf-8");
+          return resp;
+        };
+
+    try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
+      URI endpoint = URI.create(fakeHttpServer.getEndpoint() + "/");
+      CreateMultipartUploadRequest request =
+          CreateMultipartUploadRequest.builder()
+              .bucket("test-bucket")
+              .key("test-key")
+              .contentType("application/octet-stream")
+              .contentDisposition("attachment; filename=\"test.txt\"")
+              .build();
+
+      multipartUploadHttpRequestManager.sendCreateMultipartUploadRequest(endpoint, request);
+    }
+  }
+
+  @Test
+  public void sendCreateMultipartUploadRequest_withContentEncoding() throws Exception {
+    HttpRequestHandler handler =
+        req -> {
+          assertThat(req.headers().get("Content-Encoding")).isEqualTo("gzip");
+          CreateMultipartUploadResponse response =
+              CreateMultipartUploadResponse.builder()
+                  .bucket("test-bucket")
+                  .key("test-key")
+                  .uploadId("test-upload-id")
+                  .build();
+          ByteBuf buf = Unpooled.wrappedBuffer(xmlMapper.writeValueAsBytes(response));
+
+          DefaultFullHttpResponse resp =
+              new DefaultFullHttpResponse(req.protocolVersion(), OK, buf);
+          resp.headers().set(CONTENT_TYPE, "application/xml; charset=utf-8");
+          return resp;
+        };
+
+    try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
+      URI endpoint = URI.create(fakeHttpServer.getEndpoint() + "/");
+      CreateMultipartUploadRequest request =
+          CreateMultipartUploadRequest.builder()
+              .bucket("test-bucket")
+              .key("test-key")
+              .contentType("application/octet-stream")
+              .contentEncoding("gzip")
+              .build();
+
+      multipartUploadHttpRequestManager.sendCreateMultipartUploadRequest(endpoint, request);
+    }
+  }
+
+  @Test
+  public void sendCreateMultipartUploadRequest_withContentLanguage() throws Exception {
+    HttpRequestHandler handler =
+        req -> {
+          assertThat(req.headers().get("Content-Language")).isEqualTo("en");
+          CreateMultipartUploadResponse response =
+              CreateMultipartUploadResponse.builder()
+                  .bucket("test-bucket")
+                  .key("test-key")
+                  .uploadId("test-upload-id")
+                  .build();
+          ByteBuf buf = Unpooled.wrappedBuffer(xmlMapper.writeValueAsBytes(response));
+
+          DefaultFullHttpResponse resp =
+              new DefaultFullHttpResponse(req.protocolVersion(), OK, buf);
+          resp.headers().set(CONTENT_TYPE, "application/xml; charset=utf-8");
+          return resp;
+        };
+
+    try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
+      URI endpoint = URI.create(fakeHttpServer.getEndpoint() + "/");
+      CreateMultipartUploadRequest request =
+          CreateMultipartUploadRequest.builder()
+              .bucket("test-bucket")
+              .key("test-key")
+              .contentType("application/octet-stream")
+              .contentLanguage("en")
+              .build();
+
+      multipartUploadHttpRequestManager.sendCreateMultipartUploadRequest(endpoint, request);
+    }
+  }
+
+  @Test
+  public void sendCreateMultipartUploadRequest_withCacheControl() throws Exception {
+    HttpRequestHandler handler =
+        req -> {
+          assertThat(req.headers().get("Cache-Control"))
+              .isEqualTo("no-cache, no-store, max-age=0, must-revalidate");
+          CreateMultipartUploadResponse response =
+              CreateMultipartUploadResponse.builder()
+                  .bucket("test-bucket")
+                  .key("test-key")
+                  .uploadId("test-upload-id")
+                  .build();
+          ByteBuf buf = Unpooled.wrappedBuffer(xmlMapper.writeValueAsBytes(response));
+
+          DefaultFullHttpResponse resp =
+              new DefaultFullHttpResponse(req.protocolVersion(), OK, buf);
+          resp.headers().set(CONTENT_TYPE, "application/xml; charset=utf-8");
+          return resp;
+        };
+
+    try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
+      URI endpoint = URI.create(fakeHttpServer.getEndpoint() + "/");
+      CreateMultipartUploadRequest request =
+          CreateMultipartUploadRequest.builder()
+              .bucket("test-bucket")
+              .key("test-key")
+              .contentType("application/octet-stream")
+              .cacheControl("no-cache, no-store, max-age=0, must-revalidate")
+              .build();
+
+      multipartUploadHttpRequestManager.sendCreateMultipartUploadRequest(endpoint, request);
+    }
+  }
+
+  @Test
+  public void sendCreateMultipartUploadRequest_withUserProject() throws Exception {
+    HttpRequestHandler handler =
+        req -> {
+          assertThat(req.headers().get("x-goog-user-project")).isEqualTo("test-project");
+          CreateMultipartUploadResponse response =
+              CreateMultipartUploadResponse.builder()
+                  .bucket("test-bucket")
+                  .key("test-key")
+                  .uploadId("test-upload-id")
+                  .build();
+          ByteBuf buf = Unpooled.wrappedBuffer(xmlMapper.writeValueAsBytes(response));
+
+          DefaultFullHttpResponse resp =
+              new DefaultFullHttpResponse(req.protocolVersion(), OK, buf);
+          resp.headers().set(CONTENT_TYPE, "application/xml; charset=utf-8");
+          return resp;
+        };
+
+    try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
+      URI endpoint = URI.create(fakeHttpServer.getEndpoint() + "/");
+      CreateMultipartUploadRequest request =
+          CreateMultipartUploadRequest.builder()
+              .bucket("test-bucket")
+              .key("test-key")
+              .contentType("application/octet-stream")
+              .userProject("test-project")
+              .build();
+
+      multipartUploadHttpRequestManager.sendCreateMultipartUploadRequest(endpoint, request);
+    }
+  }
+
+  @Test
   public void sendListPartsRequest_success() throws Exception {
     HttpRequestHandler handler =
         req -> {
