@@ -316,7 +316,7 @@ public final class ListMultipartUploadsResponse {
     return new Builder();
   }
 
-  public static class CommonPrefixHelper {
+  static class CommonPrefixHelper {
     @JacksonXmlProperty(localName = "Prefix")
     public String prefix;
   }
