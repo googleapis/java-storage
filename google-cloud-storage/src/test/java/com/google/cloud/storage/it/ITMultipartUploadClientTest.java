@@ -265,15 +265,15 @@ public final class ITMultipartUploadClientTest {
             .crc32c(content.getCrc32cBase64())
             .build();
     UploadPartResponse response =
-    multipartUploadClient.uploadPart(request, RequestBody.of(content.asByteBuffer()));
+        multipartUploadClient.uploadPart(request, RequestBody.of(content.asByteBuffer()));
     assertThat(response).isNotNull();
     assertThat(response.eTag()).isNotNull();
 
     abortMultipartUpload(info, uploadId);
- }
+  }
 
- @Test
- public void testUploadPart_withCustomChecksum_fail() throws IOException {
+  @Test
+  public void testUploadPart_withCustomChecksum_fail() throws IOException {
     BlobInfo info = BlobInfo.newBuilder(bucket, generator.randomObjectName()).build();
     CreateMultipartUploadResponse createResponse = createMultipartUpload(info);
     String uploadId = createResponse.uploadId();
@@ -293,7 +293,8 @@ public final class ITMultipartUploadClientTest {
       multipartUploadClient.uploadPart(request, RequestBody.of(content.asByteBuffer()));
       fail("Expected StorageException");
     } catch (StorageException e) {
-      assertThat(e.getMessage()).contains("The CRC32C you specified did not match what we computed.");
+      assertThat(e.getMessage())
+          .contains("The CRC32C you specified did not match what we computed.");
     } finally {
       abortMultipartUpload(info, uploadId);
     }
