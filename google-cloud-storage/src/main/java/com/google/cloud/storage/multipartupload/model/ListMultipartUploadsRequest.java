@@ -17,6 +17,7 @@
 package com.google.cloud.storage.multipartupload.model;
 
 import com.google.api.core.BetaApi;
+import com.google.common.base.MoreObjects;
 import java.util.Objects;
 
 /**
@@ -159,16 +160,15 @@ public final class ListMultipartUploadsRequest {
 
   @Override
   public String toString() {
-    StringBuilder sb = new StringBuilder("ListMultipartUploadsRequest{");
-    sb.append("bucket='").append(bucket).append("'");
-    sb.append(", delimiter='").append(delimiter).append("'");
-    sb.append(", encodingType='").append(encodingType).append(",");
-    sb.append(", keyMarker='").append(keyMarker).append(",");
-    sb.append(", maxUploads=").append(maxUploads);
-    sb.append(", prefix='").append(prefix).append(",");
-    sb.append(", uploadIdMarker='").append(uploadIdMarker).append(",");
-    sb.append('}');
-    return sb.toString();
+    return MoreObjects.toStringHelper(this)
+        .add("bucket", bucket)
+        .add("delimiter", delimiter)
+        .add("encodingType", encodingType)
+        .add("keyMarker", keyMarker)
+        .add("maxUploads", maxUploads)
+        .add("prefix", prefix)
+        .add("uploadIdMarker", uploadIdMarker)
+        .toString();
   }
 
   /**

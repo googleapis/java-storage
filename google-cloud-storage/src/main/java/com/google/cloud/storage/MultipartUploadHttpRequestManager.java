@@ -142,7 +142,6 @@ final class MultipartUploadHttpRequestManager {
                 + "{bucket}?uploads{&delimiter,encoding-type,key-marker,max-uploads,prefix,upload-id-marker}",
             params.build(),
             false);
-    System.out.println(listUri);
     HttpRequest httpRequest = requestFactory.buildGetRequest(new GenericUrl(listUri));
     httpRequest.getHeaders().putAll(headerProvider.getHeaders());
     httpRequest.setParser(objectParser);

@@ -19,6 +19,7 @@ package com.google.cloud.storage.multipartupload.model;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.google.api.core.BetaApi;
 import com.google.cloud.storage.StorageClass;
+import com.google.common.base.MoreObjects;
 import java.time.OffsetDateTime;
 import java.util.Objects;
 
@@ -118,18 +119,11 @@ public final class MultipartUpload {
 
   @Override
   public String toString() {
-    return new StringBuilder("MultipartUpload{")
-        .append("key='")
-        .append(key)
-        .append('\'')
-        .append(", uploadId='")
-        .append(uploadId)
-        .append('\'')
-        .append(", storageClass=")
-        .append(storageClass)
-        .append(", initiated=")
-        .append(initiated)
-        .append('}')
+    return MoreObjects.toStringHelper(this)
+        .add("key", key)
+        .add("uploadId", uploadId)
+        .add("storageClass", storageClass)
+        .add("initiated", initiated)
         .toString();
   }
 

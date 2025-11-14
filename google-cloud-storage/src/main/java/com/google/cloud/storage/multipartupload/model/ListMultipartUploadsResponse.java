@@ -20,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.google.api.core.BetaApi;
+import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.List;
@@ -288,40 +289,20 @@ public final class ListMultipartUploadsResponse {
 
   @Override
   public String toString() {
-    return "ListMultipartUploadsResponse{"
-        + "uploads="
-        + getUploads()
-        + ", bucket='"
-        + bucket
-        + "'"
-        + ", delimiter='"
-        + delimiter
-        + "'"
-        + ", encodingType='"
-        + encodingType
-        + "'"
-        + ", keyMarker='"
-        + keyMarker
-        + "'"
-        + ", uploadIdMarker='"
-        + uploadIdMarker
-        + "'"
-        + ", nextKeyMarker='"
-        + nextKeyMarker
-        + "'"
-        + ", nextUploadIdMarker='"
-        + nextUploadIdMarker
-        + "'"
-        + ", maxUploads="
-        + maxUploads
-        + ", prefix='"
-        + prefix
-        + "'"
-        + ", isTruncated="
-        + isTruncated
-        + ", commonPrefixes="
-        + getCommonPrefixes()
-        + '}';
+    return MoreObjects.toStringHelper(this)
+        .add("uploads", getUploads())
+        .add("bucket", bucket)
+        .add("delimiter", delimiter)
+        .add("encodingType", encodingType)
+        .add("keyMarker", keyMarker)
+        .add("uploadIdMarker", uploadIdMarker)
+        .add("nextKeyMarker", nextKeyMarker)
+        .add("nextUploadIdMarker", nextUploadIdMarker)
+        .add("maxUploads", maxUploads)
+        .add("prefix", prefix)
+        .add("isTruncated", isTruncated)
+        .add("commonPrefixes", getCommonPrefixes())
+        .toString();
   }
 
   /**
