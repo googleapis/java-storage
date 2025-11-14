@@ -22,19 +22,25 @@ import com.google.cloud.storage.multipartupload.model.UploadPartResponse;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
-/** A utility class to parse {@link HttpResponse} and create a {@link UploadPartResponse}. */
+/** A utility class to parse checksums from an {@link HttpResponse}. */
 final class ChecksumResponseParser {
+
+  private static final String X_GOOG_HASH = "x-goog-hash";
 
   private ChecksumResponseParser() {}
 
   static UploadPartResponse parseUploadResponse(HttpResponse response) {
     String eTag = response.getHeaders().getETag();
     Map<String, String> hashes = extractHashesFromHeader(response);
-    return UploadPartResponse.builder().eTag(eTag).md5(hashes.get("md5")).build();
+    return UploadPartResponse.builder()
+        .eTag(eTag)
+        .md5(hashes.get("md5"))
+        .crc32c(hashes.get("crc32c"))
+        .build();
   }
 
   static CompleteMultipartUploadResponse parseCompleteResponse(HttpResponse response)
@@ -52,14 +58,18 @@ final class ChecksumResponseParser {
   }
 
   static Map<String, String> extractHashesFromHeader(HttpResponse response) {
-    return Optional.ofNullable(response.getHeaders().getFirstHeaderStringValue("x-goog-hash"))
-        .map(
-            h ->
-                Arrays.stream(h.split(","))
-                    .map(s -> s.trim().split("=", 2))
-                    .filter(a -> a.length == 2)
-                    .filter(a -> "crc32c".equalsIgnoreCase(a[0]) || "md5".equalsIgnoreCase(a[0]))
-                    .collect(Collectors.toMap(a -> a[0].toLowerCase(), a -> a[1], (v1, v2) -> v1)))
-        .orElse(Collections.emptyMap());
+    List<String> hashHeaders = response.getHeaders().getHeaderStringValues(X_GOOG_HASH);
+    if (hashHeaders == null || hashHeaders.isEmpty()) {
+      return Collections.emptyMap();
+    }
+
+    return hashHeaders.stream()
+        .flatMap(h -> Arrays.stream(h.split(",")))
+        .map(String::trim)
+        .filter(s -> !s.isEmpty())
+        .map(s -> s.split("=", 2))
+        .filter(a -> a.length == 2)
+        .filter(a -> "crc32c".equalsIgnoreCase(a[0]) || "md5".equalsIgnoreCase(a[0]))
+        .collect(Collectors.toMap(a -> a[0].toLowerCase(), a -> a[1], (v1, v2) -> v1));
   }
 }
