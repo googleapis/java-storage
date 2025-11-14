@@ -461,11 +461,18 @@ public class HttpStorageRpc implements StorageRpc {
               .setPrefix(Option.PREFIX.getString(options))
               .setMaxResults(Option.MAX_RESULTS.getLong(options))
               .setPageToken(Option.PAGE_TOKEN.getString(options))
+              .setReturnPartialSuccess(Option.RETURN_PARTIAL_SUCCESS.getBoolean(options))
               .setFields(Option.FIELDS.getString(options))
               .setUserProject(Option.USER_PROJECT.getString(options));
       setExtraHeaders(list, options);
-      com.google.api.services.storage.model.Buckets buckets = list.execute();
-      return Tuple.<String, Iterable<Bucket>>of(buckets.getNextPageToken(), buckets.getItems());
+      com.google.api.services.storage.model.Buckets bucketList = list.execute();
+      Iterable<Bucket> buckets =
+          Iterables.concat(
+              firstNonNull(bucketList.getItems(), ImmutableList.<Bucket>of()),
+              bucketList.getUnreachable() != null
+                  ? Lists.transform(bucketList.getUnreachable(), unreachableBucket())
+                  : ImmutableList.<Bucket>of());
+      return Tuple.<String, Iterable<Bucket>>of(bucketList.getNextPageToken(), buckets);
     } catch (IOException ex) {
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
       throw translate(ex);
@@ -528,6 +535,15 @@ public class HttpStorageRpc implements StorageRpc {
     }
 
     return firstNonNull(contentType, "application/octet-stream");
+  }
+
+  private static Function<String, Bucket> unreachableBucket() {
+    return new Function<String, Bucket>() {
+      public Bucket apply(String bucketName) {
+        return new Bucket().setName(bucketName)
+        .set("isUnreachable", "true");
+      }
+    };
   }
 
   private static Function<String, StorageObject> objectFromPrefix(final String bucket) {

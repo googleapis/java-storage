@@ -674,6 +674,9 @@ final class JsonConversions {
     ifNonNull(from.getObjectRetention(), this::objectRetentionDecode, to::setObjectRetention);
     ifNonNull(from.getSoftDeletePolicy(), this::softDeletePolicyDecode, to::setSoftDeletePolicy);
     ifNonNull(from.getIpFilter(), ipFilterCodec::decode, to::setIpFilter);
+    if(from.containsKey("isUnreachable")) {
+        to.setIsUnreachable(Boolean.TRUE);
+    }
     return to.build();
   }
 

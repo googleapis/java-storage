@@ -790,6 +790,12 @@ public class Bucket extends BucketInfo {
     }
 
     @Override
+    Builder setIsUnreachable(boolean isUnreachable) {
+        infoBuilder.setIsUnreachable(isUnreachable);
+        return this;
+    }
+
+    @Override
     public Bucket build() {
       return new Bucket(storage, infoBuilder);
     }
@@ -997,6 +1003,12 @@ public class Bucket extends BucketInfo {
       infoBuilder.clearCustomerSuppliedEncryptionEnforcementConfig();
       return this;
     }
+
+    @Override
+      Builder clearIsUnreachable() {
+      infoBuilder.clearIsUnreachable();
+      return this;
+      }
   }
 
   Bucket(Storage storage, BucketInfo.BuilderImpl infoBuilder) {
