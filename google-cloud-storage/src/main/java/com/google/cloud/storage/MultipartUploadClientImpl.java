@@ -23,6 +23,8 @@ import com.google.cloud.storage.multipartupload.model.CompleteMultipartUploadReq
 import com.google.cloud.storage.multipartupload.model.CompleteMultipartUploadResponse;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadRequest;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadResponse;
+import com.google.cloud.storage.multipartupload.model.ListMultipartUploadsRequest;
+import com.google.cloud.storage.multipartupload.model.ListMultipartUploadsResponse;
 import com.google.cloud.storage.multipartupload.model.ListPartsRequest;
 import com.google.cloud.storage.multipartupload.model.ListPartsResponse;
 import com.google.cloud.storage.multipartupload.model.UploadPartRequest;
@@ -98,6 +100,14 @@ final class MultipartUploadClientImpl extends MultipartUploadClient {
           }
           return httpRequestManager.sendUploadPartRequest(uri, request, requestBody.getContent());
         },
+        Decoder.identity());
+  }
+
+  @Override
+  public ListMultipartUploadsResponse listMultipartUploads(ListMultipartUploadsRequest request) {
+    return retrier.run(
+        retryAlgorithmManager.idempotent(),
+        () -> httpRequestManager.sendListMultipartUploadsRequest(uri, request),
         Decoder.identity());
   }
 }
