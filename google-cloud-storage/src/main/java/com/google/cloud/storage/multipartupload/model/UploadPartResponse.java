@@ -31,10 +31,12 @@ public final class UploadPartResponse {
 
   private final String eTag;
   private final String md5;
+  private final String crc32c;
 
   private UploadPartResponse(Builder builder) {
     this.eTag = builder.etag;
     this.md5 = builder.md5;
+    this.crc32c = builder.crc32c;
   }
 
   /**
@@ -59,6 +61,17 @@ public final class UploadPartResponse {
     return md5;
   }
 
+  /**
+   * Returns the CRC32C checksum of the uploaded part.
+   *
+   * @return The CRC32C checksum.
+   * @since 2.61.0 This new api is in preview and is subject to breaking changes.
+   */
+  @BetaApi
+  public String crc32c() {
+    return crc32c;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -68,17 +81,23 @@ public final class UploadPartResponse {
       return false;
     }
     UploadPartResponse that = (UploadPartResponse) o;
-    return Objects.equals(eTag, that.eTag) && Objects.equals(md5, that.md5);
+    return Objects.equals(eTag, that.eTag)
+        && Objects.equals(md5, that.md5)
+        && Objects.equals(crc32c, that.crc32c);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(eTag, md5);
+    return Objects.hash(eTag, md5, crc32c);
   }
 
   @Override
   public String toString() {
-    return MoreObjects.toStringHelper(this).add("etag", eTag).add("md5", md5).toString();
+    return MoreObjects.toStringHelper(this)
+        .add("etag", eTag)
+        .add("md5", md5)
+        .add("crc32c", crc32c)
+        .toString();
   }
 
   /**
@@ -101,6 +120,7 @@ public final class UploadPartResponse {
   public static class Builder {
     private String etag;
     private String md5;
+    private String crc32c;
 
     private Builder() {}
 
@@ -127,6 +147,19 @@ public final class UploadPartResponse {
     @BetaApi
     public Builder md5(String md5) {
       this.md5 = md5;
+      return this;
+    }
+
+    /**
+     * Sets the CRC32C checksum for the uploaded part.
+     *
+     * @param crc32c The CRC32C checksum.
+     * @return This builder.
+     * @since 2.61.0 This new api is in preview and is subject to breaking changes.
+     */
+    @BetaApi
+    public Builder crc32c(String crc32c) {
+      this.crc32c = crc32c;
       return this;
     }
 
