@@ -790,7 +790,7 @@ public class Bucket extends BucketInfo {
     }
 
     @Override
-    Builder setIsUnreachable(boolean isUnreachable) {
+    Builder setIsUnreachable(Boolean isUnreachable) {
         infoBuilder.setIsUnreachable(isUnreachable);
         return this;
     }

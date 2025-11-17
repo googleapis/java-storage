@@ -131,7 +131,7 @@ public class BucketInfo implements Serializable {
       customerManagedEncryptionEnforcementConfig;
   private final @Nullable CustomerSuppliedEncryptionEnforcementConfig
       customerSuppliedEncryptionEnforcementConfig;
-    private final boolean isUnreachable;
+    private final Boolean isUnreachable;
 
   private final transient ImmutableSet<NamedField> modifiedFields;
 
@@ -2639,7 +2639,7 @@ public class BucketInfo implements Serializable {
      */
     public abstract Builder setIpFilter(IpFilter ipFilter);
 
-    abstract Builder setIsUnreachable(boolean unreachable);
+    abstract Builder setIsUnreachable(Boolean isUnreachable);
 
     /** Creates a {@code BucketInfo} object. */
     public abstract BucketInfo build();
@@ -3258,8 +3258,9 @@ public class BucketInfo implements Serializable {
     }
 
     @Override
-    Builder setIsUnreachable(boolean isUnreachable) {
-        this.isUnreachable = isUnreachable;
+    Builder setIsUnreachable(Boolean isUnreachable) {
+        Boolean tmp = firstNonNull(isUnreachable, Data.<Boolean>nullOf(Boolean.class));
+        this.isUnreachable = tmp;
         return this;
     }
 
