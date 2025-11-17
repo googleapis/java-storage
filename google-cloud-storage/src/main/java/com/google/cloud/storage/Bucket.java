@@ -791,8 +791,8 @@ public class Bucket extends BucketInfo {
 
     @Override
     Builder setIsUnreachable(Boolean isUnreachable) {
-        infoBuilder.setIsUnreachable(isUnreachable);
-        return this;
+      infoBuilder.setIsUnreachable(isUnreachable);
+      return this;
     }
 
     @Override
@@ -1005,10 +1005,10 @@ public class Bucket extends BucketInfo {
     }
 
     @Override
-      Builder clearIsUnreachable() {
+    Builder clearIsUnreachable() {
       infoBuilder.clearIsUnreachable();
       return this;
-      }
+    }
   }
 
   Bucket(Storage storage, BucketInfo.BuilderImpl infoBuilder) {

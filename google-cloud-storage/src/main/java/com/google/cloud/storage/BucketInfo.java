@@ -131,7 +131,7 @@ public class BucketInfo implements Serializable {
       customerManagedEncryptionEnforcementConfig;
   private final @Nullable CustomerSuppliedEncryptionEnforcementConfig
       customerSuppliedEncryptionEnforcementConfig;
-    private final Boolean isUnreachable;
+  private final Boolean isUnreachable;
 
   private final transient ImmutableSet<NamedField> modifiedFields;
 
@@ -3259,9 +3259,9 @@ public class BucketInfo implements Serializable {
 
     @Override
     Builder setIsUnreachable(Boolean isUnreachable) {
-        Boolean tmp = firstNonNull(isUnreachable, Data.<Boolean>nullOf(Boolean.class));
-        this.isUnreachable = tmp;
-        return this;
+      Boolean tmp = firstNonNull(isUnreachable, Data.<Boolean>nullOf(Boolean.class));
+      this.isUnreachable = tmp;
+      return this;
     }
 
     @Override
@@ -3907,12 +3907,10 @@ public class BucketInfo implements Serializable {
     return customerSuppliedEncryptionEnforcementConfig;
   }
 
-    /**
-     *
-     */
-    public Boolean isUnreachable() {
-        return Data.isNull(isUnreachable) ? null : isUnreachable;
-    }
+  /** */
+  public Boolean isUnreachable() {
+    return Data.isNull(isUnreachable) ? null : isUnreachable;
+  }
 
   /** Returns a builder for the current bucket. */
   public Builder toBuilder() {
@@ -3960,7 +3958,7 @@ public class BucketInfo implements Serializable {
         googleManagedEncryptionEnforcementConfig,
         customerManagedEncryptionEnforcementConfig,
         customerSuppliedEncryptionEnforcementConfig,
-            isUnreachable);
+        isUnreachable);
   }
 
   @Override
@@ -4015,7 +4013,7 @@ public class BucketInfo implements Serializable {
         && Objects.equals(
             customerSuppliedEncryptionEnforcementConfig,
             that.customerSuppliedEncryptionEnforcementConfig)
-            && Objects.equals(isUnreachable, that.isUnreachable);
+        && Objects.equals(isUnreachable, that.isUnreachable);
   }
 
   @Override
