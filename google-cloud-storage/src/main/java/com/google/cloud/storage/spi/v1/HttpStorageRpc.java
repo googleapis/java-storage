@@ -470,7 +470,7 @@ public class HttpStorageRpc implements StorageRpc {
           Iterables.concat(
               firstNonNull(bucketList.getItems(), ImmutableList.<Bucket>of()),
               bucketList.getUnreachable() != null
-                  ? Lists.transform(bucketList.getUnreachable(), unreachableBucket())
+                  ? Lists.transform(bucketList.getUnreachable(), createUnreachableBucket())
                   : ImmutableList.<Bucket>of());
       return Tuple.<String, Iterable<Bucket>>of(bucketList.getNextPageToken(), buckets);
     } catch (IOException ex) {
@@ -537,7 +537,7 @@ public class HttpStorageRpc implements StorageRpc {
     return firstNonNull(contentType, "application/octet-stream");
   }
 
-  private static Function<String, Bucket> unreachableBucket() {
+  private static Function<String, Bucket> createUnreachableBucket() {
     return new Function<String, Bucket>() {
       public Bucket apply(String bucketName) {
         return new Bucket().setName(bucketName)
