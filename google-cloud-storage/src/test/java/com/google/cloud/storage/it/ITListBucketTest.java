@@ -44,7 +44,12 @@ public class ITListBucketTest {
   @Inject public Storage storage;
 
   private static final String NORMAL_BUCKET_NAME = "normal_bucket";
+  // For testing purposes, the TESTBENCH considers a bucket to be unreachable if the bucket name
+  // contains "unreachable"
   private static final String UNREACHABLE_BUCKET_NAME = "unreachable_bucket";
+
+  // The unreachable buckets are returned as a list of bucket resource names in string form. (e.g.
+  // "projects/_/buckets/bucket1")
   private static final String EXPECTED_UNREACHABLE_BUCKET_NAME =
       "projects/_/buckets/" + UNREACHABLE_BUCKET_NAME;
 
@@ -63,6 +68,7 @@ public class ITListBucketTest {
   @Test
   public void testListBucketWithPartialSuccess() {
     Page<Bucket> page = storage.list(Storage.BucketListOption.returnPartialSuccess(true));
+    System.out.println("page: " + page);
     Iterable<Bucket> allBuckets = page.getValues();
 
     Bucket actualNormalBucket =
@@ -73,7 +79,7 @@ public class ITListBucketTest {
     Bucket actualUnreachableBucket =
         Iterables.getOnlyElement(
             Iterables.filter(
-                allBuckets, b -> b.getName().contains(EXPECTED_UNREACHABLE_BUCKET_NAME)));
+                allBuckets, b -> b.getName().contains(UNREACHABLE_BUCKET_NAME)));
     assertThat(actualUnreachableBucket.getName()).isEqualTo(EXPECTED_UNREACHABLE_BUCKET_NAME);
     assertTrue(
         "The unreachable bucket must have the isUnreachable flag set to true",
