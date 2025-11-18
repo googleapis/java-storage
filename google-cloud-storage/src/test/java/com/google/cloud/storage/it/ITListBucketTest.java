@@ -78,8 +78,7 @@ public class ITListBucketTest {
 
     Bucket actualUnreachableBucket =
         Iterables.getOnlyElement(
-            Iterables.filter(
-                allBuckets, b -> b.getName().contains(UNREACHABLE_BUCKET_NAME)));
+            Iterables.filter(allBuckets, b -> b.getName().contains(UNREACHABLE_BUCKET_NAME)));
     assertThat(actualUnreachableBucket.getName()).isEqualTo(EXPECTED_UNREACHABLE_BUCKET_NAME);
     assertTrue(
         "The unreachable bucket must have the isUnreachable flag set to true",
