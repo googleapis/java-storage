@@ -408,7 +408,8 @@ public final class ITMultipartUploadHttpRequestManagerTest {
         };
 
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
-      URI endpoint = URI.create(fakeHttpServer.getEndpoint() + "/");
+      MultipartUploadHttpRequestManager multipartUploadHttpRequestManager =
+          MultipartUploadHttpRequestManager.createFrom(fakeHttpServer.getHttpStorageOptions());
       CreateMultipartUploadRequest request =
           CreateMultipartUploadRequest.builder()
               .bucket("test-bucket")
@@ -417,7 +418,7 @@ public final class ITMultipartUploadHttpRequestManagerTest {
               .contentDisposition("attachment; filename=\"test.txt\"")
               .build();
 
-      multipartUploadHttpRequestManager.sendCreateMultipartUploadRequest(endpoint, request);
+      multipartUploadHttpRequestManager.sendCreateMultipartUploadRequest(request);
     }
   }
 
@@ -441,7 +442,8 @@ public final class ITMultipartUploadHttpRequestManagerTest {
         };
 
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
-      URI endpoint = URI.create(fakeHttpServer.getEndpoint() + "/");
+      MultipartUploadHttpRequestManager multipartUploadHttpRequestManager =
+          MultipartUploadHttpRequestManager.createFrom(fakeHttpServer.getHttpStorageOptions());
       CreateMultipartUploadRequest request =
           CreateMultipartUploadRequest.builder()
               .bucket("test-bucket")
@@ -450,7 +452,7 @@ public final class ITMultipartUploadHttpRequestManagerTest {
               .contentEncoding("gzip")
               .build();
 
-      multipartUploadHttpRequestManager.sendCreateMultipartUploadRequest(endpoint, request);
+      multipartUploadHttpRequestManager.sendCreateMultipartUploadRequest(request);
     }
   }
 
@@ -474,7 +476,8 @@ public final class ITMultipartUploadHttpRequestManagerTest {
         };
 
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
-      URI endpoint = URI.create(fakeHttpServer.getEndpoint() + "/");
+      MultipartUploadHttpRequestManager multipartUploadHttpRequestManager =
+          MultipartUploadHttpRequestManager.createFrom(fakeHttpServer.getHttpStorageOptions());
       CreateMultipartUploadRequest request =
           CreateMultipartUploadRequest.builder()
               .bucket("test-bucket")
@@ -483,7 +486,7 @@ public final class ITMultipartUploadHttpRequestManagerTest {
               .contentLanguage("en")
               .build();
 
-      multipartUploadHttpRequestManager.sendCreateMultipartUploadRequest(endpoint, request);
+      multipartUploadHttpRequestManager.sendCreateMultipartUploadRequest(request);
     }
   }
 
@@ -508,7 +511,8 @@ public final class ITMultipartUploadHttpRequestManagerTest {
         };
 
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
-      URI endpoint = URI.create(fakeHttpServer.getEndpoint() + "/");
+      MultipartUploadHttpRequestManager multipartUploadHttpRequestManager =
+          MultipartUploadHttpRequestManager.createFrom(fakeHttpServer.getHttpStorageOptions());
       CreateMultipartUploadRequest request =
           CreateMultipartUploadRequest.builder()
               .bucket("test-bucket")
@@ -517,7 +521,7 @@ public final class ITMultipartUploadHttpRequestManagerTest {
               .cacheControl("no-cache, no-store, max-age=0, must-revalidate")
               .build();
 
-      multipartUploadHttpRequestManager.sendCreateMultipartUploadRequest(endpoint, request);
+      multipartUploadHttpRequestManager.sendCreateMultipartUploadRequest(request);
     }
   }
 
@@ -541,7 +545,8 @@ public final class ITMultipartUploadHttpRequestManagerTest {
         };
 
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
-      URI endpoint = URI.create(fakeHttpServer.getEndpoint() + "/");
+      MultipartUploadHttpRequestManager multipartUploadHttpRequestManager =
+          MultipartUploadHttpRequestManager.createFrom(fakeHttpServer.getHttpStorageOptions());
       CreateMultipartUploadRequest request =
           CreateMultipartUploadRequest.builder()
               .bucket("test-bucket")
@@ -550,7 +555,7 @@ public final class ITMultipartUploadHttpRequestManagerTest {
               .userProject("test-project")
               .build();
 
-      multipartUploadHttpRequestManager.sendCreateMultipartUploadRequest(endpoint, request);
+      multipartUploadHttpRequestManager.sendCreateMultipartUploadRequest(request);
     }
   }
 
@@ -1002,7 +1007,8 @@ public final class ITMultipartUploadHttpRequestManagerTest {
         };
 
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
-      URI endpoint = URI.create(fakeHttpServer.getEndpoint() + "/");
+      MultipartUploadHttpRequestManager multipartUploadHttpRequestManager =
+          MultipartUploadHttpRequestManager.createFrom(fakeHttpServer.getHttpStorageOptions());
       UploadPartRequest request =
           UploadPartRequest.builder()
               .bucket("test-bucket")
@@ -1013,7 +1019,7 @@ public final class ITMultipartUploadHttpRequestManagerTest {
               .build();
       UploadPartResponse response =
           multipartUploadHttpRequestManager.sendUploadPartRequest(
-              endpoint, request, RewindableContent.of(content.asByteBuffer()));
+              request, RewindableContent.of(content.asByteBuffer()));
       assertThat(response).isNotNull();
       assertThat(response.eTag()).isEqualTo(etag);
     }
