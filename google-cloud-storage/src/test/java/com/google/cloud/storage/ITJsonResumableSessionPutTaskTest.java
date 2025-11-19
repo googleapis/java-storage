@@ -460,7 +460,7 @@ public final class ITJsonResumableSessionPutTaskTest {
       StorageObject call = operationResult.getObject();
       assertThat(call).isNotNull();
       assertThat(call.getMetadata())
-          .containsEntry("upload_id", uploadUrl.substring(endpoint.toString().length()));
+          .containsEntry("upload_id", uploadUrl.substring(endpoint.toString().length() - 1));
       assertThat(operationResult.getPersistedSize()).isEqualTo(_256KiBL);
     }
   }
