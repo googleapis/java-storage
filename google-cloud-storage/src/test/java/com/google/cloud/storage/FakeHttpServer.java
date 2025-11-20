@@ -70,7 +70,7 @@ final class FakeHttpServer implements AutoCloseable {
   static FakeHttpServer of(HttpRequestHandler server) {
     // based on
     // https://github.com/netty/netty/blob/59aa6e635b9996cf21cd946e64353270679adc73/example/src/main/java/io/netty/example/http/helloworld/HttpHelloWorldServer.java
-    InetSocketAddress address = new InetSocketAddress("localhost", 0);
+    InetSocketAddress address = new InetSocketAddress("127.0.0.1", 0);
     // Configure the server.
     EventLoopGroup bossGroup = new NioEventLoopGroup(1);
     EventLoopGroup workerGroup = new NioEventLoopGroup();
