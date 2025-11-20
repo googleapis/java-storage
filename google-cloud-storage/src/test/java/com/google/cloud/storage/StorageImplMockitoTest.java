@@ -200,6 +200,8 @@ public class StorageImplMockitoTest {
       Storage.BucketListOption.fields();
   private static final Map<StorageRpc.Option, ?> BUCKET_LIST_OPTIONS =
       ImmutableMap.of(StorageRpc.Option.MAX_RESULTS, PAGE_SIZE, StorageRpc.Option.PREFIX, "prefix");
+  private static final Map<StorageRpc.Option, ?> BUCKET_LIST_PARTIAL_SUCCESS_OPTION =
+      ImmutableMap.of(StorageRpc.Option.RETURN_PARTIAL_SUCCESS, true);
 
   // Blob list options
   private static final Storage.BlobListOption BLOB_LIST_PAGE_SIZE =
@@ -783,6 +785,47 @@ public class StorageImplMockitoTest {
     Page<Bucket> page = storage.list();
     assertEquals(cursor, page.getNextPageToken());
     assertArrayEquals(bucketList.toArray(), Iterables.toArray(page.getValues(), Bucket.class));
+  }
+
+  @Test
+  public void testListBucketWithPartialSuccess() {
+    String cursor = "cursor";
+    String unreachableName = "unreachable_bucket";
+
+    com.google.api.services.storage.model.Bucket modelUnreachableBucket =
+        new com.google.api.services.storage.model.Bucket()
+            .setName(unreachableName)
+            .set("isUnreachable", "true");
+    com.google.api.services.storage.model.Bucket modelBucket1 =
+        Conversions.json().bucketInfo().encode(BUCKET_INFO1);
+    com.google.api.services.storage.model.Bucket modelBucket2 =
+        Conversions.json().bucketInfo().encode(BUCKET_INFO2);
+
+    List<com.google.api.services.storage.model.Bucket> bucketList =
+        ImmutableList.of(modelBucket1, modelBucket2, modelUnreachableBucket);
+    Tuple<String, Iterable<com.google.api.services.storage.model.Bucket>> result =
+        Tuple.of(cursor, bucketList);
+
+    doReturn(result)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .list(BUCKET_LIST_PARTIAL_SUCCESS_OPTION);
+
+    initializeService();
+    Page<Bucket> page = storage.list(Storage.BucketListOption.returnPartialSuccess(true));
+
+    Bucket expectedUnreachableBucket =
+        new Bucket(
+            storage,
+            new BucketInfo.BuilderImpl(
+                BucketInfo.newBuilder(unreachableName).setIsUnreachable(true).build()));
+
+    ImmutableList<Bucket> expectedBucketList =
+        ImmutableList.of(expectedBucket1, expectedBucket2, expectedUnreachableBucket);
+
+    assertEquals(cursor, page.getNextPageToken());
+    assertArrayEquals(
+        expectedBucketList.toArray(), Iterables.toArray(page.getValues(), Bucket.class));
   }
 
   @Test
