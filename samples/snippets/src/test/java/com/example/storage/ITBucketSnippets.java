@@ -160,7 +160,7 @@ public class ITBucketSnippets {
   }
 
   @Test
-  public void testAddBucketLabel() {
+  public void testAddBucketLabel() throws Exception {
     int oldSize = storage.get(BUCKET).getLabels().size();
     AddBucketLabel.addBucketLabel(PROJECT_ID, BUCKET, "key", "value");
     assertEquals(oldSize + 1, storage.get(BUCKET).getLabels().size());
@@ -178,7 +178,7 @@ public class ITBucketSnippets {
   }
 
   @Test
-  public void testCreateBucket() {
+  public void testCreateBucket() throws Exception {
     String newBucket = RemoteStorageHelper.generateBucketName();
     CreateBucket.createBucket(PROJECT_ID, newBucket);
     try {
@@ -190,7 +190,7 @@ public class ITBucketSnippets {
   }
 
   @Test
-  public void testCreateBucketWithStorageClassAndLocation() {
+  public void testCreateBucketWithStorageClassAndLocation() throws Exception {
     String newBucket = RemoteStorageHelper.generateBucketName();
     CreateBucketWithStorageClassAndLocation.createBucketWithStorageClassAndLocation(
         PROJECT_ID, newBucket);
@@ -212,13 +212,15 @@ public class ITBucketSnippets {
     try {
       DeleteBucket.deleteBucket(PROJECT_ID, newBucket);
       assertNull(storage.get(newBucket));
+    } catch (Exception e) {
+      throw new RuntimeException(e);
     } finally {
       storage.delete(newBucket);
     }
   }
 
   @Test
-  public void testGetBucketMetadata() {
+  public void testGetBucketMetadata() throws Exception {
     Bucket bucket =
         storage.get(BUCKET, Storage.BucketGetOption.fields(Storage.BucketField.values()));
     bucket =
@@ -263,14 +265,14 @@ public class ITBucketSnippets {
   }
 
   @Test
-  public void testListBuckets() {
+  public void testListBuckets() throws Exception {
     ListBuckets.listBuckets(PROJECT_ID);
     String snippetOutput = stdOutCaptureRule.getCapturedOutputAsUtf8String();
     assertTrue(snippetOutput.contains(BUCKET));
   }
 
   @Test
-  public void testRemoveBucketLabel() {
+  public void testRemoveBucketLabel() throws Exception {
     storage.get(BUCKET).toBuilder().setLabels(ImmutableMap.of("k", "v")).build().update();
     int oldSize = storage.get(BUCKET).getLabels().size();
     RemoveBucketLabel.removeBucketLabel(PROJECT_ID, BUCKET, "k");
@@ -479,7 +481,7 @@ public class ITBucketSnippets {
   }
 
   @Test
-  public void testSetClientEndpoint() {
+  public void testSetClientEndpoint() throws Exception {
     SetClientEndpoint.setClientEndpoint(PROJECT_ID, "https://storage.googleapis.com");
     String snippetOutput = stdOutCaptureRule.getCapturedOutputAsUtf8String();
     assertTrue(snippetOutput.contains("https://storage.googleapis.com"));
@@ -647,13 +649,15 @@ public class ITBucketSnippets {
       assertEquals(5L, (long) storage.get(tempBucket).getRetentionPeriod());
       LockRetentionPolicy.lockRetentionPolicy(PROJECT_ID, tempBucket);
       assertTrue(storage.get(tempBucket).retentionPolicyIsLocked());
+    } catch (Exception e) {
+      throw new RuntimeException(e);
     } finally {
       storage.delete(tempBucket);
     }
   }
 
   @Test
-  public void testUniformBucketLevelAccess() {
+  public void testUniformBucketLevelAccess() throws Exception {
     EnableUniformBucketLevelAccess.enableUniformBucketLevelAccess(PROJECT_ID, BUCKET);
     Bucket bucket = storage.get(BUCKET);
     assertTrue(bucket.getIamConfiguration().isUniformBucketLevelAccessEnabled());
@@ -668,7 +672,7 @@ public class ITBucketSnippets {
   }
 
   @Test
-  public void testCreateBucketWithObjectRetention() {
+  public void testCreateBucketWithObjectRetention() throws Exception {
     String tempBucket = RemoteStorageHelper.generateBucketName();
 
     try {
@@ -682,7 +686,7 @@ public class ITBucketSnippets {
   }
 
   @Test
-  public void testSetSoftDeletePolicy() {
+  public void testSetSoftDeletePolicy() throws Exception {
     String tempBucket = RemoteStorageHelper.generateBucketName();
     Bucket bucket = storage.create(BucketInfo.of(tempBucket));
     try {
@@ -698,7 +702,7 @@ public class ITBucketSnippets {
   }
 
   @Test
-  public void testDisableSoftDelete() {
+  public void testDisableSoftDelete() throws Exception {
     String tempBucket = RemoteStorageHelper.generateBucketName();
     Bucket bucket = storage.create(BucketInfo.of(tempBucket));
     try {

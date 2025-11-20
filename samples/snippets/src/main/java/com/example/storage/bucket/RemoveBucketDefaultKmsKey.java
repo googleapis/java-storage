@@ -23,21 +23,24 @@ import com.google.cloud.storage.Storage.BucketTargetOption;
 import com.google.cloud.storage.StorageOptions;
 
 public class RemoveBucketDefaultKmsKey {
-  public static void removeBucketDefaultKmsKey(String projectId, String bucketName) {
+  public static void removeBucketDefaultKmsKey(String projectId, String bucketName)
+      throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
     // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
-    // first look up the bucket, so we will have its metageneration
-    Bucket bucket = storage.get(bucketName);
-    storage.update(
-        bucket.toBuilder().setDefaultKmsKeyName(null).build(),
-        BucketTargetOption.metagenerationMatch());
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+      // first look up the bucket, so we will have its metageneration
+      Bucket bucket = storage.get(bucketName);
+      storage.update(
+          bucket.toBuilder().setDefaultKmsKeyName(null).build(),
+          BucketTargetOption.metagenerationMatch());
 
-    System.out.println("Default KMS key was removed from " + bucketName);
+      System.out.println("Default KMS key was removed from " + bucketName);
+    }
   }
 }
 // [END storage_bucket_delete_default_kms_key]
