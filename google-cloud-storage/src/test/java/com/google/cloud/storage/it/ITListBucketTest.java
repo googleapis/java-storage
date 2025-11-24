@@ -68,7 +68,6 @@ public class ITListBucketTest {
   @Test
   public void testListBucketWithPartialSuccess() {
     Page<Bucket> page = storage.list(Storage.BucketListOption.returnPartialSuccess(true));
-    System.out.println("page: " + page);
     Iterable<Bucket> allBuckets = page.getValues();
 
     Bucket actualNormalBucket =

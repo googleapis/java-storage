@@ -2639,7 +2639,7 @@ public class BucketInfo implements Serializable {
      */
     public abstract Builder setIpFilter(IpFilter ipFilter);
 
-    abstract Builder setIsUnreachable(Boolean isUnreachable);
+    public abstract Builder setIsUnreachable(Boolean isUnreachable);
 
     /** Creates a {@code BucketInfo} object. */
     public abstract BucketInfo build();
@@ -3258,7 +3258,7 @@ public class BucketInfo implements Serializable {
     }
 
     @Override
-    Builder setIsUnreachable(Boolean isUnreachable) {
+    public Builder setIsUnreachable(Boolean isUnreachable) {
       Boolean tmp = firstNonNull(isUnreachable, Data.<Boolean>nullOf(Boolean.class));
       this.isUnreachable = tmp;
       return this;
@@ -3907,7 +3907,12 @@ public class BucketInfo implements Serializable {
     return customerSuppliedEncryptionEnforcementConfig;
   }
 
-  /** */
+  /**
+   * Returns a {@code Boolean} with {@code true} if the bucket is unreachable, else {@code null}
+   *
+   * <p>A bucket may be unreachable if the region in which it resides is experiencing an outage or
+   * if there are other temporary access issues.
+   */
   public Boolean isUnreachable() {
     return Data.isNull(isUnreachable) ? null : isUnreachable;
   }

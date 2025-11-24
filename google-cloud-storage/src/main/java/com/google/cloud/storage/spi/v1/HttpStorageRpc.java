@@ -538,11 +538,7 @@ public class HttpStorageRpc implements StorageRpc {
   }
 
   private static Function<String, Bucket> createUnreachableBucket() {
-    return new Function<String, Bucket>() {
-      public Bucket apply(String bucketName) {
-        return new Bucket().setName(bucketName).set("isUnreachable", "true");
-      }
-    };
+    return bucketName -> new Bucket().setName(bucketName).set("isUnreachable", "true");
   }
 
   private static Function<String, StorageObject> objectFromPrefix(final String bucket) {

@@ -2476,7 +2476,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
       return new BucketListOption(UnifiedOpts.pageToken(pageToken));
     }
 
-    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    @TransportCompatibility({Transport.HTTP})
     public static BucketListOption returnPartialSuccess(boolean returnPartialSuccess) {
       return new BucketListOption(UnifiedOpts.returnPartialSuccess(returnPartialSuccess));
     }
