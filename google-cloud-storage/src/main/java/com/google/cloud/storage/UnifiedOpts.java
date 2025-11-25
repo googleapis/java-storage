@@ -1647,6 +1647,7 @@ final class UnifiedOpts {
 
   static final class ReturnPartialSuccess extends RpcOptVal<Boolean> implements BucketListOpt {
     private static final long serialVersionUID = -1370658416509499277L;
+
     private ReturnPartialSuccess(boolean val) {
       super(StorageRpc.Option.RETURN_PARTIAL_SUCCESS, val);
     }

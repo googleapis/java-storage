@@ -20,7 +20,6 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import com.google.api.gax.paging.Page;
-import com.google.api.gax.rpc.FixedHeaderProvider;
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.Storage;
@@ -29,14 +28,8 @@ import com.google.cloud.storage.it.runner.StorageITRunner;
 import com.google.cloud.storage.it.runner.annotations.Backend;
 import com.google.cloud.storage.it.runner.annotations.CrossRun;
 import com.google.cloud.storage.it.runner.annotations.Inject;
-import com.google.cloud.storage.it.runner.registry.TestBench;
-import com.google.cloud.storage.it.runner.registry.TestBench.RetryTestResource;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import java.io.IOException;
 import java.util.stream.StreamSupport;
 import org.junit.After;
 import org.junit.Before;
@@ -46,14 +39,14 @@ import org.junit.runner.RunWith;
 @RunWith(StorageITRunner.class)
 @CrossRun(
     backends = {Backend.TEST_BENCH},
-    transports = {Transport.GRPC})
+    transports = {Transport.GRPC, Transport.HTTP})
 public class ITListBucketTest {
   @Inject public Storage storage;
 
   private static final String NORMAL_BUCKET_NAME = "normal_bucket";
   // For testing purposes, the TESTBENCH considers a bucket to be unreachable if the bucket name
   // contains "unreachable"
-  private static final String UNREACHABLE_BUCKET_NAME = "bucket-unreachable";
+  private static final String UNREACHABLE_BUCKET_NAME = "unreachable_bucket";
 
   // The unreachable buckets are returned as a list of bucket resource names in string form. (e.g.
   // "projects/_/buckets/bucket1")

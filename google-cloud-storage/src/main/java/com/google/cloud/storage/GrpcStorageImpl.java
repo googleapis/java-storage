@@ -95,7 +95,6 @@ import com.google.storage.v2.DeleteObjectRequest;
 import com.google.storage.v2.GetBucketRequest;
 import com.google.storage.v2.GetObjectRequest;
 import com.google.storage.v2.ListBucketsRequest;
-import com.google.storage.v2.ListBucketsResponse;
 import com.google.storage.v2.ListObjectsRequest;
 import com.google.storage.v2.ListObjectsResponse;
 import com.google.storage.v2.LockBucketRetentionPolicyRequest;
@@ -130,12 +129,10 @@ import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.Spliterator;
-import java.util.Spliterators;
 import java.util.Spliterators.AbstractSpliterator;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -453,7 +450,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   }
 
   @Override
- public Page<Bucket> list(BucketListOption... options) {
+  public Page<Bucket> list(BucketListOption... options) {
     Opts<BucketListOpt> opts = Opts.unwrap(options).prepend(defaultOpts).prepend(ALL_BUCKET_FIELDS);
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
@@ -484,16 +481,17 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
       // New logic for partial success
       try {
         GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
-        com.google.storage.v2.ListBucketsResponse response = retrier.run(
-            retryAlgorithmManager.getFor(request),
-            () -> storageClient.listBucketsCallable().call(request, merge),
-            Decoder.identity());
+        com.google.storage.v2.ListBucketsResponse response =
+            retrier.run(
+                retryAlgorithmManager.getFor(request),
+                () -> storageClient.listBucketsCallable().call(request, merge),
+                Decoder.identity());
         return new ListBucketsWithPartialSuccessPage(grpcCallContext, request, response, opts);
       } catch (Exception e) {
         throw StorageException.coalesce(e);
       }
     }
- }
+  }
 
   @Override
   public Page<Blob> list(String bucket, BlobListOption... options) {
@@ -1636,8 +1634,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
       };
     }
   }
-  
-   private final class ListBucketsWithPartialSuccessPage implements Page<Bucket> {
+
+  private final class ListBucketsWithPartialSuccessPage implements Page<Bucket> {
 
     private final GrpcCallContext ctx;
     private final ListBucketsRequest req;
@@ -1670,7 +1668,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
       if (!hasNextPage()) {
         return null;
       }
-      ListBucketsRequest nextPageReq = req.toBuilder().setPageToken(resp.getNextPageToken()).build();
+      ListBucketsRequest nextPageReq =
+          req.toBuilder().setPageToken(resp.getNextPageToken()).build();
       try {
         GrpcCallContext merge = Utils.merge(ctx, Retrying.newCallContext());
         com.google.storage.v2.ListBucketsResponse nextPageResp =
@@ -1684,25 +1683,24 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
       }
     }
 
-     @Override
-     public Iterable<Bucket> getValues() {
-       Decoder<com.google.storage.v2.Bucket, Bucket> bucketDecoder =
-               syntaxDecoders.bucket.andThen(opts.clearBucketFields());
-       Stream<Bucket> reachable = resp.getBucketsList().stream().map(bucketDecoder::decode);
-        Stream<Bucket> unreachable =
-            resp.getUnreachableList().stream()
-                .map(
-                    name -> {
-                      String encoded = bucketNameCodec.encode(name);
-                      BucketInfo.Builder builder =
-                          BucketInfo.newBuilder(encoded);
-                      builder.setIsUnreachable(true);
-                      return builder.build().asBucket(GrpcStorageImpl.this);
-                    });
-       return Streams.concat(reachable, unreachable).collect(ImmutableList.toImmutableList());
-     }
+    @Override
+    public Iterable<Bucket> getValues() {
+      Decoder<com.google.storage.v2.Bucket, Bucket> bucketDecoder =
+          syntaxDecoders.bucket.andThen(opts.clearBucketFields());
+      Stream<Bucket> reachable = resp.getBucketsList().stream().map(bucketDecoder::decode);
+      Stream<Bucket> unreachable =
+          resp.getUnreachableList().stream()
+              .map(
+                  name -> {
+                    String encoded = bucketNameCodec.encode(name);
+                    BucketInfo.Builder builder = BucketInfo.newBuilder(encoded);
+                    builder.setIsUnreachable(true);
+                    return builder.build().asBucket(GrpcStorageImpl.this);
+                  });
+      return Streams.concat(reachable, unreachable).collect(ImmutableList.toImmutableList());
+    }
 
-     @Override
+    @Override
     public Iterable<Bucket> iterateAll() {
       Page<Bucket> curr = this;
       return () ->
@@ -1710,8 +1708,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
               .filter(Objects::nonNull)
               .flatMap(p -> StreamSupport.stream(p.getValues().spliterator(), false))
               .iterator();
-}
-
+    }
   }
 
   static final class TransformingPageDecorator<
