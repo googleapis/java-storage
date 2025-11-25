@@ -2479,7 +2479,6 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BucketListOption pageToken(@NonNull String pageToken) {
       return new BucketListOption(UnifiedOpts.pageToken(pageToken));
-    }
 
     /**
      * Returns an option to set a prefix to filter results to buckets whose names begin with this

@@ -69,17 +69,17 @@ public class ITListBucketTest {
   @Test
   public void testListBucketWithPartialSuccess() {
     Page<Bucket> page = storage.list(Storage.BucketListOption.returnPartialSuccess(true));
-    System.out.println("page: " + page);
     Iterable<Bucket> allBuckets = page.getValues();
 
     Bucket actualNormalBucket =
         Iterables.getOnlyElement(
             Iterables.filter(allBuckets, b -> b.getName().equals(NORMAL_BUCKET_NAME)));
-    assertThat(actualNormalBucket.getName()).isEqualTo(NORMAL_BUCKET_NAME);
 
     Bucket actualUnreachableBucket =
         Iterables.getOnlyElement(
             Iterables.filter(allBuckets, b -> b.getName().contains(UNREACHABLE_BUCKET_NAME)));
+
+    assertThat(actualNormalBucket.getName()).isEqualTo(NORMAL_BUCKET_NAME);
     assertThat(actualUnreachableBucket.getName()).isEqualTo(EXPECTED_UNREACHABLE_BUCKET_NAME);
     assertTrue(
         "The unreachable bucket must have the isUnreachable flag set to true",

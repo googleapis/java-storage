@@ -788,47 +788,6 @@ public class StorageImplMockitoTest {
   }
 
   @Test
-  public void testListBucketWithPartialSuccess() {
-    String cursor = "cursor";
-    String unreachableName = "unreachable_bucket";
-
-    com.google.api.services.storage.model.Bucket modelUnreachableBucket =
-        new com.google.api.services.storage.model.Bucket()
-            .setName(unreachableName)
-            .set("isUnreachable", "true");
-    com.google.api.services.storage.model.Bucket modelBucket1 =
-        Conversions.json().bucketInfo().encode(BUCKET_INFO1);
-    com.google.api.services.storage.model.Bucket modelBucket2 =
-        Conversions.json().bucketInfo().encode(BUCKET_INFO2);
-
-    List<com.google.api.services.storage.model.Bucket> bucketList =
-        ImmutableList.of(modelBucket1, modelBucket2, modelUnreachableBucket);
-    Tuple<String, Iterable<com.google.api.services.storage.model.Bucket>> result =
-        Tuple.of(cursor, bucketList);
-
-    doReturn(result)
-        .doThrow(UNEXPECTED_CALL_EXCEPTION)
-        .when(storageRpcMock)
-        .list(BUCKET_LIST_PARTIAL_SUCCESS_OPTION);
-
-    initializeService();
-    Page<Bucket> page = storage.list(Storage.BucketListOption.returnPartialSuccess(true));
-
-    Bucket expectedUnreachableBucket =
-        new Bucket(
-            storage,
-            new BucketInfo.BuilderImpl(
-                BucketInfo.newBuilder(unreachableName).setIsUnreachable(true).build()));
-
-    ImmutableList<Bucket> expectedBucketList =
-        ImmutableList.of(expectedBucket1, expectedBucket2, expectedUnreachableBucket);
-
-    assertEquals(cursor, page.getNextPageToken());
-    assertArrayEquals(
-        expectedBucketList.toArray(), Iterables.toArray(page.getValues(), Bucket.class));
-  }
-
-  @Test
   public void testListBucketsEmpty() {
     doReturn(Tuple.<String, Iterable<com.google.api.services.storage.model.Bucket>>of(null, null))
         .doThrow(UNEXPECTED_CALL_EXCEPTION)
