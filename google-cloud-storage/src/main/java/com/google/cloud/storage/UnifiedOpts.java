@@ -25,8 +25,6 @@ import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.cloud.storage.Conversions.Decoder;
 import com.google.cloud.storage.Storage.BlobField;
 import com.google.cloud.storage.Storage.BucketField;
-import com.google.cloud.storage.UnifiedOpts.BucketListOpt;
-import com.google.cloud.storage.UnifiedOpts.Mapper;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.MoreObjects;

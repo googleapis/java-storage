@@ -34,8 +34,6 @@ import com.google.cloud.StringEnumType;
 import com.google.cloud.StringEnumValue;
 import com.google.cloud.storage.Acl.Entity;
 import com.google.cloud.storage.BlobInfo.ImmutableEmptyMap;
-import com.google.cloud.storage.BucketInfo.DeleteRule;
-import com.google.cloud.storage.BucketInfo.LifecycleRule;
 import com.google.cloud.storage.Storage.BucketField;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.UnifiedOpts.NamedField;
@@ -2641,7 +2639,7 @@ public class BucketInfo implements Serializable {
      */
     public abstract Builder setIpFilter(IpFilter ipFilter);
 
-    abstract Builder setIsUnreachable(Boolean isUnreachable);
+    public abstract Builder setIsUnreachable(Boolean isUnreachable);
 
     /** Creates a {@code BucketInfo} object. */
     public abstract BucketInfo build();
@@ -2805,7 +2803,6 @@ public class BucketInfo implements Serializable {
           bucketInfo.googleManagedEncryptionEnforcementConfig;
       customerManagedEncryptionEnforcementConfig =
           bucketInfo.customerManagedEncryptionEnforcementConfig;
-      isUnreachable = bucketInfo.isUnreachable;
       customerSuppliedEncryptionEnforcementConfig =
           bucketInfo.customerSuppliedEncryptionEnforcementConfig;
       isUnreachable = bucketInfo.isUnreachable;
@@ -3261,7 +3258,7 @@ public class BucketInfo implements Serializable {
     }
 
     @Override
-    Builder setIsUnreachable(Boolean isUnreachable) {
+    public Builder setIsUnreachable(Boolean isUnreachable) {
       Boolean tmp = firstNonNull(isUnreachable, Data.<Boolean>nullOf(Boolean.class));
       this.isUnreachable = tmp;
       return this;
@@ -3910,6 +3907,12 @@ public class BucketInfo implements Serializable {
     return customerSuppliedEncryptionEnforcementConfig;
   }
 
+  /**
+   * Returns a {@code Boolean} with {@code true} if the bucket is unreachable, else {@code null}
+   *
+   * <p>A bucket may be unreachable if the region in which it resides is experiencing an outage or
+   * if there are other temporary access issues.
+   */
   public Boolean isUnreachable() {
     return Data.isNull(isUnreachable) ? null : isUnreachable;
   }
