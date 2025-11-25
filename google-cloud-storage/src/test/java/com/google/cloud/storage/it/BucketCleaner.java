@@ -77,7 +77,7 @@ public final class BucketCleaner {
       }
       LOGGER.trace("Bucket cleanup complete");
     } catch (Exception e) {
-      LOGGER.error("Error during bucket cleanup.");
+      LOGGER.error("Error during bucket cleanup.", e);
     }
   }
 
@@ -224,7 +224,7 @@ public final class BucketCleaner {
 
       LOGGER.warn("Bucket cleanup complete: {}", bucketName);
     } catch (Exception e) {
-      LOGGER.error("Error during bucket cleanup.");
+      LOGGER.error("Error during bucket cleanup.", e);
     }
   }
 

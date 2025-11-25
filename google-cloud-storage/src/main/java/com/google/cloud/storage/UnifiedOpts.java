@@ -25,6 +25,8 @@ import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.cloud.storage.Conversions.Decoder;
 import com.google.cloud.storage.Storage.BlobField;
 import com.google.cloud.storage.Storage.BucketField;
+import com.google.cloud.storage.UnifiedOpts.BucketListOpt;
+import com.google.cloud.storage.UnifiedOpts.Mapper;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.MoreObjects;
@@ -1645,7 +1647,6 @@ final class UnifiedOpts {
 
   static final class ReturnPartialSuccess extends RpcOptVal<Boolean> implements BucketListOpt {
     private static final long serialVersionUID = -1370658416509499277L;
-
     private ReturnPartialSuccess(boolean val) {
       super(StorageRpc.Option.RETURN_PARTIAL_SUCCESS, val);
     }

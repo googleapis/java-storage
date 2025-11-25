@@ -34,6 +34,8 @@ import com.google.cloud.StringEnumType;
 import com.google.cloud.StringEnumValue;
 import com.google.cloud.storage.Acl.Entity;
 import com.google.cloud.storage.BlobInfo.ImmutableEmptyMap;
+import com.google.cloud.storage.BucketInfo.DeleteRule;
+import com.google.cloud.storage.BucketInfo.LifecycleRule;
 import com.google.cloud.storage.Storage.BucketField;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.UnifiedOpts.NamedField;
@@ -2803,6 +2805,7 @@ public class BucketInfo implements Serializable {
           bucketInfo.googleManagedEncryptionEnforcementConfig;
       customerManagedEncryptionEnforcementConfig =
           bucketInfo.customerManagedEncryptionEnforcementConfig;
+      isUnreachable = bucketInfo.isUnreachable;
       customerSuppliedEncryptionEnforcementConfig =
           bucketInfo.customerSuppliedEncryptionEnforcementConfig;
       isUnreachable = bucketInfo.isUnreachable;
@@ -3907,7 +3910,6 @@ public class BucketInfo implements Serializable {
     return customerSuppliedEncryptionEnforcementConfig;
   }
 
-  /** */
   public Boolean isUnreachable() {
     return Data.isNull(isUnreachable) ? null : isUnreachable;
   }
