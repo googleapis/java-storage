@@ -16,16 +16,6 @@
 name: Hermetic library generation upon generation config change through pull requests
 on:
   pull_request:
-    paths:
-      - 'generation_config.yaml'
-      - '.readme-partials.yaml'
-      - 'owlbot.py'
-      - 'versions.txt'
-      - '.github/.OwlBot-hermetic.yaml'
-      - '.github/workflows'
-      - 'google-cloud-storage/src/test/resources/'
-      - 'google-cloud-storage/pom.xml'
-      - 'samples/snippets/pom.xml'
 
 env:
   REPO_FULL_NAME: ${{ github.event.pull_request.head.repo.full_name }}
