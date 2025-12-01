@@ -128,24 +128,15 @@ public class ITListBucketTest {
     page.iterateAll().forEach(allBuckets::add);
 
     // Verify we found all expected buckets
-    assertThat(
-            allBuckets.stream()
-                .map(Bucket::getName)
-                .filter(name -> name.equals(NORMAL_BUCKET_NAME))
-                .count())
-        .isEqualTo(1);
-    assertThat(
-            allBuckets.stream()
-                .map(Bucket::getName)
-                .filter(name -> name.equals("normal_bucket_2"))
-                .count())
-        .isEqualTo(1);
-    assertThat(
-            allBuckets.stream()
-                .map(Bucket::getName)
-                .filter(name -> name.equals("normal_bucket_3"))
-                .count())
-        .isEqualTo(1);
+    ImmutableList<String> bucketNames =
+        allBuckets.stream().map(Bucket::getName).collect(ImmutableList.toImmutableList());
+
+    assertThat(bucketNames)
+        .containsExactly(
+            NORMAL_BUCKET_NAME,
+            "normal_bucket_2",
+            "normal_bucket_3",
+            EXPECTED_UNREACHABLE_BUCKET_NAME);
 
     // Verify unreachable bucket is present and marked correctly
     Bucket actualUnreachableBucket =
