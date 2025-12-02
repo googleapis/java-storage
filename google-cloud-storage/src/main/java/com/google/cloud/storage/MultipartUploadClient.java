@@ -112,7 +112,6 @@ public abstract class MultipartUploadClient {
   public abstract ListMultipartUploadsResponse listMultipartUploads(
       ListMultipartUploadsRequest request);
 
-
   /**
    * Creates a new instance of {@link MultipartUploadClient}.
    *

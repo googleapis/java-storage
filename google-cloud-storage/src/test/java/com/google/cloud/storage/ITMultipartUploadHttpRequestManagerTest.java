@@ -21,7 +21,6 @@ import static io.grpc.netty.shaded.io.netty.handler.codec.http.HttpHeaderNames.C
 import static io.grpc.netty.shaded.io.netty.handler.codec.http.HttpResponseStatus.OK;
 import static org.junit.Assert.assertThrows;
 
-
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.api.client.http.HttpResponseException;
@@ -57,7 +56,6 @@ import io.grpc.netty.shaded.io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.grpc.netty.shaded.io.netty.handler.codec.http.FullHttpRequest;
 import io.grpc.netty.shaded.io.netty.handler.codec.http.FullHttpResponse;
 import io.grpc.netty.shaded.io.netty.handler.codec.http.HttpResponseStatus;
-import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
@@ -1135,9 +1133,7 @@ public final class ITMultipartUploadHttpRequestManagerTest {
 
       assertThrows(
           HttpResponseException.class,
-          () ->
-              multipartUploadHttpRequestManager.sendListMultipartUploadsRequest(request));
+          () -> multipartUploadHttpRequestManager.sendListMultipartUploadsRequest(request));
     }
   }
 }
-
