@@ -120,8 +120,7 @@ final class MultipartUploadHttpRequestManager {
     return httpRequest.execute().parseAs(ListPartsResponse.class);
   }
 
-  ListMultipartUploadsResponse sendListMultipartUploadsRequest(
-      URI uri, ListMultipartUploadsRequest request) throws IOException {
+  ListMultipartUploadsResponse sendListMultipartUploadsRequest(ListMultipartUploadsRequest request) throws IOException {
 
     ImmutableMap.Builder<String, Object> params =
         ImmutableMap.<String, Object>builder().put("bucket", request.bucket());
@@ -156,7 +155,7 @@ final class MultipartUploadHttpRequestManager {
     return httpRequest.execute().parseAs(ListMultipartUploadsResponse.class);
   }
 
-  AbortMultipartUploadResponse sendAbortMultipartUploadRequest(URI uri, AbortMultipartUploadRequest request)
+  AbortMultipartUploadResponse sendAbortMultipartUploadRequest(AbortMultipartUploadRequest request)
       throws IOException {
 
     String abortUri =

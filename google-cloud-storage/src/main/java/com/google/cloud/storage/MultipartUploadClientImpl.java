@@ -103,7 +103,7 @@ final class MultipartUploadClientImpl extends MultipartUploadClient {
   public ListMultipartUploadsResponse listMultipartUploads(ListMultipartUploadsRequest request) {
     return retrier.run(
         retryAlgorithmManager.idempotent(),
-        () -> httpRequestManager.sendListMultipartUploadsRequest(uri, request),
+        () -> httpRequestManager.sendListMultipartUploadsRequest(request),
         Decoder.identity());
   }
 }
