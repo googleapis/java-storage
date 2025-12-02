@@ -149,8 +149,8 @@ public final class CommonObjectRequestParams extends com.google.protobuf.Generat
    *
    *
    * <pre>
-   * Optional. SHA256 hash of encryption key used with the Customer-Supplied
-   * Encryption Keys feature.
+   * Optional. SHA256 hash of encryption key used with the Customer-supplied
+   * encryption keys feature.
    * </pre>
    *
    * <code>bytes encryption_key_sha256_bytes = 5 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -734,8 +734,8 @@ public final class CommonObjectRequestParams extends com.google.protobuf.Generat
      *
      *
      * <pre>
-     * Optional. SHA256 hash of encryption key used with the Customer-Supplied
-     * Encryption Keys feature.
+     * Optional. SHA256 hash of encryption key used with the Customer-supplied
+     * encryption keys feature.
      * </pre>
      *
      * <code>bytes encryption_key_sha256_bytes = 5 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -751,8 +751,8 @@ public final class CommonObjectRequestParams extends com.google.protobuf.Generat
      *
      *
      * <pre>
-     * Optional. SHA256 hash of encryption key used with the Customer-Supplied
-     * Encryption Keys feature.
+     * Optional. SHA256 hash of encryption key used with the Customer-supplied
+     * encryption keys feature.
      * </pre>
      *
      * <code>bytes encryption_key_sha256_bytes = 5 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -774,8 +774,8 @@ public final class CommonObjectRequestParams extends com.google.protobuf.Generat
      *
      *
      * <pre>
-     * Optional. SHA256 hash of encryption key used with the Customer-Supplied
-     * Encryption Keys feature.
+     * Optional. SHA256 hash of encryption key used with the Customer-supplied
+     * encryption keys feature.
      * </pre>
      *
      * <code>bytes encryption_key_sha256_bytes = 5 [(.google.api.field_behavior) = OPTIONAL];</code>

@@ -23,7 +23,7 @@ package com.google.storage.v2;
  *
  *
  * <pre>
- * Request for UpdateBucket method.
+ * Request for [UpdateBucket][google.storage.v2.Storage.UpdateBucket] method.
  * </pre>
  *
  * Protobuf type {@code google.storage.v2.UpdateBucketRequest}
@@ -74,7 +74,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
    *
    * <pre>
    * Required. The bucket to update.
-   * The bucket's `name` field will be used to identify the bucket.
+   * The bucket's `name` field is used to identify the bucket.
    * </pre>
    *
    * <code>.google.storage.v2.Bucket bucket = 1 [(.google.api.field_behavior) = REQUIRED];</code>
@@ -91,7 +91,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
    *
    * <pre>
    * Required. The bucket to update.
-   * The bucket's `name` field will be used to identify the bucket.
+   * The bucket's `name` field is used to identify the bucket.
    * </pre>
    *
    * <code>.google.storage.v2.Bucket bucket = 1 [(.google.api.field_behavior) = REQUIRED];</code>
@@ -108,7 +108,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
    *
    * <pre>
    * Required. The bucket to update.
-   * The bucket's `name` field will be used to identify the bucket.
+   * The bucket's `name` field is used to identify the bucket.
    * </pre>
    *
    * <code>.google.storage.v2.Bucket bucket = 1 [(.google.api.field_behavior) = REQUIRED];</code>
@@ -125,7 +125,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * If set, will only modify the bucket if its metageneration matches this
+   * If set, the request modifies the bucket if its metageneration matches this
    * value.
    * </pre>
    *
@@ -142,7 +142,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * If set, will only modify the bucket if its metageneration matches this
+   * If set, the request modifies the bucket if its metageneration matches this
    * value.
    * </pre>
    *
@@ -162,8 +162,8 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * If set, will only modify the bucket if its metageneration does not match
-   * this value.
+   * If set, the request modifies the bucket if its metageneration doesn't
+   * match this value.
    * </pre>
    *
    * <code>optional int64 if_metageneration_not_match = 3;</code>
@@ -179,8 +179,8 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * If set, will only modify the bucket if its metageneration does not match
-   * this value.
+   * If set, the request modifies the bucket if its metageneration doesn't
+   * match this value.
    * </pre>
    *
    * <code>optional int64 if_metageneration_not_match = 3;</code>
@@ -202,8 +202,8 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
    *
    * <pre>
    * Optional. Apply a predefined set of access controls to this bucket.
-   * Valid values are "authenticatedRead", "private", "projectPrivate",
-   * "publicRead", or "publicReadWrite".
+   * Valid values are `authenticatedRead`, `private`, `projectPrivate`,
+   * `publicRead`, or `publicReadWrite`.
    * </pre>
    *
    * <code>string predefined_acl = 8 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -228,8 +228,8 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
    *
    * <pre>
    * Optional. Apply a predefined set of access controls to this bucket.
-   * Valid values are "authenticatedRead", "private", "projectPrivate",
-   * "publicRead", or "publicReadWrite".
+   * Valid values are `authenticatedRead`, `private`, `projectPrivate`,
+   * `publicRead`, or `publicReadWrite`.
    * </pre>
    *
    * <code>string predefined_acl = 8 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -259,8 +259,8 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
    *
    * <pre>
    * Optional. Apply a predefined set of default object access controls to this
-   * bucket. Valid values are "authenticatedRead", "bucketOwnerFullControl",
-   * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
+   * bucket. Valid values are `authenticatedRead`, `bucketOwnerFullControl`,
+   * `bucketOwnerRead`, `private`, `projectPrivate`, or `publicRead`.
    * </pre>
    *
    * <code>string predefined_default_object_acl = 9 [(.google.api.field_behavior) = OPTIONAL];
@@ -286,8 +286,8 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
    *
    * <pre>
    * Optional. Apply a predefined set of default object access controls to this
-   * bucket. Valid values are "authenticatedRead", "bucketOwnerFullControl",
-   * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
+   * bucket. Valid values are `authenticatedRead`, `bucketOwnerFullControl`,
+   * `bucketOwnerRead`, `private`, `projectPrivate`, or `publicRead`.
    * </pre>
    *
    * <code>string predefined_default_object_acl = 9 [(.google.api.field_behavior) = OPTIONAL];
@@ -320,7 +320,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
    * To specify ALL fields, equivalent to the JSON API's "update" function,
    * specify a single field with the value `*`. Note: not recommended. If a new
    * field is introduced at a later time, an older client updating with the `*`
-   * may accidentally reset the new field's value.
+   * might accidentally reset the new field's value.
    *
    * Not specifying any fields is an error.
    * </pre>
@@ -344,7 +344,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
    * To specify ALL fields, equivalent to the JSON API's "update" function,
    * specify a single field with the value `*`. Note: not recommended. If a new
    * field is introduced at a later time, an older client updating with the `*`
-   * may accidentally reset the new field's value.
+   * might accidentally reset the new field's value.
    *
    * Not specifying any fields is an error.
    * </pre>
@@ -368,7 +368,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
    * To specify ALL fields, equivalent to the JSON API's "update" function,
    * specify a single field with the value `*`. Note: not recommended. If a new
    * field is introduced at a later time, an older client updating with the `*`
-   * may accidentally reset the new field's value.
+   * might accidentally reset the new field's value.
    *
    * Not specifying any fields is an error.
    * </pre>
@@ -612,7 +612,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * Request for UpdateBucket method.
+   * Request for [UpdateBucket][google.storage.v2.Storage.UpdateBucket] method.
    * </pre>
    *
    * Protobuf type {@code google.storage.v2.UpdateBucketRequest}
@@ -893,7 +893,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      * <pre>
      * Required. The bucket to update.
-     * The bucket's `name` field will be used to identify the bucket.
+     * The bucket's `name` field is used to identify the bucket.
      * </pre>
      *
      * <code>.google.storage.v2.Bucket bucket = 1 [(.google.api.field_behavior) = REQUIRED];</code>
@@ -909,7 +909,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      * <pre>
      * Required. The bucket to update.
-     * The bucket's `name` field will be used to identify the bucket.
+     * The bucket's `name` field is used to identify the bucket.
      * </pre>
      *
      * <code>.google.storage.v2.Bucket bucket = 1 [(.google.api.field_behavior) = REQUIRED];</code>
@@ -929,7 +929,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      * <pre>
      * Required. The bucket to update.
-     * The bucket's `name` field will be used to identify the bucket.
+     * The bucket's `name` field is used to identify the bucket.
      * </pre>
      *
      * <code>.google.storage.v2.Bucket bucket = 1 [(.google.api.field_behavior) = REQUIRED];</code>
@@ -953,7 +953,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      * <pre>
      * Required. The bucket to update.
-     * The bucket's `name` field will be used to identify the bucket.
+     * The bucket's `name` field is used to identify the bucket.
      * </pre>
      *
      * <code>.google.storage.v2.Bucket bucket = 1 [(.google.api.field_behavior) = REQUIRED];</code>
@@ -974,7 +974,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      * <pre>
      * Required. The bucket to update.
-     * The bucket's `name` field will be used to identify the bucket.
+     * The bucket's `name` field is used to identify the bucket.
      * </pre>
      *
      * <code>.google.storage.v2.Bucket bucket = 1 [(.google.api.field_behavior) = REQUIRED];</code>
@@ -1003,7 +1003,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      * <pre>
      * Required. The bucket to update.
-     * The bucket's `name` field will be used to identify the bucket.
+     * The bucket's `name` field is used to identify the bucket.
      * </pre>
      *
      * <code>.google.storage.v2.Bucket bucket = 1 [(.google.api.field_behavior) = REQUIRED];</code>
@@ -1024,7 +1024,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      * <pre>
      * Required. The bucket to update.
-     * The bucket's `name` field will be used to identify the bucket.
+     * The bucket's `name` field is used to identify the bucket.
      * </pre>
      *
      * <code>.google.storage.v2.Bucket bucket = 1 [(.google.api.field_behavior) = REQUIRED];</code>
@@ -1040,7 +1040,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      * <pre>
      * Required. The bucket to update.
-     * The bucket's `name` field will be used to identify the bucket.
+     * The bucket's `name` field is used to identify the bucket.
      * </pre>
      *
      * <code>.google.storage.v2.Bucket bucket = 1 [(.google.api.field_behavior) = REQUIRED];</code>
@@ -1058,7 +1058,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      * <pre>
      * Required. The bucket to update.
-     * The bucket's `name` field will be used to identify the bucket.
+     * The bucket's `name` field is used to identify the bucket.
      * </pre>
      *
      * <code>.google.storage.v2.Bucket bucket = 1 [(.google.api.field_behavior) = REQUIRED];</code>
@@ -1086,7 +1086,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * If set, will only modify the bucket if its metageneration matches this
+     * If set, the request modifies the bucket if its metageneration matches this
      * value.
      * </pre>
      *
@@ -1103,7 +1103,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * If set, will only modify the bucket if its metageneration matches this
+     * If set, the request modifies the bucket if its metageneration matches this
      * value.
      * </pre>
      *
@@ -1120,7 +1120,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * If set, will only modify the bucket if its metageneration matches this
+     * If set, the request modifies the bucket if its metageneration matches this
      * value.
      * </pre>
      *
@@ -1141,7 +1141,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * If set, will only modify the bucket if its metageneration matches this
+     * If set, the request modifies the bucket if its metageneration matches this
      * value.
      * </pre>
      *
@@ -1162,8 +1162,8 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * If set, will only modify the bucket if its metageneration does not match
-     * this value.
+     * If set, the request modifies the bucket if its metageneration doesn't
+     * match this value.
      * </pre>
      *
      * <code>optional int64 if_metageneration_not_match = 3;</code>
@@ -1179,8 +1179,8 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * If set, will only modify the bucket if its metageneration does not match
-     * this value.
+     * If set, the request modifies the bucket if its metageneration doesn't
+     * match this value.
      * </pre>
      *
      * <code>optional int64 if_metageneration_not_match = 3;</code>
@@ -1196,8 +1196,8 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * If set, will only modify the bucket if its metageneration does not match
-     * this value.
+     * If set, the request modifies the bucket if its metageneration doesn't
+     * match this value.
      * </pre>
      *
      * <code>optional int64 if_metageneration_not_match = 3;</code>
@@ -1217,8 +1217,8 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * If set, will only modify the bucket if its metageneration does not match
-     * this value.
+     * If set, the request modifies the bucket if its metageneration doesn't
+     * match this value.
      * </pre>
      *
      * <code>optional int64 if_metageneration_not_match = 3;</code>
@@ -1239,8 +1239,8 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      * <pre>
      * Optional. Apply a predefined set of access controls to this bucket.
-     * Valid values are "authenticatedRead", "private", "projectPrivate",
-     * "publicRead", or "publicReadWrite".
+     * Valid values are `authenticatedRead`, `private`, `projectPrivate`,
+     * `publicRead`, or `publicReadWrite`.
      * </pre>
      *
      * <code>string predefined_acl = 8 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -1264,8 +1264,8 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      * <pre>
      * Optional. Apply a predefined set of access controls to this bucket.
-     * Valid values are "authenticatedRead", "private", "projectPrivate",
-     * "publicRead", or "publicReadWrite".
+     * Valid values are `authenticatedRead`, `private`, `projectPrivate`,
+     * `publicRead`, or `publicReadWrite`.
      * </pre>
      *
      * <code>string predefined_acl = 8 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -1289,8 +1289,8 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      * <pre>
      * Optional. Apply a predefined set of access controls to this bucket.
-     * Valid values are "authenticatedRead", "private", "projectPrivate",
-     * "publicRead", or "publicReadWrite".
+     * Valid values are `authenticatedRead`, `private`, `projectPrivate`,
+     * `publicRead`, or `publicReadWrite`.
      * </pre>
      *
      * <code>string predefined_acl = 8 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -1313,8 +1313,8 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      * <pre>
      * Optional. Apply a predefined set of access controls to this bucket.
-     * Valid values are "authenticatedRead", "private", "projectPrivate",
-     * "publicRead", or "publicReadWrite".
+     * Valid values are `authenticatedRead`, `private`, `projectPrivate`,
+     * `publicRead`, or `publicReadWrite`.
      * </pre>
      *
      * <code>string predefined_acl = 8 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -1333,8 +1333,8 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      * <pre>
      * Optional. Apply a predefined set of access controls to this bucket.
-     * Valid values are "authenticatedRead", "private", "projectPrivate",
-     * "publicRead", or "publicReadWrite".
+     * Valid values are `authenticatedRead`, `private`, `projectPrivate`,
+     * `publicRead`, or `publicReadWrite`.
      * </pre>
      *
      * <code>string predefined_acl = 8 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -1360,8 +1360,8 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      * <pre>
      * Optional. Apply a predefined set of default object access controls to this
-     * bucket. Valid values are "authenticatedRead", "bucketOwnerFullControl",
-     * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
+     * bucket. Valid values are `authenticatedRead`, `bucketOwnerFullControl`,
+     * `bucketOwnerRead`, `private`, `projectPrivate`, or `publicRead`.
      * </pre>
      *
      * <code>string predefined_default_object_acl = 9 [(.google.api.field_behavior) = OPTIONAL];
@@ -1386,8 +1386,8 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      * <pre>
      * Optional. Apply a predefined set of default object access controls to this
-     * bucket. Valid values are "authenticatedRead", "bucketOwnerFullControl",
-     * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
+     * bucket. Valid values are `authenticatedRead`, `bucketOwnerFullControl`,
+     * `bucketOwnerRead`, `private`, `projectPrivate`, or `publicRead`.
      * </pre>
      *
      * <code>string predefined_default_object_acl = 9 [(.google.api.field_behavior) = OPTIONAL];
@@ -1412,8 +1412,8 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      * <pre>
      * Optional. Apply a predefined set of default object access controls to this
-     * bucket. Valid values are "authenticatedRead", "bucketOwnerFullControl",
-     * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
+     * bucket. Valid values are `authenticatedRead`, `bucketOwnerFullControl`,
+     * `bucketOwnerRead`, `private`, `projectPrivate`, or `publicRead`.
      * </pre>
      *
      * <code>string predefined_default_object_acl = 9 [(.google.api.field_behavior) = OPTIONAL];
@@ -1437,8 +1437,8 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      * <pre>
      * Optional. Apply a predefined set of default object access controls to this
-     * bucket. Valid values are "authenticatedRead", "bucketOwnerFullControl",
-     * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
+     * bucket. Valid values are `authenticatedRead`, `bucketOwnerFullControl`,
+     * `bucketOwnerRead`, `private`, `projectPrivate`, or `publicRead`.
      * </pre>
      *
      * <code>string predefined_default_object_acl = 9 [(.google.api.field_behavior) = OPTIONAL];
@@ -1458,8 +1458,8 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      * <pre>
      * Optional. Apply a predefined set of default object access controls to this
-     * bucket. Valid values are "authenticatedRead", "bucketOwnerFullControl",
-     * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
+     * bucket. Valid values are `authenticatedRead`, `bucketOwnerFullControl`,
+     * `bucketOwnerRead`, `private`, `projectPrivate`, or `publicRead`.
      * </pre>
      *
      * <code>string predefined_default_object_acl = 9 [(.google.api.field_behavior) = OPTIONAL];
@@ -1495,7 +1495,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      * To specify ALL fields, equivalent to the JSON API's "update" function,
      * specify a single field with the value `*`. Note: not recommended. If a new
      * field is introduced at a later time, an older client updating with the `*`
-     * may accidentally reset the new field's value.
+     * might accidentally reset the new field's value.
      *
      * Not specifying any fields is an error.
      * </pre>
@@ -1518,7 +1518,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      * To specify ALL fields, equivalent to the JSON API's "update" function,
      * specify a single field with the value `*`. Note: not recommended. If a new
      * field is introduced at a later time, an older client updating with the `*`
-     * may accidentally reset the new field's value.
+     * might accidentally reset the new field's value.
      *
      * Not specifying any fields is an error.
      * </pre>
@@ -1547,7 +1547,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      * To specify ALL fields, equivalent to the JSON API's "update" function,
      * specify a single field with the value `*`. Note: not recommended. If a new
      * field is introduced at a later time, an older client updating with the `*`
-     * may accidentally reset the new field's value.
+     * might accidentally reset the new field's value.
      *
      * Not specifying any fields is an error.
      * </pre>
@@ -1578,7 +1578,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      * To specify ALL fields, equivalent to the JSON API's "update" function,
      * specify a single field with the value `*`. Note: not recommended. If a new
      * field is introduced at a later time, an older client updating with the `*`
-     * may accidentally reset the new field's value.
+     * might accidentally reset the new field's value.
      *
      * Not specifying any fields is an error.
      * </pre>
@@ -1606,7 +1606,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      * To specify ALL fields, equivalent to the JSON API's "update" function,
      * specify a single field with the value `*`. Note: not recommended. If a new
      * field is introduced at a later time, an older client updating with the `*`
-     * may accidentally reset the new field's value.
+     * might accidentally reset the new field's value.
      *
      * Not specifying any fields is an error.
      * </pre>
@@ -1642,7 +1642,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      * To specify ALL fields, equivalent to the JSON API's "update" function,
      * specify a single field with the value `*`. Note: not recommended. If a new
      * field is introduced at a later time, an older client updating with the `*`
-     * may accidentally reset the new field's value.
+     * might accidentally reset the new field's value.
      *
      * Not specifying any fields is an error.
      * </pre>
@@ -1670,7 +1670,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      * To specify ALL fields, equivalent to the JSON API's "update" function,
      * specify a single field with the value `*`. Note: not recommended. If a new
      * field is introduced at a later time, an older client updating with the `*`
-     * may accidentally reset the new field's value.
+     * might accidentally reset the new field's value.
      *
      * Not specifying any fields is an error.
      * </pre>
@@ -1693,7 +1693,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      * To specify ALL fields, equivalent to the JSON API's "update" function,
      * specify a single field with the value `*`. Note: not recommended. If a new
      * field is introduced at a later time, an older client updating with the `*`
-     * may accidentally reset the new field's value.
+     * might accidentally reset the new field's value.
      *
      * Not specifying any fields is an error.
      * </pre>
@@ -1720,7 +1720,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      * To specify ALL fields, equivalent to the JSON API's "update" function,
      * specify a single field with the value `*`. Note: not recommended. If a new
      * field is introduced at a later time, an older client updating with the `*`
-     * may accidentally reset the new field's value.
+     * might accidentally reset the new field's value.
      *
      * Not specifying any fields is an error.
      * </pre>

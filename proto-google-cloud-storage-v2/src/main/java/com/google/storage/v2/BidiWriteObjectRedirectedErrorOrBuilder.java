@@ -75,7 +75,7 @@ public interface BidiWriteObjectRedirectedErrorOrBuilder
    * <pre>
    * Opaque value describing a previous write. If set, the client must use this
    * in an AppendObjectSpec first_message when retrying the write stream. If not
-   * set, clients may retry the original request.
+   * set, clients might retry the original request.
    * </pre>
    *
    * <code>optional .google.storage.v2.BidiWriteHandle write_handle = 2;</code>
@@ -90,7 +90,7 @@ public interface BidiWriteObjectRedirectedErrorOrBuilder
    * <pre>
    * Opaque value describing a previous write. If set, the client must use this
    * in an AppendObjectSpec first_message when retrying the write stream. If not
-   * set, clients may retry the original request.
+   * set, clients might retry the original request.
    * </pre>
    *
    * <code>optional .google.storage.v2.BidiWriteHandle write_handle = 2;</code>
@@ -105,7 +105,7 @@ public interface BidiWriteObjectRedirectedErrorOrBuilder
    * <pre>
    * Opaque value describing a previous write. If set, the client must use this
    * in an AppendObjectSpec first_message when retrying the write stream. If not
-   * set, clients may retry the original request.
+   * set, clients might retry the original request.
    * </pre>
    *
    * <code>optional .google.storage.v2.BidiWriteHandle write_handle = 2;</code>
@@ -116,9 +116,9 @@ public interface BidiWriteObjectRedirectedErrorOrBuilder
    *
    *
    * <pre>
-   * The generation of the object that triggered the redirect. This will be set
-   * iff write_handle is set. If set, the client must use this in an
-   * AppendObjectSpec first_message when retrying the write stream.
+   * The generation of the object that triggered the redirect. This is set
+   * iff `write_handle` is set. If set, the client must use this in an
+   * `AppendObjectSpec` first_message when retrying the write stream.
    * </pre>
    *
    * <code>optional int64 generation = 3;</code>
@@ -131,9 +131,9 @@ public interface BidiWriteObjectRedirectedErrorOrBuilder
    *
    *
    * <pre>
-   * The generation of the object that triggered the redirect. This will be set
-   * iff write_handle is set. If set, the client must use this in an
-   * AppendObjectSpec first_message when retrying the write stream.
+   * The generation of the object that triggered the redirect. This is set
+   * iff `write_handle` is set. If set, the client must use this in an
+   * `AppendObjectSpec` first_message when retrying the write stream.
    * </pre>
    *
    * <code>optional int64 generation = 3;</code>

@@ -86,8 +86,8 @@ public final class ServiceConstants extends com.google.protobuf.GeneratedMessage
      *
      *
      * <pre>
-     * The maximum size chunk that can will be returned in a single
-     * ReadRequest.
+     * The maximum size chunk that can be returned in a single
+     * `ReadRequest`.
      * 2 MiB.
      * </pre>
      *
@@ -295,8 +295,8 @@ public final class ServiceConstants extends com.google.protobuf.GeneratedMessage
      *
      *
      * <pre>
-     * The maximum size chunk that can will be returned in a single
-     * ReadRequest.
+     * The maximum size chunk that can be returned in a single
+     * `ReadRequest`.
      * 2 MiB.
      * </pre>
      *

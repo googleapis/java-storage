@@ -23,7 +23,8 @@ package com.google.storage.v2;
  *
  *
  * <pre>
- * Response object for `QueryWriteStatus`.
+ * Response object for
+ * [QueryWriteStatus][google.storage.v2.Storage.QueryWriteStatus].
  * </pre>
  *
  * Protobuf type {@code google.storage.v2.QueryWriteStatusResponse}
@@ -406,7 +407,8 @@ public final class QueryWriteStatusResponse extends com.google.protobuf.Generate
    *
    *
    * <pre>
-   * Response object for `QueryWriteStatus`.
+   * Response object for
+   * [QueryWriteStatus][google.storage.v2.Storage.QueryWriteStatus].
    * </pre>
    *
    * Protobuf type {@code google.storage.v2.QueryWriteStatusResponse}

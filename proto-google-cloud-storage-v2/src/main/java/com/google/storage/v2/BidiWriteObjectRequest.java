@@ -23,7 +23,8 @@ package com.google.storage.v2;
  *
  *
  * <pre>
- * Request message for BidiWriteObject.
+ * Request message for
+ * [BidiWriteObject][google.storage.v2.Storage.BidiWriteObject].
  * </pre>
  *
  * Protobuf type {@code google.storage.v2.BidiWriteObjectRequest}
@@ -361,15 +362,15 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
    * should be written.
    *
    * In the first `WriteObjectRequest` of a `WriteObject()` action, it
-   * indicates the initial offset for the `Write()` call. The value **must** be
+   * indicates the initial offset for the `Write()` call. The value must be
    * equal to the `persisted_size` that a call to `QueryWriteStatus()` would
    * return (0 if this is the first write to the object).
    *
-   * On subsequent calls, this value **must** be no larger than the sum of the
+   * On subsequent calls, this value must be no larger than the sum of the
    * first `write_offset` and the sizes of all `data` chunks sent previously on
    * this stream.
    *
-   * An invalid value will cause an error.
+   * An invalid value causes an error.
    * </pre>
    *
    * <code>int64 write_offset = 3 [(.google.api.field_behavior) = REQUIRED];</code>
@@ -388,7 +389,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
    *
    * <pre>
    * The data to insert. If a crc32c checksum is provided that doesn't match
-   * the checksum computed by the service, the request will fail.
+   * the checksum computed by the service, the request fails.
    * </pre>
    *
    * <code>.google.storage.v2.ChecksummedData checksummed_data = 4;</code>
@@ -405,7 +406,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
    *
    * <pre>
    * The data to insert. If a crc32c checksum is provided that doesn't match
-   * the checksum computed by the service, the request will fail.
+   * the checksum computed by the service, the request fails.
    * </pre>
    *
    * <code>.google.storage.v2.ChecksummedData checksummed_data = 4;</code>
@@ -425,7 +426,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
    *
    * <pre>
    * The data to insert. If a crc32c checksum is provided that doesn't match
-   * the checksum computed by the service, the request will fail.
+   * the checksum computed by the service, the request fails.
    * </pre>
    *
    * <code>.google.storage.v2.ChecksummedData checksummed_data = 4;</code>
@@ -446,9 +447,9 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
    *
    * <pre>
    * Optional. Checksums for the complete object. If the checksums computed by
-   * the service don't match the specified checksums the call will fail. May
-   * only be provided in the first request or the last request (with
-   * finish_write set).
+   * the service don't match the specified checksums the call fails. Might only
+   * be provided in the first request or the last request (with finish_write
+   * set).
    * </pre>
    *
    * <code>
@@ -467,9 +468,9 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
    *
    * <pre>
    * Optional. Checksums for the complete object. If the checksums computed by
-   * the service don't match the specified checksums the call will fail. May
-   * only be provided in the first request or the last request (with
-   * finish_write set).
+   * the service don't match the specified checksums the call fails. Might only
+   * be provided in the first request or the last request (with finish_write
+   * set).
    * </pre>
    *
    * <code>
@@ -490,9 +491,9 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
    *
    * <pre>
    * Optional. Checksums for the complete object. If the checksums computed by
-   * the service don't match the specified checksums the call will fail. May
-   * only be provided in the first request or the last request (with
-   * finish_write set).
+   * the service don't match the specified checksums the call fails. Might only
+   * be provided in the first request or the last request (with finish_write
+   * set).
    * </pre>
    *
    * <code>
@@ -513,14 +514,14 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
    *
    *
    * <pre>
-   * Optional. For each BidiWriteObjectRequest where state_lookup is `true` or
-   * the client closes the stream, the service will send a
-   * BidiWriteObjectResponse containing the current persisted size. The
+   * Optional. For each `BidiWriteObjectRequest` where `state_lookup` is `true`
+   * or the client closes the stream, the service sends a
+   * `BidiWriteObjectResponse` containing the current persisted size. The
    * persisted size sent in responses covers all the bytes the server has
    * persisted thus far and can be used to decide what data is safe for the
    * client to drop. Note that the object's current size reported by the
-   * BidiWriteObjectResponse may lag behind the number of bytes written by the
-   * client. This field is ignored if `finish_write` is set to true.
+   * `BidiWriteObjectResponse` might lag behind the number of bytes written by
+   * the client. This field is ignored if `finish_write` is set to true.
    * </pre>
    *
    * <code>bool state_lookup = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -541,7 +542,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
    * <pre>
    * Optional. Persists data written on the stream, up to and including the
    * current message, to permanent storage. This option should be used sparingly
-   * as it may reduce performance. Ongoing writes will periodically be persisted
+   * as it might reduce performance. Ongoing writes are periodically persisted
    * on the server even when `flush` is not set. This field is ignored if
    * `finish_write` is set to true since there's no need to checkpoint or flush
    * if this message completes the write.
@@ -565,8 +566,8 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
    * <pre>
    * Optional. If `true`, this indicates that the write is complete. Sending any
    * `WriteObjectRequest`s subsequent to one in which `finish_write` is `true`
-   * will cause an error.
-   * For a non-resumable write (where the upload_id was not set in the first
+   * causes an error.
+   * For a non-resumable write (where the `upload_id` was not set in the first
    * message), it is an error not to set this field in the final message of the
    * stream.
    * </pre>
@@ -941,7 +942,8 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
    *
    *
    * <pre>
-   * Request message for BidiWriteObject.
+   * Request message for
+   * [BidiWriteObject][google.storage.v2.Storage.BidiWriteObject].
    * </pre>
    *
    * Protobuf type {@code google.storage.v2.BidiWriteObjectRequest}
@@ -1927,15 +1929,15 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
      * should be written.
      *
      * In the first `WriteObjectRequest` of a `WriteObject()` action, it
-     * indicates the initial offset for the `Write()` call. The value **must** be
+     * indicates the initial offset for the `Write()` call. The value must be
      * equal to the `persisted_size` that a call to `QueryWriteStatus()` would
      * return (0 if this is the first write to the object).
      *
-     * On subsequent calls, this value **must** be no larger than the sum of the
+     * On subsequent calls, this value must be no larger than the sum of the
      * first `write_offset` and the sizes of all `data` chunks sent previously on
      * this stream.
      *
-     * An invalid value will cause an error.
+     * An invalid value causes an error.
      * </pre>
      *
      * <code>int64 write_offset = 3 [(.google.api.field_behavior) = REQUIRED];</code>
@@ -1955,15 +1957,15 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
      * should be written.
      *
      * In the first `WriteObjectRequest` of a `WriteObject()` action, it
-     * indicates the initial offset for the `Write()` call. The value **must** be
+     * indicates the initial offset for the `Write()` call. The value must be
      * equal to the `persisted_size` that a call to `QueryWriteStatus()` would
      * return (0 if this is the first write to the object).
      *
-     * On subsequent calls, this value **must** be no larger than the sum of the
+     * On subsequent calls, this value must be no larger than the sum of the
      * first `write_offset` and the sizes of all `data` chunks sent previously on
      * this stream.
      *
-     * An invalid value will cause an error.
+     * An invalid value causes an error.
      * </pre>
      *
      * <code>int64 write_offset = 3 [(.google.api.field_behavior) = REQUIRED];</code>
@@ -1987,15 +1989,15 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
      * should be written.
      *
      * In the first `WriteObjectRequest` of a `WriteObject()` action, it
-     * indicates the initial offset for the `Write()` call. The value **must** be
+     * indicates the initial offset for the `Write()` call. The value must be
      * equal to the `persisted_size` that a call to `QueryWriteStatus()` would
      * return (0 if this is the first write to the object).
      *
-     * On subsequent calls, this value **must** be no larger than the sum of the
+     * On subsequent calls, this value must be no larger than the sum of the
      * first `write_offset` and the sizes of all `data` chunks sent previously on
      * this stream.
      *
-     * An invalid value will cause an error.
+     * An invalid value causes an error.
      * </pre>
      *
      * <code>int64 write_offset = 3 [(.google.api.field_behavior) = REQUIRED];</code>
@@ -2020,7 +2022,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
      *
      * <pre>
      * The data to insert. If a crc32c checksum is provided that doesn't match
-     * the checksum computed by the service, the request will fail.
+     * the checksum computed by the service, the request fails.
      * </pre>
      *
      * <code>.google.storage.v2.ChecksummedData checksummed_data = 4;</code>
@@ -2037,7 +2039,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
      *
      * <pre>
      * The data to insert. If a crc32c checksum is provided that doesn't match
-     * the checksum computed by the service, the request will fail.
+     * the checksum computed by the service, the request fails.
      * </pre>
      *
      * <code>.google.storage.v2.ChecksummedData checksummed_data = 4;</code>
@@ -2064,7 +2066,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
      *
      * <pre>
      * The data to insert. If a crc32c checksum is provided that doesn't match
-     * the checksum computed by the service, the request will fail.
+     * the checksum computed by the service, the request fails.
      * </pre>
      *
      * <code>.google.storage.v2.ChecksummedData checksummed_data = 4;</code>
@@ -2088,7 +2090,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
      *
      * <pre>
      * The data to insert. If a crc32c checksum is provided that doesn't match
-     * the checksum computed by the service, the request will fail.
+     * the checksum computed by the service, the request fails.
      * </pre>
      *
      * <code>.google.storage.v2.ChecksummedData checksummed_data = 4;</code>
@@ -2110,7 +2112,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
      *
      * <pre>
      * The data to insert. If a crc32c checksum is provided that doesn't match
-     * the checksum computed by the service, the request will fail.
+     * the checksum computed by the service, the request fails.
      * </pre>
      *
      * <code>.google.storage.v2.ChecksummedData checksummed_data = 4;</code>
@@ -2143,7 +2145,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
      *
      * <pre>
      * The data to insert. If a crc32c checksum is provided that doesn't match
-     * the checksum computed by the service, the request will fail.
+     * the checksum computed by the service, the request fails.
      * </pre>
      *
      * <code>.google.storage.v2.ChecksummedData checksummed_data = 4;</code>
@@ -2170,7 +2172,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
      *
      * <pre>
      * The data to insert. If a crc32c checksum is provided that doesn't match
-     * the checksum computed by the service, the request will fail.
+     * the checksum computed by the service, the request fails.
      * </pre>
      *
      * <code>.google.storage.v2.ChecksummedData checksummed_data = 4;</code>
@@ -2184,7 +2186,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
      *
      * <pre>
      * The data to insert. If a crc32c checksum is provided that doesn't match
-     * the checksum computed by the service, the request will fail.
+     * the checksum computed by the service, the request fails.
      * </pre>
      *
      * <code>.google.storage.v2.ChecksummedData checksummed_data = 4;</code>
@@ -2206,7 +2208,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
      *
      * <pre>
      * The data to insert. If a crc32c checksum is provided that doesn't match
-     * the checksum computed by the service, the request will fail.
+     * the checksum computed by the service, the request fails.
      * </pre>
      *
      * <code>.google.storage.v2.ChecksummedData checksummed_data = 4;</code>
@@ -2245,9 +2247,9 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
      *
      * <pre>
      * Optional. Checksums for the complete object. If the checksums computed by
-     * the service don't match the specified checksums the call will fail. May
-     * only be provided in the first request or the last request (with
-     * finish_write set).
+     * the service don't match the specified checksums the call fails. Might only
+     * be provided in the first request or the last request (with finish_write
+     * set).
      * </pre>
      *
      * <code>
@@ -2265,9 +2267,9 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
      *
      * <pre>
      * Optional. Checksums for the complete object. If the checksums computed by
-     * the service don't match the specified checksums the call will fail. May
-     * only be provided in the first request or the last request (with
-     * finish_write set).
+     * the service don't match the specified checksums the call fails. Might only
+     * be provided in the first request or the last request (with finish_write
+     * set).
      * </pre>
      *
      * <code>
@@ -2291,9 +2293,9 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
      *
      * <pre>
      * Optional. Checksums for the complete object. If the checksums computed by
-     * the service don't match the specified checksums the call will fail. May
-     * only be provided in the first request or the last request (with
-     * finish_write set).
+     * the service don't match the specified checksums the call fails. Might only
+     * be provided in the first request or the last request (with finish_write
+     * set).
      * </pre>
      *
      * <code>
@@ -2319,9 +2321,9 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
      *
      * <pre>
      * Optional. Checksums for the complete object. If the checksums computed by
-     * the service don't match the specified checksums the call will fail. May
-     * only be provided in the first request or the last request (with
-     * finish_write set).
+     * the service don't match the specified checksums the call fails. Might only
+     * be provided in the first request or the last request (with finish_write
+     * set).
      * </pre>
      *
      * <code>
@@ -2345,9 +2347,9 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
      *
      * <pre>
      * Optional. Checksums for the complete object. If the checksums computed by
-     * the service don't match the specified checksums the call will fail. May
-     * only be provided in the first request or the last request (with
-     * finish_write set).
+     * the service don't match the specified checksums the call fails. Might only
+     * be provided in the first request or the last request (with finish_write
+     * set).
      * </pre>
      *
      * <code>
@@ -2378,9 +2380,9 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
      *
      * <pre>
      * Optional. Checksums for the complete object. If the checksums computed by
-     * the service don't match the specified checksums the call will fail. May
-     * only be provided in the first request or the last request (with
-     * finish_write set).
+     * the service don't match the specified checksums the call fails. Might only
+     * be provided in the first request or the last request (with finish_write
+     * set).
      * </pre>
      *
      * <code>
@@ -2403,9 +2405,9 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
      *
      * <pre>
      * Optional. Checksums for the complete object. If the checksums computed by
-     * the service don't match the specified checksums the call will fail. May
-     * only be provided in the first request or the last request (with
-     * finish_write set).
+     * the service don't match the specified checksums the call fails. Might only
+     * be provided in the first request or the last request (with finish_write
+     * set).
      * </pre>
      *
      * <code>
@@ -2423,9 +2425,9 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
      *
      * <pre>
      * Optional. Checksums for the complete object. If the checksums computed by
-     * the service don't match the specified checksums the call will fail. May
-     * only be provided in the first request or the last request (with
-     * finish_write set).
+     * the service don't match the specified checksums the call fails. Might only
+     * be provided in the first request or the last request (with finish_write
+     * set).
      * </pre>
      *
      * <code>
@@ -2447,9 +2449,9 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
      *
      * <pre>
      * Optional. Checksums for the complete object. If the checksums computed by
-     * the service don't match the specified checksums the call will fail. May
-     * only be provided in the first request or the last request (with
-     * finish_write set).
+     * the service don't match the specified checksums the call fails. Might only
+     * be provided in the first request or the last request (with finish_write
+     * set).
      * </pre>
      *
      * <code>
@@ -2479,14 +2481,14 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
      *
      *
      * <pre>
-     * Optional. For each BidiWriteObjectRequest where state_lookup is `true` or
-     * the client closes the stream, the service will send a
-     * BidiWriteObjectResponse containing the current persisted size. The
+     * Optional. For each `BidiWriteObjectRequest` where `state_lookup` is `true`
+     * or the client closes the stream, the service sends a
+     * `BidiWriteObjectResponse` containing the current persisted size. The
      * persisted size sent in responses covers all the bytes the server has
      * persisted thus far and can be used to decide what data is safe for the
      * client to drop. Note that the object's current size reported by the
-     * BidiWriteObjectResponse may lag behind the number of bytes written by the
-     * client. This field is ignored if `finish_write` is set to true.
+     * `BidiWriteObjectResponse` might lag behind the number of bytes written by
+     * the client. This field is ignored if `finish_write` is set to true.
      * </pre>
      *
      * <code>bool state_lookup = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -2502,14 +2504,14 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
      *
      *
      * <pre>
-     * Optional. For each BidiWriteObjectRequest where state_lookup is `true` or
-     * the client closes the stream, the service will send a
-     * BidiWriteObjectResponse containing the current persisted size. The
+     * Optional. For each `BidiWriteObjectRequest` where `state_lookup` is `true`
+     * or the client closes the stream, the service sends a
+     * `BidiWriteObjectResponse` containing the current persisted size. The
      * persisted size sent in responses covers all the bytes the server has
      * persisted thus far and can be used to decide what data is safe for the
      * client to drop. Note that the object's current size reported by the
-     * BidiWriteObjectResponse may lag behind the number of bytes written by the
-     * client. This field is ignored if `finish_write` is set to true.
+     * `BidiWriteObjectResponse` might lag behind the number of bytes written by
+     * the client. This field is ignored if `finish_write` is set to true.
      * </pre>
      *
      * <code>bool state_lookup = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -2529,14 +2531,14 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
      *
      *
      * <pre>
-     * Optional. For each BidiWriteObjectRequest where state_lookup is `true` or
-     * the client closes the stream, the service will send a
-     * BidiWriteObjectResponse containing the current persisted size. The
+     * Optional. For each `BidiWriteObjectRequest` where `state_lookup` is `true`
+     * or the client closes the stream, the service sends a
+     * `BidiWriteObjectResponse` containing the current persisted size. The
      * persisted size sent in responses covers all the bytes the server has
      * persisted thus far and can be used to decide what data is safe for the
      * client to drop. Note that the object's current size reported by the
-     * BidiWriteObjectResponse may lag behind the number of bytes written by the
-     * client. This field is ignored if `finish_write` is set to true.
+     * `BidiWriteObjectResponse` might lag behind the number of bytes written by
+     * the client. This field is ignored if `finish_write` is set to true.
      * </pre>
      *
      * <code>bool state_lookup = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -2558,7 +2560,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
      * <pre>
      * Optional. Persists data written on the stream, up to and including the
      * current message, to permanent storage. This option should be used sparingly
-     * as it may reduce performance. Ongoing writes will periodically be persisted
+     * as it might reduce performance. Ongoing writes are periodically persisted
      * on the server even when `flush` is not set. This field is ignored if
      * `finish_write` is set to true since there's no need to checkpoint or flush
      * if this message completes the write.
@@ -2579,7 +2581,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
      * <pre>
      * Optional. Persists data written on the stream, up to and including the
      * current message, to permanent storage. This option should be used sparingly
-     * as it may reduce performance. Ongoing writes will periodically be persisted
+     * as it might reduce performance. Ongoing writes are periodically persisted
      * on the server even when `flush` is not set. This field is ignored if
      * `finish_write` is set to true since there's no need to checkpoint or flush
      * if this message completes the write.
@@ -2604,7 +2606,7 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
      * <pre>
      * Optional. Persists data written on the stream, up to and including the
      * current message, to permanent storage. This option should be used sparingly
-     * as it may reduce performance. Ongoing writes will periodically be persisted
+     * as it might reduce performance. Ongoing writes are periodically persisted
      * on the server even when `flush` is not set. This field is ignored if
      * `finish_write` is set to true since there's no need to checkpoint or flush
      * if this message completes the write.
@@ -2629,8 +2631,8 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
      * <pre>
      * Optional. If `true`, this indicates that the write is complete. Sending any
      * `WriteObjectRequest`s subsequent to one in which `finish_write` is `true`
-     * will cause an error.
-     * For a non-resumable write (where the upload_id was not set in the first
+     * causes an error.
+     * For a non-resumable write (where the `upload_id` was not set in the first
      * message), it is an error not to set this field in the final message of the
      * stream.
      * </pre>
@@ -2650,8 +2652,8 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
      * <pre>
      * Optional. If `true`, this indicates that the write is complete. Sending any
      * `WriteObjectRequest`s subsequent to one in which `finish_write` is `true`
-     * will cause an error.
-     * For a non-resumable write (where the upload_id was not set in the first
+     * causes an error.
+     * For a non-resumable write (where the `upload_id` was not set in the first
      * message), it is an error not to set this field in the final message of the
      * stream.
      * </pre>
@@ -2675,8 +2677,8 @@ public final class BidiWriteObjectRequest extends com.google.protobuf.GeneratedM
      * <pre>
      * Optional. If `true`, this indicates that the write is complete. Sending any
      * `WriteObjectRequest`s subsequent to one in which `finish_write` is `true`
-     * will cause an error.
-     * For a non-resumable write (where the upload_id was not set in the first
+     * causes an error.
+     * For a non-resumable write (where the `upload_id` was not set in the first
      * message), it is an error not to set this field in the final message of the
      * stream.
      * </pre>

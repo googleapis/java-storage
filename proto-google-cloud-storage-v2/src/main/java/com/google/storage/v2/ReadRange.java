@@ -23,7 +23,7 @@ package com.google.storage.v2;
  *
  *
  * <pre>
- * Describes a range of bytes to read in a BidiReadObjectRanges request.
+ * Describes a range of bytes to read in a `BidiReadObjectRanges` request.
  * </pre>
  *
  * Protobuf type {@code google.storage.v2.ReadRange}
@@ -71,13 +71,13 @@ public final class ReadRange extends com.google.protobuf.GeneratedMessageV3
    * Required. The offset for the first byte to return in the read, relative to
    * the start of the object.
    *
-   * A negative read_offset value will be interpreted as the number of bytes
+   * A negative read_offset value is interpreted as the number of bytes
    * back from the end of the object to be returned. For example, if an object's
-   * length is 15 bytes, a ReadObjectRequest with read_offset = -5 and
-   * read_length = 3 would return bytes 10 through 12 of the object. Requesting
-   * a negative offset with magnitude larger than the size of the object will
-   * return the entire object. A read_offset larger than the size of the object
-   * will result in an OutOfRange error.
+   * length is 15 bytes, a `ReadObjectRequest` with `read_offset` = -5 and
+   * `read_length` = 3 would return bytes 10 through 12 of the object.
+   * Requesting a negative offset with magnitude larger than the size of the
+   * object returns the entire object. A `read_offset` larger than the size
+   * of the object results in an `OutOfRange` error.
    * </pre>
    *
    * <code>int64 read_offset = 1 [(.google.api.field_behavior) = REQUIRED];</code>
@@ -97,11 +97,11 @@ public final class ReadRange extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Optional. The maximum number of data bytes the server is allowed to return
-   * across all response messages with the same read_id. A read_length of zero
-   * indicates to read until the resource end, and a negative read_length will
-   * cause an error. If the stream returns fewer bytes than allowed by the
-   * read_length and no error occurred, the stream includes all data from the
-   * read_offset to the resource end.
+   * across all response messages with the same `read_id`. A `read_length` of
+   * zero indicates to read until the resource end, and a negative `read_length`
+   * causes an error. If the stream returns fewer bytes than allowed by the
+   * `read_length` and no error occurred, the stream includes all data from the
+   * `read_offset` to the resource end.
    * </pre>
    *
    * <code>int64 read_length = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -121,10 +121,10 @@ public final class ReadRange extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Required. Read identifier provided by the client. When the client issues
-   * more than one outstanding ReadRange on the same stream, responses can be
+   * more than one outstanding `ReadRange` on the same stream, responses can be
    * mapped back to their corresponding requests using this value. Clients must
    * ensure that all outstanding requests have different read_id values. The
-   * server may close the stream with an error if this condition is not met.
+   * server might close the stream with an error if this condition is not met.
    * </pre>
    *
    * <code>int64 read_id = 3 [(.google.api.field_behavior) = REQUIRED];</code>
@@ -316,7 +316,7 @@ public final class ReadRange extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Describes a range of bytes to read in a BidiReadObjectRanges request.
+   * Describes a range of bytes to read in a `BidiReadObjectRanges` request.
    * </pre>
    *
    * Protobuf type {@code google.storage.v2.ReadRange}
@@ -525,13 +525,13 @@ public final class ReadRange extends com.google.protobuf.GeneratedMessageV3
      * Required. The offset for the first byte to return in the read, relative to
      * the start of the object.
      *
-     * A negative read_offset value will be interpreted as the number of bytes
+     * A negative read_offset value is interpreted as the number of bytes
      * back from the end of the object to be returned. For example, if an object's
-     * length is 15 bytes, a ReadObjectRequest with read_offset = -5 and
-     * read_length = 3 would return bytes 10 through 12 of the object. Requesting
-     * a negative offset with magnitude larger than the size of the object will
-     * return the entire object. A read_offset larger than the size of the object
-     * will result in an OutOfRange error.
+     * length is 15 bytes, a `ReadObjectRequest` with `read_offset` = -5 and
+     * `read_length` = 3 would return bytes 10 through 12 of the object.
+     * Requesting a negative offset with magnitude larger than the size of the
+     * object returns the entire object. A `read_offset` larger than the size
+     * of the object results in an `OutOfRange` error.
      * </pre>
      *
      * <code>int64 read_offset = 1 [(.google.api.field_behavior) = REQUIRED];</code>
@@ -550,13 +550,13 @@ public final class ReadRange extends com.google.protobuf.GeneratedMessageV3
      * Required. The offset for the first byte to return in the read, relative to
      * the start of the object.
      *
-     * A negative read_offset value will be interpreted as the number of bytes
+     * A negative read_offset value is interpreted as the number of bytes
      * back from the end of the object to be returned. For example, if an object's
-     * length is 15 bytes, a ReadObjectRequest with read_offset = -5 and
-     * read_length = 3 would return bytes 10 through 12 of the object. Requesting
-     * a negative offset with magnitude larger than the size of the object will
-     * return the entire object. A read_offset larger than the size of the object
-     * will result in an OutOfRange error.
+     * length is 15 bytes, a `ReadObjectRequest` with `read_offset` = -5 and
+     * `read_length` = 3 would return bytes 10 through 12 of the object.
+     * Requesting a negative offset with magnitude larger than the size of the
+     * object returns the entire object. A `read_offset` larger than the size
+     * of the object results in an `OutOfRange` error.
      * </pre>
      *
      * <code>int64 read_offset = 1 [(.google.api.field_behavior) = REQUIRED];</code>
@@ -579,13 +579,13 @@ public final class ReadRange extends com.google.protobuf.GeneratedMessageV3
      * Required. The offset for the first byte to return in the read, relative to
      * the start of the object.
      *
-     * A negative read_offset value will be interpreted as the number of bytes
+     * A negative read_offset value is interpreted as the number of bytes
      * back from the end of the object to be returned. For example, if an object's
-     * length is 15 bytes, a ReadObjectRequest with read_offset = -5 and
-     * read_length = 3 would return bytes 10 through 12 of the object. Requesting
-     * a negative offset with magnitude larger than the size of the object will
-     * return the entire object. A read_offset larger than the size of the object
-     * will result in an OutOfRange error.
+     * length is 15 bytes, a `ReadObjectRequest` with `read_offset` = -5 and
+     * `read_length` = 3 would return bytes 10 through 12 of the object.
+     * Requesting a negative offset with magnitude larger than the size of the
+     * object returns the entire object. A `read_offset` larger than the size
+     * of the object results in an `OutOfRange` error.
      * </pre>
      *
      * <code>int64 read_offset = 1 [(.google.api.field_behavior) = REQUIRED];</code>
@@ -606,11 +606,11 @@ public final class ReadRange extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. The maximum number of data bytes the server is allowed to return
-     * across all response messages with the same read_id. A read_length of zero
-     * indicates to read until the resource end, and a negative read_length will
-     * cause an error. If the stream returns fewer bytes than allowed by the
-     * read_length and no error occurred, the stream includes all data from the
-     * read_offset to the resource end.
+     * across all response messages with the same `read_id`. A `read_length` of
+     * zero indicates to read until the resource end, and a negative `read_length`
+     * causes an error. If the stream returns fewer bytes than allowed by the
+     * `read_length` and no error occurred, the stream includes all data from the
+     * `read_offset` to the resource end.
      * </pre>
      *
      * <code>int64 read_length = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -627,11 +627,11 @@ public final class ReadRange extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. The maximum number of data bytes the server is allowed to return
-     * across all response messages with the same read_id. A read_length of zero
-     * indicates to read until the resource end, and a negative read_length will
-     * cause an error. If the stream returns fewer bytes than allowed by the
-     * read_length and no error occurred, the stream includes all data from the
-     * read_offset to the resource end.
+     * across all response messages with the same `read_id`. A `read_length` of
+     * zero indicates to read until the resource end, and a negative `read_length`
+     * causes an error. If the stream returns fewer bytes than allowed by the
+     * `read_length` and no error occurred, the stream includes all data from the
+     * `read_offset` to the resource end.
      * </pre>
      *
      * <code>int64 read_length = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -652,11 +652,11 @@ public final class ReadRange extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. The maximum number of data bytes the server is allowed to return
-     * across all response messages with the same read_id. A read_length of zero
-     * indicates to read until the resource end, and a negative read_length will
-     * cause an error. If the stream returns fewer bytes than allowed by the
-     * read_length and no error occurred, the stream includes all data from the
-     * read_offset to the resource end.
+     * across all response messages with the same `read_id`. A `read_length` of
+     * zero indicates to read until the resource end, and a negative `read_length`
+     * causes an error. If the stream returns fewer bytes than allowed by the
+     * `read_length` and no error occurred, the stream includes all data from the
+     * `read_offset` to the resource end.
      * </pre>
      *
      * <code>int64 read_length = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -677,10 +677,10 @@ public final class ReadRange extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Required. Read identifier provided by the client. When the client issues
-     * more than one outstanding ReadRange on the same stream, responses can be
+     * more than one outstanding `ReadRange` on the same stream, responses can be
      * mapped back to their corresponding requests using this value. Clients must
      * ensure that all outstanding requests have different read_id values. The
-     * server may close the stream with an error if this condition is not met.
+     * server might close the stream with an error if this condition is not met.
      * </pre>
      *
      * <code>int64 read_id = 3 [(.google.api.field_behavior) = REQUIRED];</code>
@@ -697,10 +697,10 @@ public final class ReadRange extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Required. Read identifier provided by the client. When the client issues
-     * more than one outstanding ReadRange on the same stream, responses can be
+     * more than one outstanding `ReadRange` on the same stream, responses can be
      * mapped back to their corresponding requests using this value. Clients must
      * ensure that all outstanding requests have different read_id values. The
-     * server may close the stream with an error if this condition is not met.
+     * server might close the stream with an error if this condition is not met.
      * </pre>
      *
      * <code>int64 read_id = 3 [(.google.api.field_behavior) = REQUIRED];</code>
@@ -721,10 +721,10 @@ public final class ReadRange extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Required. Read identifier provided by the client. When the client issues
-     * more than one outstanding ReadRange on the same stream, responses can be
+     * more than one outstanding `ReadRange` on the same stream, responses can be
      * mapped back to their corresponding requests using this value. Clients must
      * ensure that all outstanding requests have different read_id values. The
-     * server may close the stream with an error if this condition is not met.
+     * server might close the stream with an error if this condition is not met.
      * </pre>
      *
      * <code>int64 read_id = 3 [(.google.api.field_behavior) = REQUIRED];</code>

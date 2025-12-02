@@ -106,4 +106,94 @@ public interface ListBucketsResponseOrBuilder
    * @return The bytes for nextPageToken.
    */
   com.google.protobuf.ByteString getNextPageTokenBytes();
+
+  /**
+   *
+   *
+   * <pre>
+   * Unreachable resources.
+   * This field can only be present if the caller specified
+   * return_partial_success to be true in the request to receive indications
+   * of temporarily missing resources.
+   * unreachable might be:
+   * unreachable = [
+   *  "projects/_/buckets/bucket1",
+   *  "projects/_/buckets/bucket2",
+   *  "projects/_/buckets/bucket3",
+   * ]
+   * </pre>
+   *
+   * <code>repeated string unreachable = 3;</code>
+   *
+   * @return A list containing the unreachable.
+   */
+  java.util.List<java.lang.String> getUnreachableList();
+
+  /**
+   *
+   *
+   * <pre>
+   * Unreachable resources.
+   * This field can only be present if the caller specified
+   * return_partial_success to be true in the request to receive indications
+   * of temporarily missing resources.
+   * unreachable might be:
+   * unreachable = [
+   *  "projects/_/buckets/bucket1",
+   *  "projects/_/buckets/bucket2",
+   *  "projects/_/buckets/bucket3",
+   * ]
+   * </pre>
+   *
+   * <code>repeated string unreachable = 3;</code>
+   *
+   * @return The count of unreachable.
+   */
+  int getUnreachableCount();
+
+  /**
+   *
+   *
+   * <pre>
+   * Unreachable resources.
+   * This field can only be present if the caller specified
+   * return_partial_success to be true in the request to receive indications
+   * of temporarily missing resources.
+   * unreachable might be:
+   * unreachable = [
+   *  "projects/_/buckets/bucket1",
+   *  "projects/_/buckets/bucket2",
+   *  "projects/_/buckets/bucket3",
+   * ]
+   * </pre>
+   *
+   * <code>repeated string unreachable = 3;</code>
+   *
+   * @param index The index of the element to return.
+   * @return The unreachable at the given index.
+   */
+  java.lang.String getUnreachable(int index);
+
+  /**
+   *
+   *
+   * <pre>
+   * Unreachable resources.
+   * This field can only be present if the caller specified
+   * return_partial_success to be true in the request to receive indications
+   * of temporarily missing resources.
+   * unreachable might be:
+   * unreachable = [
+   *  "projects/_/buckets/bucket1",
+   *  "projects/_/buckets/bucket2",
+   *  "projects/_/buckets/bucket3",
+   * ]
+   * </pre>
+   *
+   * <code>repeated string unreachable = 3;</code>
+   *
+   * @param index The index of the value to return.
+   * @return The bytes of the unreachable at the given index.
+   */
+  com.google.protobuf.ByteString getUnreachableBytes(int index);
 }

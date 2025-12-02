@@ -23,7 +23,8 @@ package com.google.storage.v2;
  *
  *
  * <pre>
- * Request message for LockBucketRetentionPolicyRequest.
+ * Request message for
+ * [LockBucketRetentionPolicy][google.storage.v2.Storage.LockBucketRetentionPolicy].
  * </pre>
  *
  * Protobuf type {@code google.storage.v2.LockBucketRetentionPolicyRequest}
@@ -316,7 +317,8 @@ public final class LockBucketRetentionPolicyRequest extends com.google.protobuf.
    *
    *
    * <pre>
-   * Request message for LockBucketRetentionPolicyRequest.
+   * Request message for
+   * [LockBucketRetentionPolicy][google.storage.v2.Storage.LockBucketRetentionPolicy].
    * </pre>
    *
    * Protobuf type {@code google.storage.v2.LockBucketRetentionPolicyRequest}

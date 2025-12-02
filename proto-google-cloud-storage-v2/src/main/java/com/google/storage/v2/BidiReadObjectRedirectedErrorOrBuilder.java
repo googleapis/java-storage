@@ -28,8 +28,8 @@ public interface BidiReadObjectRedirectedErrorOrBuilder
    *
    *
    * <pre>
-   * The read handle for the redirected read. If set, the client may use this in
-   * the BidiReadObjectSpec when retrying the read stream.
+   * The read handle for the redirected read. If set, the client might use this
+   * in the BidiReadObjectSpec when retrying the read stream.
    * </pre>
    *
    * <code>.google.storage.v2.BidiReadHandle read_handle = 1;</code>
@@ -42,8 +42,8 @@ public interface BidiReadObjectRedirectedErrorOrBuilder
    *
    *
    * <pre>
-   * The read handle for the redirected read. If set, the client may use this in
-   * the BidiReadObjectSpec when retrying the read stream.
+   * The read handle for the redirected read. If set, the client might use this
+   * in the BidiReadObjectSpec when retrying the read stream.
    * </pre>
    *
    * <code>.google.storage.v2.BidiReadHandle read_handle = 1;</code>
@@ -56,8 +56,8 @@ public interface BidiReadObjectRedirectedErrorOrBuilder
    *
    *
    * <pre>
-   * The read handle for the redirected read. If set, the client may use this in
-   * the BidiReadObjectSpec when retrying the read stream.
+   * The read handle for the redirected read. If set, the client might use this
+   * in the BidiReadObjectSpec when retrying the read stream.
    * </pre>
    *
    * <code>.google.storage.v2.BidiReadHandle read_handle = 1;</code>

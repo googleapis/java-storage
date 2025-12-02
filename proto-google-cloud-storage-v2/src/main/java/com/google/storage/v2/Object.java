@@ -237,9 +237,9 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Retention period may be decreased or increased.
-       * The Retention configuration may be removed.
-       * The mode may be changed to locked.
+       * Retention period might be decreased or increased.
+       * The Retention configuration might be removed.
+       * The mode might be changed to locked.
        * </pre>
        *
        * <code>UNLOCKED = 1;</code>
@@ -249,7 +249,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Retention period may be increased.
+       * Retention period might be increased.
        * The Retention configuration cannot be removed.
        * The mode cannot be changed.
        * </pre>
@@ -275,9 +275,9 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Retention period may be decreased or increased.
-       * The Retention configuration may be removed.
-       * The mode may be changed to locked.
+       * Retention period might be decreased or increased.
+       * The Retention configuration might be removed.
+       * The mode might be changed to locked.
        * </pre>
        *
        * <code>UNLOCKED = 1;</code>
@@ -288,7 +288,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Retention period may be increased.
+       * Retention period might be increased.
        * The Retention configuration cannot be removed.
        * The mode cannot be changed.
        * </pre>
@@ -1395,9 +1395,9 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Optional. The etag of the object.
+   * Optional. The `etag` of an object.
    * If included in the metadata of an update or delete request message, the
-   * operation will only be performed if the etag matches that of the live
+   * operation is only performed if the etag matches that of the live
    * object.
    * </pre>
    *
@@ -1422,9 +1422,9 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Optional. The etag of the object.
+   * Optional. The `etag` of an object.
    * If included in the metadata of an update or delete request message, the
-   * operation will only be performed if the etag matches that of the live
+   * operation is only performed if the etag matches that of the live
    * object.
    * </pre>
    *
@@ -1623,7 +1623,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Output only. Content-Length of the object data in bytes, matching
-   * [https://tools.ietf.org/html/rfc7230#section-3.3.2][RFC 7230 §3.3.2].
+   * [RFC 7230 §3.3.2](https://tools.ietf.org/html/rfc7230#section-3.3.2]).
    * </pre>
    *
    * <code>int64 size = 6 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -1645,7 +1645,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Optional. Content-Encoding of the object data, matching
-   * [https://tools.ietf.org/html/rfc7231#section-3.1.2.2][RFC 7231 §3.1.2.2]
+   * [RFC 7231 §3.1.2.2](https://tools.ietf.org/html/rfc7231#section-3.1.2.2)
    * </pre>
    *
    * <code>string content_encoding = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -1670,7 +1670,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Optional. Content-Encoding of the object data, matching
-   * [https://tools.ietf.org/html/rfc7231#section-3.1.2.2][RFC 7231 §3.1.2.2]
+   * [RFC 7231 §3.1.2.2](https://tools.ietf.org/html/rfc7231#section-3.1.2.2)
    * </pre>
    *
    * <code>string content_encoding = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -1700,7 +1700,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Optional. Content-Disposition of the object data, matching
-   * [https://tools.ietf.org/html/rfc6266][RFC 6266].
+   * [RFC 6266](https://tools.ietf.org/html/rfc6266).
    * </pre>
    *
    * <code>string content_disposition = 8 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -1725,7 +1725,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Optional. Content-Disposition of the object data, matching
-   * [https://tools.ietf.org/html/rfc6266][RFC 6266].
+   * [RFC 6266](https://tools.ietf.org/html/rfc6266).
    * </pre>
    *
    * <code>string content_disposition = 8 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -1755,9 +1755,9 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Optional. Cache-Control directive for the object data, matching
-   * [https://tools.ietf.org/html/rfc7234#section-5.2"][RFC 7234 §5.2].
+   * [RFC 7234 §5.2](https://tools.ietf.org/html/rfc7234#section-5.2).
    * If omitted, and the object is accessible to all anonymous users, the
-   * default will be `public, max-age=3600`.
+   * default is `public, max-age=3600`.
    * </pre>
    *
    * <code>string cache_control = 9 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -1782,9 +1782,9 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Optional. Cache-Control directive for the object data, matching
-   * [https://tools.ietf.org/html/rfc7234#section-5.2"][RFC 7234 §5.2].
+   * [RFC 7234 §5.2](https://tools.ietf.org/html/rfc7234#section-5.2).
    * If omitted, and the object is accessible to all anonymous users, the
-   * default will be `public, max-age=3600`.
+   * default is `public, max-age=3600`.
    * </pre>
    *
    * <code>string cache_control = 9 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -1814,7 +1814,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Optional. Access controls on the object.
-   * If iam_config.uniform_bucket_level_access is enabled on the parent
+   * If `iam_config.uniform_bucket_level_access` is enabled on the parent
    * bucket, requests to set, read, or modify acl is an error.
    * </pre>
    *
@@ -1832,7 +1832,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Optional. Access controls on the object.
-   * If iam_config.uniform_bucket_level_access is enabled on the parent
+   * If `iam_config.uniform_bucket_level_access` is enabled on the parent
    * bucket, requests to set, read, or modify acl is an error.
    * </pre>
    *
@@ -1851,7 +1851,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Optional. Access controls on the object.
-   * If iam_config.uniform_bucket_level_access is enabled on the parent
+   * If `iam_config.uniform_bucket_level_access` is enabled on the parent
    * bucket, requests to set, read, or modify acl is an error.
    * </pre>
    *
@@ -1869,7 +1869,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Optional. Access controls on the object.
-   * If iam_config.uniform_bucket_level_access is enabled on the parent
+   * If `iam_config.uniform_bucket_level_access` is enabled on the parent
    * bucket, requests to set, read, or modify acl is an error.
    * </pre>
    *
@@ -1887,7 +1887,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Optional. Access controls on the object.
-   * If iam_config.uniform_bucket_level_access is enabled on the parent
+   * If `iam_config.uniform_bucket_level_access` is enabled on the parent
    * bucket, requests to set, read, or modify acl is an error.
    * </pre>
    *
@@ -1910,7 +1910,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Optional. Content-Language of the object data, matching
-   * [https://tools.ietf.org/html/rfc7231#section-3.1.3.2][RFC 7231 §3.1.3.2].
+   * [RFC 7231 §3.1.3.2](https://tools.ietf.org/html/rfc7231#section-3.1.3.2).
    * </pre>
    *
    * <code>string content_language = 11 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -1935,7 +1935,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Optional. Content-Language of the object data, matching
-   * [https://tools.ietf.org/html/rfc7231#section-3.1.3.2][RFC 7231 §3.1.3.2].
+   * [RFC 7231 §3.1.3.2](https://tools.ietf.org/html/rfc7231#section-3.1.3.2).
    * </pre>
    *
    * <code>string content_language = 11 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -2079,7 +2079,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Optional. Content-Type of the object data, matching
-   * [https://tools.ietf.org/html/rfc7231#section-3.1.1.5][RFC 7231 §3.1.1.5].
+   * [RFC 7231 §3.1.1.5](https://tools.ietf.org/html/rfc7231#section-3.1.1.5).
    * If an object is stored without a Content-Type, it is served as
    * `application/octet-stream`.
    * </pre>
@@ -2106,7 +2106,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Optional. Content-Type of the object data, matching
-   * [https://tools.ietf.org/html/rfc7231#section-3.1.1.5][RFC 7231 §3.1.1.5].
+   * [RFC 7231 §3.1.1.5](https://tools.ietf.org/html/rfc7231#section-3.1.1.5).
    * If an object is stored without a Content-Type, it is served as
    * `application/octet-stream`.
    * </pre>
@@ -2208,7 +2208,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Output only. Hashes for the data part of this object. This field is used
-   * for output only and will be silently ignored if provided in requests. The
+   * for output only and is silently ignored if provided in requests. The
    * checksums of the complete object regardless of data range. If the object is
    * downloaded in full, the client should compute one of these checksums over
    * the downloaded object and compare it against the value provided here.
@@ -2230,7 +2230,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Output only. Hashes for the data part of this object. This field is used
-   * for output only and will be silently ignored if provided in requests. The
+   * for output only and is silently ignored if provided in requests. The
    * checksums of the complete object regardless of data range. If the object is
    * downloaded in full, the client should compute one of these checksums over
    * the downloaded object and compare it against the value provided here.
@@ -2254,7 +2254,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Output only. Hashes for the data part of this object. This field is used
-   * for output only and will be silently ignored if provided in requests. The
+   * for output only and is silently ignored if provided in requests. The
    * checksums of the complete object regardless of data range. If the object is
    * downloaded in full, the client should compute one of these checksums over
    * the downloaded object and compare it against the value provided here.
@@ -2405,7 +2405,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Output only. The time at which the object's storage class was last changed.
-   * When the object is initially created, it will be set to time_created.
+   * When the object is initially created, it is set to `time_created`.
    * </pre>
    *
    * <code>
@@ -2424,7 +2424,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Output only. The time at which the object's storage class was last changed.
-   * When the object is initially created, it will be set to time_created.
+   * When the object is initially created, it is set to `time_created`.
    * </pre>
    *
    * <code>
@@ -2445,7 +2445,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Output only. The time at which the object's storage class was last changed.
-   * When the object is initially created, it will be set to time_created.
+   * When the object is initially created, it is set to `time_created`.
    * </pre>
    *
    * <code>
@@ -2739,14 +2739,14 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    * Whether an object is under event-based hold.
    * An event-based hold is a way to force the retention of an object until
    * after some event occurs. Once the hold is released by explicitly setting
-   * this field to false, the object will become subject to any bucket-level
-   * retention policy, except that the retention duration will be calculated
+   * this field to `false`, the object becomes subject to any bucket-level
+   * retention policy, except that the retention duration is calculated
    * from the time the event based hold was lifted, rather than the time the
    * object was created.
    *
-   * In a WriteObject request, not setting this field implies that the value
-   * should be taken from the parent bucket's "default_event_based_hold" field.
-   * In a response, this field will always be set to true or false.
+   * In a `WriteObject` request, not setting this field implies that the value
+   * should be taken from the parent bucket's `default_event_based_hold` field.
+   * In a response, this field is always set to `true` or `false`.
    * </pre>
    *
    * <code>optional bool event_based_hold = 23;</code>
@@ -2765,14 +2765,14 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    * Whether an object is under event-based hold.
    * An event-based hold is a way to force the retention of an object until
    * after some event occurs. Once the hold is released by explicitly setting
-   * this field to false, the object will become subject to any bucket-level
-   * retention policy, except that the retention duration will be calculated
+   * this field to `false`, the object becomes subject to any bucket-level
+   * retention policy, except that the retention duration is calculated
    * from the time the event based hold was lifted, rather than the time the
    * object was created.
    *
-   * In a WriteObject request, not setting this field implies that the value
-   * should be taken from the parent bucket's "default_event_based_hold" field.
-   * In a response, this field will always be set to true or false.
+   * In a `WriteObject` request, not setting this field implies that the value
+   * should be taken from the parent bucket's `default_event_based_hold` field.
+   * In a response, this field is always set to `true` or `false`.
    * </pre>
    *
    * <code>optional bool event_based_hold = 23;</code>
@@ -2791,8 +2791,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Output only. The owner of the object. This will always be the uploader of
-   * the object.
+   * Output only. The owner of the object. This is always the uploader of the
+   * object.
    * </pre>
    *
    * <code>.google.storage.v2.Owner owner = 24 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -2808,8 +2808,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Output only. The owner of the object. This will always be the uploader of
-   * the object.
+   * Output only. The owner of the object. This is always the uploader of the
+   * object.
    * </pre>
    *
    * <code>.google.storage.v2.Owner owner = 24 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -2825,8 +2825,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Output only. The owner of the object. This will always be the uploader of
-   * the object.
+   * Output only. The owner of the object. This is always the uploader of the
+   * object.
    * </pre>
    *
    * <code>.google.storage.v2.Owner owner = 24 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -2843,7 +2843,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Optional. Metadata of Customer-Supplied Encryption Key, if the object is
+   * Optional. Metadata of customer-supplied encryption key, if the object is
    * encrypted by such a key.
    * </pre>
    *
@@ -2862,7 +2862,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Optional. Metadata of Customer-Supplied Encryption Key, if the object is
+   * Optional. Metadata of customer-supplied encryption key, if the object is
    * encrypted by such a key.
    * </pre>
    *
@@ -2883,7 +2883,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Optional. Metadata of Customer-Supplied Encryption Key, if the object is
+   * Optional. Metadata of customer-supplied encryption key, if the object is
    * encrypted by such a key.
    * </pre>
    *
@@ -2960,7 +2960,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    * Output only. This is the time when the object became soft-deleted.
    *
    * Soft-deleted objects are only accessible if a soft_delete_policy is
-   * enabled. Also see hard_delete_time.
+   * enabled. Also see `hard_delete_time`.
    * </pre>
    *
    * <code>
@@ -2981,7 +2981,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    * Output only. This is the time when the object became soft-deleted.
    *
    * Soft-deleted objects are only accessible if a soft_delete_policy is
-   * enabled. Also see hard_delete_time.
+   * enabled. Also see `hard_delete_time`.
    * </pre>
    *
    * <code>
@@ -3004,7 +3004,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    * Output only. This is the time when the object became soft-deleted.
    *
    * Soft-deleted objects are only accessible if a soft_delete_policy is
-   * enabled. Also see hard_delete_time.
+   * enabled. Also see `hard_delete_time`.
    * </pre>
    *
    * <code>
@@ -3025,10 +3025,10 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Output only. The time when the object will be permanently deleted.
+   * Output only. The time when the object is permanently deleted.
    *
-   * Only set when an object becomes soft-deleted with a soft_delete_policy.
-   * Otherwise, the object will not be accessible.
+   * Only set when an object becomes soft-deleted with a `soft_delete_policy`.
+   * Otherwise, the object is not accessible.
    * </pre>
    *
    * <code>
@@ -3046,10 +3046,10 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Output only. The time when the object will be permanently deleted.
+   * Output only. The time when the object is permanently deleted.
    *
-   * Only set when an object becomes soft-deleted with a soft_delete_policy.
-   * Otherwise, the object will not be accessible.
+   * Only set when an object becomes soft-deleted with a `soft_delete_policy`.
+   * Otherwise, the object is not accessible.
    * </pre>
    *
    * <code>
@@ -3069,10 +3069,10 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Output only. The time when the object will be permanently deleted.
+   * Output only. The time when the object is permanently deleted.
    *
-   * Only set when an object becomes soft-deleted with a soft_delete_policy.
-   * Otherwise, the object will not be accessible.
+   * Only set when an object becomes soft-deleted with a `soft_delete_policy`.
+   * Otherwise, the object is not accessible.
    * </pre>
    *
    * <code>
@@ -3094,7 +3094,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Optional. Retention configuration of this object.
-   * May only be configured if the bucket has object retention enabled.
+   * Might only be configured if the bucket has object retention enabled.
    * </pre>
    *
    * <code>
@@ -3113,7 +3113,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Optional. Retention configuration of this object.
-   * May only be configured if the bucket has object retention enabled.
+   * Might only be configured if the bucket has object retention enabled.
    * </pre>
    *
    * <code>
@@ -3134,7 +3134,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Optional. Retention configuration of this object.
-   * May only be configured if the bucket has object retention enabled.
+   * Might only be configured if the bucket has object retention enabled.
    * </pre>
    *
    * <code>
@@ -4766,9 +4766,9 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The etag of the object.
+     * Optional. The `etag` of an object.
      * If included in the metadata of an update or delete request message, the
-     * operation will only be performed if the etag matches that of the live
+     * operation is only performed if the etag matches that of the live
      * object.
      * </pre>
      *
@@ -4792,9 +4792,9 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The etag of the object.
+     * Optional. The `etag` of an object.
      * If included in the metadata of an update or delete request message, the
-     * operation will only be performed if the etag matches that of the live
+     * operation is only performed if the etag matches that of the live
      * object.
      * </pre>
      *
@@ -4818,9 +4818,9 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The etag of the object.
+     * Optional. The `etag` of an object.
      * If included in the metadata of an update or delete request message, the
-     * operation will only be performed if the etag matches that of the live
+     * operation is only performed if the etag matches that of the live
      * object.
      * </pre>
      *
@@ -4843,9 +4843,9 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The etag of the object.
+     * Optional. The `etag` of an object.
      * If included in the metadata of an update or delete request message, the
-     * operation will only be performed if the etag matches that of the live
+     * operation is only performed if the etag matches that of the live
      * object.
      * </pre>
      *
@@ -4864,9 +4864,9 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. The etag of the object.
+     * Optional. The `etag` of an object.
      * If included in the metadata of an update or delete request message, the
-     * operation will only be performed if the etag matches that of the live
+     * operation is only performed if the etag matches that of the live
      * object.
      * </pre>
      *
@@ -5266,7 +5266,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. Content-Length of the object data in bytes, matching
-     * [https://tools.ietf.org/html/rfc7230#section-3.3.2][RFC 7230 §3.3.2].
+     * [RFC 7230 §3.3.2](https://tools.ietf.org/html/rfc7230#section-3.3.2]).
      * </pre>
      *
      * <code>int64 size = 6 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -5283,7 +5283,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. Content-Length of the object data in bytes, matching
-     * [https://tools.ietf.org/html/rfc7230#section-3.3.2][RFC 7230 §3.3.2].
+     * [RFC 7230 §3.3.2](https://tools.ietf.org/html/rfc7230#section-3.3.2]).
      * </pre>
      *
      * <code>int64 size = 6 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -5304,7 +5304,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. Content-Length of the object data in bytes, matching
-     * [https://tools.ietf.org/html/rfc7230#section-3.3.2][RFC 7230 §3.3.2].
+     * [RFC 7230 §3.3.2](https://tools.ietf.org/html/rfc7230#section-3.3.2]).
      * </pre>
      *
      * <code>int64 size = 6 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -5325,7 +5325,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Content-Encoding of the object data, matching
-     * [https://tools.ietf.org/html/rfc7231#section-3.1.2.2][RFC 7231 §3.1.2.2]
+     * [RFC 7231 §3.1.2.2](https://tools.ietf.org/html/rfc7231#section-3.1.2.2)
      * </pre>
      *
      * <code>string content_encoding = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -5349,7 +5349,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Content-Encoding of the object data, matching
-     * [https://tools.ietf.org/html/rfc7231#section-3.1.2.2][RFC 7231 §3.1.2.2]
+     * [RFC 7231 §3.1.2.2](https://tools.ietf.org/html/rfc7231#section-3.1.2.2)
      * </pre>
      *
      * <code>string content_encoding = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -5373,7 +5373,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Content-Encoding of the object data, matching
-     * [https://tools.ietf.org/html/rfc7231#section-3.1.2.2][RFC 7231 §3.1.2.2]
+     * [RFC 7231 §3.1.2.2](https://tools.ietf.org/html/rfc7231#section-3.1.2.2)
      * </pre>
      *
      * <code>string content_encoding = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -5396,7 +5396,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Content-Encoding of the object data, matching
-     * [https://tools.ietf.org/html/rfc7231#section-3.1.2.2][RFC 7231 §3.1.2.2]
+     * [RFC 7231 §3.1.2.2](https://tools.ietf.org/html/rfc7231#section-3.1.2.2)
      * </pre>
      *
      * <code>string content_encoding = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -5415,7 +5415,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Content-Encoding of the object data, matching
-     * [https://tools.ietf.org/html/rfc7231#section-3.1.2.2][RFC 7231 §3.1.2.2]
+     * [RFC 7231 §3.1.2.2](https://tools.ietf.org/html/rfc7231#section-3.1.2.2)
      * </pre>
      *
      * <code>string content_encoding = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -5441,7 +5441,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Content-Disposition of the object data, matching
-     * [https://tools.ietf.org/html/rfc6266][RFC 6266].
+     * [RFC 6266](https://tools.ietf.org/html/rfc6266).
      * </pre>
      *
      * <code>string content_disposition = 8 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -5465,7 +5465,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Content-Disposition of the object data, matching
-     * [https://tools.ietf.org/html/rfc6266][RFC 6266].
+     * [RFC 6266](https://tools.ietf.org/html/rfc6266).
      * </pre>
      *
      * <code>string content_disposition = 8 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -5489,7 +5489,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Content-Disposition of the object data, matching
-     * [https://tools.ietf.org/html/rfc6266][RFC 6266].
+     * [RFC 6266](https://tools.ietf.org/html/rfc6266).
      * </pre>
      *
      * <code>string content_disposition = 8 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -5512,7 +5512,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Content-Disposition of the object data, matching
-     * [https://tools.ietf.org/html/rfc6266][RFC 6266].
+     * [RFC 6266](https://tools.ietf.org/html/rfc6266).
      * </pre>
      *
      * <code>string content_disposition = 8 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -5531,7 +5531,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Content-Disposition of the object data, matching
-     * [https://tools.ietf.org/html/rfc6266][RFC 6266].
+     * [RFC 6266](https://tools.ietf.org/html/rfc6266).
      * </pre>
      *
      * <code>string content_disposition = 8 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -5557,9 +5557,9 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Cache-Control directive for the object data, matching
-     * [https://tools.ietf.org/html/rfc7234#section-5.2"][RFC 7234 §5.2].
+     * [RFC 7234 §5.2](https://tools.ietf.org/html/rfc7234#section-5.2).
      * If omitted, and the object is accessible to all anonymous users, the
-     * default will be `public, max-age=3600`.
+     * default is `public, max-age=3600`.
      * </pre>
      *
      * <code>string cache_control = 9 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -5583,9 +5583,9 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Cache-Control directive for the object data, matching
-     * [https://tools.ietf.org/html/rfc7234#section-5.2"][RFC 7234 §5.2].
+     * [RFC 7234 §5.2](https://tools.ietf.org/html/rfc7234#section-5.2).
      * If omitted, and the object is accessible to all anonymous users, the
-     * default will be `public, max-age=3600`.
+     * default is `public, max-age=3600`.
      * </pre>
      *
      * <code>string cache_control = 9 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -5609,9 +5609,9 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Cache-Control directive for the object data, matching
-     * [https://tools.ietf.org/html/rfc7234#section-5.2"][RFC 7234 §5.2].
+     * [RFC 7234 §5.2](https://tools.ietf.org/html/rfc7234#section-5.2).
      * If omitted, and the object is accessible to all anonymous users, the
-     * default will be `public, max-age=3600`.
+     * default is `public, max-age=3600`.
      * </pre>
      *
      * <code>string cache_control = 9 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -5634,9 +5634,9 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Cache-Control directive for the object data, matching
-     * [https://tools.ietf.org/html/rfc7234#section-5.2"][RFC 7234 §5.2].
+     * [RFC 7234 §5.2](https://tools.ietf.org/html/rfc7234#section-5.2).
      * If omitted, and the object is accessible to all anonymous users, the
-     * default will be `public, max-age=3600`.
+     * default is `public, max-age=3600`.
      * </pre>
      *
      * <code>string cache_control = 9 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -5655,9 +5655,9 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Cache-Control directive for the object data, matching
-     * [https://tools.ietf.org/html/rfc7234#section-5.2"][RFC 7234 §5.2].
+     * [RFC 7234 §5.2](https://tools.ietf.org/html/rfc7234#section-5.2).
      * If omitted, and the object is accessible to all anonymous users, the
-     * default will be `public, max-age=3600`.
+     * default is `public, max-age=3600`.
      * </pre>
      *
      * <code>string cache_control = 9 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -5697,7 +5697,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Access controls on the object.
-     * If iam_config.uniform_bucket_level_access is enabled on the parent
+     * If `iam_config.uniform_bucket_level_access` is enabled on the parent
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -5718,7 +5718,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Access controls on the object.
-     * If iam_config.uniform_bucket_level_access is enabled on the parent
+     * If `iam_config.uniform_bucket_level_access` is enabled on the parent
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -5739,7 +5739,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Access controls on the object.
-     * If iam_config.uniform_bucket_level_access is enabled on the parent
+     * If `iam_config.uniform_bucket_level_access` is enabled on the parent
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -5760,7 +5760,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Access controls on the object.
-     * If iam_config.uniform_bucket_level_access is enabled on the parent
+     * If `iam_config.uniform_bucket_level_access` is enabled on the parent
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -5787,7 +5787,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Access controls on the object.
-     * If iam_config.uniform_bucket_level_access is enabled on the parent
+     * If `iam_config.uniform_bucket_level_access` is enabled on the parent
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -5812,7 +5812,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Access controls on the object.
-     * If iam_config.uniform_bucket_level_access is enabled on the parent
+     * If `iam_config.uniform_bucket_level_access` is enabled on the parent
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -5839,7 +5839,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Access controls on the object.
-     * If iam_config.uniform_bucket_level_access is enabled on the parent
+     * If `iam_config.uniform_bucket_level_access` is enabled on the parent
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -5866,7 +5866,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Access controls on the object.
-     * If iam_config.uniform_bucket_level_access is enabled on the parent
+     * If `iam_config.uniform_bucket_level_access` is enabled on the parent
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -5890,7 +5890,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Access controls on the object.
-     * If iam_config.uniform_bucket_level_access is enabled on the parent
+     * If `iam_config.uniform_bucket_level_access` is enabled on the parent
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -5915,7 +5915,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Access controls on the object.
-     * If iam_config.uniform_bucket_level_access is enabled on the parent
+     * If `iam_config.uniform_bucket_level_access` is enabled on the parent
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -5940,7 +5940,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Access controls on the object.
-     * If iam_config.uniform_bucket_level_access is enabled on the parent
+     * If `iam_config.uniform_bucket_level_access` is enabled on the parent
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -5964,7 +5964,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Access controls on the object.
-     * If iam_config.uniform_bucket_level_access is enabled on the parent
+     * If `iam_config.uniform_bucket_level_access` is enabled on the parent
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -5988,7 +5988,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Access controls on the object.
-     * If iam_config.uniform_bucket_level_access is enabled on the parent
+     * If `iam_config.uniform_bucket_level_access` is enabled on the parent
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -6005,7 +6005,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Access controls on the object.
-     * If iam_config.uniform_bucket_level_access is enabled on the parent
+     * If `iam_config.uniform_bucket_level_access` is enabled on the parent
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -6026,7 +6026,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Access controls on the object.
-     * If iam_config.uniform_bucket_level_access is enabled on the parent
+     * If `iam_config.uniform_bucket_level_access` is enabled on the parent
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -6048,7 +6048,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Access controls on the object.
-     * If iam_config.uniform_bucket_level_access is enabled on the parent
+     * If `iam_config.uniform_bucket_level_access` is enabled on the parent
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -6066,7 +6066,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Access controls on the object.
-     * If iam_config.uniform_bucket_level_access is enabled on the parent
+     * If `iam_config.uniform_bucket_level_access` is enabled on the parent
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -6084,7 +6084,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Access controls on the object.
-     * If iam_config.uniform_bucket_level_access is enabled on the parent
+     * If `iam_config.uniform_bucket_level_access` is enabled on the parent
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -6120,7 +6120,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Content-Language of the object data, matching
-     * [https://tools.ietf.org/html/rfc7231#section-3.1.3.2][RFC 7231 §3.1.3.2].
+     * [RFC 7231 §3.1.3.2](https://tools.ietf.org/html/rfc7231#section-3.1.3.2).
      * </pre>
      *
      * <code>string content_language = 11 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -6144,7 +6144,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Content-Language of the object data, matching
-     * [https://tools.ietf.org/html/rfc7231#section-3.1.3.2][RFC 7231 §3.1.3.2].
+     * [RFC 7231 §3.1.3.2](https://tools.ietf.org/html/rfc7231#section-3.1.3.2).
      * </pre>
      *
      * <code>string content_language = 11 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -6168,7 +6168,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Content-Language of the object data, matching
-     * [https://tools.ietf.org/html/rfc7231#section-3.1.3.2][RFC 7231 §3.1.3.2].
+     * [RFC 7231 §3.1.3.2](https://tools.ietf.org/html/rfc7231#section-3.1.3.2).
      * </pre>
      *
      * <code>string content_language = 11 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -6191,7 +6191,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Content-Language of the object data, matching
-     * [https://tools.ietf.org/html/rfc7231#section-3.1.3.2][RFC 7231 §3.1.3.2].
+     * [RFC 7231 §3.1.3.2](https://tools.ietf.org/html/rfc7231#section-3.1.3.2).
      * </pre>
      *
      * <code>string content_language = 11 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -6210,7 +6210,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Content-Language of the object data, matching
-     * [https://tools.ietf.org/html/rfc7231#section-3.1.3.2][RFC 7231 §3.1.3.2].
+     * [RFC 7231 §3.1.3.2](https://tools.ietf.org/html/rfc7231#section-3.1.3.2).
      * </pre>
      *
      * <code>string content_language = 11 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -6669,7 +6669,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Content-Type of the object data, matching
-     * [https://tools.ietf.org/html/rfc7231#section-3.1.1.5][RFC 7231 §3.1.1.5].
+     * [RFC 7231 §3.1.1.5](https://tools.ietf.org/html/rfc7231#section-3.1.1.5).
      * If an object is stored without a Content-Type, it is served as
      * `application/octet-stream`.
      * </pre>
@@ -6695,7 +6695,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Content-Type of the object data, matching
-     * [https://tools.ietf.org/html/rfc7231#section-3.1.1.5][RFC 7231 §3.1.1.5].
+     * [RFC 7231 §3.1.1.5](https://tools.ietf.org/html/rfc7231#section-3.1.1.5).
      * If an object is stored without a Content-Type, it is served as
      * `application/octet-stream`.
      * </pre>
@@ -6721,7 +6721,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Content-Type of the object data, matching
-     * [https://tools.ietf.org/html/rfc7231#section-3.1.1.5][RFC 7231 §3.1.1.5].
+     * [RFC 7231 §3.1.1.5](https://tools.ietf.org/html/rfc7231#section-3.1.1.5).
      * If an object is stored without a Content-Type, it is served as
      * `application/octet-stream`.
      * </pre>
@@ -6746,7 +6746,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Content-Type of the object data, matching
-     * [https://tools.ietf.org/html/rfc7231#section-3.1.1.5][RFC 7231 §3.1.1.5].
+     * [RFC 7231 §3.1.1.5](https://tools.ietf.org/html/rfc7231#section-3.1.1.5).
      * If an object is stored without a Content-Type, it is served as
      * `application/octet-stream`.
      * </pre>
@@ -6767,7 +6767,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Content-Type of the object data, matching
-     * [https://tools.ietf.org/html/rfc7231#section-3.1.1.5][RFC 7231 §3.1.1.5].
+     * [RFC 7231 §3.1.1.5](https://tools.ietf.org/html/rfc7231#section-3.1.1.5).
      * If an object is stored without a Content-Type, it is served as
      * `application/octet-stream`.
      * </pre>
@@ -7071,7 +7071,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. Hashes for the data part of this object. This field is used
-     * for output only and will be silently ignored if provided in requests. The
+     * for output only and is silently ignored if provided in requests. The
      * checksums of the complete object regardless of data range. If the object is
      * downloaded in full, the client should compute one of these checksums over
      * the downloaded object and compare it against the value provided here.
@@ -7092,7 +7092,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. Hashes for the data part of this object. This field is used
-     * for output only and will be silently ignored if provided in requests. The
+     * for output only and is silently ignored if provided in requests. The
      * checksums of the complete object regardless of data range. If the object is
      * downloaded in full, the client should compute one of these checksums over
      * the downloaded object and compare it against the value provided here.
@@ -7119,7 +7119,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. Hashes for the data part of this object. This field is used
-     * for output only and will be silently ignored if provided in requests. The
+     * for output only and is silently ignored if provided in requests. The
      * checksums of the complete object regardless of data range. If the object is
      * downloaded in full, the client should compute one of these checksums over
      * the downloaded object and compare it against the value provided here.
@@ -7148,7 +7148,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. Hashes for the data part of this object. This field is used
-     * for output only and will be silently ignored if provided in requests. The
+     * for output only and is silently ignored if provided in requests. The
      * checksums of the complete object regardless of data range. If the object is
      * downloaded in full, the client should compute one of these checksums over
      * the downloaded object and compare it against the value provided here.
@@ -7174,7 +7174,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. Hashes for the data part of this object. This field is used
-     * for output only and will be silently ignored if provided in requests. The
+     * for output only and is silently ignored if provided in requests. The
      * checksums of the complete object regardless of data range. If the object is
      * downloaded in full, the client should compute one of these checksums over
      * the downloaded object and compare it against the value provided here.
@@ -7208,7 +7208,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. Hashes for the data part of this object. This field is used
-     * for output only and will be silently ignored if provided in requests. The
+     * for output only and is silently ignored if provided in requests. The
      * checksums of the complete object regardless of data range. If the object is
      * downloaded in full, the client should compute one of these checksums over
      * the downloaded object and compare it against the value provided here.
@@ -7234,7 +7234,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. Hashes for the data part of this object. This field is used
-     * for output only and will be silently ignored if provided in requests. The
+     * for output only and is silently ignored if provided in requests. The
      * checksums of the complete object regardless of data range. If the object is
      * downloaded in full, the client should compute one of these checksums over
      * the downloaded object and compare it against the value provided here.
@@ -7255,7 +7255,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. Hashes for the data part of this object. This field is used
-     * for output only and will be silently ignored if provided in requests. The
+     * for output only and is silently ignored if provided in requests. The
      * checksums of the complete object regardless of data range. If the object is
      * downloaded in full, the client should compute one of these checksums over
      * the downloaded object and compare it against the value provided here.
@@ -7280,7 +7280,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. Hashes for the data part of this object. This field is used
-     * for output only and will be silently ignored if provided in requests. The
+     * for output only and is silently ignored if provided in requests. The
      * checksums of the complete object regardless of data range. If the object is
      * downloaded in full, the client should compute one of these checksums over
      * the downloaded object and compare it against the value provided here.
@@ -7702,7 +7702,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. The time at which the object's storage class was last changed.
-     * When the object is initially created, it will be set to time_created.
+     * When the object is initially created, it is set to `time_created`.
      * </pre>
      *
      * <code>
@@ -7720,7 +7720,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. The time at which the object's storage class was last changed.
-     * When the object is initially created, it will be set to time_created.
+     * When the object is initially created, it is set to `time_created`.
      * </pre>
      *
      * <code>
@@ -7744,7 +7744,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. The time at which the object's storage class was last changed.
-     * When the object is initially created, it will be set to time_created.
+     * When the object is initially created, it is set to `time_created`.
      * </pre>
      *
      * <code>
@@ -7770,7 +7770,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. The time at which the object's storage class was last changed.
-     * When the object is initially created, it will be set to time_created.
+     * When the object is initially created, it is set to `time_created`.
      * </pre>
      *
      * <code>
@@ -7794,7 +7794,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. The time at which the object's storage class was last changed.
-     * When the object is initially created, it will be set to time_created.
+     * When the object is initially created, it is set to `time_created`.
      * </pre>
      *
      * <code>
@@ -7825,7 +7825,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. The time at which the object's storage class was last changed.
-     * When the object is initially created, it will be set to time_created.
+     * When the object is initially created, it is set to `time_created`.
      * </pre>
      *
      * <code>
@@ -7848,7 +7848,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. The time at which the object's storage class was last changed.
-     * When the object is initially created, it will be set to time_created.
+     * When the object is initially created, it is set to `time_created`.
      * </pre>
      *
      * <code>
@@ -7866,7 +7866,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. The time at which the object's storage class was last changed.
-     * When the object is initially created, it will be set to time_created.
+     * When the object is initially created, it is set to `time_created`.
      * </pre>
      *
      * <code>
@@ -7888,7 +7888,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. The time at which the object's storage class was last changed.
-     * When the object is initially created, it will be set to time_created.
+     * When the object is initially created, it is set to `time_created`.
      * </pre>
      *
      * <code>
@@ -8659,14 +8659,14 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      * Whether an object is under event-based hold.
      * An event-based hold is a way to force the retention of an object until
      * after some event occurs. Once the hold is released by explicitly setting
-     * this field to false, the object will become subject to any bucket-level
-     * retention policy, except that the retention duration will be calculated
+     * this field to `false`, the object becomes subject to any bucket-level
+     * retention policy, except that the retention duration is calculated
      * from the time the event based hold was lifted, rather than the time the
      * object was created.
      *
-     * In a WriteObject request, not setting this field implies that the value
-     * should be taken from the parent bucket's "default_event_based_hold" field.
-     * In a response, this field will always be set to true or false.
+     * In a `WriteObject` request, not setting this field implies that the value
+     * should be taken from the parent bucket's `default_event_based_hold` field.
+     * In a response, this field is always set to `true` or `false`.
      * </pre>
      *
      * <code>optional bool event_based_hold = 23;</code>
@@ -8685,14 +8685,14 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      * Whether an object is under event-based hold.
      * An event-based hold is a way to force the retention of an object until
      * after some event occurs. Once the hold is released by explicitly setting
-     * this field to false, the object will become subject to any bucket-level
-     * retention policy, except that the retention duration will be calculated
+     * this field to `false`, the object becomes subject to any bucket-level
+     * retention policy, except that the retention duration is calculated
      * from the time the event based hold was lifted, rather than the time the
      * object was created.
      *
-     * In a WriteObject request, not setting this field implies that the value
-     * should be taken from the parent bucket's "default_event_based_hold" field.
-     * In a response, this field will always be set to true or false.
+     * In a `WriteObject` request, not setting this field implies that the value
+     * should be taken from the parent bucket's `default_event_based_hold` field.
+     * In a response, this field is always set to `true` or `false`.
      * </pre>
      *
      * <code>optional bool event_based_hold = 23;</code>
@@ -8711,14 +8711,14 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      * Whether an object is under event-based hold.
      * An event-based hold is a way to force the retention of an object until
      * after some event occurs. Once the hold is released by explicitly setting
-     * this field to false, the object will become subject to any bucket-level
-     * retention policy, except that the retention duration will be calculated
+     * this field to `false`, the object becomes subject to any bucket-level
+     * retention policy, except that the retention duration is calculated
      * from the time the event based hold was lifted, rather than the time the
      * object was created.
      *
-     * In a WriteObject request, not setting this field implies that the value
-     * should be taken from the parent bucket's "default_event_based_hold" field.
-     * In a response, this field will always be set to true or false.
+     * In a `WriteObject` request, not setting this field implies that the value
+     * should be taken from the parent bucket's `default_event_based_hold` field.
+     * In a response, this field is always set to `true` or `false`.
      * </pre>
      *
      * <code>optional bool event_based_hold = 23;</code>
@@ -8741,14 +8741,14 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      * Whether an object is under event-based hold.
      * An event-based hold is a way to force the retention of an object until
      * after some event occurs. Once the hold is released by explicitly setting
-     * this field to false, the object will become subject to any bucket-level
-     * retention policy, except that the retention duration will be calculated
+     * this field to `false`, the object becomes subject to any bucket-level
+     * retention policy, except that the retention duration is calculated
      * from the time the event based hold was lifted, rather than the time the
      * object was created.
      *
-     * In a WriteObject request, not setting this field implies that the value
-     * should be taken from the parent bucket's "default_event_based_hold" field.
-     * In a response, this field will always be set to true or false.
+     * In a `WriteObject` request, not setting this field implies that the value
+     * should be taken from the parent bucket's `default_event_based_hold` field.
+     * In a response, this field is always set to `true` or `false`.
      * </pre>
      *
      * <code>optional bool event_based_hold = 23;</code>
@@ -8773,8 +8773,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The owner of the object. This will always be the uploader of
-     * the object.
+     * Output only. The owner of the object. This is always the uploader of the
+     * object.
      * </pre>
      *
      * <code>.google.storage.v2.Owner owner = 24 [(.google.api.field_behavior) = OUTPUT_ONLY];
@@ -8790,8 +8790,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The owner of the object. This will always be the uploader of
-     * the object.
+     * Output only. The owner of the object. This is always the uploader of the
+     * object.
      * </pre>
      *
      * <code>.google.storage.v2.Owner owner = 24 [(.google.api.field_behavior) = OUTPUT_ONLY];
@@ -8811,8 +8811,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The owner of the object. This will always be the uploader of
-     * the object.
+     * Output only. The owner of the object. This is always the uploader of the
+     * object.
      * </pre>
      *
      * <code>.google.storage.v2.Owner owner = 24 [(.google.api.field_behavior) = OUTPUT_ONLY];
@@ -8836,8 +8836,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The owner of the object. This will always be the uploader of
-     * the object.
+     * Output only. The owner of the object. This is always the uploader of the
+     * object.
      * </pre>
      *
      * <code>.google.storage.v2.Owner owner = 24 [(.google.api.field_behavior) = OUTPUT_ONLY];
@@ -8858,8 +8858,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The owner of the object. This will always be the uploader of
-     * the object.
+     * Output only. The owner of the object. This is always the uploader of the
+     * object.
      * </pre>
      *
      * <code>.google.storage.v2.Owner owner = 24 [(.google.api.field_behavior) = OUTPUT_ONLY];
@@ -8888,8 +8888,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The owner of the object. This will always be the uploader of
-     * the object.
+     * Output only. The owner of the object. This is always the uploader of the
+     * object.
      * </pre>
      *
      * <code>.google.storage.v2.Owner owner = 24 [(.google.api.field_behavior) = OUTPUT_ONLY];
@@ -8910,8 +8910,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The owner of the object. This will always be the uploader of
-     * the object.
+     * Output only. The owner of the object. This is always the uploader of the
+     * object.
      * </pre>
      *
      * <code>.google.storage.v2.Owner owner = 24 [(.google.api.field_behavior) = OUTPUT_ONLY];
@@ -8927,8 +8927,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The owner of the object. This will always be the uploader of
-     * the object.
+     * Output only. The owner of the object. This is always the uploader of the
+     * object.
      * </pre>
      *
      * <code>.google.storage.v2.Owner owner = 24 [(.google.api.field_behavior) = OUTPUT_ONLY];
@@ -8946,8 +8946,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The owner of the object. This will always be the uploader of
-     * the object.
+     * Output only. The owner of the object. This is always the uploader of the
+     * object.
      * </pre>
      *
      * <code>.google.storage.v2.Owner owner = 24 [(.google.api.field_behavior) = OUTPUT_ONLY];
@@ -8981,7 +8981,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. Metadata of Customer-Supplied Encryption Key, if the object is
+     * Optional. Metadata of customer-supplied encryption key, if the object is
      * encrypted by such a key.
      * </pre>
      *
@@ -8999,7 +8999,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. Metadata of Customer-Supplied Encryption Key, if the object is
+     * Optional. Metadata of customer-supplied encryption key, if the object is
      * encrypted by such a key.
      * </pre>
      *
@@ -9023,7 +9023,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. Metadata of Customer-Supplied Encryption Key, if the object is
+     * Optional. Metadata of customer-supplied encryption key, if the object is
      * encrypted by such a key.
      * </pre>
      *
@@ -9049,7 +9049,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. Metadata of Customer-Supplied Encryption Key, if the object is
+     * Optional. Metadata of customer-supplied encryption key, if the object is
      * encrypted by such a key.
      * </pre>
      *
@@ -9073,7 +9073,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. Metadata of Customer-Supplied Encryption Key, if the object is
+     * Optional. Metadata of customer-supplied encryption key, if the object is
      * encrypted by such a key.
      * </pre>
      *
@@ -9105,7 +9105,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. Metadata of Customer-Supplied Encryption Key, if the object is
+     * Optional. Metadata of customer-supplied encryption key, if the object is
      * encrypted by such a key.
      * </pre>
      *
@@ -9128,7 +9128,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. Metadata of Customer-Supplied Encryption Key, if the object is
+     * Optional. Metadata of customer-supplied encryption key, if the object is
      * encrypted by such a key.
      * </pre>
      *
@@ -9146,7 +9146,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. Metadata of Customer-Supplied Encryption Key, if the object is
+     * Optional. Metadata of customer-supplied encryption key, if the object is
      * encrypted by such a key.
      * </pre>
      *
@@ -9168,7 +9168,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. Metadata of Customer-Supplied Encryption Key, if the object is
+     * Optional. Metadata of customer-supplied encryption key, if the object is
      * encrypted by such a key.
      * </pre>
      *
@@ -9410,7 +9410,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      * Output only. This is the time when the object became soft-deleted.
      *
      * Soft-deleted objects are only accessible if a soft_delete_policy is
-     * enabled. Also see hard_delete_time.
+     * enabled. Also see `hard_delete_time`.
      * </pre>
      *
      * <code>
@@ -9430,7 +9430,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      * Output only. This is the time when the object became soft-deleted.
      *
      * Soft-deleted objects are only accessible if a soft_delete_policy is
-     * enabled. Also see hard_delete_time.
+     * enabled. Also see `hard_delete_time`.
      * </pre>
      *
      * <code>
@@ -9456,7 +9456,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      * Output only. This is the time when the object became soft-deleted.
      *
      * Soft-deleted objects are only accessible if a soft_delete_policy is
-     * enabled. Also see hard_delete_time.
+     * enabled. Also see `hard_delete_time`.
      * </pre>
      *
      * <code>
@@ -9484,7 +9484,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      * Output only. This is the time when the object became soft-deleted.
      *
      * Soft-deleted objects are only accessible if a soft_delete_policy is
-     * enabled. Also see hard_delete_time.
+     * enabled. Also see `hard_delete_time`.
      * </pre>
      *
      * <code>
@@ -9509,7 +9509,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      * Output only. This is the time when the object became soft-deleted.
      *
      * Soft-deleted objects are only accessible if a soft_delete_policy is
-     * enabled. Also see hard_delete_time.
+     * enabled. Also see `hard_delete_time`.
      * </pre>
      *
      * <code>
@@ -9542,7 +9542,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      * Output only. This is the time when the object became soft-deleted.
      *
      * Soft-deleted objects are only accessible if a soft_delete_policy is
-     * enabled. Also see hard_delete_time.
+     * enabled. Also see `hard_delete_time`.
      * </pre>
      *
      * <code>
@@ -9567,7 +9567,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      * Output only. This is the time when the object became soft-deleted.
      *
      * Soft-deleted objects are only accessible if a soft_delete_policy is
-     * enabled. Also see hard_delete_time.
+     * enabled. Also see `hard_delete_time`.
      * </pre>
      *
      * <code>
@@ -9587,7 +9587,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      * Output only. This is the time when the object became soft-deleted.
      *
      * Soft-deleted objects are only accessible if a soft_delete_policy is
-     * enabled. Also see hard_delete_time.
+     * enabled. Also see `hard_delete_time`.
      * </pre>
      *
      * <code>
@@ -9611,7 +9611,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      * Output only. This is the time when the object became soft-deleted.
      *
      * Soft-deleted objects are only accessible if a soft_delete_policy is
-     * enabled. Also see hard_delete_time.
+     * enabled. Also see `hard_delete_time`.
      * </pre>
      *
      * <code>
@@ -9646,10 +9646,10 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The time when the object will be permanently deleted.
+     * Output only. The time when the object is permanently deleted.
      *
-     * Only set when an object becomes soft-deleted with a soft_delete_policy.
-     * Otherwise, the object will not be accessible.
+     * Only set when an object becomes soft-deleted with a `soft_delete_policy`.
+     * Otherwise, the object is not accessible.
      * </pre>
      *
      * <code>
@@ -9666,10 +9666,10 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The time when the object will be permanently deleted.
+     * Output only. The time when the object is permanently deleted.
      *
-     * Only set when an object becomes soft-deleted with a soft_delete_policy.
-     * Otherwise, the object will not be accessible.
+     * Only set when an object becomes soft-deleted with a `soft_delete_policy`.
+     * Otherwise, the object is not accessible.
      * </pre>
      *
      * <code>
@@ -9692,10 +9692,10 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The time when the object will be permanently deleted.
+     * Output only. The time when the object is permanently deleted.
      *
-     * Only set when an object becomes soft-deleted with a soft_delete_policy.
-     * Otherwise, the object will not be accessible.
+     * Only set when an object becomes soft-deleted with a `soft_delete_policy`.
+     * Otherwise, the object is not accessible.
      * </pre>
      *
      * <code>
@@ -9720,10 +9720,10 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The time when the object will be permanently deleted.
+     * Output only. The time when the object is permanently deleted.
      *
-     * Only set when an object becomes soft-deleted with a soft_delete_policy.
-     * Otherwise, the object will not be accessible.
+     * Only set when an object becomes soft-deleted with a `soft_delete_policy`.
+     * Otherwise, the object is not accessible.
      * </pre>
      *
      * <code>
@@ -9745,10 +9745,10 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The time when the object will be permanently deleted.
+     * Output only. The time when the object is permanently deleted.
      *
-     * Only set when an object becomes soft-deleted with a soft_delete_policy.
-     * Otherwise, the object will not be accessible.
+     * Only set when an object becomes soft-deleted with a `soft_delete_policy`.
+     * Otherwise, the object is not accessible.
      * </pre>
      *
      * <code>
@@ -9778,10 +9778,10 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The time when the object will be permanently deleted.
+     * Output only. The time when the object is permanently deleted.
      *
-     * Only set when an object becomes soft-deleted with a soft_delete_policy.
-     * Otherwise, the object will not be accessible.
+     * Only set when an object becomes soft-deleted with a `soft_delete_policy`.
+     * Otherwise, the object is not accessible.
      * </pre>
      *
      * <code>
@@ -9803,10 +9803,10 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The time when the object will be permanently deleted.
+     * Output only. The time when the object is permanently deleted.
      *
-     * Only set when an object becomes soft-deleted with a soft_delete_policy.
-     * Otherwise, the object will not be accessible.
+     * Only set when an object becomes soft-deleted with a `soft_delete_policy`.
+     * Otherwise, the object is not accessible.
      * </pre>
      *
      * <code>
@@ -9823,10 +9823,10 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The time when the object will be permanently deleted.
+     * Output only. The time when the object is permanently deleted.
      *
-     * Only set when an object becomes soft-deleted with a soft_delete_policy.
-     * Otherwise, the object will not be accessible.
+     * Only set when an object becomes soft-deleted with a `soft_delete_policy`.
+     * Otherwise, the object is not accessible.
      * </pre>
      *
      * <code>
@@ -9847,10 +9847,10 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The time when the object will be permanently deleted.
+     * Output only. The time when the object is permanently deleted.
      *
-     * Only set when an object becomes soft-deleted with a soft_delete_policy.
-     * Otherwise, the object will not be accessible.
+     * Only set when an object becomes soft-deleted with a `soft_delete_policy`.
+     * Otherwise, the object is not accessible.
      * </pre>
      *
      * <code>
@@ -9886,7 +9886,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Retention configuration of this object.
-     * May only be configured if the bucket has object retention enabled.
+     * Might only be configured if the bucket has object retention enabled.
      * </pre>
      *
      * <code>
@@ -9904,7 +9904,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Retention configuration of this object.
-     * May only be configured if the bucket has object retention enabled.
+     * Might only be configured if the bucket has object retention enabled.
      * </pre>
      *
      * <code>
@@ -9928,7 +9928,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Retention configuration of this object.
-     * May only be configured if the bucket has object retention enabled.
+     * Might only be configured if the bucket has object retention enabled.
      * </pre>
      *
      * <code>
@@ -9954,7 +9954,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Retention configuration of this object.
-     * May only be configured if the bucket has object retention enabled.
+     * Might only be configured if the bucket has object retention enabled.
      * </pre>
      *
      * <code>
@@ -9977,7 +9977,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Retention configuration of this object.
-     * May only be configured if the bucket has object retention enabled.
+     * Might only be configured if the bucket has object retention enabled.
      * </pre>
      *
      * <code>
@@ -10008,7 +10008,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Retention configuration of this object.
-     * May only be configured if the bucket has object retention enabled.
+     * Might only be configured if the bucket has object retention enabled.
      * </pre>
      *
      * <code>
@@ -10031,7 +10031,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Retention configuration of this object.
-     * May only be configured if the bucket has object retention enabled.
+     * Might only be configured if the bucket has object retention enabled.
      * </pre>
      *
      * <code>
@@ -10049,7 +10049,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Retention configuration of this object.
-     * May only be configured if the bucket has object retention enabled.
+     * Might only be configured if the bucket has object retention enabled.
      * </pre>
      *
      * <code>
@@ -10071,7 +10071,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Optional. Retention configuration of this object.
-     * May only be configured if the bucket has object retention enabled.
+     * Might only be configured if the bucket has object retention enabled.
      * </pre>
      *
      * <code>

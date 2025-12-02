@@ -23,7 +23,7 @@ package com.google.storage.v2;
  *
  *
  * <pre>
- * Request message for ComposeObject.
+ * Request message for [ComposeObject][google.storage.v2.Storage.ComposeObject].
  * </pre>
  *
  * Protobuf type {@code google.storage.v2.ComposeObjectRequest}
@@ -214,7 +214,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
        * <pre>
        * Only perform the composition if the generation of the source object
        * that would be used matches this value.  If this value and a generation
-       * are both specified, they must be the same value or the call will fail.
+       * are both specified, they must be the same value or the call fails.
        * </pre>
        *
        * <code>optional int64 if_generation_match = 1;</code>
@@ -229,7 +229,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
        * <pre>
        * Only perform the composition if the generation of the source object
        * that would be used matches this value.  If this value and a generation
-       * are both specified, they must be the same value or the call will fail.
+       * are both specified, they must be the same value or the call fails.
        * </pre>
        *
        * <code>optional int64 if_generation_match = 1;</code>
@@ -293,7 +293,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
        * <pre>
        * Only perform the composition if the generation of the source object
        * that would be used matches this value.  If this value and a generation
-       * are both specified, they must be the same value or the call will fail.
+       * are both specified, they must be the same value or the call fails.
        * </pre>
        *
        * <code>optional int64 if_generation_match = 1;</code>
@@ -311,7 +311,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
        * <pre>
        * Only perform the composition if the generation of the source object
        * that would be used matches this value.  If this value and a generation
-       * are both specified, they must be the same value or the call will fail.
+       * are both specified, they must be the same value or the call fails.
        * </pre>
        *
        * <code>optional int64 if_generation_match = 1;</code>
@@ -709,7 +709,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
          * <pre>
          * Only perform the composition if the generation of the source object
          * that would be used matches this value.  If this value and a generation
-         * are both specified, they must be the same value or the call will fail.
+         * are both specified, they must be the same value or the call fails.
          * </pre>
          *
          * <code>optional int64 if_generation_match = 1;</code>
@@ -727,7 +727,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
          * <pre>
          * Only perform the composition if the generation of the source object
          * that would be used matches this value.  If this value and a generation
-         * are both specified, they must be the same value or the call will fail.
+         * are both specified, they must be the same value or the call fails.
          * </pre>
          *
          * <code>optional int64 if_generation_match = 1;</code>
@@ -745,7 +745,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
          * <pre>
          * Only perform the composition if the generation of the source object
          * that would be used matches this value.  If this value and a generation
-         * are both specified, they must be the same value or the call will fail.
+         * are both specified, they must be the same value or the call fails.
          * </pre>
          *
          * <code>optional int64 if_generation_match = 1;</code>
@@ -767,7 +767,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
          * <pre>
          * Only perform the composition if the generation of the source object
          * that would be used matches this value.  If this value and a generation
-         * are both specified, they must be the same value or the call will fail.
+         * are both specified, they must be the same value or the call fails.
          * </pre>
          *
          * <code>optional int64 if_generation_match = 1;</code>
@@ -1931,8 +1931,8 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * Optional. The list of source objects that will be concatenated into a
-   * single object.
+   * Optional. The list of source objects that is concatenated into a single
+   * object.
    * </pre>
    *
    * <code>
@@ -1949,8 +1949,8 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * Optional. The list of source objects that will be concatenated into a
-   * single object.
+   * Optional. The list of source objects that is concatenated into a single
+   * object.
    * </pre>
    *
    * <code>
@@ -1967,8 +1967,8 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * Optional. The list of source objects that will be concatenated into a
-   * single object.
+   * Optional. The list of source objects that is concatenated into a single
+   * object.
    * </pre>
    *
    * <code>
@@ -1984,8 +1984,8 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * Optional. The list of source objects that will be concatenated into a
-   * single object.
+   * Optional. The list of source objects that is concatenated into a single
+   * object.
    * </pre>
    *
    * <code>
@@ -2001,8 +2001,8 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * Optional. The list of source objects that will be concatenated into a
-   * single object.
+   * Optional. The list of source objects that is concatenated into a single
+   * object.
    * </pre>
    *
    * <code>
@@ -2025,8 +2025,8 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
    *
    * <pre>
    * Optional. Apply a predefined set of access controls to the destination
-   * object. Valid values are "authenticatedRead", "bucketOwnerFullControl",
-   * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
+   * object. Valid values are `authenticatedRead`, `bucketOwnerFullControl`,
+   * `bucketOwnerRead`, `private`, `projectPrivate`, or `publicRead`.
    * </pre>
    *
    * <code>string destination_predefined_acl = 9 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -2051,8 +2051,8 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
    *
    * <pre>
    * Optional. Apply a predefined set of access controls to the destination
-   * object. Valid values are "authenticatedRead", "bucketOwnerFullControl",
-   * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
+   * object. Valid values are `authenticatedRead`, `bucketOwnerFullControl`,
+   * `bucketOwnerRead`, `private`, `projectPrivate`, or `publicRead`.
    * </pre>
    *
    * <code>string destination_predefined_acl = 9 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -2159,7 +2159,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
    * <pre>
    * Optional. Resource name of the Cloud KMS key, of the form
    * `projects/my-project/locations/my-location/keyRings/my-kr/cryptoKeys/my-key`,
-   * that will be used to encrypt the object. Overrides the object
+   * that is used to encrypt the object. Overrides the object
    * metadata's `kms_key_name` value, if any.
    * </pre>
    *
@@ -2188,7 +2188,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
    * <pre>
    * Optional. Resource name of the Cloud KMS key, of the form
    * `projects/my-project/locations/my-location/keyRings/my-kr/cryptoKeys/my-key`,
-   * that will be used to encrypt the object. Overrides the object
+   * that is used to encrypt the object. Overrides the object
    * metadata's `kms_key_name` value, if any.
    * </pre>
    *
@@ -2281,8 +2281,8 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * Optional. The checksums of the complete object. This will be validated
-   * against the combined checksums of the component objects.
+   * Optional. The checksums of the complete object. This is validated against
+   * the combined checksums of the component objects.
    * </pre>
    *
    * <code>
@@ -2300,8 +2300,8 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * Optional. The checksums of the complete object. This will be validated
-   * against the combined checksums of the component objects.
+   * Optional. The checksums of the complete object. This is validated against
+   * the combined checksums of the component objects.
    * </pre>
    *
    * <code>
@@ -2321,8 +2321,8 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * Optional. The checksums of the complete object. This will be validated
-   * against the combined checksums of the component objects.
+   * Optional. The checksums of the complete object. This is validated against
+   * the combined checksums of the component objects.
    * </pre>
    *
    * <code>
@@ -2594,7 +2594,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * Request message for ComposeObject.
+   * Request message for [ComposeObject][google.storage.v2.Storage.ComposeObject].
    * </pre>
    *
    * Protobuf type {@code google.storage.v2.ComposeObjectRequest}
@@ -3175,8 +3175,8 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Optional. The list of source objects that will be concatenated into a
-     * single object.
+     * Optional. The list of source objects that is concatenated into a single
+     * object.
      * </pre>
      *
      * <code>
@@ -3196,8 +3196,8 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Optional. The list of source objects that will be concatenated into a
-     * single object.
+     * Optional. The list of source objects that is concatenated into a single
+     * object.
      * </pre>
      *
      * <code>
@@ -3216,8 +3216,8 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Optional. The list of source objects that will be concatenated into a
-     * single object.
+     * Optional. The list of source objects that is concatenated into a single
+     * object.
      * </pre>
      *
      * <code>
@@ -3236,8 +3236,8 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Optional. The list of source objects that will be concatenated into a
-     * single object.
+     * Optional. The list of source objects that is concatenated into a single
+     * object.
      * </pre>
      *
      * <code>
@@ -3263,8 +3263,8 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Optional. The list of source objects that will be concatenated into a
-     * single object.
+     * Optional. The list of source objects that is concatenated into a single
+     * object.
      * </pre>
      *
      * <code>
@@ -3288,8 +3288,8 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Optional. The list of source objects that will be concatenated into a
-     * single object.
+     * Optional. The list of source objects that is concatenated into a single
+     * object.
      * </pre>
      *
      * <code>
@@ -3314,8 +3314,8 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Optional. The list of source objects that will be concatenated into a
-     * single object.
+     * Optional. The list of source objects that is concatenated into a single
+     * object.
      * </pre>
      *
      * <code>
@@ -3341,8 +3341,8 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Optional. The list of source objects that will be concatenated into a
-     * single object.
+     * Optional. The list of source objects that is concatenated into a single
+     * object.
      * </pre>
      *
      * <code>
@@ -3365,8 +3365,8 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Optional. The list of source objects that will be concatenated into a
-     * single object.
+     * Optional. The list of source objects that is concatenated into a single
+     * object.
      * </pre>
      *
      * <code>
@@ -3390,8 +3390,8 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Optional. The list of source objects that will be concatenated into a
-     * single object.
+     * Optional. The list of source objects that is concatenated into a single
+     * object.
      * </pre>
      *
      * <code>
@@ -3415,8 +3415,8 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Optional. The list of source objects that will be concatenated into a
-     * single object.
+     * Optional. The list of source objects that is concatenated into a single
+     * object.
      * </pre>
      *
      * <code>
@@ -3438,8 +3438,8 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Optional. The list of source objects that will be concatenated into a
-     * single object.
+     * Optional. The list of source objects that is concatenated into a single
+     * object.
      * </pre>
      *
      * <code>
@@ -3461,8 +3461,8 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Optional. The list of source objects that will be concatenated into a
-     * single object.
+     * Optional. The list of source objects that is concatenated into a single
+     * object.
      * </pre>
      *
      * <code>
@@ -3478,8 +3478,8 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Optional. The list of source objects that will be concatenated into a
-     * single object.
+     * Optional. The list of source objects that is concatenated into a single
+     * object.
      * </pre>
      *
      * <code>
@@ -3499,8 +3499,8 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Optional. The list of source objects that will be concatenated into a
-     * single object.
+     * Optional. The list of source objects that is concatenated into a single
+     * object.
      * </pre>
      *
      * <code>
@@ -3521,8 +3521,8 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Optional. The list of source objects that will be concatenated into a
-     * single object.
+     * Optional. The list of source objects that is concatenated into a single
+     * object.
      * </pre>
      *
      * <code>
@@ -3539,8 +3539,8 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Optional. The list of source objects that will be concatenated into a
-     * single object.
+     * Optional. The list of source objects that is concatenated into a single
+     * object.
      * </pre>
      *
      * <code>
@@ -3558,8 +3558,8 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Optional. The list of source objects that will be concatenated into a
-     * single object.
+     * Optional. The list of source objects that is concatenated into a single
+     * object.
      * </pre>
      *
      * <code>
@@ -3598,8 +3598,8 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      * <pre>
      * Optional. Apply a predefined set of access controls to the destination
-     * object. Valid values are "authenticatedRead", "bucketOwnerFullControl",
-     * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
+     * object. Valid values are `authenticatedRead`, `bucketOwnerFullControl`,
+     * `bucketOwnerRead`, `private`, `projectPrivate`, or `publicRead`.
      * </pre>
      *
      * <code>string destination_predefined_acl = 9 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -3623,8 +3623,8 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      * <pre>
      * Optional. Apply a predefined set of access controls to the destination
-     * object. Valid values are "authenticatedRead", "bucketOwnerFullControl",
-     * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
+     * object. Valid values are `authenticatedRead`, `bucketOwnerFullControl`,
+     * `bucketOwnerRead`, `private`, `projectPrivate`, or `publicRead`.
      * </pre>
      *
      * <code>string destination_predefined_acl = 9 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -3648,8 +3648,8 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      * <pre>
      * Optional. Apply a predefined set of access controls to the destination
-     * object. Valid values are "authenticatedRead", "bucketOwnerFullControl",
-     * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
+     * object. Valid values are `authenticatedRead`, `bucketOwnerFullControl`,
+     * `bucketOwnerRead`, `private`, `projectPrivate`, or `publicRead`.
      * </pre>
      *
      * <code>string destination_predefined_acl = 9 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -3672,8 +3672,8 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      * <pre>
      * Optional. Apply a predefined set of access controls to the destination
-     * object. Valid values are "authenticatedRead", "bucketOwnerFullControl",
-     * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
+     * object. Valid values are `authenticatedRead`, `bucketOwnerFullControl`,
+     * `bucketOwnerRead`, `private`, `projectPrivate`, or `publicRead`.
      * </pre>
      *
      * <code>string destination_predefined_acl = 9 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -3692,8 +3692,8 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      * <pre>
      * Optional. Apply a predefined set of access controls to the destination
-     * object. Valid values are "authenticatedRead", "bucketOwnerFullControl",
-     * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
+     * object. Valid values are `authenticatedRead`, `bucketOwnerFullControl`,
+     * `bucketOwnerRead`, `private`, `projectPrivate`, or `publicRead`.
      * </pre>
      *
      * <code>string destination_predefined_acl = 9 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -3876,7 +3876,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      * <pre>
      * Optional. Resource name of the Cloud KMS key, of the form
      * `projects/my-project/locations/my-location/keyRings/my-kr/cryptoKeys/my-key`,
-     * that will be used to encrypt the object. Overrides the object
+     * that is used to encrypt the object. Overrides the object
      * metadata's `kms_key_name` value, if any.
      * </pre>
      *
@@ -3904,7 +3904,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      * <pre>
      * Optional. Resource name of the Cloud KMS key, of the form
      * `projects/my-project/locations/my-location/keyRings/my-kr/cryptoKeys/my-key`,
-     * that will be used to encrypt the object. Overrides the object
+     * that is used to encrypt the object. Overrides the object
      * metadata's `kms_key_name` value, if any.
      * </pre>
      *
@@ -3932,7 +3932,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      * <pre>
      * Optional. Resource name of the Cloud KMS key, of the form
      * `projects/my-project/locations/my-location/keyRings/my-kr/cryptoKeys/my-key`,
-     * that will be used to encrypt the object. Overrides the object
+     * that is used to encrypt the object. Overrides the object
      * metadata's `kms_key_name` value, if any.
      * </pre>
      *
@@ -3959,7 +3959,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      * <pre>
      * Optional. Resource name of the Cloud KMS key, of the form
      * `projects/my-project/locations/my-location/keyRings/my-kr/cryptoKeys/my-key`,
-     * that will be used to encrypt the object. Overrides the object
+     * that is used to encrypt the object. Overrides the object
      * metadata's `kms_key_name` value, if any.
      * </pre>
      *
@@ -3982,7 +3982,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      * <pre>
      * Optional. Resource name of the Cloud KMS key, of the form
      * `projects/my-project/locations/my-location/keyRings/my-kr/cryptoKeys/my-key`,
-     * that will be used to encrypt the object. Overrides the object
+     * that is used to encrypt the object. Overrides the object
      * metadata's `kms_key_name` value, if any.
      * </pre>
      *
@@ -4242,8 +4242,8 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Optional. The checksums of the complete object. This will be validated
-     * against the combined checksums of the component objects.
+     * Optional. The checksums of the complete object. This is validated against
+     * the combined checksums of the component objects.
      * </pre>
      *
      * <code>
@@ -4260,8 +4260,8 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Optional. The checksums of the complete object. This will be validated
-     * against the combined checksums of the component objects.
+     * Optional. The checksums of the complete object. This is validated against
+     * the combined checksums of the component objects.
      * </pre>
      *
      * <code>
@@ -4284,8 +4284,8 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Optional. The checksums of the complete object. This will be validated
-     * against the combined checksums of the component objects.
+     * Optional. The checksums of the complete object. This is validated against
+     * the combined checksums of the component objects.
      * </pre>
      *
      * <code>
@@ -4310,8 +4310,8 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Optional. The checksums of the complete object. This will be validated
-     * against the combined checksums of the component objects.
+     * Optional. The checksums of the complete object. This is validated against
+     * the combined checksums of the component objects.
      * </pre>
      *
      * <code>
@@ -4334,8 +4334,8 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Optional. The checksums of the complete object. This will be validated
-     * against the combined checksums of the component objects.
+     * Optional. The checksums of the complete object. This is validated against
+     * the combined checksums of the component objects.
      * </pre>
      *
      * <code>
@@ -4365,8 +4365,8 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Optional. The checksums of the complete object. This will be validated
-     * against the combined checksums of the component objects.
+     * Optional. The checksums of the complete object. This is validated against
+     * the combined checksums of the component objects.
      * </pre>
      *
      * <code>
@@ -4388,8 +4388,8 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Optional. The checksums of the complete object. This will be validated
-     * against the combined checksums of the component objects.
+     * Optional. The checksums of the complete object. This is validated against
+     * the combined checksums of the component objects.
      * </pre>
      *
      * <code>
@@ -4406,8 +4406,8 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Optional. The checksums of the complete object. This will be validated
-     * against the combined checksums of the component objects.
+     * Optional. The checksums of the complete object. This is validated against
+     * the combined checksums of the component objects.
      * </pre>
      *
      * <code>
@@ -4428,8 +4428,8 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Optional. The checksums of the complete object. This will be validated
-     * against the combined checksums of the component objects.
+     * Optional. The checksums of the complete object. This is validated against
+     * the combined checksums of the component objects.
      * </pre>
      *
      * <code>

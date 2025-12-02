@@ -23,7 +23,7 @@ package com.google.storage.v2;
  *
  *
  * <pre>
- * Error proto containing details for a redirected write. This error may be
+ * Error proto containing details for a redirected write. This error might be
  * attached as details for an ABORTED response to BidiWriteObject.
  * </pre>
  *
@@ -151,7 +151,7 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
    * <pre>
    * Opaque value describing a previous write. If set, the client must use this
    * in an AppendObjectSpec first_message when retrying the write stream. If not
-   * set, clients may retry the original request.
+   * set, clients might retry the original request.
    * </pre>
    *
    * <code>optional .google.storage.v2.BidiWriteHandle write_handle = 2;</code>
@@ -169,7 +169,7 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
    * <pre>
    * Opaque value describing a previous write. If set, the client must use this
    * in an AppendObjectSpec first_message when retrying the write stream. If not
-   * set, clients may retry the original request.
+   * set, clients might retry the original request.
    * </pre>
    *
    * <code>optional .google.storage.v2.BidiWriteHandle write_handle = 2;</code>
@@ -189,7 +189,7 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
    * <pre>
    * Opaque value describing a previous write. If set, the client must use this
    * in an AppendObjectSpec first_message when retrying the write stream. If not
-   * set, clients may retry the original request.
+   * set, clients might retry the original request.
    * </pre>
    *
    * <code>optional .google.storage.v2.BidiWriteHandle write_handle = 2;</code>
@@ -208,9 +208,9 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
    *
    *
    * <pre>
-   * The generation of the object that triggered the redirect. This will be set
-   * iff write_handle is set. If set, the client must use this in an
-   * AppendObjectSpec first_message when retrying the write stream.
+   * The generation of the object that triggered the redirect. This is set
+   * iff `write_handle` is set. If set, the client must use this in an
+   * `AppendObjectSpec` first_message when retrying the write stream.
    * </pre>
    *
    * <code>optional int64 generation = 3;</code>
@@ -226,9 +226,9 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
    *
    *
    * <pre>
-   * The generation of the object that triggered the redirect. This will be set
-   * iff write_handle is set. If set, the client must use this in an
-   * AppendObjectSpec first_message when retrying the write stream.
+   * The generation of the object that triggered the redirect. This is set
+   * iff `write_handle` is set. If set, the client must use this in an
+   * `AppendObjectSpec` first_message when retrying the write stream.
    * </pre>
    *
    * <code>optional int64 generation = 3;</code>
@@ -437,7 +437,7 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
    *
    *
    * <pre>
-   * Error proto containing details for a redirected write. This error may be
+   * Error proto containing details for a redirected write. This error might be
    * attached as details for an ABORTED response to BidiWriteObject.
    * </pre>
    *
@@ -813,7 +813,7 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
      * <pre>
      * Opaque value describing a previous write. If set, the client must use this
      * in an AppendObjectSpec first_message when retrying the write stream. If not
-     * set, clients may retry the original request.
+     * set, clients might retry the original request.
      * </pre>
      *
      * <code>optional .google.storage.v2.BidiWriteHandle write_handle = 2;</code>
@@ -830,7 +830,7 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
      * <pre>
      * Opaque value describing a previous write. If set, the client must use this
      * in an AppendObjectSpec first_message when retrying the write stream. If not
-     * set, clients may retry the original request.
+     * set, clients might retry the original request.
      * </pre>
      *
      * <code>optional .google.storage.v2.BidiWriteHandle write_handle = 2;</code>
@@ -853,7 +853,7 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
      * <pre>
      * Opaque value describing a previous write. If set, the client must use this
      * in an AppendObjectSpec first_message when retrying the write stream. If not
-     * set, clients may retry the original request.
+     * set, clients might retry the original request.
      * </pre>
      *
      * <code>optional .google.storage.v2.BidiWriteHandle write_handle = 2;</code>
@@ -878,7 +878,7 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
      * <pre>
      * Opaque value describing a previous write. If set, the client must use this
      * in an AppendObjectSpec first_message when retrying the write stream. If not
-     * set, clients may retry the original request.
+     * set, clients might retry the original request.
      * </pre>
      *
      * <code>optional .google.storage.v2.BidiWriteHandle write_handle = 2;</code>
@@ -900,7 +900,7 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
      * <pre>
      * Opaque value describing a previous write. If set, the client must use this
      * in an AppendObjectSpec first_message when retrying the write stream. If not
-     * set, clients may retry the original request.
+     * set, clients might retry the original request.
      * </pre>
      *
      * <code>optional .google.storage.v2.BidiWriteHandle write_handle = 2;</code>
@@ -930,7 +930,7 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
      * <pre>
      * Opaque value describing a previous write. If set, the client must use this
      * in an AppendObjectSpec first_message when retrying the write stream. If not
-     * set, clients may retry the original request.
+     * set, clients might retry the original request.
      * </pre>
      *
      * <code>optional .google.storage.v2.BidiWriteHandle write_handle = 2;</code>
@@ -952,7 +952,7 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
      * <pre>
      * Opaque value describing a previous write. If set, the client must use this
      * in an AppendObjectSpec first_message when retrying the write stream. If not
-     * set, clients may retry the original request.
+     * set, clients might retry the original request.
      * </pre>
      *
      * <code>optional .google.storage.v2.BidiWriteHandle write_handle = 2;</code>
@@ -969,7 +969,7 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
      * <pre>
      * Opaque value describing a previous write. If set, the client must use this
      * in an AppendObjectSpec first_message when retrying the write stream. If not
-     * set, clients may retry the original request.
+     * set, clients might retry the original request.
      * </pre>
      *
      * <code>optional .google.storage.v2.BidiWriteHandle write_handle = 2;</code>
@@ -990,7 +990,7 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
      * <pre>
      * Opaque value describing a previous write. If set, the client must use this
      * in an AppendObjectSpec first_message when retrying the write stream. If not
-     * set, clients may retry the original request.
+     * set, clients might retry the original request.
      * </pre>
      *
      * <code>optional .google.storage.v2.BidiWriteHandle write_handle = 2;</code>
@@ -1018,9 +1018,9 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
      *
      *
      * <pre>
-     * The generation of the object that triggered the redirect. This will be set
-     * iff write_handle is set. If set, the client must use this in an
-     * AppendObjectSpec first_message when retrying the write stream.
+     * The generation of the object that triggered the redirect. This is set
+     * iff `write_handle` is set. If set, the client must use this in an
+     * `AppendObjectSpec` first_message when retrying the write stream.
      * </pre>
      *
      * <code>optional int64 generation = 3;</code>
@@ -1036,9 +1036,9 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
      *
      *
      * <pre>
-     * The generation of the object that triggered the redirect. This will be set
-     * iff write_handle is set. If set, the client must use this in an
-     * AppendObjectSpec first_message when retrying the write stream.
+     * The generation of the object that triggered the redirect. This is set
+     * iff `write_handle` is set. If set, the client must use this in an
+     * `AppendObjectSpec` first_message when retrying the write stream.
      * </pre>
      *
      * <code>optional int64 generation = 3;</code>
@@ -1054,9 +1054,9 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
      *
      *
      * <pre>
-     * The generation of the object that triggered the redirect. This will be set
-     * iff write_handle is set. If set, the client must use this in an
-     * AppendObjectSpec first_message when retrying the write stream.
+     * The generation of the object that triggered the redirect. This is set
+     * iff `write_handle` is set. If set, the client must use this in an
+     * `AppendObjectSpec` first_message when retrying the write stream.
      * </pre>
      *
      * <code>optional int64 generation = 3;</code>
@@ -1076,9 +1076,9 @@ public final class BidiWriteObjectRedirectedError extends com.google.protobuf.Ge
      *
      *
      * <pre>
-     * The generation of the object that triggered the redirect. This will be set
-     * iff write_handle is set. If set, the client must use this in an
-     * AppendObjectSpec first_message when retrying the write stream.
+     * The generation of the object that triggered the redirect. This is set
+     * iff `write_handle` is set. If set, the client must use this in an
+     * `AppendObjectSpec` first_message when retrying the write stream.
      * </pre>
      *
      * <code>optional int64 generation = 3;</code>

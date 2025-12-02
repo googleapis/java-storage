@@ -122,7 +122,7 @@ public interface WriteObjectRequestOrBuilder
    * first `write_offset` and the sizes of all `data` chunks sent previously on
    * this stream.
    *
-   * An incorrect value will cause an error.
+   * An incorrect value causes an error.
    * </pre>
    *
    * <code>int64 write_offset = 3 [(.google.api.field_behavior) = REQUIRED];</code>
@@ -136,7 +136,7 @@ public interface WriteObjectRequestOrBuilder
    *
    * <pre>
    * The data to insert. If a crc32c checksum is provided that doesn't match
-   * the checksum computed by the service, the request will fail.
+   * the checksum computed by the service, the request fails.
    * </pre>
    *
    * <code>.google.storage.v2.ChecksummedData checksummed_data = 4;</code>
@@ -150,7 +150,7 @@ public interface WriteObjectRequestOrBuilder
    *
    * <pre>
    * The data to insert. If a crc32c checksum is provided that doesn't match
-   * the checksum computed by the service, the request will fail.
+   * the checksum computed by the service, the request fails.
    * </pre>
    *
    * <code>.google.storage.v2.ChecksummedData checksummed_data = 4;</code>
@@ -164,7 +164,7 @@ public interface WriteObjectRequestOrBuilder
    *
    * <pre>
    * The data to insert. If a crc32c checksum is provided that doesn't match
-   * the checksum computed by the service, the request will fail.
+   * the checksum computed by the service, the request fails.
    * </pre>
    *
    * <code>.google.storage.v2.ChecksummedData checksummed_data = 4;</code>
@@ -176,9 +176,9 @@ public interface WriteObjectRequestOrBuilder
    *
    * <pre>
    * Optional. Checksums for the complete object. If the checksums computed by
-   * the service don't match the specified checksums the call will fail. May
-   * only be provided in the first or last request (either with first_message,
-   * or finish_write set).
+   * the service don't match the specified checksums the call fails. This field
+   * might only be provided in the first or last request (either with
+   * `first_message`, or `finish_write` set).
    * </pre>
    *
    * <code>
@@ -194,9 +194,9 @@ public interface WriteObjectRequestOrBuilder
    *
    * <pre>
    * Optional. Checksums for the complete object. If the checksums computed by
-   * the service don't match the specified checksums the call will fail. May
-   * only be provided in the first or last request (either with first_message,
-   * or finish_write set).
+   * the service don't match the specified checksums the call fails. This field
+   * might only be provided in the first or last request (either with
+   * `first_message`, or `finish_write` set).
    * </pre>
    *
    * <code>
@@ -212,9 +212,9 @@ public interface WriteObjectRequestOrBuilder
    *
    * <pre>
    * Optional. Checksums for the complete object. If the checksums computed by
-   * the service don't match the specified checksums the call will fail. May
-   * only be provided in the first or last request (either with first_message,
-   * or finish_write set).
+   * the service don't match the specified checksums the call fails. This field
+   * might only be provided in the first or last request (either with
+   * `first_message`, or `finish_write` set).
    * </pre>
    *
    * <code>
@@ -229,8 +229,8 @@ public interface WriteObjectRequestOrBuilder
    * <pre>
    * Optional. If `true`, this indicates that the write is complete. Sending any
    * `WriteObjectRequest`s subsequent to one in which `finish_write` is `true`
-   * will cause an error.
-   * For a non-resumable write (where the upload_id was not set in the first
+   * causes an error.
+   * For a non-resumable write (where the `upload_id` was not set in the first
    * message), it is an error not to set this field in the final message of the
    * stream.
    * </pre>
@@ -245,8 +245,8 @@ public interface WriteObjectRequestOrBuilder
    *
    *
    * <pre>
-   * Optional. A set of parameters common to Storage API requests concerning an
-   * object.
+   * Optional. A set of parameters common to Cloud Storage API requests
+   * concerning an object.
    * </pre>
    *
    * <code>
@@ -261,8 +261,8 @@ public interface WriteObjectRequestOrBuilder
    *
    *
    * <pre>
-   * Optional. A set of parameters common to Storage API requests concerning an
-   * object.
+   * Optional. A set of parameters common to Cloud Storage API requests
+   * concerning an object.
    * </pre>
    *
    * <code>
@@ -277,8 +277,8 @@ public interface WriteObjectRequestOrBuilder
    *
    *
    * <pre>
-   * Optional. A set of parameters common to Storage API requests concerning an
-   * object.
+   * Optional. A set of parameters common to Cloud Storage API requests
+   * concerning an object.
    * </pre>
    *
    * <code>

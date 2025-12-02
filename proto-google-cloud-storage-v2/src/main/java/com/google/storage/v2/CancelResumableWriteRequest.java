@@ -23,8 +23,8 @@ package com.google.storage.v2;
  *
  *
  * <pre>
- * Message for canceling an in-progress resumable upload.
- * `upload_id` **must** be set.
+ * Request message for
+ * [CancelResumableWrite][google.storage.v2.Storage.CancelResumableWrite].
  * </pre>
  *
  * Protobuf type {@code google.storage.v2.CancelResumableWriteRequest}
@@ -284,8 +284,8 @@ public final class CancelResumableWriteRequest extends com.google.protobuf.Gener
    *
    *
    * <pre>
-   * Message for canceling an in-progress resumable upload.
-   * `upload_id` **must** be set.
+   * Request message for
+   * [CancelResumableWrite][google.storage.v2.Storage.CancelResumableWrite].
    * </pre>
    *
    * Protobuf type {@code google.storage.v2.CancelResumableWriteRequest}

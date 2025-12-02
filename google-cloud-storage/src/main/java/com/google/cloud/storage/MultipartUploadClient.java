@@ -29,7 +29,6 @@ import com.google.cloud.storage.multipartupload.model.ListPartsRequest;
 import com.google.cloud.storage.multipartupload.model.ListPartsResponse;
 import com.google.cloud.storage.multipartupload.model.UploadPartRequest;
 import com.google.cloud.storage.multipartupload.model.UploadPartResponse;
-import java.net.URI;
 
 /**
  * A client for interacting with Google Cloud Storage's Multipart Upload API.
@@ -111,9 +110,8 @@ public abstract class MultipartUploadClient {
   @BetaApi
   public static MultipartUploadClient create(MultipartUploadSettings config) {
     HttpStorageOptions options = config.getOptions();
-     MultipartUploadClient client = new MultipartUploadClientImpl(
-        URI.create(options.getHost()), options.createRetrier(),
-        MultipartUploadHttpRequestManager.createFrom(options), options.getRetryAlgorithmManager());
-        return OtelMultipartUploadClientDecorator.decorate(client, options.getOpenTelemetry(), Transport.HTTP);
+    MultipartUploadClient client = new MultipartUploadClientImpl(
+      options.createRetrier(), MultipartUploadHttpRequestManager.createFrom(options), options.getRetryAlgorithmManager());
+    return OtelMultipartUploadClientDecorator.decorate(client, options.getOpenTelemetry(), Transport.HTTP);
   }
 }

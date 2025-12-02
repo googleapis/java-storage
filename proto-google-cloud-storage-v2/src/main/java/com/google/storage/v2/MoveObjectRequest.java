@@ -23,7 +23,7 @@ package com.google.storage.v2;
  *
  *
  * <pre>
- * Request message for MoveObject.
+ * Request message for [MoveObject][google.storage.v2.Storage.MoveObject].
  * </pre>
  *
  * Protobuf type {@code google.storage.v2.MoveObjectRequest}
@@ -896,7 +896,7 @@ public final class MoveObjectRequest extends com.google.protobuf.GeneratedMessag
    *
    *
    * <pre>
-   * Request message for MoveObject.
+   * Request message for [MoveObject][google.storage.v2.Storage.MoveObject].
    * </pre>
    *
    * Protobuf type {@code google.storage.v2.MoveObjectRequest}

@@ -24,9 +24,6 @@ import static io.grpc.MethodDescriptor.generateFullMethodName;
  * StorageControl service includes selected control plane operations.
  * </pre>
  */
-@javax.annotation.Generated(
-    value = "by gRPC proto compiler",
-    comments = "Source: google/storage/control/v2/storage_control.proto")
 @io.grpc.stub.annotations.GrpcGenerated
 public final class StorageControlGrpc {
 
@@ -2234,8 +2231,8 @@ public final class StorageControlGrpc {
      * </pre>
      */
     public com.google.storage.control.v2.Folder createFolder(
-        com.google.storage.control.v2.CreateFolderRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+        com.google.storage.control.v2.CreateFolderRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getCreateFolderMethod(), getCallOptions(), request);
     }
 
@@ -2248,8 +2245,8 @@ public final class StorageControlGrpc {
      * </pre>
      */
     public com.google.protobuf.Empty deleteFolder(
-        com.google.storage.control.v2.DeleteFolderRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+        com.google.storage.control.v2.DeleteFolderRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getDeleteFolderMethod(), getCallOptions(), request);
     }
 
@@ -2262,8 +2259,8 @@ public final class StorageControlGrpc {
      * </pre>
      */
     public com.google.storage.control.v2.Folder getFolder(
-        com.google.storage.control.v2.GetFolderRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+        com.google.storage.control.v2.GetFolderRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getGetFolderMethod(), getCallOptions(), request);
     }
 
@@ -2276,8 +2273,8 @@ public final class StorageControlGrpc {
      * </pre>
      */
     public com.google.storage.control.v2.ListFoldersResponse listFolders(
-        com.google.storage.control.v2.ListFoldersRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+        com.google.storage.control.v2.ListFoldersRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getListFoldersMethod(), getCallOptions(), request);
     }
 
@@ -2292,8 +2289,8 @@ public final class StorageControlGrpc {
      * </pre>
      */
     public com.google.longrunning.Operation renameFolder(
-        com.google.storage.control.v2.RenameFolderRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+        com.google.storage.control.v2.RenameFolderRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getRenameFolderMethod(), getCallOptions(), request);
     }
 
@@ -2305,8 +2302,9 @@ public final class StorageControlGrpc {
      * </pre>
      */
     public com.google.storage.control.v2.StorageLayout getStorageLayout(
-        com.google.storage.control.v2.GetStorageLayoutRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+        com.google.storage.control.v2.GetStorageLayoutRequest request)
+        throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getGetStorageLayoutMethod(), getCallOptions(), request);
     }
 
@@ -2318,8 +2316,9 @@ public final class StorageControlGrpc {
      * </pre>
      */
     public com.google.storage.control.v2.ManagedFolder createManagedFolder(
-        com.google.storage.control.v2.CreateManagedFolderRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+        com.google.storage.control.v2.CreateManagedFolderRequest request)
+        throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getCreateManagedFolderMethod(), getCallOptions(), request);
     }
 
@@ -2331,8 +2330,9 @@ public final class StorageControlGrpc {
      * </pre>
      */
     public com.google.protobuf.Empty deleteManagedFolder(
-        com.google.storage.control.v2.DeleteManagedFolderRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+        com.google.storage.control.v2.DeleteManagedFolderRequest request)
+        throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getDeleteManagedFolderMethod(), getCallOptions(), request);
     }
 
@@ -2344,8 +2344,9 @@ public final class StorageControlGrpc {
      * </pre>
      */
     public com.google.storage.control.v2.ManagedFolder getManagedFolder(
-        com.google.storage.control.v2.GetManagedFolderRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+        com.google.storage.control.v2.GetManagedFolderRequest request)
+        throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getGetManagedFolderMethod(), getCallOptions(), request);
     }
 
@@ -2357,8 +2358,9 @@ public final class StorageControlGrpc {
      * </pre>
      */
     public com.google.storage.control.v2.ListManagedFoldersResponse listManagedFolders(
-        com.google.storage.control.v2.ListManagedFoldersRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+        com.google.storage.control.v2.ListManagedFoldersRequest request)
+        throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getListManagedFoldersMethod(), getCallOptions(), request);
     }
 
@@ -2370,8 +2372,9 @@ public final class StorageControlGrpc {
      * </pre>
      */
     public com.google.longrunning.Operation createAnywhereCache(
-        com.google.storage.control.v2.CreateAnywhereCacheRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+        com.google.storage.control.v2.CreateAnywhereCacheRequest request)
+        throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getCreateAnywhereCacheMethod(), getCallOptions(), request);
     }
 
@@ -2384,8 +2387,9 @@ public final class StorageControlGrpc {
      * </pre>
      */
     public com.google.longrunning.Operation updateAnywhereCache(
-        com.google.storage.control.v2.UpdateAnywhereCacheRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+        com.google.storage.control.v2.UpdateAnywhereCacheRequest request)
+        throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getUpdateAnywhereCacheMethod(), getCallOptions(), request);
     }
 
@@ -2400,8 +2404,9 @@ public final class StorageControlGrpc {
      * </pre>
      */
     public com.google.storage.control.v2.AnywhereCache disableAnywhereCache(
-        com.google.storage.control.v2.DisableAnywhereCacheRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+        com.google.storage.control.v2.DisableAnywhereCacheRequest request)
+        throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getDisableAnywhereCacheMethod(), getCallOptions(), request);
     }
 
@@ -2413,8 +2418,9 @@ public final class StorageControlGrpc {
      * </pre>
      */
     public com.google.storage.control.v2.AnywhereCache pauseAnywhereCache(
-        com.google.storage.control.v2.PauseAnywhereCacheRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+        com.google.storage.control.v2.PauseAnywhereCacheRequest request)
+        throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getPauseAnywhereCacheMethod(), getCallOptions(), request);
     }
 
@@ -2426,8 +2432,9 @@ public final class StorageControlGrpc {
      * </pre>
      */
     public com.google.storage.control.v2.AnywhereCache resumeAnywhereCache(
-        com.google.storage.control.v2.ResumeAnywhereCacheRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+        com.google.storage.control.v2.ResumeAnywhereCacheRequest request)
+        throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getResumeAnywhereCacheMethod(), getCallOptions(), request);
     }
 
@@ -2439,8 +2446,9 @@ public final class StorageControlGrpc {
      * </pre>
      */
     public com.google.storage.control.v2.AnywhereCache getAnywhereCache(
-        com.google.storage.control.v2.GetAnywhereCacheRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+        com.google.storage.control.v2.GetAnywhereCacheRequest request)
+        throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getGetAnywhereCacheMethod(), getCallOptions(), request);
     }
 
@@ -2452,8 +2460,9 @@ public final class StorageControlGrpc {
      * </pre>
      */
     public com.google.storage.control.v2.ListAnywhereCachesResponse listAnywhereCaches(
-        com.google.storage.control.v2.ListAnywhereCachesRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+        com.google.storage.control.v2.ListAnywhereCachesRequest request)
+        throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getListAnywhereCachesMethod(), getCallOptions(), request);
     }
 
@@ -2465,8 +2474,9 @@ public final class StorageControlGrpc {
      * </pre>
      */
     public com.google.storage.control.v2.IntelligenceConfig getProjectIntelligenceConfig(
-        com.google.storage.control.v2.GetProjectIntelligenceConfigRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+        com.google.storage.control.v2.GetProjectIntelligenceConfigRequest request)
+        throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getGetProjectIntelligenceConfigMethod(), getCallOptions(), request);
     }
 
@@ -2478,8 +2488,9 @@ public final class StorageControlGrpc {
      * </pre>
      */
     public com.google.storage.control.v2.IntelligenceConfig updateProjectIntelligenceConfig(
-        com.google.storage.control.v2.UpdateProjectIntelligenceConfigRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+        com.google.storage.control.v2.UpdateProjectIntelligenceConfigRequest request)
+        throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getUpdateProjectIntelligenceConfigMethod(), getCallOptions(), request);
     }
 
@@ -2491,8 +2502,9 @@ public final class StorageControlGrpc {
      * </pre>
      */
     public com.google.storage.control.v2.IntelligenceConfig getFolderIntelligenceConfig(
-        com.google.storage.control.v2.GetFolderIntelligenceConfigRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+        com.google.storage.control.v2.GetFolderIntelligenceConfigRequest request)
+        throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getGetFolderIntelligenceConfigMethod(), getCallOptions(), request);
     }
 
@@ -2504,8 +2516,9 @@ public final class StorageControlGrpc {
      * </pre>
      */
     public com.google.storage.control.v2.IntelligenceConfig updateFolderIntelligenceConfig(
-        com.google.storage.control.v2.UpdateFolderIntelligenceConfigRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+        com.google.storage.control.v2.UpdateFolderIntelligenceConfigRequest request)
+        throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getUpdateFolderIntelligenceConfigMethod(), getCallOptions(), request);
     }
 
@@ -2517,8 +2530,9 @@ public final class StorageControlGrpc {
      * </pre>
      */
     public com.google.storage.control.v2.IntelligenceConfig getOrganizationIntelligenceConfig(
-        com.google.storage.control.v2.GetOrganizationIntelligenceConfigRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+        com.google.storage.control.v2.GetOrganizationIntelligenceConfigRequest request)
+        throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getGetOrganizationIntelligenceConfigMethod(), getCallOptions(), request);
     }
 
@@ -2530,8 +2544,9 @@ public final class StorageControlGrpc {
      * </pre>
      */
     public com.google.storage.control.v2.IntelligenceConfig updateOrganizationIntelligenceConfig(
-        com.google.storage.control.v2.UpdateOrganizationIntelligenceConfigRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+        com.google.storage.control.v2.UpdateOrganizationIntelligenceConfigRequest request)
+        throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getUpdateOrganizationIntelligenceConfigMethod(), getCallOptions(), request);
     }
 
@@ -2546,8 +2561,9 @@ public final class StorageControlGrpc {
      * for a managed folder.
      * </pre>
      */
-    public com.google.iam.v1.Policy getIamPolicy(com.google.iam.v1.GetIamPolicyRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public com.google.iam.v1.Policy getIamPolicy(com.google.iam.v1.GetIamPolicyRequest request)
+        throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getGetIamPolicyMethod(), getCallOptions(), request);
     }
 
@@ -2562,8 +2578,9 @@ public final class StorageControlGrpc {
      * for a managed folder.
      * </pre>
      */
-    public com.google.iam.v1.Policy setIamPolicy(com.google.iam.v1.SetIamPolicyRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public com.google.iam.v1.Policy setIamPolicy(com.google.iam.v1.SetIamPolicyRequest request)
+        throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getSetIamPolicyMethod(), getCallOptions(), request);
     }
 
@@ -2581,8 +2598,8 @@ public final class StorageControlGrpc {
      * </pre>
      */
     public com.google.iam.v1.TestIamPermissionsResponse testIamPermissions(
-        com.google.iam.v1.TestIamPermissionsRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+        com.google.iam.v1.TestIamPermissionsRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getTestIamPermissionsMethod(), getCallOptions(), request);
     }
   }

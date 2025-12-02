@@ -124,8 +124,8 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
    *
    * <pre>
    * Optional. Apply a predefined set of access controls to this object.
-   * Valid values are "authenticatedRead", "bucketOwnerFullControl",
-   * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
+   * Valid values are `authenticatedRead`, `bucketOwnerFullControl`,
+   * `bucketOwnerRead`, `private`, `projectPrivate`, or `publicRead`.
    * </pre>
    *
    * <code>string predefined_acl = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -150,8 +150,8 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
    *
    * <pre>
    * Optional. Apply a predefined set of access controls to this object.
-   * Valid values are "authenticatedRead", "bucketOwnerFullControl",
-   * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
+   * Valid values are `authenticatedRead`, `bucketOwnerFullControl`,
+   * `bucketOwnerRead`, `private`, `projectPrivate`, or `publicRead`.
    * </pre>
    *
    * <code>string predefined_acl = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -179,7 +179,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
    *
    * <pre>
    * Makes the operation conditional on whether the object's current
-   * generation matches the given value. Setting to 0 makes the operation
+   * generation matches the given value. Setting to `0` makes the operation
    * succeed only if there are no live versions of the object.
    * </pre>
    *
@@ -197,7 +197,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
    *
    * <pre>
    * Makes the operation conditional on whether the object's current
-   * generation matches the given value. Setting to 0 makes the operation
+   * generation matches the given value. Setting to `0` makes the operation
    * succeed only if there are no live versions of the object.
    * </pre>
    *
@@ -219,7 +219,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
    * <pre>
    * Makes the operation conditional on whether the object's live
    * generation does not match the given value. If no live object exists, the
-   * precondition fails. Setting to 0 makes the operation succeed only if
+   * precondition fails. Setting to `0` makes the operation succeed only if
    * there is a live version of the object.
    * </pre>
    *
@@ -238,7 +238,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
    * <pre>
    * Makes the operation conditional on whether the object's live
    * generation does not match the given value. If no live object exists, the
-   * precondition fails. Setting to 0 makes the operation succeed only if
+   * precondition fails. Setting to `0` makes the operation succeed only if
    * there is a live version of the object.
    * </pre>
    *
@@ -334,7 +334,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
    * <pre>
    * The expected final object size being uploaded.
    * If this value is set, closing the stream after writing fewer or more than
-   * `object_size` bytes will result in an OUT_OF_RANGE error.
+   * `object_size` bytes results in an `OUT_OF_RANGE` error.
    *
    * This situation is considered a client error, and if such an error occurs
    * you must start the upload over from scratch, this time sending the correct
@@ -356,7 +356,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
    * <pre>
    * The expected final object size being uploaded.
    * If this value is set, closing the stream after writing fewer or more than
-   * `object_size` bytes will result in an OUT_OF_RANGE error.
+   * `object_size` bytes results in an `OUT_OF_RANGE` error.
    *
    * This situation is considered a client error, and if such an error occurs
    * you must start the upload over from scratch, this time sending the correct
@@ -379,8 +379,8 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
    *
    *
    * <pre>
-   * If true, the object will be created in appendable mode.
-   * This field may only be set when using BidiWriteObject.
+   * If `true`, the object is created in appendable mode.
+   * This field might only be set when using `BidiWriteObject`.
    * </pre>
    *
    * <code>optional bool appendable = 9;</code>
@@ -396,8 +396,8 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
    *
    *
    * <pre>
-   * If true, the object will be created in appendable mode.
-   * This field may only be set when using BidiWriteObject.
+   * If `true`, the object is created in appendable mode.
+   * This field might only be set when using `BidiWriteObject`.
    * </pre>
    *
    * <code>optional bool appendable = 9;</code>
@@ -1166,8 +1166,8 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      *
      * <pre>
      * Optional. Apply a predefined set of access controls to this object.
-     * Valid values are "authenticatedRead", "bucketOwnerFullControl",
-     * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
+     * Valid values are `authenticatedRead`, `bucketOwnerFullControl`,
+     * `bucketOwnerRead`, `private`, `projectPrivate`, or `publicRead`.
      * </pre>
      *
      * <code>string predefined_acl = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -1191,8 +1191,8 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      *
      * <pre>
      * Optional. Apply a predefined set of access controls to this object.
-     * Valid values are "authenticatedRead", "bucketOwnerFullControl",
-     * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
+     * Valid values are `authenticatedRead`, `bucketOwnerFullControl`,
+     * `bucketOwnerRead`, `private`, `projectPrivate`, or `publicRead`.
      * </pre>
      *
      * <code>string predefined_acl = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -1216,8 +1216,8 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      *
      * <pre>
      * Optional. Apply a predefined set of access controls to this object.
-     * Valid values are "authenticatedRead", "bucketOwnerFullControl",
-     * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
+     * Valid values are `authenticatedRead`, `bucketOwnerFullControl`,
+     * `bucketOwnerRead`, `private`, `projectPrivate`, or `publicRead`.
      * </pre>
      *
      * <code>string predefined_acl = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -1240,8 +1240,8 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      *
      * <pre>
      * Optional. Apply a predefined set of access controls to this object.
-     * Valid values are "authenticatedRead", "bucketOwnerFullControl",
-     * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
+     * Valid values are `authenticatedRead`, `bucketOwnerFullControl`,
+     * `bucketOwnerRead`, `private`, `projectPrivate`, or `publicRead`.
      * </pre>
      *
      * <code>string predefined_acl = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -1260,8 +1260,8 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      *
      * <pre>
      * Optional. Apply a predefined set of access controls to this object.
-     * Valid values are "authenticatedRead", "bucketOwnerFullControl",
-     * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
+     * Valid values are `authenticatedRead`, `bucketOwnerFullControl`,
+     * `bucketOwnerRead`, `private`, `projectPrivate`, or `publicRead`.
      * </pre>
      *
      * <code>string predefined_acl = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -1287,7 +1287,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      *
      * <pre>
      * Makes the operation conditional on whether the object's current
-     * generation matches the given value. Setting to 0 makes the operation
+     * generation matches the given value. Setting to `0` makes the operation
      * succeed only if there are no live versions of the object.
      * </pre>
      *
@@ -1305,7 +1305,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      *
      * <pre>
      * Makes the operation conditional on whether the object's current
-     * generation matches the given value. Setting to 0 makes the operation
+     * generation matches the given value. Setting to `0` makes the operation
      * succeed only if there are no live versions of the object.
      * </pre>
      *
@@ -1323,7 +1323,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      *
      * <pre>
      * Makes the operation conditional on whether the object's current
-     * generation matches the given value. Setting to 0 makes the operation
+     * generation matches the given value. Setting to `0` makes the operation
      * succeed only if there are no live versions of the object.
      * </pre>
      *
@@ -1345,7 +1345,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      *
      * <pre>
      * Makes the operation conditional on whether the object's current
-     * generation matches the given value. Setting to 0 makes the operation
+     * generation matches the given value. Setting to `0` makes the operation
      * succeed only if there are no live versions of the object.
      * </pre>
      *
@@ -1368,7 +1368,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      * <pre>
      * Makes the operation conditional on whether the object's live
      * generation does not match the given value. If no live object exists, the
-     * precondition fails. Setting to 0 makes the operation succeed only if
+     * precondition fails. Setting to `0` makes the operation succeed only if
      * there is a live version of the object.
      * </pre>
      *
@@ -1387,7 +1387,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      * <pre>
      * Makes the operation conditional on whether the object's live
      * generation does not match the given value. If no live object exists, the
-     * precondition fails. Setting to 0 makes the operation succeed only if
+     * precondition fails. Setting to `0` makes the operation succeed only if
      * there is a live version of the object.
      * </pre>
      *
@@ -1406,7 +1406,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      * <pre>
      * Makes the operation conditional on whether the object's live
      * generation does not match the given value. If no live object exists, the
-     * precondition fails. Setting to 0 makes the operation succeed only if
+     * precondition fails. Setting to `0` makes the operation succeed only if
      * there is a live version of the object.
      * </pre>
      *
@@ -1429,7 +1429,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      * <pre>
      * Makes the operation conditional on whether the object's live
      * generation does not match the given value. If no live object exists, the
-     * precondition fails. Setting to 0 makes the operation succeed only if
+     * precondition fails. Setting to `0` makes the operation succeed only if
      * there is a live version of the object.
      * </pre>
      *
@@ -1604,7 +1604,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      * <pre>
      * The expected final object size being uploaded.
      * If this value is set, closing the stream after writing fewer or more than
-     * `object_size` bytes will result in an OUT_OF_RANGE error.
+     * `object_size` bytes results in an `OUT_OF_RANGE` error.
      *
      * This situation is considered a client error, and if such an error occurs
      * you must start the upload over from scratch, this time sending the correct
@@ -1626,7 +1626,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      * <pre>
      * The expected final object size being uploaded.
      * If this value is set, closing the stream after writing fewer or more than
-     * `object_size` bytes will result in an OUT_OF_RANGE error.
+     * `object_size` bytes results in an `OUT_OF_RANGE` error.
      *
      * This situation is considered a client error, and if such an error occurs
      * you must start the upload over from scratch, this time sending the correct
@@ -1648,7 +1648,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      * <pre>
      * The expected final object size being uploaded.
      * If this value is set, closing the stream after writing fewer or more than
-     * `object_size` bytes will result in an OUT_OF_RANGE error.
+     * `object_size` bytes results in an `OUT_OF_RANGE` error.
      *
      * This situation is considered a client error, and if such an error occurs
      * you must start the upload over from scratch, this time sending the correct
@@ -1674,7 +1674,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      * <pre>
      * The expected final object size being uploaded.
      * If this value is set, closing the stream after writing fewer or more than
-     * `object_size` bytes will result in an OUT_OF_RANGE error.
+     * `object_size` bytes results in an `OUT_OF_RANGE` error.
      *
      * This situation is considered a client error, and if such an error occurs
      * you must start the upload over from scratch, this time sending the correct
@@ -1698,8 +1698,8 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * If true, the object will be created in appendable mode.
-     * This field may only be set when using BidiWriteObject.
+     * If `true`, the object is created in appendable mode.
+     * This field might only be set when using `BidiWriteObject`.
      * </pre>
      *
      * <code>optional bool appendable = 9;</code>
@@ -1715,8 +1715,8 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * If true, the object will be created in appendable mode.
-     * This field may only be set when using BidiWriteObject.
+     * If `true`, the object is created in appendable mode.
+     * This field might only be set when using `BidiWriteObject`.
      * </pre>
      *
      * <code>optional bool appendable = 9;</code>
@@ -1732,8 +1732,8 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * If true, the object will be created in appendable mode.
-     * This field may only be set when using BidiWriteObject.
+     * If `true`, the object is created in appendable mode.
+     * This field might only be set when using `BidiWriteObject`.
      * </pre>
      *
      * <code>optional bool appendable = 9;</code>
@@ -1753,8 +1753,8 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * If true, the object will be created in appendable mode.
-     * This field may only be set when using BidiWriteObject.
+     * If `true`, the object is created in appendable mode.
+     * This field might only be set when using `BidiWriteObject`.
      * </pre>
      *
      * <code>optional bool appendable = 9;</code>

@@ -58,20 +58,26 @@ final class MultipartUploadHttpRequestManager {
   private final HttpRequestFactory requestFactory;
   private final ObjectParser objectParser;
   private final HeaderProvider headerProvider;
+  private final URI uri;
 
   MultipartUploadHttpRequestManager(
-      HttpRequestFactory requestFactory, ObjectParser objectParser, HeaderProvider headerProvider) {
+      HttpRequestFactory requestFactory,
+      ObjectParser objectParser,
+      HeaderProvider headerProvider,
+      URI uri) {
     this.requestFactory = requestFactory;
     this.objectParser = objectParser;
     this.headerProvider = headerProvider;
+    this.uri = uri;
   }
 
   CreateMultipartUploadResponse sendCreateMultipartUploadRequest(
-      URI uri, CreateMultipartUploadRequest request) throws IOException {
+      CreateMultipartUploadRequest request) throws IOException {
 
     String createUri =
         UriTemplate.expand(
-            uri.toString() + "{bucket}/{key}?uploads",
+            uri.toString(),
+            "{bucket}/{key}?uploads",
             ImmutableMap.of("bucket", request.bucket(), "key", request.key()),
             false);
 
@@ -85,7 +91,7 @@ final class MultipartUploadHttpRequestManager {
     return httpRequest.execute().parseAs(CreateMultipartUploadResponse.class);
   }
 
-  ListPartsResponse sendListPartsRequest(URI uri, ListPartsRequest request) throws IOException {
+  ListPartsResponse sendListPartsRequest(ListPartsRequest request) throws IOException {
 
     ImmutableMap.Builder<String, Object> params =
         ImmutableMap.<String, Object>builder()
@@ -101,7 +107,8 @@ final class MultipartUploadHttpRequestManager {
 
     String listUri =
         UriTemplate.expand(
-            uri.toString() + "{bucket}/{key}{?uploadId,max-parts,part-number-marker}",
+            uri.toString(),
+            "{bucket}/{key}{?uploadId,max-parts,part-number-marker}",
             params.build(),
             false);
     HttpRequest httpRequest = requestFactory.buildGetRequest(new GenericUrl(listUri));
@@ -111,12 +118,13 @@ final class MultipartUploadHttpRequestManager {
     return httpRequest.execute().parseAs(ListPartsResponse.class);
   }
 
-  AbortMultipartUploadResponse sendAbortMultipartUploadRequest(
-      URI uri, AbortMultipartUploadRequest request) throws IOException {
+  AbortMultipartUploadResponse sendAbortMultipartUploadRequest(AbortMultipartUploadRequest request)
+      throws IOException {
 
     String abortUri =
         UriTemplate.expand(
-            uri.toString() + "{bucket}/{key}{?uploadId}",
+            uri.toString(),
+            "{bucket}/{key}{?uploadId}",
             ImmutableMap.of(
                 "bucket", request.bucket(), "key", request.key(), "uploadId", request.uploadId()),
             false);
@@ -129,7 +137,7 @@ final class MultipartUploadHttpRequestManager {
   }
 
   CompleteMultipartUploadResponse sendCompleteMultipartUploadRequest(
-      URI uri, CompleteMultipartUploadRequest request) throws IOException {
+      CompleteMultipartUploadRequest request) throws IOException {
     String completeUri =
         UriTemplate.expand(
             uri.toString() + "{bucket}/{key}{?uploadId}",
@@ -149,7 +157,7 @@ final class MultipartUploadHttpRequestManager {
   }
 
   UploadPartResponse sendUploadPartRequest(
-      URI uri, UploadPartRequest request, RewindableContent rewindableContent) throws IOException {
+      UploadPartRequest request, RewindableContent rewindableContent) throws IOException {
     String uploadUri =
         UriTemplate.expand(
             uri.toString() + "{bucket}/{key}{?partNumber,uploadId}",
@@ -166,7 +174,11 @@ final class MultipartUploadHttpRequestManager {
     HttpRequest httpRequest =
         requestFactory.buildPutRequest(new GenericUrl(uploadUri), rewindableContent);
     httpRequest.getHeaders().putAll(headerProvider.getHeaders());
-    addChecksumHeader(rewindableContent.getCrc32c(), httpRequest.getHeaders());
+    if (request.getCrc32c() != null) {
+      addChecksumHeader(request.getCrc32c(), httpRequest.getHeaders());
+    } else {
+      addChecksumHeader(rewindableContent.getCrc32c(), httpRequest.getHeaders());
+    }
     httpRequest.setThrowExceptionOnExecuteError(true);
     return ChecksumResponseParser.parseUploadResponse(httpRequest.execute());
   }
@@ -190,12 +202,19 @@ final class MultipartUploadHttpRequestManager {
     return new MultipartUploadHttpRequestManager(
         storage.getRequestFactory(),
         new XmlObjectParser(new XmlMapper()),
-        options.getMergedHeaderProvider(FixedHeaderProvider.create(stableHeaders.build())));
+        options.getMergedHeaderProvider(FixedHeaderProvider.create(stableHeaders.build())),
+        URI.create(options.getHost()));
   }
 
   private void addChecksumHeader(@Nullable Crc32cLengthKnown crc32c, HttpHeaders headers) {
     if (crc32c != null) {
-      headers.put("x-goog-hash", "crc32c=" + Utils.crc32cCodec.encode(crc32c.getValue()));
+      addChecksumHeader(Utils.crc32cCodec.encode(crc32c.getValue()), headers);
+    }
+  }
+
+  private void addChecksumHeader(@Nullable String crc32c, HttpHeaders headers) {
+    if (crc32c != null) {
+      headers.put("x-goog-hash", "crc32c=" + crc32c);
     }
   }
 
@@ -214,6 +233,18 @@ final class MultipartUploadHttpRequestManager {
     if (request.getContentType() != null) {
       headers.put("Content-Type", request.getContentType());
     }
+    if (request.getContentDisposition() != null) {
+      headers.put("Content-Disposition", request.getContentDisposition());
+    }
+    if (request.getContentEncoding() != null) {
+      headers.put("Content-Encoding", request.getContentEncoding());
+    }
+    if (request.getContentLanguage() != null) {
+      headers.put("Content-Language", request.getContentLanguage());
+    }
+    if (request.getCacheControl() != null) {
+      headers.put("Cache-Control", request.getCacheControl());
+    }
     if (request.getStorageClass() != null) {
       headers.put("x-goog-storage-class", request.getStorageClass().toString());
     }
@@ -231,6 +262,9 @@ final class MultipartUploadHttpRequestManager {
     if (request.getCustomTime() != null) {
       headers.put(
           "x-goog-custom-time", Utils.offsetDateTimeRfc3339Codec.encode(request.getCustomTime()));
+    }
+    if (request.getUserProject() != null) {
+      headers.put("x-goog-user-project", request.getUserProject());
     }
   }
 

@@ -58,7 +58,7 @@ public interface BucketOrBuilder
    * <pre>
    * Output only. The user-chosen part of the bucket name. The `{bucket}`
    * portion of the `name` field. For globally unique buckets, this is equal to
-   * the "bucket name" of other Cloud Storage APIs. Example: "pub".
+   * the `bucket name` of other Cloud Storage APIs. Example: `pub`.
    * </pre>
    *
    * <code>string bucket_id = 2 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -73,7 +73,7 @@ public interface BucketOrBuilder
    * <pre>
    * Output only. The user-chosen part of the bucket name. The `{bucket}`
    * portion of the `name` field. For globally unique buckets, this is equal to
-   * the "bucket name" of other Cloud Storage APIs. Example: "pub".
+   * the `bucket name` of other Cloud Storage APIs. Example: `pub`.
    * </pre>
    *
    * <code>string bucket_id = 2 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -87,8 +87,8 @@ public interface BucketOrBuilder
    *
    * <pre>
    * The etag of the bucket.
-   * If included in the metadata of an UpdateBucketRequest, the operation will
-   * only be performed if the etag matches that of the bucket.
+   * If included in the metadata of an `UpdateBucketRequest`, the operation is
+   * only performed if the `etag` matches that of the bucket.
    * </pre>
    *
    * <code>string etag = 29;</code>
@@ -102,8 +102,8 @@ public interface BucketOrBuilder
    *
    * <pre>
    * The etag of the bucket.
-   * If included in the metadata of an UpdateBucketRequest, the operation will
-   * only be performed if the etag matches that of the bucket.
+   * If included in the metadata of an `UpdateBucketRequest`, the operation is
+   * only performed if the `etag` matches that of the bucket.
    * </pre>
    *
    * <code>string etag = 29;</code>
@@ -117,9 +117,9 @@ public interface BucketOrBuilder
    *
    * <pre>
    * Immutable. The project which owns this bucket, in the format of
-   * "projects/{projectIdentifier}".
-   * {projectIdentifier} can be the project ID or project number.
-   * Output values will always be in project number format.
+   * `projects/{projectIdentifier}`.
+   * `{projectIdentifier}` can be the project ID or project number.
+   * Output values are always in the project number format.
    * </pre>
    *
    * <code>
@@ -135,9 +135,9 @@ public interface BucketOrBuilder
    *
    * <pre>
    * Immutable. The project which owns this bucket, in the format of
-   * "projects/{projectIdentifier}".
-   * {projectIdentifier} can be the project ID or project number.
-   * Output values will always be in project number format.
+   * `projects/{projectIdentifier}`.
+   * `{projectIdentifier}` can be the project ID or project number.
+   * Output values are always in the project number format.
    * </pre>
    *
    * <code>
@@ -167,10 +167,8 @@ public interface BucketOrBuilder
    * <pre>
    * Immutable. The location of the bucket. Object data for objects in the
    * bucket resides in physical storage within this region.  Defaults to `US`.
-   * See the
-   * [https://developers.google.com/storage/docs/concepts-techniques#specifyinglocations"][developer's
-   * guide] for the authoritative list. Attempting to update this field after
-   * the bucket is created will result in an error.
+   * Attempting to update this field after the bucket is created results in an
+   * error.
    * </pre>
    *
    * <code>string location = 5 [(.google.api.field_behavior) = IMMUTABLE];</code>
@@ -185,10 +183,8 @@ public interface BucketOrBuilder
    * <pre>
    * Immutable. The location of the bucket. Object data for objects in the
    * bucket resides in physical storage within this region.  Defaults to `US`.
-   * See the
-   * [https://developers.google.com/storage/docs/concepts-techniques#specifyinglocations"][developer's
-   * guide] for the authoritative list. Attempting to update this field after
-   * the bucket is created will result in an error.
+   * Attempting to update this field after the bucket is created results in an
+   * error.
    * </pre>
    *
    * <code>string location = 5 [(.google.api.field_behavior) = IMMUTABLE];</code>
@@ -232,9 +228,9 @@ public interface BucketOrBuilder
    * Optional. The bucket's default storage class, used whenever no storageClass
    * is specified for a newly-created object. This defines how objects in the
    * bucket are stored and determines the SLA and the cost of storage.
-   * If this value is not specified when the bucket is created, it will default
-   * to `STANDARD`. For more information, see
-   * https://developers.google.com/storage/docs/storage-classes.
+   * If this value is not specified when the bucket is created, it defaults
+   * to `STANDARD`. For more information, see [Storage
+   * classes](https://developers.google.com/storage/docs/storage-classes).
    * </pre>
    *
    * <code>string storage_class = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -250,9 +246,9 @@ public interface BucketOrBuilder
    * Optional. The bucket's default storage class, used whenever no storageClass
    * is specified for a newly-created object. This defines how objects in the
    * bucket are stored and determines the SLA and the cost of storage.
-   * If this value is not specified when the bucket is created, it will default
-   * to `STANDARD`. For more information, see
-   * https://developers.google.com/storage/docs/storage-classes.
+   * If this value is not specified when the bucket is created, it defaults
+   * to `STANDARD`. For more information, see [Storage
+   * classes](https://developers.google.com/storage/docs/storage-classes).
    * </pre>
    *
    * <code>string storage_class = 7 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -266,11 +262,11 @@ public interface BucketOrBuilder
    *
    * <pre>
    * Optional. The recovery point objective for cross-region replication of the
-   * bucket. Applicable only for dual- and multi-region buckets. "DEFAULT" uses
-   * default replication. "ASYNC_TURBO" enables turbo replication, valid for
+   * bucket. Applicable only for dual- and multi-region buckets. `DEFAULT` uses
+   * default replication. `ASYNC_TURBO` enables turbo replication, valid for
    * dual-region buckets only. If rpo is not specified when the bucket is
-   * created, it defaults to "DEFAULT". For more information, see
-   * https://cloud.google.com/storage/docs/availability-durability#turbo-replication.
+   * created, it defaults to `DEFAULT`. For more information, see [Turbo
+   * replication](https://cloud.google.com/storage/docs/availability-durability#turbo-replication).
    * </pre>
    *
    * <code>string rpo = 27 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -284,11 +280,11 @@ public interface BucketOrBuilder
    *
    * <pre>
    * Optional. The recovery point objective for cross-region replication of the
-   * bucket. Applicable only for dual- and multi-region buckets. "DEFAULT" uses
-   * default replication. "ASYNC_TURBO" enables turbo replication, valid for
+   * bucket. Applicable only for dual- and multi-region buckets. `DEFAULT` uses
+   * default replication. `ASYNC_TURBO` enables turbo replication, valid for
    * dual-region buckets only. If rpo is not specified when the bucket is
-   * created, it defaults to "DEFAULT". For more information, see
-   * https://cloud.google.com/storage/docs/availability-durability#turbo-replication.
+   * created, it defaults to `DEFAULT`. For more information, see [Turbo
+   * replication](https://cloud.google.com/storage/docs/availability-durability#turbo-replication).
    * </pre>
    *
    * <code>string rpo = 27 [(.google.api.field_behavior) = OPTIONAL];</code>
@@ -302,7 +298,7 @@ public interface BucketOrBuilder
    *
    * <pre>
    * Optional. Access controls on the bucket.
-   * If iam_config.uniform_bucket_level_access is enabled on this bucket,
+   * If `iam_config.uniform_bucket_level_access` is enabled on this bucket,
    * requests to set, read, or modify acl is an error.
    * </pre>
    *
@@ -317,7 +313,7 @@ public interface BucketOrBuilder
    *
    * <pre>
    * Optional. Access controls on the bucket.
-   * If iam_config.uniform_bucket_level_access is enabled on this bucket,
+   * If `iam_config.uniform_bucket_level_access` is enabled on this bucket,
    * requests to set, read, or modify acl is an error.
    * </pre>
    *
@@ -332,7 +328,7 @@ public interface BucketOrBuilder
    *
    * <pre>
    * Optional. Access controls on the bucket.
-   * If iam_config.uniform_bucket_level_access is enabled on this bucket,
+   * If `iam_config.uniform_bucket_level_access` is enabled on this bucket,
    * requests to set, read, or modify acl is an error.
    * </pre>
    *
@@ -347,7 +343,7 @@ public interface BucketOrBuilder
    *
    * <pre>
    * Optional. Access controls on the bucket.
-   * If iam_config.uniform_bucket_level_access is enabled on this bucket,
+   * If `iam_config.uniform_bucket_level_access` is enabled on this bucket,
    * requests to set, read, or modify acl is an error.
    * </pre>
    *
@@ -363,7 +359,7 @@ public interface BucketOrBuilder
    *
    * <pre>
    * Optional. Access controls on the bucket.
-   * If iam_config.uniform_bucket_level_access is enabled on this bucket,
+   * If `iam_config.uniform_bucket_level_access` is enabled on this bucket,
    * requests to set, read, or modify acl is an error.
    * </pre>
    *
@@ -378,7 +374,7 @@ public interface BucketOrBuilder
    *
    * <pre>
    * Optional. Default access controls to apply to new objects when no ACL is
-   * provided. If iam_config.uniform_bucket_level_access is enabled on this
+   * provided. If `iam_config.uniform_bucket_level_access` is enabled on this
    * bucket, requests to set, read, or modify acl is an error.
    * </pre>
    *
@@ -393,7 +389,7 @@ public interface BucketOrBuilder
    *
    * <pre>
    * Optional. Default access controls to apply to new objects when no ACL is
-   * provided. If iam_config.uniform_bucket_level_access is enabled on this
+   * provided. If `iam_config.uniform_bucket_level_access` is enabled on this
    * bucket, requests to set, read, or modify acl is an error.
    * </pre>
    *
@@ -408,7 +404,7 @@ public interface BucketOrBuilder
    *
    * <pre>
    * Optional. Default access controls to apply to new objects when no ACL is
-   * provided. If iam_config.uniform_bucket_level_access is enabled on this
+   * provided. If `iam_config.uniform_bucket_level_access` is enabled on this
    * bucket, requests to set, read, or modify acl is an error.
    * </pre>
    *
@@ -423,7 +419,7 @@ public interface BucketOrBuilder
    *
    * <pre>
    * Optional. Default access controls to apply to new objects when no ACL is
-   * provided. If iam_config.uniform_bucket_level_access is enabled on this
+   * provided. If `iam_config.uniform_bucket_level_access` is enabled on this
    * bucket, requests to set, read, or modify acl is an error.
    * </pre>
    *
@@ -439,7 +435,7 @@ public interface BucketOrBuilder
    *
    * <pre>
    * Optional. Default access controls to apply to new objects when no ACL is
-   * provided. If iam_config.uniform_bucket_level_access is enabled on this
+   * provided. If `iam_config.uniform_bucket_level_access` is enabled on this
    * bucket, requests to set, read, or modify acl is an error.
    * </pre>
    *
@@ -453,9 +449,9 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * Optional. The bucket's lifecycle config. See
-   * [https://developers.google.com/storage/docs/lifecycle]Lifecycle Management]
-   * for more information.
+   * Optional. The bucket's lifecycle configuration. See [Lifecycle
+   * Management](https://developers.google.com/storage/docs/lifecycle) for more
+   * information.
    * </pre>
    *
    * <code>
@@ -470,9 +466,9 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * Optional. The bucket's lifecycle config. See
-   * [https://developers.google.com/storage/docs/lifecycle]Lifecycle Management]
-   * for more information.
+   * Optional. The bucket's lifecycle configuration. See [Lifecycle
+   * Management](https://developers.google.com/storage/docs/lifecycle) for more
+   * information.
    * </pre>
    *
    * <code>
@@ -487,9 +483,9 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * Optional. The bucket's lifecycle config. See
-   * [https://developers.google.com/storage/docs/lifecycle]Lifecycle Management]
-   * for more information.
+   * Optional. The bucket's lifecycle configuration. See [Lifecycle
+   * Management](https://developers.google.com/storage/docs/lifecycle) for more
+   * information.
    * </pre>
    *
    * <code>
@@ -542,8 +538,8 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * Optional. The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource
-   * Sharing] (CORS) config.
+   * Optional. The bucket's [CORS](https://www.w3.org/TR/cors/)
+   * configuration.
    * </pre>
    *
    * <code>
@@ -556,8 +552,8 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * Optional. The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource
-   * Sharing] (CORS) config.
+   * Optional. The bucket's [CORS](https://www.w3.org/TR/cors/)
+   * configuration.
    * </pre>
    *
    * <code>
@@ -570,8 +566,8 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * Optional. The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource
-   * Sharing] (CORS) config.
+   * Optional. The bucket's [CORS](https://www.w3.org/TR/cors/)
+   * configuration.
    * </pre>
    *
    * <code>
@@ -584,8 +580,8 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * Optional. The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource
-   * Sharing] (CORS) config.
+   * Optional. The bucket's [CORS](https://www.w3.org/TR/cors/)
+   * configuration.
    * </pre>
    *
    * <code>
@@ -598,8 +594,8 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * Optional. The bucket's [https://www.w3.org/TR/cors/][Cross-Origin Resource
-   * Sharing] (CORS) config.
+   * Optional. The bucket's [CORS](https://www.w3.org/TR/cors/)
+   * configuration.
    * </pre>
    *
    * <code>
@@ -655,11 +651,11 @@ public interface BucketOrBuilder
    * Optional. The default value for event-based hold on newly created objects
    * in this bucket.  Event-based hold is a way to retain objects indefinitely
    * until an event occurs, signified by the hold's release. After being
-   * released, such objects will be subject to bucket-level retention (if any).
-   * One sample use case of this flag is for banks to hold loan documents for at
+   * released, such objects are subject to bucket-level retention (if any).  One
+   * sample use case of this flag is for banks to hold loan documents for at
    * least 3 years after loan is paid in full. Here, bucket-level retention is 3
    * years and the event is loan being paid in full. In this example, these
-   * objects will be held intact for any number of years until the event has
+   * objects are held intact for any number of years until the event has
    * occurred (event-based hold on the object is released) and then 3 more years
    * after that. That means retention duration of the objects begins from the
    * moment event-based hold transitioned from true to false.  Objects under
@@ -741,9 +737,9 @@ public interface BucketOrBuilder
    *
    * <pre>
    * Optional. The bucket's website config, controlling how the service behaves
-   * when accessing bucket contents as a web site. See the
-   * [https://cloud.google.com/storage/docs/static-website][Static Website
-   * Examples] for more information.
+   * when accessing bucket contents as a web site. See the [Static website
+   * examples](https://cloud.google.com/storage/docs/static-website) for more
+   * information.
    * </pre>
    *
    * <code>.google.storage.v2.Bucket.Website website = 16 [(.google.api.field_behavior) = OPTIONAL];
@@ -758,9 +754,9 @@ public interface BucketOrBuilder
    *
    * <pre>
    * Optional. The bucket's website config, controlling how the service behaves
-   * when accessing bucket contents as a web site. See the
-   * [https://cloud.google.com/storage/docs/static-website][Static Website
-   * Examples] for more information.
+   * when accessing bucket contents as a web site. See the [Static website
+   * examples](https://cloud.google.com/storage/docs/static-website) for more
+   * information.
    * </pre>
    *
    * <code>.google.storage.v2.Bucket.Website website = 16 [(.google.api.field_behavior) = OPTIONAL];
@@ -775,9 +771,9 @@ public interface BucketOrBuilder
    *
    * <pre>
    * Optional. The bucket's website config, controlling how the service behaves
-   * when accessing bucket contents as a web site. See the
-   * [https://cloud.google.com/storage/docs/static-website][Static Website
-   * Examples] for more information.
+   * when accessing bucket contents as a web site. See the [Static website
+   * examples](https://cloud.google.com/storage/docs/static-website) for more
+   * information.
    * </pre>
    *
    * <code>.google.storage.v2.Bucket.Website website = 16 [(.google.api.field_behavior) = OPTIONAL];
@@ -789,7 +785,7 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * Optional. The bucket's versioning config.
+   * Optional. The bucket's versioning configuration.
    * </pre>
    *
    * <code>
@@ -804,7 +800,7 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * Optional. The bucket's versioning config.
+   * Optional. The bucket's versioning configuration.
    * </pre>
    *
    * <code>
@@ -819,7 +815,7 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * Optional. The bucket's versioning config.
+   * Optional. The bucket's versioning configuration.
    * </pre>
    *
    * <code>
@@ -958,7 +954,7 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * Optional. The bucket's billing config.
+   * Optional. The bucket's billing configuration.
    * </pre>
    *
    * <code>.google.storage.v2.Bucket.Billing billing = 21 [(.google.api.field_behavior) = OPTIONAL];
@@ -972,7 +968,7 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * Optional. The bucket's billing config.
+   * Optional. The bucket's billing configuration.
    * </pre>
    *
    * <code>.google.storage.v2.Bucket.Billing billing = 21 [(.google.api.field_behavior) = OPTIONAL];
@@ -986,7 +982,7 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * Optional. The bucket's billing config.
+   * Optional. The bucket's billing configuration.
    * </pre>
    *
    * <code>.google.storage.v2.Bucket.Billing billing = 21 [(.google.api.field_behavior) = OPTIONAL];
@@ -1001,12 +997,12 @@ public interface BucketOrBuilder
    * Optional. The bucket's retention policy. The retention policy enforces a
    * minimum retention time for all objects contained in the bucket, based on
    * their creation time. Any attempt to overwrite or delete objects younger
-   * than the retention period will result in a PERMISSION_DENIED error.  An
+   * than the retention period results in a `PERMISSION_DENIED` error.  An
    * unlocked retention policy can be modified or removed from the bucket via a
    * storage.buckets.update operation. A locked retention policy cannot be
    * removed or shortened in duration for the lifetime of the bucket.
-   * Attempting to remove or decrease period of a locked retention policy will
-   * result in a PERMISSION_DENIED error.
+   * Attempting to remove or decrease period of a locked retention policy
+   * results in a `PERMISSION_DENIED` error.
    * </pre>
    *
    * <code>
@@ -1024,12 +1020,12 @@ public interface BucketOrBuilder
    * Optional. The bucket's retention policy. The retention policy enforces a
    * minimum retention time for all objects contained in the bucket, based on
    * their creation time. Any attempt to overwrite or delete objects younger
-   * than the retention period will result in a PERMISSION_DENIED error.  An
+   * than the retention period results in a `PERMISSION_DENIED` error.  An
    * unlocked retention policy can be modified or removed from the bucket via a
    * storage.buckets.update operation. A locked retention policy cannot be
    * removed or shortened in duration for the lifetime of the bucket.
-   * Attempting to remove or decrease period of a locked retention policy will
-   * result in a PERMISSION_DENIED error.
+   * Attempting to remove or decrease period of a locked retention policy
+   * results in a `PERMISSION_DENIED` error.
    * </pre>
    *
    * <code>
@@ -1047,12 +1043,12 @@ public interface BucketOrBuilder
    * Optional. The bucket's retention policy. The retention policy enforces a
    * minimum retention time for all objects contained in the bucket, based on
    * their creation time. Any attempt to overwrite or delete objects younger
-   * than the retention period will result in a PERMISSION_DENIED error.  An
+   * than the retention period results in a `PERMISSION_DENIED` error.  An
    * unlocked retention policy can be modified or removed from the bucket via a
    * storage.buckets.update operation. A locked retention policy cannot be
    * removed or shortened in duration for the lifetime of the bucket.
-   * Attempting to remove or decrease period of a locked retention policy will
-   * result in a PERMISSION_DENIED error.
+   * Attempting to remove or decrease period of a locked retention policy
+   * results in a `PERMISSION_DENIED` error.
    * </pre>
    *
    * <code>
@@ -1065,7 +1061,7 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * Optional. The bucket's IAM config.
+   * Optional. The bucket's IAM configuration.
    * </pre>
    *
    * <code>
@@ -1080,7 +1076,7 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * Optional. The bucket's IAM config.
+   * Optional. The bucket's IAM configuration.
    * </pre>
    *
    * <code>
@@ -1095,7 +1091,7 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * Optional. The bucket's IAM config.
+   * Optional. The bucket's IAM configuration.
    * </pre>
    *
    * <code>
@@ -1122,9 +1118,8 @@ public interface BucketOrBuilder
    *
    * <pre>
    * Optional. Configuration that, if present, specifies the data placement for
-   * a
-   * [https://cloud.google.com/storage/docs/locations#location-dr][configurable
-   * dual-region].
+   * a [configurable
+   * dual-region](https://cloud.google.com/storage/docs/locations#location-dr).
    * </pre>
    *
    * <code>
@@ -1140,9 +1135,8 @@ public interface BucketOrBuilder
    *
    * <pre>
    * Optional. Configuration that, if present, specifies the data placement for
-   * a
-   * [https://cloud.google.com/storage/docs/locations#location-dr][configurable
-   * dual-region].
+   * a [configurable
+   * dual-region](https://cloud.google.com/storage/docs/locations#location-dr).
    * </pre>
    *
    * <code>
@@ -1158,9 +1152,8 @@ public interface BucketOrBuilder
    *
    * <pre>
    * Optional. Configuration that, if present, specifies the data placement for
-   * a
-   * [https://cloud.google.com/storage/docs/locations#location-dr][configurable
-   * dual-region].
+   * a [configurable
+   * dual-region](https://cloud.google.com/storage/docs/locations#location-dr).
    * </pre>
    *
    * <code>
@@ -1174,8 +1167,8 @@ public interface BucketOrBuilder
    *
    * <pre>
    * Optional. The bucket's Autoclass configuration. If there is no
-   * configuration, the Autoclass feature will be disabled and have no effect on
-   * the bucket.
+   * configuration, the Autoclass feature is disabled and has no effect on the
+   * bucket.
    * </pre>
    *
    * <code>
@@ -1191,8 +1184,8 @@ public interface BucketOrBuilder
    *
    * <pre>
    * Optional. The bucket's Autoclass configuration. If there is no
-   * configuration, the Autoclass feature will be disabled and have no effect on
-   * the bucket.
+   * configuration, the Autoclass feature is disabled and has no effect on the
+   * bucket.
    * </pre>
    *
    * <code>
@@ -1208,8 +1201,8 @@ public interface BucketOrBuilder
    *
    * <pre>
    * Optional. The bucket's Autoclass configuration. If there is no
-   * configuration, the Autoclass feature will be disabled and have no effect on
-   * the bucket.
+   * configuration, the Autoclass feature is disabled and has no effect on the
+   * bucket.
    * </pre>
    *
    * <code>
@@ -1223,7 +1216,7 @@ public interface BucketOrBuilder
    *
    * <pre>
    * Optional. The bucket's hierarchical namespace configuration. If there is no
-   * configuration, the hierarchical namespace feature will be disabled and have
+   * configuration, the hierarchical namespace feature is disabled and has
    * no effect on the bucket.
    * </pre>
    *
@@ -1240,7 +1233,7 @@ public interface BucketOrBuilder
    *
    * <pre>
    * Optional. The bucket's hierarchical namespace configuration. If there is no
-   * configuration, the hierarchical namespace feature will be disabled and have
+   * configuration, the hierarchical namespace feature is disabled and has
    * no effect on the bucket.
    * </pre>
    *
@@ -1257,7 +1250,7 @@ public interface BucketOrBuilder
    *
    * <pre>
    * Optional. The bucket's hierarchical namespace configuration. If there is no
-   * configuration, the hierarchical namespace feature will be disabled and have
+   * configuration, the hierarchical namespace feature is disabled and has
    * no effect on the bucket.
    * </pre>
    *
@@ -1318,7 +1311,7 @@ public interface BucketOrBuilder
    *
    * <pre>
    * Optional. The bucket's object retention configuration. Must be enabled
-   * before objects in the bucket may have retention configured.
+   * before objects in the bucket might have retention configured.
    * </pre>
    *
    * <code>
@@ -1334,7 +1327,7 @@ public interface BucketOrBuilder
    *
    * <pre>
    * Optional. The bucket's object retention configuration. Must be enabled
-   * before objects in the bucket may have retention configured.
+   * before objects in the bucket might have retention configured.
    * </pre>
    *
    * <code>
@@ -1350,7 +1343,7 @@ public interface BucketOrBuilder
    *
    * <pre>
    * Optional. The bucket's object retention configuration. Must be enabled
-   * before objects in the bucket may have retention configured.
+   * before objects in the bucket might have retention configured.
    * </pre>
    *
    * <code>

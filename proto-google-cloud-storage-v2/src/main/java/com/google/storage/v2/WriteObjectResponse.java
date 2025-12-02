@@ -23,7 +23,8 @@ package com.google.storage.v2;
  *
  *
  * <pre>
- * Response message for WriteObject.
+ * Response message for
+ * [WriteObject][google.storage.v2.Storage.WriteObject].
  * </pre>
  *
  * Protobuf type {@code google.storage.v2.WriteObjectResponse}
@@ -402,7 +403,8 @@ public final class WriteObjectResponse extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * Response message for WriteObject.
+   * Response message for
+   * [WriteObject][google.storage.v2.Storage.WriteObject].
    * </pre>
    *
    * Protobuf type {@code google.storage.v2.WriteObjectResponse}

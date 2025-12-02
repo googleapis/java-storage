@@ -24,26 +24,26 @@ import static io.grpc.MethodDescriptor.generateFullMethodName;
  * ## API Overview and Naming Syntax
  * The Cloud Storage gRPC API allows applications to read and write data through
  * the abstractions of buckets and objects. For a description of these
- * abstractions please see https://cloud.google.com/storage/docs.
+ * abstractions please see [Cloud Storage
+ * documentation](https://cloud.google.com/storage/docs).
  * Resources are named as follows:
  *   - Projects are referred to as they are defined by the Resource Manager API,
  *     using strings like `projects/123456` or `projects/my-string-id`.
  *   - Buckets are named using string names of the form:
- *     `projects/{project}/buckets/{bucket}`
- *     For globally unique buckets, `_` may be substituted for the project.
+ *     `projects/{project}/buckets/{bucket}`.
+ *     For globally unique buckets, `_` might be substituted for the project.
  *   - Objects are uniquely identified by their name along with the name of the
  *     bucket they belong to, as separate strings in this API. For example:
- *       ReadObjectRequest {
+ *         ```
+ *         ReadObjectRequest {
  *         bucket: 'projects/_/buckets/my-bucket'
  *         object: 'my-object'
- *       }
- *     Note that object names can contain `/` characters, which are treated as
- *     any other character (no special directory semantics).
+ *         }
+ *         ```
+ * Note that object names can contain `/` characters, which are treated as
+ * any other character (no special directory semantics).
  * </pre>
  */
-@javax.annotation.Generated(
-    value = "by gRPC proto compiler",
-    comments = "Source: google/storage/v2/storage.proto")
 @io.grpc.stub.annotations.GrpcGenerated
 public final class StorageGrpc {
 
@@ -1103,21 +1103,24 @@ public final class StorageGrpc {
    * ## API Overview and Naming Syntax
    * The Cloud Storage gRPC API allows applications to read and write data through
    * the abstractions of buckets and objects. For a description of these
-   * abstractions please see https://cloud.google.com/storage/docs.
+   * abstractions please see [Cloud Storage
+   * documentation](https://cloud.google.com/storage/docs).
    * Resources are named as follows:
    *   - Projects are referred to as they are defined by the Resource Manager API,
    *     using strings like `projects/123456` or `projects/my-string-id`.
    *   - Buckets are named using string names of the form:
-   *     `projects/{project}/buckets/{bucket}`
-   *     For globally unique buckets, `_` may be substituted for the project.
+   *     `projects/{project}/buckets/{bucket}`.
+   *     For globally unique buckets, `_` might be substituted for the project.
    *   - Objects are uniquely identified by their name along with the name of the
    *     bucket they belong to, as separate strings in this API. For example:
-   *       ReadObjectRequest {
+   *         ```
+   *         ReadObjectRequest {
    *         bucket: 'projects/_/buckets/my-bucket'
    *         object: 'my-object'
-   *       }
-   *     Note that object names can contain `/` characters, which are treated as
-   *     any other character (no special directory semantics).
+   *         }
+   *         ```
+   * Note that object names can contain `/` characters, which are treated as
+   * any other character (no special directory semantics).
    * </pre>
    */
   public interface AsyncService {
@@ -1127,6 +1130,25 @@ public final class StorageGrpc {
      *
      * <pre>
      * Permanently deletes an empty bucket.
+     * The request fails if there are any live or
+     * noncurrent objects in the bucket, but the request succeeds if the
+     * bucket only contains soft-deleted objects or incomplete uploads, such
+     * as ongoing XML API multipart uploads. Does not permanently delete
+     * soft-deleted objects.
+     * When this API is used to delete a bucket containing an object that has a
+     * soft delete policy
+     * enabled, the object becomes soft deleted, and the
+     * `softDeleteTime` and `hardDeleteTime` properties are set on the
+     * object.
+     * Objects and multipart uploads that were in the bucket at the time of
+     * deletion are also retained for the specified retention duration. When
+     * a soft-deleted bucket reaches the end of its retention duration, it
+     * is permanently deleted. The `hardDeleteTime` of the bucket always
+     * equals
+     * or exceeds the expiration time of the last soft-deleted object in the
+     * bucket.
+     * **IAM Permissions**:
+     * Requires `storage.buckets.delete` IAM permission on the bucket.
      * </pre>
      */
     default void deleteBucket(
@@ -1141,6 +1163,13 @@ public final class StorageGrpc {
      *
      * <pre>
      * Returns metadata for the specified bucket.
+     * **IAM Permissions**:
+     * Requires `storage.buckets.get`
+     * IAM permission on
+     * the bucket. Additionally, to return specific bucket metadata, the
+     * authenticated user must have the following permissions:
+     * - To return the IAM policies: `storage.buckets.getIamPolicy`
+     * - To return the bucket IP filtering rules: `storage.buckets.getIpFilter`
      * </pre>
      */
     default void getBucket(
@@ -1154,6 +1183,13 @@ public final class StorageGrpc {
      *
      * <pre>
      * Creates a new bucket.
+     * **IAM Permissions**:
+     * Requires `storage.buckets.create` IAM permission on the bucket.
+     * Additionally, to enable specific bucket features, the authenticated user
+     * must have the following permissions:
+     * - To enable object retention using the `enableObjectRetention` query
+     * parameter: `storage.buckets.enableObjectRetention`
+     * - To set the bucket IP filtering rules: `storage.buckets.setIpFilter`
      * </pre>
      */
     default void createBucket(
@@ -1167,7 +1203,14 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Retrieves a list of buckets for a given project.
+     * Retrieves a list of buckets for a given project, ordered
+     * lexicographically by name.
+     * **IAM Permissions**:
+     * Requires `storage.buckets.list` IAM permission on the bucket.
+     * Additionally, to enable specific bucket features, the authenticated
+     * user must have the following permissions:
+     * - To list the IAM policies: `storage.buckets.getIamPolicy`
+     * - To list the bucket IP filtering rules: `storage.buckets.getIpFilter`
      * </pre>
      */
     default void listBuckets(
@@ -1181,7 +1224,20 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Locks retention policy on a bucket.
+     * Permanently locks the retention
+     * policy that is
+     * currently applied to the specified bucket.
+     * Caution: Locking a bucket is an
+     * irreversible action. Once you lock a bucket:
+     * - You cannot remove the retention policy from the bucket.
+     * - You cannot decrease the retention period for the policy.
+     * Once locked, you must delete the entire bucket in order to remove the
+     * bucket's retention policy. However, before you can delete the bucket, you
+     * must delete all the objects in the bucket, which is only
+     * possible if all the objects have reached the retention period set by the
+     * retention policy.
+     * **IAM Permissions**:
+     * Requires `storage.buckets.update` IAM permission on the bucket.
      * </pre>
      */
     default void lockBucketRetentionPolicy(
@@ -1195,11 +1251,15 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Gets the IAM policy for a specified bucket.
+     * Gets the IAM policy for a specified bucket or managed folder.
      * The `resource` field in the request should be
      * `projects/_/buckets/{bucket}` for a bucket, or
      * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}`
      * for a managed folder.
+     * **IAM Permissions**:
+     * Requires `storage.buckets.getIamPolicy` on the bucket or
+     * `storage.managedFolders.getIamPolicy` IAM permission on the
+     * managed folder.
      * </pre>
      */
     default void getIamPolicy(
@@ -1213,7 +1273,7 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Updates an IAM policy for the specified bucket.
+     * Updates an IAM policy for the specified bucket or managed folder.
      * The `resource` field in the request should be
      * `projects/_/buckets/{bucket}` for a bucket, or
      * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}`
@@ -1232,9 +1292,8 @@ public final class StorageGrpc {
      *
      * <pre>
      * Tests a set of permissions on the given bucket, object, or managed folder
-     * to see which, if any, are held by the caller.
-     * The `resource` field in the request should be
-     * `projects/_/buckets/{bucket}` for a bucket,
+     * to see which, if any, are held by the caller. The `resource` field in the
+     * request should be `projects/_/buckets/{bucket}` for a bucket,
      * `projects/_/buckets/{bucket}/objects/{object}` for an object, or
      * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}`
      * for a managed folder.
@@ -1252,7 +1311,16 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Updates a bucket. Equivalent to JSON API's storage.buckets.patch method.
+     * Updates a bucket. Changes to the bucket are readable immediately after
+     * writing, but configuration changes might take time to propagate. This
+     * method supports `patch` semantics.
+     * **IAM Permissions**:
+     * Requires `storage.buckets.update` IAM permission on the bucket.
+     * Additionally, to enable specific bucket features, the authenticated user
+     * must have the following permissions:
+     * - To set bucket IP filtering rules: `storage.buckets.setIpFilter`
+     * - To update public access prevention policies or access control lists
+     * (ACLs): `storage.buckets.setIamPolicy`
      * </pre>
      */
     default void updateBucket(
@@ -1267,7 +1335,14 @@ public final class StorageGrpc {
      *
      * <pre>
      * Concatenates a list of existing objects into a new object in the same
-     * bucket.
+     * bucket. The existing source objects are unaffected by this operation.
+     * **IAM Permissions**:
+     * Requires the `storage.objects.create` and `storage.objects.get` IAM
+     * permissions to use this method. If the new composite object
+     * overwrites an existing object, the authenticated user must also have
+     * the `storage.objects.delete` permission. If the request body includes
+     * the retention property, the authenticated user must also have the
+     * `storage.objects.setRetention` IAM permission.
      * </pre>
      */
     default void composeObject(
@@ -1283,7 +1358,7 @@ public final class StorageGrpc {
      * <pre>
      * Deletes an object and its metadata. Deletions are permanent if versioning
      * is not enabled for the bucket, or if the generation parameter is used, or
-     * if [soft delete](https://cloud.google.com/storage/docs/soft-delete) is not
+     * if soft delete is not
      * enabled for the bucket.
      * When this API is used to delete an object from a bucket that has soft
      * delete policy enabled, the object becomes soft deleted, and the
@@ -1295,9 +1370,7 @@ public final class StorageGrpc {
      * API to restore soft-deleted objects until the soft delete retention period
      * has passed.
      * **IAM Permissions**:
-     * Requires `storage.objects.delete`
-     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on
-     * the bucket.
+     * Requires `storage.objects.delete` IAM permission on the bucket.
      * </pre>
      */
     default void deleteObject(
@@ -1311,7 +1384,38 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Restores a soft-deleted object.
+     * Restores a
+     * soft-deleted object.
+     * When a soft-deleted object is restored, a new copy of that object is
+     * created in the same bucket and inherits the same metadata as the
+     * soft-deleted object. The inherited metadata is the metadata that existed
+     * when the original object became soft deleted, with the following
+     * exceptions:
+     *   - The `createTime` of the new object is set to the time at which the
+     *   soft-deleted object was restored.
+     *   - The `softDeleteTime` and `hardDeleteTime` values are cleared.
+     *   - A new generation is assigned and the metageneration is reset to 1.
+     *   - If the soft-deleted object was in a bucket that had Autoclass enabled,
+     *   the new object is
+     *     restored to Standard storage.
+     *   - The restored object inherits the bucket's default object ACL, unless
+     *   `copySourceAcl` is `true`.
+     * If a live object using the same name already exists in the bucket and
+     * becomes overwritten, the live object becomes a noncurrent object if Object
+     * Versioning is enabled on the bucket. If Object Versioning is not enabled,
+     * the live object becomes soft deleted.
+     * **IAM Permissions**:
+     * Requires the following IAM permissions to use this method:
+     *   - `storage.objects.restore`
+     *   - `storage.objects.create`
+     *   - `storage.objects.delete` (only required if overwriting an existing
+     *   object)
+     *   - `storage.objects.getIamPolicy` (only required if `projection` is `full`
+     *   and the relevant bucket
+     *     has uniform bucket-level access disabled)
+     *   - `storage.objects.setIamPolicy` (only required if `copySourceAcl` is
+     *   `true` and the relevant
+     *     bucket has uniform bucket-level access disabled)
      * </pre>
      */
     default void restoreObject(
@@ -1327,8 +1431,8 @@ public final class StorageGrpc {
      * <pre>
      * Cancels an in-progress resumable upload.
      * Any attempts to write to the resumable upload after cancelling the upload
-     * will fail.
-     * The behavior for currently in progress write operations is not guaranteed -
+     * fail.
+     * The behavior for any in-progress write operations is not guaranteed;
      * they could either complete before the cancellation or fail if the
      * cancellation completes first.
      * </pre>
@@ -1347,9 +1451,8 @@ public final class StorageGrpc {
      * <pre>
      * Retrieves object metadata.
      * **IAM Permissions**:
-     * Requires `storage.objects.get`
-     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on
-     * the bucket. To return object ACLs, the authenticated user must also have
+     * Requires `storage.objects.get` IAM permission on the bucket.
+     * To return object ACLs, the authenticated user must also have
      * the `storage.objects.getIamPolicy` permission.
      * </pre>
      */
@@ -1365,9 +1468,7 @@ public final class StorageGrpc {
      * <pre>
      * Retrieves object data.
      * **IAM Permissions**:
-     * Requires `storage.objects.get`
-     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on
-     * the bucket.
+     * Requires `storage.objects.get` IAM permission on the bucket.
      * </pre>
      */
     default void readObject(
@@ -1381,19 +1482,15 @@ public final class StorageGrpc {
      *
      * <pre>
      * Reads an object's data.
-     * This is a bi-directional API with the added support for reading multiple
-     * ranges within one stream both within and across multiple messages.
-     * If the server encountered an error for any of the inputs, the stream will
-     * be closed with the relevant error code.
-     * Because the API allows for multiple outstanding requests, when the stream
-     * is closed the error response will contain a BidiReadObjectRangesError proto
-     * in the error extension describing the error for each outstanding read_id.
+     * This bi-directional API reads data from an object, allowing you to
+     * request multiple data ranges within a single stream, even across
+     * several messages. If an error occurs with any request, the stream
+     * closes with a relevant error code. Since you can have multiple
+     * outstanding requests, the error response includes a
+     * `BidiReadObjectRangesError` field detailing the specific error for
+     * each pending `read_id`.
      * **IAM Permissions**:
-     * Requires `storage.objects.get`
-     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on
-     * the bucket.
-     * This API is currently in preview and is not yet available for general
-     * use.
+     * Requires `storage.objects.get` IAM permission on the bucket.
      * </pre>
      */
     default io.grpc.stub.StreamObserver<com.google.storage.v2.BidiReadObjectRequest> bidiReadObject(
@@ -1408,7 +1505,9 @@ public final class StorageGrpc {
      *
      * <pre>
      * Updates an object's metadata.
-     * Equivalent to JSON API's storage.objects.patch.
+     * Equivalent to JSON API's `storage.objects.patch` method.
+     * **IAM Permissions**:
+     * Requires `storage.objects.update` IAM permission on the bucket.
      * </pre>
      */
     default void updateObject(
@@ -1438,47 +1537,47 @@ public final class StorageGrpc {
      * follows:
      *   - Check the result Status of the stream, to determine if writing can be
      *     resumed on this stream or must be restarted from scratch (by calling
-     *     `StartResumableWrite()`). The resumable errors are DEADLINE_EXCEEDED,
-     *     INTERNAL, and UNAVAILABLE. For each case, the client should use binary
-     *     exponential backoff before retrying.  Additionally, writes can be
-     *     resumed after RESOURCE_EXHAUSTED errors, but only after taking
-     *     appropriate measures, which may include reducing aggregate send rate
+     *     `StartResumableWrite()`). The resumable errors are `DEADLINE_EXCEEDED`,
+     *     `INTERNAL`, and `UNAVAILABLE`. For each case, the client should use
+     *     binary exponential backoff before retrying.  Additionally, writes can
+     *     be resumed after `RESOURCE_EXHAUSTED` errors, but only after taking
+     *     appropriate measures, which might include reducing aggregate send rate
      *     across clients and/or requesting a quota increase for your project.
      *   - If the call to `WriteObject` returns `ABORTED`, that indicates
      *     concurrent attempts to update the resumable write, caused either by
      *     multiple racing clients or by a single client where the previous
      *     request was timed out on the client side but nonetheless reached the
      *     server. In this case the client should take steps to prevent further
-     *     concurrent writes (e.g., increase the timeouts, stop using more than
-     *     one process to perform the upload, etc.), and then should follow the
-     *     steps below for resuming the upload.
+     *     concurrent writes. For example, increase the timeouts and stop using
+     *     more than one process to perform the upload. Follow the steps below for
+     *     resuming the upload.
      *   - For resumable errors, the client should call `QueryWriteStatus()` and
-     *     then continue writing from the returned `persisted_size`. This may be
+     *     then continue writing from the returned `persisted_size`. This might be
      *     less than the amount of data the client previously sent. Note also that
      *     it is acceptable to send data starting at an offset earlier than the
-     *     returned `persisted_size`; in this case, the service will skip data at
+     *     returned `persisted_size`; in this case, the service skips data at
      *     offsets that were already persisted (without checking that it matches
      *     the previously written data), and write only the data starting from the
-     *     persisted offset. Even though the data isn't written, it may still
+     *     persisted offset. Even though the data isn't written, it might still
      *     incur a performance cost over resuming at the correct write offset.
      *     This behavior can make client-side handling simpler in some cases.
      *   - Clients must only send data that is a multiple of 256 KiB per message,
      *     unless the object is being finished with `finish_write` set to `true`.
-     * The service will not view the object as complete until the client has
+     * The service does not view the object as complete until the client has
      * sent a `WriteObjectRequest` with `finish_write` set to `true`. Sending any
      * requests on a stream after sending a request with `finish_write` set to
-     * `true` will cause an error. The client **should** check the response it
-     * receives to determine how much data the service was able to commit and
+     * `true` causes an error. The client must check the response it
+     * receives to determine how much data the service is able to commit and
      * whether the service views the object as complete.
-     * Attempting to resume an already finalized object will result in an OK
+     * Attempting to resume an already finalized object results in an `OK`
      * status, with a `WriteObjectResponse` containing the finalized object's
      * metadata.
-     * Alternatively, the BidiWriteObject operation may be used to write an
+     * Alternatively, you can use the `BidiWriteObject` operation to write an
      * object with controls over flushing and the ability to fetch the ability to
      * determine the current persisted size.
      * **IAM Permissions**:
      * Requires `storage.objects.create`
-     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on
+     * IAM permission on
      * the bucket.
      * </pre>
      */
@@ -1493,18 +1592,18 @@ public final class StorageGrpc {
      *
      * <pre>
      * Stores a new object and metadata.
-     * This is similar to the WriteObject call with the added support for
+     * This is similar to the `WriteObject` call with the added support for
      * manual flushing of persisted state, and the ability to determine current
      * persisted size without closing the stream.
-     * The client may specify one or both of the `state_lookup` and `flush` fields
-     * in each BidiWriteObjectRequest. If `flush` is specified, the data written
-     * so far will be persisted to storage. If `state_lookup` is specified, the
-     * service will respond with a BidiWriteObjectResponse that contains the
+     * The client might specify one or both of the `state_lookup` and `flush`
+     * fields in each `BidiWriteObjectRequest`. If `flush` is specified, the data
+     * written so far is persisted to storage. If `state_lookup` is specified, the
+     * service responds with a `BidiWriteObjectResponse` that contains the
      * persisted size. If both `flush` and `state_lookup` are specified, the flush
-     * will always occur before a `state_lookup`, so that both may be set in the
-     * same request and the returned state will be the state of the object
-     * post-flush. When the stream is closed, a BidiWriteObjectResponse will
-     * always be sent to the client, regardless of the value of `state_lookup`.
+     * always occurs before a `state_lookup`, so that both might be set in the
+     * same request and the returned state is the state of the object
+     * post-flush. When the stream is closed, a `BidiWriteObjectResponse`
+     * is always sent to the client, regardless of the value of `state_lookup`.
      * </pre>
      */
     default io.grpc.stub.StreamObserver<com.google.storage.v2.BidiWriteObjectRequest>
@@ -1522,8 +1621,8 @@ public final class StorageGrpc {
      * Retrieves a list of objects matching the criteria.
      * **IAM Permissions**:
      * The authenticated user requires `storage.objects.list`
-     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions)
-     * to use this method. To return object ACLs, the authenticated user must also
+     * IAM permission to use this method. To return object ACLs, the
+     * authenticated user must also
      * have the `storage.objects.getIamPolicy` permission.
      * </pre>
      */
@@ -1554,16 +1653,14 @@ public final class StorageGrpc {
      *
      * <pre>
      * Starts a resumable write operation. This
-     * method is part of the [Resumable
-     * upload](https://cloud.google.com/storage/docs/resumable-uploads) feature.
+     * method is part of the Resumable
+     * upload feature.
      * This allows you to upload large objects in multiple chunks, which is more
      * resilient to network interruptions than a single upload. The validity
      * duration of the write operation, and the consequences of it becoming
      * invalid, are service-dependent.
      * **IAM Permissions**:
-     * Requires `storage.objects.create`
-     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on
-     * the bucket.
+     * Requires `storage.objects.create` IAM permission on the bucket.
      * </pre>
      */
     default void startResumableWrite(
@@ -1579,8 +1676,8 @@ public final class StorageGrpc {
      *
      * <pre>
      * Determines the `persisted_size` of an object that is being written. This
-     * method is part of the [resumable
-     * upload](https://cloud.google.com/storage/docs/resumable-uploads) feature.
+     * method is part of the resumable
+     * upload feature.
      * The returned value is the size of the object that has been persisted so
      * far. The value can be used as the `write_offset` for the next `Write()`
      * call.
@@ -1608,6 +1705,16 @@ public final class StorageGrpc {
      *
      * <pre>
      * Moves the source object to the destination object in the same bucket.
+     * This operation moves a source object to a destination object in the
+     * same bucket by renaming the object. The move itself is an atomic
+     * transaction, ensuring all steps either complete successfully or no
+     * changes are made.
+     * **IAM Permissions**:
+     * Requires the following IAM permissions to use this method:
+     *   - `storage.objects.move`
+     *   - `storage.objects.create`
+     *   - `storage.objects.delete` (only required if overwriting an existing
+     *   object)
      * </pre>
      */
     default void moveObject(
@@ -1624,21 +1731,24 @@ public final class StorageGrpc {
    * ## API Overview and Naming Syntax
    * The Cloud Storage gRPC API allows applications to read and write data through
    * the abstractions of buckets and objects. For a description of these
-   * abstractions please see https://cloud.google.com/storage/docs.
+   * abstractions please see [Cloud Storage
+   * documentation](https://cloud.google.com/storage/docs).
    * Resources are named as follows:
    *   - Projects are referred to as they are defined by the Resource Manager API,
    *     using strings like `projects/123456` or `projects/my-string-id`.
    *   - Buckets are named using string names of the form:
-   *     `projects/{project}/buckets/{bucket}`
-   *     For globally unique buckets, `_` may be substituted for the project.
+   *     `projects/{project}/buckets/{bucket}`.
+   *     For globally unique buckets, `_` might be substituted for the project.
    *   - Objects are uniquely identified by their name along with the name of the
    *     bucket they belong to, as separate strings in this API. For example:
-   *       ReadObjectRequest {
+   *         ```
+   *         ReadObjectRequest {
    *         bucket: 'projects/_/buckets/my-bucket'
    *         object: 'my-object'
-   *       }
-   *     Note that object names can contain `/` characters, which are treated as
-   *     any other character (no special directory semantics).
+   *         }
+   *         ```
+   * Note that object names can contain `/` characters, which are treated as
+   * any other character (no special directory semantics).
    * </pre>
    */
   public abstract static class StorageImplBase implements io.grpc.BindableService, AsyncService {
@@ -1656,21 +1766,24 @@ public final class StorageGrpc {
    * ## API Overview and Naming Syntax
    * The Cloud Storage gRPC API allows applications to read and write data through
    * the abstractions of buckets and objects. For a description of these
-   * abstractions please see https://cloud.google.com/storage/docs.
+   * abstractions please see [Cloud Storage
+   * documentation](https://cloud.google.com/storage/docs).
    * Resources are named as follows:
    *   - Projects are referred to as they are defined by the Resource Manager API,
    *     using strings like `projects/123456` or `projects/my-string-id`.
    *   - Buckets are named using string names of the form:
-   *     `projects/{project}/buckets/{bucket}`
-   *     For globally unique buckets, `_` may be substituted for the project.
+   *     `projects/{project}/buckets/{bucket}`.
+   *     For globally unique buckets, `_` might be substituted for the project.
    *   - Objects are uniquely identified by their name along with the name of the
    *     bucket they belong to, as separate strings in this API. For example:
-   *       ReadObjectRequest {
+   *         ```
+   *         ReadObjectRequest {
    *         bucket: 'projects/_/buckets/my-bucket'
    *         object: 'my-object'
-   *       }
-   *     Note that object names can contain `/` characters, which are treated as
-   *     any other character (no special directory semantics).
+   *         }
+   *         ```
+   * Note that object names can contain `/` characters, which are treated as
+   * any other character (no special directory semantics).
    * </pre>
    */
   public static final class StorageStub extends io.grpc.stub.AbstractAsyncStub<StorageStub> {
@@ -1688,6 +1801,25 @@ public final class StorageGrpc {
      *
      * <pre>
      * Permanently deletes an empty bucket.
+     * The request fails if there are any live or
+     * noncurrent objects in the bucket, but the request succeeds if the
+     * bucket only contains soft-deleted objects or incomplete uploads, such
+     * as ongoing XML API multipart uploads. Does not permanently delete
+     * soft-deleted objects.
+     * When this API is used to delete a bucket containing an object that has a
+     * soft delete policy
+     * enabled, the object becomes soft deleted, and the
+     * `softDeleteTime` and `hardDeleteTime` properties are set on the
+     * object.
+     * Objects and multipart uploads that were in the bucket at the time of
+     * deletion are also retained for the specified retention duration. When
+     * a soft-deleted bucket reaches the end of its retention duration, it
+     * is permanently deleted. The `hardDeleteTime` of the bucket always
+     * equals
+     * or exceeds the expiration time of the last soft-deleted object in the
+     * bucket.
+     * **IAM Permissions**:
+     * Requires `storage.buckets.delete` IAM permission on the bucket.
      * </pre>
      */
     public void deleteBucket(
@@ -1704,6 +1836,13 @@ public final class StorageGrpc {
      *
      * <pre>
      * Returns metadata for the specified bucket.
+     * **IAM Permissions**:
+     * Requires `storage.buckets.get`
+     * IAM permission on
+     * the bucket. Additionally, to return specific bucket metadata, the
+     * authenticated user must have the following permissions:
+     * - To return the IAM policies: `storage.buckets.getIamPolicy`
+     * - To return the bucket IP filtering rules: `storage.buckets.getIpFilter`
      * </pre>
      */
     public void getBucket(
@@ -1718,6 +1857,13 @@ public final class StorageGrpc {
      *
      * <pre>
      * Creates a new bucket.
+     * **IAM Permissions**:
+     * Requires `storage.buckets.create` IAM permission on the bucket.
+     * Additionally, to enable specific bucket features, the authenticated user
+     * must have the following permissions:
+     * - To enable object retention using the `enableObjectRetention` query
+     * parameter: `storage.buckets.enableObjectRetention`
+     * - To set the bucket IP filtering rules: `storage.buckets.setIpFilter`
      * </pre>
      */
     public void createBucket(
@@ -1733,7 +1879,14 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Retrieves a list of buckets for a given project.
+     * Retrieves a list of buckets for a given project, ordered
+     * lexicographically by name.
+     * **IAM Permissions**:
+     * Requires `storage.buckets.list` IAM permission on the bucket.
+     * Additionally, to enable specific bucket features, the authenticated
+     * user must have the following permissions:
+     * - To list the IAM policies: `storage.buckets.getIamPolicy`
+     * - To list the bucket IP filtering rules: `storage.buckets.getIpFilter`
      * </pre>
      */
     public void listBuckets(
@@ -1749,7 +1902,20 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Locks retention policy on a bucket.
+     * Permanently locks the retention
+     * policy that is
+     * currently applied to the specified bucket.
+     * Caution: Locking a bucket is an
+     * irreversible action. Once you lock a bucket:
+     * - You cannot remove the retention policy from the bucket.
+     * - You cannot decrease the retention period for the policy.
+     * Once locked, you must delete the entire bucket in order to remove the
+     * bucket's retention policy. However, before you can delete the bucket, you
+     * must delete all the objects in the bucket, which is only
+     * possible if all the objects have reached the retention period set by the
+     * retention policy.
+     * **IAM Permissions**:
+     * Requires `storage.buckets.update` IAM permission on the bucket.
      * </pre>
      */
     public void lockBucketRetentionPolicy(
@@ -1765,11 +1931,15 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Gets the IAM policy for a specified bucket.
+     * Gets the IAM policy for a specified bucket or managed folder.
      * The `resource` field in the request should be
      * `projects/_/buckets/{bucket}` for a bucket, or
      * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}`
      * for a managed folder.
+     * **IAM Permissions**:
+     * Requires `storage.buckets.getIamPolicy` on the bucket or
+     * `storage.managedFolders.getIamPolicy` IAM permission on the
+     * managed folder.
      * </pre>
      */
     public void getIamPolicy(
@@ -1785,7 +1955,7 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Updates an IAM policy for the specified bucket.
+     * Updates an IAM policy for the specified bucket or managed folder.
      * The `resource` field in the request should be
      * `projects/_/buckets/{bucket}` for a bucket, or
      * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}`
@@ -1806,9 +1976,8 @@ public final class StorageGrpc {
      *
      * <pre>
      * Tests a set of permissions on the given bucket, object, or managed folder
-     * to see which, if any, are held by the caller.
-     * The `resource` field in the request should be
-     * `projects/_/buckets/{bucket}` for a bucket,
+     * to see which, if any, are held by the caller. The `resource` field in the
+     * request should be `projects/_/buckets/{bucket}` for a bucket,
      * `projects/_/buckets/{bucket}/objects/{object}` for an object, or
      * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}`
      * for a managed folder.
@@ -1828,7 +1997,16 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Updates a bucket. Equivalent to JSON API's storage.buckets.patch method.
+     * Updates a bucket. Changes to the bucket are readable immediately after
+     * writing, but configuration changes might take time to propagate. This
+     * method supports `patch` semantics.
+     * **IAM Permissions**:
+     * Requires `storage.buckets.update` IAM permission on the bucket.
+     * Additionally, to enable specific bucket features, the authenticated user
+     * must have the following permissions:
+     * - To set bucket IP filtering rules: `storage.buckets.setIpFilter`
+     * - To update public access prevention policies or access control lists
+     * (ACLs): `storage.buckets.setIamPolicy`
      * </pre>
      */
     public void updateBucket(
@@ -1845,7 +2023,14 @@ public final class StorageGrpc {
      *
      * <pre>
      * Concatenates a list of existing objects into a new object in the same
-     * bucket.
+     * bucket. The existing source objects are unaffected by this operation.
+     * **IAM Permissions**:
+     * Requires the `storage.objects.create` and `storage.objects.get` IAM
+     * permissions to use this method. If the new composite object
+     * overwrites an existing object, the authenticated user must also have
+     * the `storage.objects.delete` permission. If the request body includes
+     * the retention property, the authenticated user must also have the
+     * `storage.objects.setRetention` IAM permission.
      * </pre>
      */
     public void composeObject(
@@ -1863,7 +2048,7 @@ public final class StorageGrpc {
      * <pre>
      * Deletes an object and its metadata. Deletions are permanent if versioning
      * is not enabled for the bucket, or if the generation parameter is used, or
-     * if [soft delete](https://cloud.google.com/storage/docs/soft-delete) is not
+     * if soft delete is not
      * enabled for the bucket.
      * When this API is used to delete an object from a bucket that has soft
      * delete policy enabled, the object becomes soft deleted, and the
@@ -1875,9 +2060,7 @@ public final class StorageGrpc {
      * API to restore soft-deleted objects until the soft delete retention period
      * has passed.
      * **IAM Permissions**:
-     * Requires `storage.objects.delete`
-     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on
-     * the bucket.
+     * Requires `storage.objects.delete` IAM permission on the bucket.
      * </pre>
      */
     public void deleteObject(
@@ -1893,7 +2076,38 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Restores a soft-deleted object.
+     * Restores a
+     * soft-deleted object.
+     * When a soft-deleted object is restored, a new copy of that object is
+     * created in the same bucket and inherits the same metadata as the
+     * soft-deleted object. The inherited metadata is the metadata that existed
+     * when the original object became soft deleted, with the following
+     * exceptions:
+     *   - The `createTime` of the new object is set to the time at which the
+     *   soft-deleted object was restored.
+     *   - The `softDeleteTime` and `hardDeleteTime` values are cleared.
+     *   - A new generation is assigned and the metageneration is reset to 1.
+     *   - If the soft-deleted object was in a bucket that had Autoclass enabled,
+     *   the new object is
+     *     restored to Standard storage.
+     *   - The restored object inherits the bucket's default object ACL, unless
+     *   `copySourceAcl` is `true`.
+     * If a live object using the same name already exists in the bucket and
+     * becomes overwritten, the live object becomes a noncurrent object if Object
+     * Versioning is enabled on the bucket. If Object Versioning is not enabled,
+     * the live object becomes soft deleted.
+     * **IAM Permissions**:
+     * Requires the following IAM permissions to use this method:
+     *   - `storage.objects.restore`
+     *   - `storage.objects.create`
+     *   - `storage.objects.delete` (only required if overwriting an existing
+     *   object)
+     *   - `storage.objects.getIamPolicy` (only required if `projection` is `full`
+     *   and the relevant bucket
+     *     has uniform bucket-level access disabled)
+     *   - `storage.objects.setIamPolicy` (only required if `copySourceAcl` is
+     *   `true` and the relevant
+     *     bucket has uniform bucket-level access disabled)
      * </pre>
      */
     public void restoreObject(
@@ -1911,8 +2125,8 @@ public final class StorageGrpc {
      * <pre>
      * Cancels an in-progress resumable upload.
      * Any attempts to write to the resumable upload after cancelling the upload
-     * will fail.
-     * The behavior for currently in progress write operations is not guaranteed -
+     * fail.
+     * The behavior for any in-progress write operations is not guaranteed;
      * they could either complete before the cancellation or fail if the
      * cancellation completes first.
      * </pre>
@@ -1933,9 +2147,8 @@ public final class StorageGrpc {
      * <pre>
      * Retrieves object metadata.
      * **IAM Permissions**:
-     * Requires `storage.objects.get`
-     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on
-     * the bucket. To return object ACLs, the authenticated user must also have
+     * Requires `storage.objects.get` IAM permission on the bucket.
+     * To return object ACLs, the authenticated user must also have
      * the `storage.objects.getIamPolicy` permission.
      * </pre>
      */
@@ -1952,9 +2165,7 @@ public final class StorageGrpc {
      * <pre>
      * Retrieves object data.
      * **IAM Permissions**:
-     * Requires `storage.objects.get`
-     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on
-     * the bucket.
+     * Requires `storage.objects.get` IAM permission on the bucket.
      * </pre>
      */
     public void readObject(
@@ -1969,19 +2180,15 @@ public final class StorageGrpc {
      *
      * <pre>
      * Reads an object's data.
-     * This is a bi-directional API with the added support for reading multiple
-     * ranges within one stream both within and across multiple messages.
-     * If the server encountered an error for any of the inputs, the stream will
-     * be closed with the relevant error code.
-     * Because the API allows for multiple outstanding requests, when the stream
-     * is closed the error response will contain a BidiReadObjectRangesError proto
-     * in the error extension describing the error for each outstanding read_id.
+     * This bi-directional API reads data from an object, allowing you to
+     * request multiple data ranges within a single stream, even across
+     * several messages. If an error occurs with any request, the stream
+     * closes with a relevant error code. Since you can have multiple
+     * outstanding requests, the error response includes a
+     * `BidiReadObjectRangesError` field detailing the specific error for
+     * each pending `read_id`.
      * **IAM Permissions**:
-     * Requires `storage.objects.get`
-     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on
-     * the bucket.
-     * This API is currently in preview and is not yet available for general
-     * use.
+     * Requires `storage.objects.get` IAM permission on the bucket.
      * </pre>
      */
     public io.grpc.stub.StreamObserver<com.google.storage.v2.BidiReadObjectRequest> bidiReadObject(
@@ -1996,7 +2203,9 @@ public final class StorageGrpc {
      *
      * <pre>
      * Updates an object's metadata.
-     * Equivalent to JSON API's storage.objects.patch.
+     * Equivalent to JSON API's `storage.objects.patch` method.
+     * **IAM Permissions**:
+     * Requires `storage.objects.update` IAM permission on the bucket.
      * </pre>
      */
     public void updateObject(
@@ -2028,47 +2237,47 @@ public final class StorageGrpc {
      * follows:
      *   - Check the result Status of the stream, to determine if writing can be
      *     resumed on this stream or must be restarted from scratch (by calling
-     *     `StartResumableWrite()`). The resumable errors are DEADLINE_EXCEEDED,
-     *     INTERNAL, and UNAVAILABLE. For each case, the client should use binary
-     *     exponential backoff before retrying.  Additionally, writes can be
-     *     resumed after RESOURCE_EXHAUSTED errors, but only after taking
-     *     appropriate measures, which may include reducing aggregate send rate
+     *     `StartResumableWrite()`). The resumable errors are `DEADLINE_EXCEEDED`,
+     *     `INTERNAL`, and `UNAVAILABLE`. For each case, the client should use
+     *     binary exponential backoff before retrying.  Additionally, writes can
+     *     be resumed after `RESOURCE_EXHAUSTED` errors, but only after taking
+     *     appropriate measures, which might include reducing aggregate send rate
      *     across clients and/or requesting a quota increase for your project.
      *   - If the call to `WriteObject` returns `ABORTED`, that indicates
      *     concurrent attempts to update the resumable write, caused either by
      *     multiple racing clients or by a single client where the previous
      *     request was timed out on the client side but nonetheless reached the
      *     server. In this case the client should take steps to prevent further
-     *     concurrent writes (e.g., increase the timeouts, stop using more than
-     *     one process to perform the upload, etc.), and then should follow the
-     *     steps below for resuming the upload.
+     *     concurrent writes. For example, increase the timeouts and stop using
+     *     more than one process to perform the upload. Follow the steps below for
+     *     resuming the upload.
      *   - For resumable errors, the client should call `QueryWriteStatus()` and
-     *     then continue writing from the returned `persisted_size`. This may be
+     *     then continue writing from the returned `persisted_size`. This might be
      *     less than the amount of data the client previously sent. Note also that
      *     it is acceptable to send data starting at an offset earlier than the
-     *     returned `persisted_size`; in this case, the service will skip data at
+     *     returned `persisted_size`; in this case, the service skips data at
      *     offsets that were already persisted (without checking that it matches
      *     the previously written data), and write only the data starting from the
-     *     persisted offset. Even though the data isn't written, it may still
+     *     persisted offset. Even though the data isn't written, it might still
      *     incur a performance cost over resuming at the correct write offset.
      *     This behavior can make client-side handling simpler in some cases.
      *   - Clients must only send data that is a multiple of 256 KiB per message,
      *     unless the object is being finished with `finish_write` set to `true`.
-     * The service will not view the object as complete until the client has
+     * The service does not view the object as complete until the client has
      * sent a `WriteObjectRequest` with `finish_write` set to `true`. Sending any
      * requests on a stream after sending a request with `finish_write` set to
-     * `true` will cause an error. The client **should** check the response it
-     * receives to determine how much data the service was able to commit and
+     * `true` causes an error. The client must check the response it
+     * receives to determine how much data the service is able to commit and
      * whether the service views the object as complete.
-     * Attempting to resume an already finalized object will result in an OK
+     * Attempting to resume an already finalized object results in an `OK`
      * status, with a `WriteObjectResponse` containing the finalized object's
      * metadata.
-     * Alternatively, the BidiWriteObject operation may be used to write an
+     * Alternatively, you can use the `BidiWriteObject` operation to write an
      * object with controls over flushing and the ability to fetch the ability to
      * determine the current persisted size.
      * **IAM Permissions**:
      * Requires `storage.objects.create`
-     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on
+     * IAM permission on
      * the bucket.
      * </pre>
      */
@@ -2083,18 +2292,18 @@ public final class StorageGrpc {
      *
      * <pre>
      * Stores a new object and metadata.
-     * This is similar to the WriteObject call with the added support for
+     * This is similar to the `WriteObject` call with the added support for
      * manual flushing of persisted state, and the ability to determine current
      * persisted size without closing the stream.
-     * The client may specify one or both of the `state_lookup` and `flush` fields
-     * in each BidiWriteObjectRequest. If `flush` is specified, the data written
-     * so far will be persisted to storage. If `state_lookup` is specified, the
-     * service will respond with a BidiWriteObjectResponse that contains the
+     * The client might specify one or both of the `state_lookup` and `flush`
+     * fields in each `BidiWriteObjectRequest`. If `flush` is specified, the data
+     * written so far is persisted to storage. If `state_lookup` is specified, the
+     * service responds with a `BidiWriteObjectResponse` that contains the
      * persisted size. If both `flush` and `state_lookup` are specified, the flush
-     * will always occur before a `state_lookup`, so that both may be set in the
-     * same request and the returned state will be the state of the object
-     * post-flush. When the stream is closed, a BidiWriteObjectResponse will
-     * always be sent to the client, regardless of the value of `state_lookup`.
+     * always occurs before a `state_lookup`, so that both might be set in the
+     * same request and the returned state is the state of the object
+     * post-flush. When the stream is closed, a `BidiWriteObjectResponse`
+     * is always sent to the client, regardless of the value of `state_lookup`.
      * </pre>
      */
     public io.grpc.stub.StreamObserver<com.google.storage.v2.BidiWriteObjectRequest>
@@ -2112,8 +2321,8 @@ public final class StorageGrpc {
      * Retrieves a list of objects matching the criteria.
      * **IAM Permissions**:
      * The authenticated user requires `storage.objects.list`
-     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions)
-     * to use this method. To return object ACLs, the authenticated user must also
+     * IAM permission to use this method. To return object ACLs, the
+     * authenticated user must also
      * have the `storage.objects.getIamPolicy` permission.
      * </pre>
      */
@@ -2148,16 +2357,14 @@ public final class StorageGrpc {
      *
      * <pre>
      * Starts a resumable write operation. This
-     * method is part of the [Resumable
-     * upload](https://cloud.google.com/storage/docs/resumable-uploads) feature.
+     * method is part of the Resumable
+     * upload feature.
      * This allows you to upload large objects in multiple chunks, which is more
      * resilient to network interruptions than a single upload. The validity
      * duration of the write operation, and the consequences of it becoming
      * invalid, are service-dependent.
      * **IAM Permissions**:
-     * Requires `storage.objects.create`
-     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on
-     * the bucket.
+     * Requires `storage.objects.create` IAM permission on the bucket.
      * </pre>
      */
     public void startResumableWrite(
@@ -2175,8 +2382,8 @@ public final class StorageGrpc {
      *
      * <pre>
      * Determines the `persisted_size` of an object that is being written. This
-     * method is part of the [resumable
-     * upload](https://cloud.google.com/storage/docs/resumable-uploads) feature.
+     * method is part of the resumable
+     * upload feature.
      * The returned value is the size of the object that has been persisted so
      * far. The value can be used as the `write_offset` for the next `Write()`
      * call.
@@ -2206,6 +2413,16 @@ public final class StorageGrpc {
      *
      * <pre>
      * Moves the source object to the destination object in the same bucket.
+     * This operation moves a source object to a destination object in the
+     * same bucket by renaming the object. The move itself is an atomic
+     * transaction, ensuring all steps either complete successfully or no
+     * changes are made.
+     * **IAM Permissions**:
+     * Requires the following IAM permissions to use this method:
+     *   - `storage.objects.move`
+     *   - `storage.objects.create`
+     *   - `storage.objects.delete` (only required if overwriting an existing
+     *   object)
      * </pre>
      */
     public void moveObject(
@@ -2223,21 +2440,24 @@ public final class StorageGrpc {
    * ## API Overview and Naming Syntax
    * The Cloud Storage gRPC API allows applications to read and write data through
    * the abstractions of buckets and objects. For a description of these
-   * abstractions please see https://cloud.google.com/storage/docs.
+   * abstractions please see [Cloud Storage
+   * documentation](https://cloud.google.com/storage/docs).
    * Resources are named as follows:
    *   - Projects are referred to as they are defined by the Resource Manager API,
    *     using strings like `projects/123456` or `projects/my-string-id`.
    *   - Buckets are named using string names of the form:
-   *     `projects/{project}/buckets/{bucket}`
-   *     For globally unique buckets, `_` may be substituted for the project.
+   *     `projects/{project}/buckets/{bucket}`.
+   *     For globally unique buckets, `_` might be substituted for the project.
    *   - Objects are uniquely identified by their name along with the name of the
    *     bucket they belong to, as separate strings in this API. For example:
-   *       ReadObjectRequest {
+   *         ```
+   *         ReadObjectRequest {
    *         bucket: 'projects/_/buckets/my-bucket'
    *         object: 'my-object'
-   *       }
-   *     Note that object names can contain `/` characters, which are treated as
-   *     any other character (no special directory semantics).
+   *         }
+   *         ```
+   * Note that object names can contain `/` characters, which are treated as
+   * any other character (no special directory semantics).
    * </pre>
    */
   public static final class StorageBlockingV2Stub
@@ -2257,11 +2477,30 @@ public final class StorageGrpc {
      *
      * <pre>
      * Permanently deletes an empty bucket.
+     * The request fails if there are any live or
+     * noncurrent objects in the bucket, but the request succeeds if the
+     * bucket only contains soft-deleted objects or incomplete uploads, such
+     * as ongoing XML API multipart uploads. Does not permanently delete
+     * soft-deleted objects.
+     * When this API is used to delete a bucket containing an object that has a
+     * soft delete policy
+     * enabled, the object becomes soft deleted, and the
+     * `softDeleteTime` and `hardDeleteTime` properties are set on the
+     * object.
+     * Objects and multipart uploads that were in the bucket at the time of
+     * deletion are also retained for the specified retention duration. When
+     * a soft-deleted bucket reaches the end of its retention duration, it
+     * is permanently deleted. The `hardDeleteTime` of the bucket always
+     * equals
+     * or exceeds the expiration time of the last soft-deleted object in the
+     * bucket.
+     * **IAM Permissions**:
+     * Requires `storage.buckets.delete` IAM permission on the bucket.
      * </pre>
      */
-    public com.google.protobuf.Empty deleteBucket(
-        com.google.storage.v2.DeleteBucketRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public com.google.protobuf.Empty deleteBucket(com.google.storage.v2.DeleteBucketRequest request)
+        throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getDeleteBucketMethod(), getCallOptions(), request);
     }
 
@@ -2270,10 +2509,18 @@ public final class StorageGrpc {
      *
      * <pre>
      * Returns metadata for the specified bucket.
+     * **IAM Permissions**:
+     * Requires `storage.buckets.get`
+     * IAM permission on
+     * the bucket. Additionally, to return specific bucket metadata, the
+     * authenticated user must have the following permissions:
+     * - To return the IAM policies: `storage.buckets.getIamPolicy`
+     * - To return the bucket IP filtering rules: `storage.buckets.getIpFilter`
      * </pre>
      */
-    public com.google.storage.v2.Bucket getBucket(com.google.storage.v2.GetBucketRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public com.google.storage.v2.Bucket getBucket(com.google.storage.v2.GetBucketRequest request)
+        throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getGetBucketMethod(), getCallOptions(), request);
     }
 
@@ -2282,11 +2529,18 @@ public final class StorageGrpc {
      *
      * <pre>
      * Creates a new bucket.
+     * **IAM Permissions**:
+     * Requires `storage.buckets.create` IAM permission on the bucket.
+     * Additionally, to enable specific bucket features, the authenticated user
+     * must have the following permissions:
+     * - To enable object retention using the `enableObjectRetention` query
+     * parameter: `storage.buckets.enableObjectRetention`
+     * - To set the bucket IP filtering rules: `storage.buckets.setIpFilter`
      * </pre>
      */
     public com.google.storage.v2.Bucket createBucket(
-        com.google.storage.v2.CreateBucketRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+        com.google.storage.v2.CreateBucketRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getCreateBucketMethod(), getCallOptions(), request);
     }
 
@@ -2294,12 +2548,19 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Retrieves a list of buckets for a given project.
+     * Retrieves a list of buckets for a given project, ordered
+     * lexicographically by name.
+     * **IAM Permissions**:
+     * Requires `storage.buckets.list` IAM permission on the bucket.
+     * Additionally, to enable specific bucket features, the authenticated
+     * user must have the following permissions:
+     * - To list the IAM policies: `storage.buckets.getIamPolicy`
+     * - To list the bucket IP filtering rules: `storage.buckets.getIpFilter`
      * </pre>
      */
     public com.google.storage.v2.ListBucketsResponse listBuckets(
-        com.google.storage.v2.ListBucketsRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+        com.google.storage.v2.ListBucketsRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getListBucketsMethod(), getCallOptions(), request);
     }
 
@@ -2307,12 +2568,26 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Locks retention policy on a bucket.
+     * Permanently locks the retention
+     * policy that is
+     * currently applied to the specified bucket.
+     * Caution: Locking a bucket is an
+     * irreversible action. Once you lock a bucket:
+     * - You cannot remove the retention policy from the bucket.
+     * - You cannot decrease the retention period for the policy.
+     * Once locked, you must delete the entire bucket in order to remove the
+     * bucket's retention policy. However, before you can delete the bucket, you
+     * must delete all the objects in the bucket, which is only
+     * possible if all the objects have reached the retention period set by the
+     * retention policy.
+     * **IAM Permissions**:
+     * Requires `storage.buckets.update` IAM permission on the bucket.
      * </pre>
      */
     public com.google.storage.v2.Bucket lockBucketRetentionPolicy(
-        com.google.storage.v2.LockBucketRetentionPolicyRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+        com.google.storage.v2.LockBucketRetentionPolicyRequest request)
+        throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getLockBucketRetentionPolicyMethod(), getCallOptions(), request);
     }
 
@@ -2320,15 +2595,20 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Gets the IAM policy for a specified bucket.
+     * Gets the IAM policy for a specified bucket or managed folder.
      * The `resource` field in the request should be
      * `projects/_/buckets/{bucket}` for a bucket, or
      * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}`
      * for a managed folder.
+     * **IAM Permissions**:
+     * Requires `storage.buckets.getIamPolicy` on the bucket or
+     * `storage.managedFolders.getIamPolicy` IAM permission on the
+     * managed folder.
      * </pre>
      */
-    public com.google.iam.v1.Policy getIamPolicy(com.google.iam.v1.GetIamPolicyRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public com.google.iam.v1.Policy getIamPolicy(com.google.iam.v1.GetIamPolicyRequest request)
+        throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getGetIamPolicyMethod(), getCallOptions(), request);
     }
 
@@ -2336,15 +2616,16 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Updates an IAM policy for the specified bucket.
+     * Updates an IAM policy for the specified bucket or managed folder.
      * The `resource` field in the request should be
      * `projects/_/buckets/{bucket}` for a bucket, or
      * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}`
      * for a managed folder.
      * </pre>
      */
-    public com.google.iam.v1.Policy setIamPolicy(com.google.iam.v1.SetIamPolicyRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public com.google.iam.v1.Policy setIamPolicy(com.google.iam.v1.SetIamPolicyRequest request)
+        throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getSetIamPolicyMethod(), getCallOptions(), request);
     }
 
@@ -2353,17 +2634,16 @@ public final class StorageGrpc {
      *
      * <pre>
      * Tests a set of permissions on the given bucket, object, or managed folder
-     * to see which, if any, are held by the caller.
-     * The `resource` field in the request should be
-     * `projects/_/buckets/{bucket}` for a bucket,
+     * to see which, if any, are held by the caller. The `resource` field in the
+     * request should be `projects/_/buckets/{bucket}` for a bucket,
      * `projects/_/buckets/{bucket}/objects/{object}` for an object, or
      * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}`
      * for a managed folder.
      * </pre>
      */
     public com.google.iam.v1.TestIamPermissionsResponse testIamPermissions(
-        com.google.iam.v1.TestIamPermissionsRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+        com.google.iam.v1.TestIamPermissionsRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getTestIamPermissionsMethod(), getCallOptions(), request);
     }
 
@@ -2371,12 +2651,21 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Updates a bucket. Equivalent to JSON API's storage.buckets.patch method.
+     * Updates a bucket. Changes to the bucket are readable immediately after
+     * writing, but configuration changes might take time to propagate. This
+     * method supports `patch` semantics.
+     * **IAM Permissions**:
+     * Requires `storage.buckets.update` IAM permission on the bucket.
+     * Additionally, to enable specific bucket features, the authenticated user
+     * must have the following permissions:
+     * - To set bucket IP filtering rules: `storage.buckets.setIpFilter`
+     * - To update public access prevention policies or access control lists
+     * (ACLs): `storage.buckets.setIamPolicy`
      * </pre>
      */
     public com.google.storage.v2.Bucket updateBucket(
-        com.google.storage.v2.UpdateBucketRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+        com.google.storage.v2.UpdateBucketRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getUpdateBucketMethod(), getCallOptions(), request);
     }
 
@@ -2385,12 +2674,19 @@ public final class StorageGrpc {
      *
      * <pre>
      * Concatenates a list of existing objects into a new object in the same
-     * bucket.
+     * bucket. The existing source objects are unaffected by this operation.
+     * **IAM Permissions**:
+     * Requires the `storage.objects.create` and `storage.objects.get` IAM
+     * permissions to use this method. If the new composite object
+     * overwrites an existing object, the authenticated user must also have
+     * the `storage.objects.delete` permission. If the request body includes
+     * the retention property, the authenticated user must also have the
+     * `storage.objects.setRetention` IAM permission.
      * </pre>
      */
     public com.google.storage.v2.Object composeObject(
-        com.google.storage.v2.ComposeObjectRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+        com.google.storage.v2.ComposeObjectRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getComposeObjectMethod(), getCallOptions(), request);
     }
 
@@ -2400,7 +2696,7 @@ public final class StorageGrpc {
      * <pre>
      * Deletes an object and its metadata. Deletions are permanent if versioning
      * is not enabled for the bucket, or if the generation parameter is used, or
-     * if [soft delete](https://cloud.google.com/storage/docs/soft-delete) is not
+     * if soft delete is not
      * enabled for the bucket.
      * When this API is used to delete an object from a bucket that has soft
      * delete policy enabled, the object becomes soft deleted, and the
@@ -2412,14 +2708,12 @@ public final class StorageGrpc {
      * API to restore soft-deleted objects until the soft delete retention period
      * has passed.
      * **IAM Permissions**:
-     * Requires `storage.objects.delete`
-     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on
-     * the bucket.
+     * Requires `storage.objects.delete` IAM permission on the bucket.
      * </pre>
      */
-    public com.google.protobuf.Empty deleteObject(
-        com.google.storage.v2.DeleteObjectRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public com.google.protobuf.Empty deleteObject(com.google.storage.v2.DeleteObjectRequest request)
+        throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getDeleteObjectMethod(), getCallOptions(), request);
     }
 
@@ -2427,12 +2721,43 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Restores a soft-deleted object.
+     * Restores a
+     * soft-deleted object.
+     * When a soft-deleted object is restored, a new copy of that object is
+     * created in the same bucket and inherits the same metadata as the
+     * soft-deleted object. The inherited metadata is the metadata that existed
+     * when the original object became soft deleted, with the following
+     * exceptions:
+     *   - The `createTime` of the new object is set to the time at which the
+     *   soft-deleted object was restored.
+     *   - The `softDeleteTime` and `hardDeleteTime` values are cleared.
+     *   - A new generation is assigned and the metageneration is reset to 1.
+     *   - If the soft-deleted object was in a bucket that had Autoclass enabled,
+     *   the new object is
+     *     restored to Standard storage.
+     *   - The restored object inherits the bucket's default object ACL, unless
+     *   `copySourceAcl` is `true`.
+     * If a live object using the same name already exists in the bucket and
+     * becomes overwritten, the live object becomes a noncurrent object if Object
+     * Versioning is enabled on the bucket. If Object Versioning is not enabled,
+     * the live object becomes soft deleted.
+     * **IAM Permissions**:
+     * Requires the following IAM permissions to use this method:
+     *   - `storage.objects.restore`
+     *   - `storage.objects.create`
+     *   - `storage.objects.delete` (only required if overwriting an existing
+     *   object)
+     *   - `storage.objects.getIamPolicy` (only required if `projection` is `full`
+     *   and the relevant bucket
+     *     has uniform bucket-level access disabled)
+     *   - `storage.objects.setIamPolicy` (only required if `copySourceAcl` is
+     *   `true` and the relevant
+     *     bucket has uniform bucket-level access disabled)
      * </pre>
      */
     public com.google.storage.v2.Object restoreObject(
-        com.google.storage.v2.RestoreObjectRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+        com.google.storage.v2.RestoreObjectRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getRestoreObjectMethod(), getCallOptions(), request);
     }
 
@@ -2442,15 +2767,15 @@ public final class StorageGrpc {
      * <pre>
      * Cancels an in-progress resumable upload.
      * Any attempts to write to the resumable upload after cancelling the upload
-     * will fail.
-     * The behavior for currently in progress write operations is not guaranteed -
+     * fail.
+     * The behavior for any in-progress write operations is not guaranteed;
      * they could either complete before the cancellation or fail if the
      * cancellation completes first.
      * </pre>
      */
     public com.google.storage.v2.CancelResumableWriteResponse cancelResumableWrite(
-        com.google.storage.v2.CancelResumableWriteRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+        com.google.storage.v2.CancelResumableWriteRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getCancelResumableWriteMethod(), getCallOptions(), request);
     }
 
@@ -2460,14 +2785,14 @@ public final class StorageGrpc {
      * <pre>
      * Retrieves object metadata.
      * **IAM Permissions**:
-     * Requires `storage.objects.get`
-     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on
-     * the bucket. To return object ACLs, the authenticated user must also have
+     * Requires `storage.objects.get` IAM permission on the bucket.
+     * To return object ACLs, the authenticated user must also have
      * the `storage.objects.getIamPolicy` permission.
      * </pre>
      */
-    public com.google.storage.v2.Object getObject(com.google.storage.v2.GetObjectRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public com.google.storage.v2.Object getObject(com.google.storage.v2.GetObjectRequest request)
+        throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getGetObjectMethod(), getCallOptions(), request);
     }
 
@@ -2477,9 +2802,7 @@ public final class StorageGrpc {
      * <pre>
      * Retrieves object data.
      * **IAM Permissions**:
-     * Requires `storage.objects.get`
-     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on
-     * the bucket.
+     * Requires `storage.objects.get` IAM permission on the bucket.
      * </pre>
      */
     @io.grpc.ExperimentalApi("https://github.com/grpc/grpc-java/issues/10918")
@@ -2494,19 +2817,15 @@ public final class StorageGrpc {
      *
      * <pre>
      * Reads an object's data.
-     * This is a bi-directional API with the added support for reading multiple
-     * ranges within one stream both within and across multiple messages.
-     * If the server encountered an error for any of the inputs, the stream will
-     * be closed with the relevant error code.
-     * Because the API allows for multiple outstanding requests, when the stream
-     * is closed the error response will contain a BidiReadObjectRangesError proto
-     * in the error extension describing the error for each outstanding read_id.
+     * This bi-directional API reads data from an object, allowing you to
+     * request multiple data ranges within a single stream, even across
+     * several messages. If an error occurs with any request, the stream
+     * closes with a relevant error code. Since you can have multiple
+     * outstanding requests, the error response includes a
+     * `BidiReadObjectRangesError` field detailing the specific error for
+     * each pending `read_id`.
      * **IAM Permissions**:
-     * Requires `storage.objects.get`
-     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on
-     * the bucket.
-     * This API is currently in preview and is not yet available for general
-     * use.
+     * Requires `storage.objects.get` IAM permission on the bucket.
      * </pre>
      */
     @io.grpc.ExperimentalApi("https://github.com/grpc/grpc-java/issues/10918")
@@ -2523,12 +2842,14 @@ public final class StorageGrpc {
      *
      * <pre>
      * Updates an object's metadata.
-     * Equivalent to JSON API's storage.objects.patch.
+     * Equivalent to JSON API's `storage.objects.patch` method.
+     * **IAM Permissions**:
+     * Requires `storage.objects.update` IAM permission on the bucket.
      * </pre>
      */
     public com.google.storage.v2.Object updateObject(
-        com.google.storage.v2.UpdateObjectRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+        com.google.storage.v2.UpdateObjectRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getUpdateObjectMethod(), getCallOptions(), request);
     }
 
@@ -2552,47 +2873,47 @@ public final class StorageGrpc {
      * follows:
      *   - Check the result Status of the stream, to determine if writing can be
      *     resumed on this stream or must be restarted from scratch (by calling
-     *     `StartResumableWrite()`). The resumable errors are DEADLINE_EXCEEDED,
-     *     INTERNAL, and UNAVAILABLE. For each case, the client should use binary
-     *     exponential backoff before retrying.  Additionally, writes can be
-     *     resumed after RESOURCE_EXHAUSTED errors, but only after taking
-     *     appropriate measures, which may include reducing aggregate send rate
+     *     `StartResumableWrite()`). The resumable errors are `DEADLINE_EXCEEDED`,
+     *     `INTERNAL`, and `UNAVAILABLE`. For each case, the client should use
+     *     binary exponential backoff before retrying.  Additionally, writes can
+     *     be resumed after `RESOURCE_EXHAUSTED` errors, but only after taking
+     *     appropriate measures, which might include reducing aggregate send rate
      *     across clients and/or requesting a quota increase for your project.
      *   - If the call to `WriteObject` returns `ABORTED`, that indicates
      *     concurrent attempts to update the resumable write, caused either by
      *     multiple racing clients or by a single client where the previous
      *     request was timed out on the client side but nonetheless reached the
      *     server. In this case the client should take steps to prevent further
-     *     concurrent writes (e.g., increase the timeouts, stop using more than
-     *     one process to perform the upload, etc.), and then should follow the
-     *     steps below for resuming the upload.
+     *     concurrent writes. For example, increase the timeouts and stop using
+     *     more than one process to perform the upload. Follow the steps below for
+     *     resuming the upload.
      *   - For resumable errors, the client should call `QueryWriteStatus()` and
-     *     then continue writing from the returned `persisted_size`. This may be
+     *     then continue writing from the returned `persisted_size`. This might be
      *     less than the amount of data the client previously sent. Note also that
      *     it is acceptable to send data starting at an offset earlier than the
-     *     returned `persisted_size`; in this case, the service will skip data at
+     *     returned `persisted_size`; in this case, the service skips data at
      *     offsets that were already persisted (without checking that it matches
      *     the previously written data), and write only the data starting from the
-     *     persisted offset. Even though the data isn't written, it may still
+     *     persisted offset. Even though the data isn't written, it might still
      *     incur a performance cost over resuming at the correct write offset.
      *     This behavior can make client-side handling simpler in some cases.
      *   - Clients must only send data that is a multiple of 256 KiB per message,
      *     unless the object is being finished with `finish_write` set to `true`.
-     * The service will not view the object as complete until the client has
+     * The service does not view the object as complete until the client has
      * sent a `WriteObjectRequest` with `finish_write` set to `true`. Sending any
      * requests on a stream after sending a request with `finish_write` set to
-     * `true` will cause an error. The client **should** check the response it
-     * receives to determine how much data the service was able to commit and
+     * `true` causes an error. The client must check the response it
+     * receives to determine how much data the service is able to commit and
      * whether the service views the object as complete.
-     * Attempting to resume an already finalized object will result in an OK
+     * Attempting to resume an already finalized object results in an `OK`
      * status, with a `WriteObjectResponse` containing the finalized object's
      * metadata.
-     * Alternatively, the BidiWriteObject operation may be used to write an
+     * Alternatively, you can use the `BidiWriteObject` operation to write an
      * object with controls over flushing and the ability to fetch the ability to
      * determine the current persisted size.
      * **IAM Permissions**:
      * Requires `storage.objects.create`
-     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on
+     * IAM permission on
      * the bucket.
      * </pre>
      */
@@ -2609,18 +2930,18 @@ public final class StorageGrpc {
      *
      * <pre>
      * Stores a new object and metadata.
-     * This is similar to the WriteObject call with the added support for
+     * This is similar to the `WriteObject` call with the added support for
      * manual flushing of persisted state, and the ability to determine current
      * persisted size without closing the stream.
-     * The client may specify one or both of the `state_lookup` and `flush` fields
-     * in each BidiWriteObjectRequest. If `flush` is specified, the data written
-     * so far will be persisted to storage. If `state_lookup` is specified, the
-     * service will respond with a BidiWriteObjectResponse that contains the
+     * The client might specify one or both of the `state_lookup` and `flush`
+     * fields in each `BidiWriteObjectRequest`. If `flush` is specified, the data
+     * written so far is persisted to storage. If `state_lookup` is specified, the
+     * service responds with a `BidiWriteObjectResponse` that contains the
      * persisted size. If both `flush` and `state_lookup` are specified, the flush
-     * will always occur before a `state_lookup`, so that both may be set in the
-     * same request and the returned state will be the state of the object
-     * post-flush. When the stream is closed, a BidiWriteObjectResponse will
-     * always be sent to the client, regardless of the value of `state_lookup`.
+     * always occurs before a `state_lookup`, so that both might be set in the
+     * same request and the returned state is the state of the object
+     * post-flush. When the stream is closed, a `BidiWriteObjectResponse`
+     * is always sent to the client, regardless of the value of `state_lookup`.
      * </pre>
      */
     @io.grpc.ExperimentalApi("https://github.com/grpc/grpc-java/issues/10918")
@@ -2639,14 +2960,14 @@ public final class StorageGrpc {
      * Retrieves a list of objects matching the criteria.
      * **IAM Permissions**:
      * The authenticated user requires `storage.objects.list`
-     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions)
-     * to use this method. To return object ACLs, the authenticated user must also
+     * IAM permission to use this method. To return object ACLs, the
+     * authenticated user must also
      * have the `storage.objects.getIamPolicy` permission.
      * </pre>
      */
     public com.google.storage.v2.ListObjectsResponse listObjects(
-        com.google.storage.v2.ListObjectsRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+        com.google.storage.v2.ListObjectsRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getListObjectsMethod(), getCallOptions(), request);
     }
 
@@ -2659,8 +2980,8 @@ public final class StorageGrpc {
      * </pre>
      */
     public com.google.storage.v2.RewriteResponse rewriteObject(
-        com.google.storage.v2.RewriteObjectRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+        com.google.storage.v2.RewriteObjectRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getRewriteObjectMethod(), getCallOptions(), request);
     }
 
@@ -2669,21 +2990,19 @@ public final class StorageGrpc {
      *
      * <pre>
      * Starts a resumable write operation. This
-     * method is part of the [Resumable
-     * upload](https://cloud.google.com/storage/docs/resumable-uploads) feature.
+     * method is part of the Resumable
+     * upload feature.
      * This allows you to upload large objects in multiple chunks, which is more
      * resilient to network interruptions than a single upload. The validity
      * duration of the write operation, and the consequences of it becoming
      * invalid, are service-dependent.
      * **IAM Permissions**:
-     * Requires `storage.objects.create`
-     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on
-     * the bucket.
+     * Requires `storage.objects.create` IAM permission on the bucket.
      * </pre>
      */
     public com.google.storage.v2.StartResumableWriteResponse startResumableWrite(
-        com.google.storage.v2.StartResumableWriteRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+        com.google.storage.v2.StartResumableWriteRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getStartResumableWriteMethod(), getCallOptions(), request);
     }
 
@@ -2692,8 +3011,8 @@ public final class StorageGrpc {
      *
      * <pre>
      * Determines the `persisted_size` of an object that is being written. This
-     * method is part of the [resumable
-     * upload](https://cloud.google.com/storage/docs/resumable-uploads) feature.
+     * method is part of the resumable
+     * upload feature.
      * The returned value is the size of the object that has been persisted so
      * far. The value can be used as the `write_offset` for the next `Write()`
      * call.
@@ -2709,8 +3028,8 @@ public final class StorageGrpc {
      * </pre>
      */
     public com.google.storage.v2.QueryWriteStatusResponse queryWriteStatus(
-        com.google.storage.v2.QueryWriteStatusRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+        com.google.storage.v2.QueryWriteStatusRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getQueryWriteStatusMethod(), getCallOptions(), request);
     }
 
@@ -2719,11 +3038,21 @@ public final class StorageGrpc {
      *
      * <pre>
      * Moves the source object to the destination object in the same bucket.
+     * This operation moves a source object to a destination object in the
+     * same bucket by renaming the object. The move itself is an atomic
+     * transaction, ensuring all steps either complete successfully or no
+     * changes are made.
+     * **IAM Permissions**:
+     * Requires the following IAM permissions to use this method:
+     *   - `storage.objects.move`
+     *   - `storage.objects.create`
+     *   - `storage.objects.delete` (only required if overwriting an existing
+     *   object)
      * </pre>
      */
-    public com.google.storage.v2.Object moveObject(
-        com.google.storage.v2.MoveObjectRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public com.google.storage.v2.Object moveObject(com.google.storage.v2.MoveObjectRequest request)
+        throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getMoveObjectMethod(), getCallOptions(), request);
     }
   }
@@ -2735,21 +3064,24 @@ public final class StorageGrpc {
    * ## API Overview and Naming Syntax
    * The Cloud Storage gRPC API allows applications to read and write data through
    * the abstractions of buckets and objects. For a description of these
-   * abstractions please see https://cloud.google.com/storage/docs.
+   * abstractions please see [Cloud Storage
+   * documentation](https://cloud.google.com/storage/docs).
    * Resources are named as follows:
    *   - Projects are referred to as they are defined by the Resource Manager API,
    *     using strings like `projects/123456` or `projects/my-string-id`.
    *   - Buckets are named using string names of the form:
-   *     `projects/{project}/buckets/{bucket}`
-   *     For globally unique buckets, `_` may be substituted for the project.
+   *     `projects/{project}/buckets/{bucket}`.
+   *     For globally unique buckets, `_` might be substituted for the project.
    *   - Objects are uniquely identified by their name along with the name of the
    *     bucket they belong to, as separate strings in this API. For example:
-   *       ReadObjectRequest {
+   *         ```
+   *         ReadObjectRequest {
    *         bucket: 'projects/_/buckets/my-bucket'
    *         object: 'my-object'
-   *       }
-   *     Note that object names can contain `/` characters, which are treated as
-   *     any other character (no special directory semantics).
+   *         }
+   *         ```
+   * Note that object names can contain `/` characters, which are treated as
+   * any other character (no special directory semantics).
    * </pre>
    */
   public static final class StorageBlockingStub
@@ -2768,6 +3100,25 @@ public final class StorageGrpc {
      *
      * <pre>
      * Permanently deletes an empty bucket.
+     * The request fails if there are any live or
+     * noncurrent objects in the bucket, but the request succeeds if the
+     * bucket only contains soft-deleted objects or incomplete uploads, such
+     * as ongoing XML API multipart uploads. Does not permanently delete
+     * soft-deleted objects.
+     * When this API is used to delete a bucket containing an object that has a
+     * soft delete policy
+     * enabled, the object becomes soft deleted, and the
+     * `softDeleteTime` and `hardDeleteTime` properties are set on the
+     * object.
+     * Objects and multipart uploads that were in the bucket at the time of
+     * deletion are also retained for the specified retention duration. When
+     * a soft-deleted bucket reaches the end of its retention duration, it
+     * is permanently deleted. The `hardDeleteTime` of the bucket always
+     * equals
+     * or exceeds the expiration time of the last soft-deleted object in the
+     * bucket.
+     * **IAM Permissions**:
+     * Requires `storage.buckets.delete` IAM permission on the bucket.
      * </pre>
      */
     public com.google.protobuf.Empty deleteBucket(
@@ -2781,6 +3132,13 @@ public final class StorageGrpc {
      *
      * <pre>
      * Returns metadata for the specified bucket.
+     * **IAM Permissions**:
+     * Requires `storage.buckets.get`
+     * IAM permission on
+     * the bucket. Additionally, to return specific bucket metadata, the
+     * authenticated user must have the following permissions:
+     * - To return the IAM policies: `storage.buckets.getIamPolicy`
+     * - To return the bucket IP filtering rules: `storage.buckets.getIpFilter`
      * </pre>
      */
     public com.google.storage.v2.Bucket getBucket(com.google.storage.v2.GetBucketRequest request) {
@@ -2793,6 +3151,13 @@ public final class StorageGrpc {
      *
      * <pre>
      * Creates a new bucket.
+     * **IAM Permissions**:
+     * Requires `storage.buckets.create` IAM permission on the bucket.
+     * Additionally, to enable specific bucket features, the authenticated user
+     * must have the following permissions:
+     * - To enable object retention using the `enableObjectRetention` query
+     * parameter: `storage.buckets.enableObjectRetention`
+     * - To set the bucket IP filtering rules: `storage.buckets.setIpFilter`
      * </pre>
      */
     public com.google.storage.v2.Bucket createBucket(
@@ -2805,7 +3170,14 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Retrieves a list of buckets for a given project.
+     * Retrieves a list of buckets for a given project, ordered
+     * lexicographically by name.
+     * **IAM Permissions**:
+     * Requires `storage.buckets.list` IAM permission on the bucket.
+     * Additionally, to enable specific bucket features, the authenticated
+     * user must have the following permissions:
+     * - To list the IAM policies: `storage.buckets.getIamPolicy`
+     * - To list the bucket IP filtering rules: `storage.buckets.getIpFilter`
      * </pre>
      */
     public com.google.storage.v2.ListBucketsResponse listBuckets(
@@ -2818,7 +3190,20 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Locks retention policy on a bucket.
+     * Permanently locks the retention
+     * policy that is
+     * currently applied to the specified bucket.
+     * Caution: Locking a bucket is an
+     * irreversible action. Once you lock a bucket:
+     * - You cannot remove the retention policy from the bucket.
+     * - You cannot decrease the retention period for the policy.
+     * Once locked, you must delete the entire bucket in order to remove the
+     * bucket's retention policy. However, before you can delete the bucket, you
+     * must delete all the objects in the bucket, which is only
+     * possible if all the objects have reached the retention period set by the
+     * retention policy.
+     * **IAM Permissions**:
+     * Requires `storage.buckets.update` IAM permission on the bucket.
      * </pre>
      */
     public com.google.storage.v2.Bucket lockBucketRetentionPolicy(
@@ -2831,11 +3216,15 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Gets the IAM policy for a specified bucket.
+     * Gets the IAM policy for a specified bucket or managed folder.
      * The `resource` field in the request should be
      * `projects/_/buckets/{bucket}` for a bucket, or
      * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}`
      * for a managed folder.
+     * **IAM Permissions**:
+     * Requires `storage.buckets.getIamPolicy` on the bucket or
+     * `storage.managedFolders.getIamPolicy` IAM permission on the
+     * managed folder.
      * </pre>
      */
     public com.google.iam.v1.Policy getIamPolicy(com.google.iam.v1.GetIamPolicyRequest request) {
@@ -2847,7 +3236,7 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Updates an IAM policy for the specified bucket.
+     * Updates an IAM policy for the specified bucket or managed folder.
      * The `resource` field in the request should be
      * `projects/_/buckets/{bucket}` for a bucket, or
      * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}`
@@ -2864,9 +3253,8 @@ public final class StorageGrpc {
      *
      * <pre>
      * Tests a set of permissions on the given bucket, object, or managed folder
-     * to see which, if any, are held by the caller.
-     * The `resource` field in the request should be
-     * `projects/_/buckets/{bucket}` for a bucket,
+     * to see which, if any, are held by the caller. The `resource` field in the
+     * request should be `projects/_/buckets/{bucket}` for a bucket,
      * `projects/_/buckets/{bucket}/objects/{object}` for an object, or
      * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}`
      * for a managed folder.
@@ -2882,7 +3270,16 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Updates a bucket. Equivalent to JSON API's storage.buckets.patch method.
+     * Updates a bucket. Changes to the bucket are readable immediately after
+     * writing, but configuration changes might take time to propagate. This
+     * method supports `patch` semantics.
+     * **IAM Permissions**:
+     * Requires `storage.buckets.update` IAM permission on the bucket.
+     * Additionally, to enable specific bucket features, the authenticated user
+     * must have the following permissions:
+     * - To set bucket IP filtering rules: `storage.buckets.setIpFilter`
+     * - To update public access prevention policies or access control lists
+     * (ACLs): `storage.buckets.setIamPolicy`
      * </pre>
      */
     public com.google.storage.v2.Bucket updateBucket(
@@ -2896,7 +3293,14 @@ public final class StorageGrpc {
      *
      * <pre>
      * Concatenates a list of existing objects into a new object in the same
-     * bucket.
+     * bucket. The existing source objects are unaffected by this operation.
+     * **IAM Permissions**:
+     * Requires the `storage.objects.create` and `storage.objects.get` IAM
+     * permissions to use this method. If the new composite object
+     * overwrites an existing object, the authenticated user must also have
+     * the `storage.objects.delete` permission. If the request body includes
+     * the retention property, the authenticated user must also have the
+     * `storage.objects.setRetention` IAM permission.
      * </pre>
      */
     public com.google.storage.v2.Object composeObject(
@@ -2911,7 +3315,7 @@ public final class StorageGrpc {
      * <pre>
      * Deletes an object and its metadata. Deletions are permanent if versioning
      * is not enabled for the bucket, or if the generation parameter is used, or
-     * if [soft delete](https://cloud.google.com/storage/docs/soft-delete) is not
+     * if soft delete is not
      * enabled for the bucket.
      * When this API is used to delete an object from a bucket that has soft
      * delete policy enabled, the object becomes soft deleted, and the
@@ -2923,9 +3327,7 @@ public final class StorageGrpc {
      * API to restore soft-deleted objects until the soft delete retention period
      * has passed.
      * **IAM Permissions**:
-     * Requires `storage.objects.delete`
-     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on
-     * the bucket.
+     * Requires `storage.objects.delete` IAM permission on the bucket.
      * </pre>
      */
     public com.google.protobuf.Empty deleteObject(
@@ -2938,7 +3340,38 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Restores a soft-deleted object.
+     * Restores a
+     * soft-deleted object.
+     * When a soft-deleted object is restored, a new copy of that object is
+     * created in the same bucket and inherits the same metadata as the
+     * soft-deleted object. The inherited metadata is the metadata that existed
+     * when the original object became soft deleted, with the following
+     * exceptions:
+     *   - The `createTime` of the new object is set to the time at which the
+     *   soft-deleted object was restored.
+     *   - The `softDeleteTime` and `hardDeleteTime` values are cleared.
+     *   - A new generation is assigned and the metageneration is reset to 1.
+     *   - If the soft-deleted object was in a bucket that had Autoclass enabled,
+     *   the new object is
+     *     restored to Standard storage.
+     *   - The restored object inherits the bucket's default object ACL, unless
+     *   `copySourceAcl` is `true`.
+     * If a live object using the same name already exists in the bucket and
+     * becomes overwritten, the live object becomes a noncurrent object if Object
+     * Versioning is enabled on the bucket. If Object Versioning is not enabled,
+     * the live object becomes soft deleted.
+     * **IAM Permissions**:
+     * Requires the following IAM permissions to use this method:
+     *   - `storage.objects.restore`
+     *   - `storage.objects.create`
+     *   - `storage.objects.delete` (only required if overwriting an existing
+     *   object)
+     *   - `storage.objects.getIamPolicy` (only required if `projection` is `full`
+     *   and the relevant bucket
+     *     has uniform bucket-level access disabled)
+     *   - `storage.objects.setIamPolicy` (only required if `copySourceAcl` is
+     *   `true` and the relevant
+     *     bucket has uniform bucket-level access disabled)
      * </pre>
      */
     public com.google.storage.v2.Object restoreObject(
@@ -2953,8 +3386,8 @@ public final class StorageGrpc {
      * <pre>
      * Cancels an in-progress resumable upload.
      * Any attempts to write to the resumable upload after cancelling the upload
-     * will fail.
-     * The behavior for currently in progress write operations is not guaranteed -
+     * fail.
+     * The behavior for any in-progress write operations is not guaranteed;
      * they could either complete before the cancellation or fail if the
      * cancellation completes first.
      * </pre>
@@ -2971,9 +3404,8 @@ public final class StorageGrpc {
      * <pre>
      * Retrieves object metadata.
      * **IAM Permissions**:
-     * Requires `storage.objects.get`
-     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on
-     * the bucket. To return object ACLs, the authenticated user must also have
+     * Requires `storage.objects.get` IAM permission on the bucket.
+     * To return object ACLs, the authenticated user must also have
      * the `storage.objects.getIamPolicy` permission.
      * </pre>
      */
@@ -2988,9 +3420,7 @@ public final class StorageGrpc {
      * <pre>
      * Retrieves object data.
      * **IAM Permissions**:
-     * Requires `storage.objects.get`
-     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on
-     * the bucket.
+     * Requires `storage.objects.get` IAM permission on the bucket.
      * </pre>
      */
     public java.util.Iterator<com.google.storage.v2.ReadObjectResponse> readObject(
@@ -3004,7 +3434,9 @@ public final class StorageGrpc {
      *
      * <pre>
      * Updates an object's metadata.
-     * Equivalent to JSON API's storage.objects.patch.
+     * Equivalent to JSON API's `storage.objects.patch` method.
+     * **IAM Permissions**:
+     * Requires `storage.objects.update` IAM permission on the bucket.
      * </pre>
      */
     public com.google.storage.v2.Object updateObject(
@@ -3020,8 +3452,8 @@ public final class StorageGrpc {
      * Retrieves a list of objects matching the criteria.
      * **IAM Permissions**:
      * The authenticated user requires `storage.objects.list`
-     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions)
-     * to use this method. To return object ACLs, the authenticated user must also
+     * IAM permission to use this method. To return object ACLs, the
+     * authenticated user must also
      * have the `storage.objects.getIamPolicy` permission.
      * </pre>
      */
@@ -3050,16 +3482,14 @@ public final class StorageGrpc {
      *
      * <pre>
      * Starts a resumable write operation. This
-     * method is part of the [Resumable
-     * upload](https://cloud.google.com/storage/docs/resumable-uploads) feature.
+     * method is part of the Resumable
+     * upload feature.
      * This allows you to upload large objects in multiple chunks, which is more
      * resilient to network interruptions than a single upload. The validity
      * duration of the write operation, and the consequences of it becoming
      * invalid, are service-dependent.
      * **IAM Permissions**:
-     * Requires `storage.objects.create`
-     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on
-     * the bucket.
+     * Requires `storage.objects.create` IAM permission on the bucket.
      * </pre>
      */
     public com.google.storage.v2.StartResumableWriteResponse startResumableWrite(
@@ -3073,8 +3503,8 @@ public final class StorageGrpc {
      *
      * <pre>
      * Determines the `persisted_size` of an object that is being written. This
-     * method is part of the [resumable
-     * upload](https://cloud.google.com/storage/docs/resumable-uploads) feature.
+     * method is part of the resumable
+     * upload feature.
      * The returned value is the size of the object that has been persisted so
      * far. The value can be used as the `write_offset` for the next `Write()`
      * call.
@@ -3100,6 +3530,16 @@ public final class StorageGrpc {
      *
      * <pre>
      * Moves the source object to the destination object in the same bucket.
+     * This operation moves a source object to a destination object in the
+     * same bucket by renaming the object. The move itself is an atomic
+     * transaction, ensuring all steps either complete successfully or no
+     * changes are made.
+     * **IAM Permissions**:
+     * Requires the following IAM permissions to use this method:
+     *   - `storage.objects.move`
+     *   - `storage.objects.create`
+     *   - `storage.objects.delete` (only required if overwriting an existing
+     *   object)
      * </pre>
      */
     public com.google.storage.v2.Object moveObject(
@@ -3116,21 +3556,24 @@ public final class StorageGrpc {
    * ## API Overview and Naming Syntax
    * The Cloud Storage gRPC API allows applications to read and write data through
    * the abstractions of buckets and objects. For a description of these
-   * abstractions please see https://cloud.google.com/storage/docs.
+   * abstractions please see [Cloud Storage
+   * documentation](https://cloud.google.com/storage/docs).
    * Resources are named as follows:
    *   - Projects are referred to as they are defined by the Resource Manager API,
    *     using strings like `projects/123456` or `projects/my-string-id`.
    *   - Buckets are named using string names of the form:
-   *     `projects/{project}/buckets/{bucket}`
-   *     For globally unique buckets, `_` may be substituted for the project.
+   *     `projects/{project}/buckets/{bucket}`.
+   *     For globally unique buckets, `_` might be substituted for the project.
    *   - Objects are uniquely identified by their name along with the name of the
    *     bucket they belong to, as separate strings in this API. For example:
-   *       ReadObjectRequest {
+   *         ```
+   *         ReadObjectRequest {
    *         bucket: 'projects/_/buckets/my-bucket'
    *         object: 'my-object'
-   *       }
-   *     Note that object names can contain `/` characters, which are treated as
-   *     any other character (no special directory semantics).
+   *         }
+   *         ```
+   * Note that object names can contain `/` characters, which are treated as
+   * any other character (no special directory semantics).
    * </pre>
    */
   public static final class StorageFutureStub
@@ -3149,6 +3592,25 @@ public final class StorageGrpc {
      *
      * <pre>
      * Permanently deletes an empty bucket.
+     * The request fails if there are any live or
+     * noncurrent objects in the bucket, but the request succeeds if the
+     * bucket only contains soft-deleted objects or incomplete uploads, such
+     * as ongoing XML API multipart uploads. Does not permanently delete
+     * soft-deleted objects.
+     * When this API is used to delete a bucket containing an object that has a
+     * soft delete policy
+     * enabled, the object becomes soft deleted, and the
+     * `softDeleteTime` and `hardDeleteTime` properties are set on the
+     * object.
+     * Objects and multipart uploads that were in the bucket at the time of
+     * deletion are also retained for the specified retention duration. When
+     * a soft-deleted bucket reaches the end of its retention duration, it
+     * is permanently deleted. The `hardDeleteTime` of the bucket always
+     * equals
+     * or exceeds the expiration time of the last soft-deleted object in the
+     * bucket.
+     * **IAM Permissions**:
+     * Requires `storage.buckets.delete` IAM permission on the bucket.
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<com.google.protobuf.Empty>
@@ -3162,6 +3624,13 @@ public final class StorageGrpc {
      *
      * <pre>
      * Returns metadata for the specified bucket.
+     * **IAM Permissions**:
+     * Requires `storage.buckets.get`
+     * IAM permission on
+     * the bucket. Additionally, to return specific bucket metadata, the
+     * authenticated user must have the following permissions:
+     * - To return the IAM policies: `storage.buckets.getIamPolicy`
+     * - To return the bucket IP filtering rules: `storage.buckets.getIpFilter`
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<com.google.storage.v2.Bucket>
@@ -3175,6 +3644,13 @@ public final class StorageGrpc {
      *
      * <pre>
      * Creates a new bucket.
+     * **IAM Permissions**:
+     * Requires `storage.buckets.create` IAM permission on the bucket.
+     * Additionally, to enable specific bucket features, the authenticated user
+     * must have the following permissions:
+     * - To enable object retention using the `enableObjectRetention` query
+     * parameter: `storage.buckets.enableObjectRetention`
+     * - To set the bucket IP filtering rules: `storage.buckets.setIpFilter`
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<com.google.storage.v2.Bucket>
@@ -3187,7 +3663,14 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Retrieves a list of buckets for a given project.
+     * Retrieves a list of buckets for a given project, ordered
+     * lexicographically by name.
+     * **IAM Permissions**:
+     * Requires `storage.buckets.list` IAM permission on the bucket.
+     * Additionally, to enable specific bucket features, the authenticated
+     * user must have the following permissions:
+     * - To list the IAM policies: `storage.buckets.getIamPolicy`
+     * - To list the bucket IP filtering rules: `storage.buckets.getIpFilter`
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<
@@ -3201,7 +3684,20 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Locks retention policy on a bucket.
+     * Permanently locks the retention
+     * policy that is
+     * currently applied to the specified bucket.
+     * Caution: Locking a bucket is an
+     * irreversible action. Once you lock a bucket:
+     * - You cannot remove the retention policy from the bucket.
+     * - You cannot decrease the retention period for the policy.
+     * Once locked, you must delete the entire bucket in order to remove the
+     * bucket's retention policy. However, before you can delete the bucket, you
+     * must delete all the objects in the bucket, which is only
+     * possible if all the objects have reached the retention period set by the
+     * retention policy.
+     * **IAM Permissions**:
+     * Requires `storage.buckets.update` IAM permission on the bucket.
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<com.google.storage.v2.Bucket>
@@ -3214,11 +3710,15 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Gets the IAM policy for a specified bucket.
+     * Gets the IAM policy for a specified bucket or managed folder.
      * The `resource` field in the request should be
      * `projects/_/buckets/{bucket}` for a bucket, or
      * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}`
      * for a managed folder.
+     * **IAM Permissions**:
+     * Requires `storage.buckets.getIamPolicy` on the bucket or
+     * `storage.managedFolders.getIamPolicy` IAM permission on the
+     * managed folder.
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<com.google.iam.v1.Policy>
@@ -3231,7 +3731,7 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Updates an IAM policy for the specified bucket.
+     * Updates an IAM policy for the specified bucket or managed folder.
      * The `resource` field in the request should be
      * `projects/_/buckets/{bucket}` for a bucket, or
      * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}`
@@ -3249,9 +3749,8 @@ public final class StorageGrpc {
      *
      * <pre>
      * Tests a set of permissions on the given bucket, object, or managed folder
-     * to see which, if any, are held by the caller.
-     * The `resource` field in the request should be
-     * `projects/_/buckets/{bucket}` for a bucket,
+     * to see which, if any, are held by the caller. The `resource` field in the
+     * request should be `projects/_/buckets/{bucket}` for a bucket,
      * `projects/_/buckets/{bucket}/objects/{object}` for an object, or
      * `projects/_/buckets/{bucket}/managedFolders/{managedFolder}`
      * for a managed folder.
@@ -3268,7 +3767,16 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Updates a bucket. Equivalent to JSON API's storage.buckets.patch method.
+     * Updates a bucket. Changes to the bucket are readable immediately after
+     * writing, but configuration changes might take time to propagate. This
+     * method supports `patch` semantics.
+     * **IAM Permissions**:
+     * Requires `storage.buckets.update` IAM permission on the bucket.
+     * Additionally, to enable specific bucket features, the authenticated user
+     * must have the following permissions:
+     * - To set bucket IP filtering rules: `storage.buckets.setIpFilter`
+     * - To update public access prevention policies or access control lists
+     * (ACLs): `storage.buckets.setIamPolicy`
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<com.google.storage.v2.Bucket>
@@ -3282,7 +3790,14 @@ public final class StorageGrpc {
      *
      * <pre>
      * Concatenates a list of existing objects into a new object in the same
-     * bucket.
+     * bucket. The existing source objects are unaffected by this operation.
+     * **IAM Permissions**:
+     * Requires the `storage.objects.create` and `storage.objects.get` IAM
+     * permissions to use this method. If the new composite object
+     * overwrites an existing object, the authenticated user must also have
+     * the `storage.objects.delete` permission. If the request body includes
+     * the retention property, the authenticated user must also have the
+     * `storage.objects.setRetention` IAM permission.
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<com.google.storage.v2.Object>
@@ -3297,7 +3812,7 @@ public final class StorageGrpc {
      * <pre>
      * Deletes an object and its metadata. Deletions are permanent if versioning
      * is not enabled for the bucket, or if the generation parameter is used, or
-     * if [soft delete](https://cloud.google.com/storage/docs/soft-delete) is not
+     * if soft delete is not
      * enabled for the bucket.
      * When this API is used to delete an object from a bucket that has soft
      * delete policy enabled, the object becomes soft deleted, and the
@@ -3309,9 +3824,7 @@ public final class StorageGrpc {
      * API to restore soft-deleted objects until the soft delete retention period
      * has passed.
      * **IAM Permissions**:
-     * Requires `storage.objects.delete`
-     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on
-     * the bucket.
+     * Requires `storage.objects.delete` IAM permission on the bucket.
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<com.google.protobuf.Empty>
@@ -3324,7 +3837,38 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Restores a soft-deleted object.
+     * Restores a
+     * soft-deleted object.
+     * When a soft-deleted object is restored, a new copy of that object is
+     * created in the same bucket and inherits the same metadata as the
+     * soft-deleted object. The inherited metadata is the metadata that existed
+     * when the original object became soft deleted, with the following
+     * exceptions:
+     *   - The `createTime` of the new object is set to the time at which the
+     *   soft-deleted object was restored.
+     *   - The `softDeleteTime` and `hardDeleteTime` values are cleared.
+     *   - A new generation is assigned and the metageneration is reset to 1.
+     *   - If the soft-deleted object was in a bucket that had Autoclass enabled,
+     *   the new object is
+     *     restored to Standard storage.
+     *   - The restored object inherits the bucket's default object ACL, unless
+     *   `copySourceAcl` is `true`.
+     * If a live object using the same name already exists in the bucket and
+     * becomes overwritten, the live object becomes a noncurrent object if Object
+     * Versioning is enabled on the bucket. If Object Versioning is not enabled,
+     * the live object becomes soft deleted.
+     * **IAM Permissions**:
+     * Requires the following IAM permissions to use this method:
+     *   - `storage.objects.restore`
+     *   - `storage.objects.create`
+     *   - `storage.objects.delete` (only required if overwriting an existing
+     *   object)
+     *   - `storage.objects.getIamPolicy` (only required if `projection` is `full`
+     *   and the relevant bucket
+     *     has uniform bucket-level access disabled)
+     *   - `storage.objects.setIamPolicy` (only required if `copySourceAcl` is
+     *   `true` and the relevant
+     *     bucket has uniform bucket-level access disabled)
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<com.google.storage.v2.Object>
@@ -3339,8 +3883,8 @@ public final class StorageGrpc {
      * <pre>
      * Cancels an in-progress resumable upload.
      * Any attempts to write to the resumable upload after cancelling the upload
-     * will fail.
-     * The behavior for currently in progress write operations is not guaranteed -
+     * fail.
+     * The behavior for any in-progress write operations is not guaranteed;
      * they could either complete before the cancellation or fail if the
      * cancellation completes first.
      * </pre>
@@ -3358,9 +3902,8 @@ public final class StorageGrpc {
      * <pre>
      * Retrieves object metadata.
      * **IAM Permissions**:
-     * Requires `storage.objects.get`
-     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on
-     * the bucket. To return object ACLs, the authenticated user must also have
+     * Requires `storage.objects.get` IAM permission on the bucket.
+     * To return object ACLs, the authenticated user must also have
      * the `storage.objects.getIamPolicy` permission.
      * </pre>
      */
@@ -3375,7 +3918,9 @@ public final class StorageGrpc {
      *
      * <pre>
      * Updates an object's metadata.
-     * Equivalent to JSON API's storage.objects.patch.
+     * Equivalent to JSON API's `storage.objects.patch` method.
+     * **IAM Permissions**:
+     * Requires `storage.objects.update` IAM permission on the bucket.
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<com.google.storage.v2.Object>
@@ -3391,8 +3936,8 @@ public final class StorageGrpc {
      * Retrieves a list of objects matching the criteria.
      * **IAM Permissions**:
      * The authenticated user requires `storage.objects.list`
-     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions)
-     * to use this method. To return object ACLs, the authenticated user must also
+     * IAM permission to use this method. To return object ACLs, the
+     * authenticated user must also
      * have the `storage.objects.getIamPolicy` permission.
      * </pre>
      */
@@ -3422,16 +3967,14 @@ public final class StorageGrpc {
      *
      * <pre>
      * Starts a resumable write operation. This
-     * method is part of the [Resumable
-     * upload](https://cloud.google.com/storage/docs/resumable-uploads) feature.
+     * method is part of the Resumable
+     * upload feature.
      * This allows you to upload large objects in multiple chunks, which is more
      * resilient to network interruptions than a single upload. The validity
      * duration of the write operation, and the consequences of it becoming
      * invalid, are service-dependent.
      * **IAM Permissions**:
-     * Requires `storage.objects.create`
-     * [IAM permission](https://cloud.google.com/iam/docs/overview#permissions) on
-     * the bucket.
+     * Requires `storage.objects.create` IAM permission on the bucket.
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<
@@ -3446,8 +3989,8 @@ public final class StorageGrpc {
      *
      * <pre>
      * Determines the `persisted_size` of an object that is being written. This
-     * method is part of the [resumable
-     * upload](https://cloud.google.com/storage/docs/resumable-uploads) feature.
+     * method is part of the resumable
+     * upload feature.
      * The returned value is the size of the object that has been persisted so
      * far. The value can be used as the `write_offset` for the next `Write()`
      * call.
@@ -3474,6 +4017,16 @@ public final class StorageGrpc {
      *
      * <pre>
      * Moves the source object to the destination object in the same bucket.
+     * This operation moves a source object to a destination object in the
+     * same bucket by renaming the object. The move itself is an atomic
+     * transaction, ensuring all steps either complete successfully or no
+     * changes are made.
+     * **IAM Permissions**:
+     * Requires the following IAM permissions to use this method:
+     *   - `storage.objects.move`
+     *   - `storage.objects.create`
+     *   - `storage.objects.delete` (only required if overwriting an existing
+     *   object)
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<com.google.storage.v2.Object>
