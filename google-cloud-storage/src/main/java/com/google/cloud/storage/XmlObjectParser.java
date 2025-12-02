@@ -31,6 +31,7 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.api.client.util.ObjectParser;
 import com.google.cloud.StringEnumValue;
+import com.google.cloud.storage.multipartupload.model.ObjectLockMode;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -67,13 +68,18 @@ final class XmlObjectParser implements ObjectParser {
           public void setupModule(SetupContext context) {
             context.addSerializers(
                 new SimpleSerializers(
-                    ImmutableList.of(new StringEnumValueSerializer<>(StorageClass.class))));
+                    ImmutableList.of(
+                        new StringEnumValueSerializer<>(StorageClass.class),
+                        new StringEnumValueSerializer<>(ObjectLockMode.class))));
             context.addDeserializers(
                 new SimpleDeserializers(
                     ImmutableMap.of(
                         StorageClass.class,
                         new StringEnumValueDeserializer<>(
-                            StorageClass.class, StorageClass::valueOf))));
+                            StorageClass.class, StorageClass::valueOf),
+                        ObjectLockMode.class,
+                        new StringEnumValueDeserializer<>(
+                            ObjectLockMode.class, ObjectLockMode::valueOf))));
           }
         });
   }
