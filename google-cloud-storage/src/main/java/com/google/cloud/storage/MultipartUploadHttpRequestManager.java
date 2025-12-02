@@ -156,7 +156,7 @@ final class MultipartUploadHttpRequestManager {
     return httpRequest.execute().parseAs(ListMultipartUploadsResponse.class);
   }
 
-  AbortMultipartUploadResponse sendAbortMultipartUploadRequest(AbortMultipartUploadRequest request)
+  AbortMultipartUploadResponse sendAbortMultipartUploadRequest(URI uri, AbortMultipartUploadRequest request)
       throws IOException {
 
     String abortUri =
