@@ -158,7 +158,7 @@ final class OtelMultipartUploadClientDecorator extends MultipartUploadClient {
             .put("gcp.client.version", StorageOptions.getDefaultInstance().getLibraryVersion())
             .put("gcp.client.repo", "googleapis/java-storage")
             .put("gcp.client.artifact", "com.google.cloud:google-cloud-storage")
-            .put("rpc.system", transport.toString().toLowerCase(Locale.ROOT))
+            .put("rpc.system", "XML")
             .put("service.name", "storage.googleapis.com")
             .build();
     return new OtelMultipartUploadClientDecorator(delegate, otel, baseAttributes);
