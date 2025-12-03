@@ -21,6 +21,12 @@ import static io.grpc.netty.shaded.io.netty.handler.codec.http.HttpHeaderNames.C
 import static io.grpc.netty.shaded.io.netty.handler.codec.http.HttpResponseStatus.OK;
 import static org.junit.Assert.assertThrows;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.api.client.http.HttpResponseException;
@@ -75,6 +81,19 @@ public final class ITMultipartUploadHttpRequestManagerTest {
   static {
     xmlMapper = new XmlMapper();
     xmlMapper.registerModule(new JavaTimeModule());
+    xmlMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+    SimpleModule module = new SimpleModule();
+    module.addSerializer(
+        StorageClass.class,
+        new JsonSerializer<StorageClass>() {
+          @Override
+          public void serialize(
+              StorageClass value, JsonGenerator gen, SerializerProvider serializers)
+              throws java.io.IOException {
+            gen.writeString(value.toString());
+          }
+        });
+    xmlMapper.registerModule(module);
   }
 
   @Rule public final TemporaryFolder temp = new TemporaryFolder();
@@ -1059,33 +1078,40 @@ public final class ITMultipartUploadHttpRequestManagerTest {
 
   @Test
   public void sendListMultipartUploadsRequest_success() throws Exception {
-    String mockXmlResponse =
-        "<ListMultipartUploadsResult>"
-            + "  <Bucket>test-bucket</Bucket>"
-            + "  <KeyMarker>key-marker</KeyMarker>"
-            + "  <UploadIdMarker>upload-id-marker</UploadIdMarker>"
-            + "  <NextKeyMarker>next-key-marker</NextKeyMarker>"
-            + "  <NextUploadIdMarker>next-upload-id-marker</NextUploadIdMarker>"
-            + "  <MaxUploads>1</MaxUploads>"
-            + "  <IsTruncated>false</IsTruncated>"
-            + "  <Upload>"
-            + "    <Key>test-key</Key>"
-            + "    <UploadId>test-upload-id</UploadId>"
-            + "    <StorageClass>STANDARD</StorageClass>"
-            + "    <Initiated>2025-11-11T00:00:00Z</Initiated>"
-            + "  </Upload>"
-            + "</ListMultipartUploadsResult>";
-
     HttpRequestHandler handler =
         req -> {
-          ByteBuf buf = Unpooled.wrappedBuffer(mockXmlResponse.getBytes(StandardCharsets.UTF_8));
+            ListMultipartUploadsResponse listMultipartUploadsResponse =
+                ListMultipartUploadsResponse.builder()
+                    .bucket("test-bucket")
+                    .keyMarker("key-marker")
+                    .uploadIdMarker("upload-id-marker")
+                    .nextKeyMarker("next-key-marker")
+                    .nextUploadIdMarker("next-upload-id-marker")
+                    .maxUploads(1)
+                    .truncated(false)
+                    .uploads(
+                        ImmutableList.of(
+                            MultipartUpload.newBuilder()
+                                .setKey("test-key")
+                                .setUploadId("test-upload-id")
+                                .setStorageClass(StorageClass.STANDARD)
+                                .setInitiated(
+                                    OffsetDateTime.of(2025, 11, 11, 0, 0, 0, 0, ZoneOffset.UTC))
+                                .build()))
+                    .build();
+            // Jackson fails to serialize ImmutableList without GuavaModule.
+            // We use reflection to replace it with ArrayList for the test.
+            forceSetUploads(listMultipartUploadsResponse, listMultipartUploadsResponse.uploads());
 
-          DefaultFullHttpResponse resp =
-              new DefaultFullHttpResponse(req.protocolVersion(), OK, buf);
+            ByteBuf buf =
+                Unpooled.wrappedBuffer(xmlMapper.writeValueAsBytes(listMultipartUploadsResponse));
 
-          resp.headers().set("Content-Type", "application/xml; charset=utf-8");
-          resp.headers().set("Content-Length", resp.content().readableBytes());
-          return resp;
+            DefaultFullHttpResponse resp =
+                new DefaultFullHttpResponse(req.protocolVersion(), OK, buf);
+
+            resp.headers().set("Content-Type", "application/xml; charset=utf-8");
+            resp.headers().set("Content-Length", resp.content().readableBytes());
+            return resp;
         };
 
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
@@ -1104,10 +1130,10 @@ public final class ITMultipartUploadHttpRequestManagerTest {
           multipartUploadHttpRequestManager.sendListMultipartUploadsRequest(request);
 
       assertThat(response).isNotNull();
-      assertThat(response.getBucket()).isEqualTo("test-bucket");
-      assertThat(response.getUploads()).hasSize(1);
+      assertThat(response.bucket()).isEqualTo("test-bucket");
+      assertThat(response.uploads()).hasSize(1);
 
-      MultipartUpload upload = response.getUploads().get(0);
+      MultipartUpload upload = response.uploads().get(0);
       assertThat(upload.getKey()).isEqualTo("test-key");
       assertThat(upload.getStorageClass()).isEqualTo(StorageClass.STANDARD);
       assertThat(upload.getInitiated())
@@ -1134,6 +1160,18 @@ public final class ITMultipartUploadHttpRequestManagerTest {
       assertThrows(
           HttpResponseException.class,
           () -> multipartUploadHttpRequestManager.sendListMultipartUploadsRequest(request));
+    }
+  }
+
+  private void forceSetUploads(
+      ListMultipartUploadsResponse response, java.util.List<MultipartUpload> uploads) {
+    try {
+      java.lang.reflect.Field uploadsField =
+          ListMultipartUploadsResponse.class.getDeclaredField("uploads");
+      uploadsField.setAccessible(true);
+      uploadsField.set(response, new java.util.ArrayList<>(uploads));
+    } catch (Exception e) {
+      throw new RuntimeException(e);
     }
   }
 }

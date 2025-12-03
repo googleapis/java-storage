@@ -119,7 +119,7 @@ public final class ListMultipartUploadsResponse {
    * @since 2.61.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  public ImmutableList<MultipartUpload> getUploads() {
+  public ImmutableList<MultipartUpload> uploads() {
     return uploads == null ? ImmutableList.of() : ImmutableList.copyOf(uploads);
   }
 
@@ -130,7 +130,7 @@ public final class ListMultipartUploadsResponse {
    * @since 2.61.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  public String getBucket() {
+  public String bucket() {
     return bucket;
   }
 
@@ -141,7 +141,7 @@ public final class ListMultipartUploadsResponse {
    * @since 2.61.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  public String getDelimiter() {
+  public String delimiter() {
     return delimiter;
   }
 
@@ -152,7 +152,7 @@ public final class ListMultipartUploadsResponse {
    * @since 2.61.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  public String getEncodingType() {
+  public String encodingType() {
     return encodingType;
   }
 
@@ -163,7 +163,7 @@ public final class ListMultipartUploadsResponse {
    * @since 2.61.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  public String getKeyMarker() {
+  public String keyMarker() {
     return keyMarker;
   }
 
@@ -174,7 +174,7 @@ public final class ListMultipartUploadsResponse {
    * @since 2.61.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  public String getUploadIdMarker() {
+  public String uploadIdMarker() {
     return uploadIdMarker;
   }
 
@@ -185,7 +185,7 @@ public final class ListMultipartUploadsResponse {
    * @since 2.61.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  public String getNextKeyMarker() {
+  public String nextKeyMarker() {
     return nextKeyMarker;
   }
 
@@ -196,7 +196,7 @@ public final class ListMultipartUploadsResponse {
    * @since 2.61.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  public String getNextUploadIdMarker() {
+  public String nextUploadIdMarker() {
     return nextUploadIdMarker;
   }
 
@@ -207,7 +207,7 @@ public final class ListMultipartUploadsResponse {
    * @since 2.61.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  public int getMaxUploads() {
+  public int maxUploads() {
     return maxUploads;
   }
 
@@ -218,7 +218,7 @@ public final class ListMultipartUploadsResponse {
    * @since 2.61.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  public String getPrefix() {
+  public String prefix() {
     return prefix;
   }
 
@@ -229,7 +229,7 @@ public final class ListMultipartUploadsResponse {
    * @since 2.61.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  public boolean isTruncated() {
+  public boolean truncated() {
     return isTruncated;
   }
 
@@ -240,7 +240,7 @@ public final class ListMultipartUploadsResponse {
    * @since 2.61.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  public ImmutableList<String> getCommonPrefixes() {
+  public ImmutableList<String> commonPrefixes() {
     if (commonPrefixes == null) {
       return ImmutableList.of();
     }
@@ -258,7 +258,7 @@ public final class ListMultipartUploadsResponse {
     ListMultipartUploadsResponse that = (ListMultipartUploadsResponse) o;
     return isTruncated == that.isTruncated
         && maxUploads == that.maxUploads
-        && Objects.equals(getUploads(), that.getUploads())
+        && Objects.equals(uploads(), that.uploads())
         && Objects.equals(bucket, that.bucket)
         && Objects.equals(delimiter, that.delimiter)
         && Objects.equals(encodingType, that.encodingType)
@@ -267,13 +267,13 @@ public final class ListMultipartUploadsResponse {
         && Objects.equals(nextKeyMarker, that.nextKeyMarker)
         && Objects.equals(nextUploadIdMarker, that.nextUploadIdMarker)
         && Objects.equals(prefix, that.prefix)
-        && Objects.equals(getCommonPrefixes(), that.getCommonPrefixes());
+        && Objects.equals(commonPrefixes(), that.commonPrefixes());
   }
 
   @Override
   public int hashCode() {
     return Objects.hash(
-        getUploads(),
+        uploads(),
         bucket,
         delimiter,
         encodingType,
@@ -284,13 +284,13 @@ public final class ListMultipartUploadsResponse {
         maxUploads,
         prefix,
         isTruncated,
-        getCommonPrefixes());
+        commonPrefixes());
   }
 
   @Override
   public String toString() {
     return MoreObjects.toStringHelper(this)
-        .add("uploads", getUploads())
+        .add("uploads", uploads())
         .add("bucket", bucket)
         .add("delimiter", delimiter)
         .add("encodingType", encodingType)
@@ -301,7 +301,7 @@ public final class ListMultipartUploadsResponse {
         .add("maxUploads", maxUploads)
         .add("prefix", prefix)
         .add("isTruncated", isTruncated)
-        .add("commonPrefixes", getCommonPrefixes())
+        .add("commonPrefixes", commonPrefixes())
         .toString();
   }
 
@@ -351,7 +351,7 @@ public final class ListMultipartUploadsResponse {
      * @since 2.61.0 This new api is in preview.
      */
     @BetaApi
-    public Builder setUploads(ImmutableList<MultipartUpload> uploads) {
+    public Builder uploads(ImmutableList<MultipartUpload> uploads) {
       this.uploads = uploads;
       return this;
     }
@@ -364,7 +364,7 @@ public final class ListMultipartUploadsResponse {
      * @since 2.61.0 This new api is in preview.
      */
     @BetaApi
-    public Builder setBucket(String bucket) {
+    public Builder bucket(String bucket) {
       this.bucket = bucket;
       return this;
     }
@@ -377,7 +377,7 @@ public final class ListMultipartUploadsResponse {
      * @since 2.61.0 This new api is in preview.
      */
     @BetaApi
-    public Builder setDelimiter(String delimiter) {
+    public Builder delimiter(String delimiter) {
       this.delimiter = delimiter;
       return this;
     }
@@ -390,7 +390,7 @@ public final class ListMultipartUploadsResponse {
      * @since 2.61.0 This new api is in preview.
      */
     @BetaApi
-    public Builder setEncodingType(String encodingType) {
+    public Builder encodingType(String encodingType) {
       this.encodingType = encodingType;
       return this;
     }
@@ -403,7 +403,7 @@ public final class ListMultipartUploadsResponse {
      * @since 2.61.0 This new api is in preview.
      */
     @BetaApi
-    public Builder setKeyMarker(String keyMarker) {
+    public Builder keyMarker(String keyMarker) {
       this.keyMarker = keyMarker;
       return this;
     }
@@ -416,7 +416,7 @@ public final class ListMultipartUploadsResponse {
      * @since 2.61.0 This new api is in preview.
      */
     @BetaApi
-    public Builder setUploadIdMarker(String uploadIdMarker) {
+    public Builder uploadIdMarker(String uploadIdMarker) {
       this.uploadIdMarker = uploadIdMarker;
       return this;
     }
@@ -429,7 +429,7 @@ public final class ListMultipartUploadsResponse {
      * @since 2.61.0 This new api is in preview.
      */
     @BetaApi
-    public Builder setNextKeyMarker(String nextKeyMarker) {
+    public Builder nextKeyMarker(String nextKeyMarker) {
       this.nextKeyMarker = nextKeyMarker;
       return this;
     }
@@ -442,7 +442,7 @@ public final class ListMultipartUploadsResponse {
      * @since 2.61.0 This new api is in preview.
      */
     @BetaApi
-    public Builder setNextUploadIdMarker(String nextUploadIdMarker) {
+    public Builder nextUploadIdMarker(String nextUploadIdMarker) {
       this.nextUploadIdMarker = nextUploadIdMarker;
       return this;
     }
@@ -455,7 +455,7 @@ public final class ListMultipartUploadsResponse {
      * @since 2.61.0 This new api is in preview.
      */
     @BetaApi
-    public Builder setMaxUploads(int maxUploads) {
+    public Builder maxUploads(int maxUploads) {
       this.maxUploads = maxUploads;
       return this;
     }
@@ -468,7 +468,7 @@ public final class ListMultipartUploadsResponse {
      * @since 2.61.0 This new api is in preview.
      */
     @BetaApi
-    public Builder setPrefix(String prefix) {
+    public Builder prefix(String prefix) {
       this.prefix = prefix;
       return this;
     }
@@ -481,7 +481,7 @@ public final class ListMultipartUploadsResponse {
      * @since 2.61.0 This new api is in preview.
      */
     @BetaApi
-    public Builder setTruncated(boolean isTruncated) {
+    public Builder truncated(boolean isTruncated) {
       this.isTruncated = isTruncated;
       return this;
     }
@@ -494,7 +494,7 @@ public final class ListMultipartUploadsResponse {
      * @since 2.61.0 This new api is in preview.
      */
     @BetaApi
-    public Builder setCommonPrefixes(ImmutableList<String> commonPrefixes) {
+    public Builder commonPrefixes(ImmutableList<String> commonPrefixes) {
       this.commonPrefixes = commonPrefixes;
       return this;
     }
