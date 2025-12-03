@@ -8,7 +8,10 @@
   "prerelease": true,
   "packages": {
     ".": {
-      "extra-files": []
+      "extra-files": [
+        "README.md",
+        ".readme-partials.yml"
+      ]
     }
   }
 }
