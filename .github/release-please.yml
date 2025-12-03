@@ -68,7 +68,7 @@ branches:
     branch: 2.49.x
   - bumpMinorPreMajor: true
     handleGHRelease: true
-    releaseType: java-backport
+    releaseType: java-yoshi
     extraFiles:
       - README.md
       - .readme-partials.yaml
