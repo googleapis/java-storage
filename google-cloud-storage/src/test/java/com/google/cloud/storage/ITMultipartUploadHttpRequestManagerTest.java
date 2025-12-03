@@ -1080,38 +1080,38 @@ public final class ITMultipartUploadHttpRequestManagerTest {
   public void sendListMultipartUploadsRequest_success() throws Exception {
     HttpRequestHandler handler =
         req -> {
-            ListMultipartUploadsResponse listMultipartUploadsResponse =
-                ListMultipartUploadsResponse.builder()
-                    .bucket("test-bucket")
-                    .keyMarker("key-marker")
-                    .uploadIdMarker("upload-id-marker")
-                    .nextKeyMarker("next-key-marker")
-                    .nextUploadIdMarker("next-upload-id-marker")
-                    .maxUploads(1)
-                    .truncated(false)
-                    .uploads(
-                        ImmutableList.of(
-                            MultipartUpload.newBuilder()
-                                .setKey("test-key")
-                                .setUploadId("test-upload-id")
-                                .setStorageClass(StorageClass.STANDARD)
-                                .setInitiated(
-                                    OffsetDateTime.of(2025, 11, 11, 0, 0, 0, 0, ZoneOffset.UTC))
-                                .build()))
-                    .build();
-            // Jackson fails to serialize ImmutableList without GuavaModule.
-            // We use reflection to replace it with ArrayList for the test.
-            forceSetUploads(listMultipartUploadsResponse, listMultipartUploadsResponse.uploads());
+          ListMultipartUploadsResponse listMultipartUploadsResponse =
+              ListMultipartUploadsResponse.builder()
+                  .bucket("test-bucket")
+                  .keyMarker("key-marker")
+                  .uploadIdMarker("upload-id-marker")
+                  .nextKeyMarker("next-key-marker")
+                  .nextUploadIdMarker("next-upload-id-marker")
+                  .maxUploads(1)
+                  .truncated(false)
+                  .uploads(
+                      ImmutableList.of(
+                          MultipartUpload.newBuilder()
+                              .setKey("test-key")
+                              .setUploadId("test-upload-id")
+                              .setStorageClass(StorageClass.STANDARD)
+                              .setInitiated(
+                                  OffsetDateTime.of(2025, 11, 11, 0, 0, 0, 0, ZoneOffset.UTC))
+                              .build()))
+                  .build();
+          // Jackson fails to serialize ImmutableList without GuavaModule.
+          // We use reflection to replace it with ArrayList for the test.
+          forceSetUploads(listMultipartUploadsResponse, listMultipartUploadsResponse.uploads());
 
-            ByteBuf buf =
-                Unpooled.wrappedBuffer(xmlMapper.writeValueAsBytes(listMultipartUploadsResponse));
+          ByteBuf buf =
+              Unpooled.wrappedBuffer(xmlMapper.writeValueAsBytes(listMultipartUploadsResponse));
 
-            DefaultFullHttpResponse resp =
-                new DefaultFullHttpResponse(req.protocolVersion(), OK, buf);
+          DefaultFullHttpResponse resp =
+              new DefaultFullHttpResponse(req.protocolVersion(), OK, buf);
 
-            resp.headers().set("Content-Type", "application/xml; charset=utf-8");
-            resp.headers().set("Content-Length", resp.content().readableBytes());
-            return resp;
+          resp.headers().set("Content-Type", "application/xml; charset=utf-8");
+          resp.headers().set("Content-Length", resp.content().readableBytes());
+          return resp;
         };
 
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
