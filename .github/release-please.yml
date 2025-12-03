@@ -66,3 +66,11 @@ branches:
       - README.md
       - .readme-partials.yaml
     branch: 2.49.x
+  - bumpMinorPreMajor: true
+    handleGHRelease: true
+    releaseType: java-backport
+    extraFiles:
+      - README.md
+      - .readme-partials.yaml
+    branch: protobuf-4.x-rc
+    manifest: true
