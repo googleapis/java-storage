@@ -15,7 +15,6 @@
  */
 package com.google.cloud.storage;
 
-
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.google.api.client.http.ByteArrayContent;
 import com.google.api.client.http.GenericUrl;

@@ -904,6 +904,53 @@ public final class ITMultipartUploadHttpRequestManagerTest {
   }
 
   @Test
+  public void sendCompleteMultipartUploadRequest_withUserProject() throws Exception {
+    HttpRequestHandler handler =
+        req -> {
+          assertThat(req.headers().get("x-goog-user-project")).isEqualTo("test-project");
+          CompleteMultipartUploadResponse response =
+              CompleteMultipartUploadResponse.builder()
+                  .bucket("test-bucket")
+                  .key("test-key")
+                  .etag("\"test-etag\"")
+                  .build();
+          ByteBuf buf = Unpooled.wrappedBuffer(xmlMapper.writeValueAsBytes(response));
+
+          DefaultFullHttpResponse resp =
+              new DefaultFullHttpResponse(req.protocolVersion(), OK, buf);
+          resp.headers().set(CONTENT_TYPE, "application/xml; charset=utf-8");
+          return resp;
+        };
+
+    try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
+      MultipartUploadHttpRequestManager multipartUploadHttpRequestManager =
+          MultipartUploadHttpRequestManager.createFrom(fakeHttpServer.getHttpStorageOptions());
+      CompleteMultipartUploadRequest request =
+          CompleteMultipartUploadRequest.builder()
+              .bucket("test-bucket")
+              .key("test-key")
+              .uploadId("test-upload-id")
+              .userProject("test-project")
+              .multipartUpload(
+                  CompletedMultipartUpload.builder()
+                      .parts(
+                          ImmutableList.of(
+                              CompletedPart.builder().partNumber(1).eTag("\"etag1\"").build(),
+                              CompletedPart.builder().partNumber(2).eTag("\"etag2\"").build()))
+                      .build())
+              .build();
+
+      CompleteMultipartUploadResponse response =
+          multipartUploadHttpRequestManager.sendCompleteMultipartUploadRequest(request);
+
+      assertThat(response).isNotNull();
+      assertThat(response.bucket()).isEqualTo("test-bucket");
+      assertThat(response.key()).isEqualTo("test-key");
+      assertThat(response.etag()).isEqualTo("\"test-etag\"");
+    }
+  }
+
+  @Test
   public void sendUploadPartRequest_success() throws Exception {
     String etag = "\"af1ed31420542285653c803a34aa839a\"";
     String content = "hello world";
