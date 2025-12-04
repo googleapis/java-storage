@@ -32,12 +32,14 @@ public final class CompleteMultipartUploadRequest {
   private final String key;
   private final String uploadId;
   private final CompletedMultipartUpload multipartUpload;
+  private final String userProject;
 
   private CompleteMultipartUploadRequest(Builder builder) {
     this.bucket = builder.bucket;
     this.key = builder.key;
     this.uploadId = builder.uploadId;
     this.multipartUpload = builder.multipartUpload;
+    this.userProject = builder.userProject;
   }
 
   /**
@@ -84,6 +86,17 @@ public final class CompleteMultipartUploadRequest {
     return multipartUpload;
   }
 
+  /**
+   * Returns the user-project.
+   *
+   * @return the user-project.
+   * @since 2.62 This new api is in preview and is subject to breaking changes.
+   */
+  @BetaApi
+  public String userProject() {
+    return userProject;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -96,12 +109,13 @@ public final class CompleteMultipartUploadRequest {
     return Objects.equals(bucket, that.bucket)
         && Objects.equals(key, that.key)
         && Objects.equals(uploadId, that.uploadId)
-        && Objects.equals(multipartUpload, that.multipartUpload);
+        && Objects.equals(multipartUpload, that.multipartUpload)
+        && Objects.equals(userProject, that.userProject);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(bucket, key, uploadId, multipartUpload);
+    return Objects.hash(bucket, key, uploadId, multipartUpload, userProject);
   }
 
   @Override
@@ -111,6 +125,7 @@ public final class CompleteMultipartUploadRequest {
         .add("key", key)
         .add("uploadId", uploadId)
         .add("completedMultipartUpload", multipartUpload)
+        .add("userProject", userProject)
         .toString();
   }
 
@@ -136,6 +151,7 @@ public final class CompleteMultipartUploadRequest {
     private String key;
     private String uploadId;
     private CompletedMultipartUpload multipartUpload;
+    private String userProject;
 
     private Builder() {}
 
@@ -188,6 +204,19 @@ public final class CompleteMultipartUploadRequest {
     @BetaApi
     public Builder multipartUpload(CompletedMultipartUpload completedMultipartUpload) {
       this.multipartUpload = completedMultipartUpload;
+      return this;
+    }
+
+    /**
+     * Sets the user-project.
+     *
+     * @param userProject The user-project.
+     * @return This builder.
+     * @since 2.62 This new api is in preview and is subject to breaking changes.
+     */
+    @BetaApi
+    public Builder userProject(String userProject) {
+      this.userProject = userProject;
       return this;
     }
 

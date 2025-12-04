@@ -149,6 +149,9 @@ final class MultipartUploadHttpRequestManager {
         requestFactory.buildPostRequest(
             new GenericUrl(completeUri), new ByteArrayContent("application/xml", bytes));
     httpRequest.getHeaders().putAll(headerProvider.getHeaders());
+    if (request.userProject() != null) {
+      httpRequest.getHeaders().put("x-goog-user-project", request.userProject());
+    }
     @Nullable Crc32cLengthKnown crc32cValue = Hasher.defaultHasher().hash(ByteBuffer.wrap(bytes));
     addChecksumHeader(crc32cValue, httpRequest.getHeaders());
     httpRequest.setParser(objectParser);
@@ -198,7 +201,6 @@ final class MultipartUploadHttpRequestManager {
                     options.getLibraryVersion(),
                     formatName(StandardSystemProperty.OS_NAME.value()),
                     formatSemver(StandardSystemProperty.OS_VERSION.value())));
-    ifNonNull(options.getProjectId(), pid -> stableHeaders.put("x-goog-user-project", pid));
     return new MultipartUploadHttpRequestManager(
         storage.getRequestFactory(),
         new XmlObjectParser(new XmlMapper()),
