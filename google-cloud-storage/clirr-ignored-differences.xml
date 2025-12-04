@@ -197,5 +197,151 @@
     <method>void flush()</method>
   </difference>
 
+  <!-- CreateMultipartUploadRequest -->
+  <difference>
+    <differenceType>7002</differenceType>
+    <className>com/google/cloud/storage/multipartupload/model/CreateMultipartUploadRequest</className>
+    <method>com.google.cloud.storage.Storage$PredefinedAcl getCannedAcl()</method>
+  </difference>
+  <difference>
+    <differenceType>7002</differenceType>
+    <className>com/google/cloud/storage/multipartupload/model/CreateMultipartUploadRequest</className>
+    <method>java.lang.String getContentType()</method>
+  </difference>
+  <difference>
+    <differenceType>7002</differenceType>
+    <className>com/google/cloud/storage/multipartupload/model/CreateMultipartUploadRequest</className>
+    <method>java.time.OffsetDateTime getCustomTime()</method>
+  </difference>
+  <difference>
+    <differenceType>7002</differenceType>
+    <className>com/google/cloud/storage/multipartupload/model/CreateMultipartUploadRequest</className>
+    <method>java.lang.String getKmsKeyName()</method>
+  </difference>
+  <difference>
+    <differenceType>7002</differenceType>
+    <className>com/google/cloud/storage/multipartupload/model/CreateMultipartUploadRequest</className>
+    <method>java.util.Map getMetadata()</method>
+  </difference>
+  <difference>
+    <differenceType>7002</differenceType>
+    <className>com/google/cloud/storage/multipartupload/model/CreateMultipartUploadRequest</className>
+    <method>com.google.cloud.storage.multipartupload.model.ObjectLockMode getObjectLockMode()</method>
+  </difference>
+  <difference>
+    <differenceType>7002</differenceType>
+    <className>com/google/cloud/storage/multipartupload/model/CreateMultipartUploadRequest</className>
+    <method>java.time.OffsetDateTime getObjectLockRetainUntilDate()</method>
+  </difference>
+  <difference>
+    <differenceType>7002</differenceType>
+    <className>com/google/cloud/storage/multipartupload/model/CreateMultipartUploadRequest</className>
+    <method>com.google.cloud.storage.StorageClass getStorageClass()</method>
+  </difference>
 
+  <!-- ListPartsRequest -->
+  <difference>
+    <differenceType>7002</differenceType>
+    <className>com/google/cloud/storage/multipartupload/model/ListPartsRequest</className>
+    <method>java.lang.Integer getMaxParts()</method>
+  </difference>
+  <difference>
+    <differenceType>7002</differenceType>
+    <className>com/google/cloud/storage/multipartupload/model/ListPartsRequest</className>
+    <method>java.lang.Integer getPartNumberMarker()</method>
+  </difference>
+
+  <!-- ListPartsResponse -->
+  <difference>
+    <differenceType>7002</differenceType>
+    <className>com/google/cloud/storage/multipartupload/model/ListPartsResponse</className>
+    <method>java.lang.String getBucket()</method>
+  </difference>
+  <difference>
+    <differenceType>7002</differenceType>
+    <className>com/google/cloud/storage/multipartupload/model/ListPartsResponse</className>
+    <method>java.lang.String getKey()</method>
+  </difference>
+  <difference>
+    <differenceType>7002</differenceType>
+    <className>com/google/cloud/storage/multipartupload/model/ListPartsResponse</className>
+    <method>int getMaxParts()</method>
+  </difference>
+  <difference>
+    <differenceType>7002</differenceType>
+    <className>com/google/cloud/storage/multipartupload/model/ListPartsResponse</className>
+    <method>int getNextPartNumberMarker()</method>
+  </difference>
+  <difference>
+    <differenceType>7002</differenceType>
+    <className>com/google/cloud/storage/multipartupload/model/ListPartsResponse</className>
+    <method>int getPartNumberMarker()</method>
+  </difference>
+  <difference>
+    <differenceType>7002</differenceType>
+    <className>com/google/cloud/storage/multipartupload/model/ListPartsResponse</className>
+    <method>java.util.List getParts()</method>
+  </difference>
+  <difference>
+    <differenceType>7002</differenceType>
+    <className>com/google/cloud/storage/multipartupload/model/ListPartsResponse</className>
+    <method>com.google.cloud.storage.StorageClass getStorageClass()</method>
+  </difference>
+  <difference>
+    <differenceType>7002</differenceType>
+    <className>com/google/cloud/storage/multipartupload/model/ListPartsResponse</className>
+    <method>java.lang.String getUploadId()</method>
+  </difference>
+  <difference>
+    <differenceType>7002</differenceType>
+    <className>com/google/cloud/storage/multipartupload/model/ListPartsResponse</className>
+    <method>boolean isTruncated()</method>
+  </difference>
+
+  <!-- ListPartsResponse$Builder -->
+  <difference>
+    <differenceType>7002</differenceType>
+    <className>com/google/cloud/storage/multipartupload/model/ListPartsResponse$Builder</className>
+    <method>com.google.cloud.storage.multipartupload.model.ListPartsResponse$Builder setBucket(java.lang.String)</method>
+  </difference>
+  <difference>
+    <differenceType>7002</differenceType>
+    <className>com/google/cloud/storage/multipartupload/model/ListPartsResponse$Builder</className>
+    <method>com.google.cloud.storage.multipartupload.model.ListPartsResponse$Builder setIsTruncated(boolean)</method>
+  </difference>
+  <difference>
+    <differenceType>7002</differenceType>
+    <className>com/google/cloud/storage/multipartupload/model/ListPartsResponse$Builder</className>
+    <method>com.google.cloud.storage.multipartupload.model.ListPartsResponse$Builder setKey(java.lang.String)</method>
+  </difference>
+  <difference>
+    <differenceType>7002</differenceType>
+    <className>com/google/cloud/storage/multipartupload/model/ListPartsResponse$Builder</className>
+    <method>com.google.cloud.storage.multipartupload.model.ListPartsResponse$Builder setMaxParts(int)</method>
+  </difference>
+  <difference>
+    <differenceType>7002</differenceType>
+    <className>com/google/cloud/storage/multipartupload/model/ListPartsResponse$Builder</className>
+    <method>com.google.cloud.storage.multipartupload.model.ListPartsResponse$Builder setNextPartNumberMarker(int)</method>
+  </difference>
+  <difference>
+    <differenceType>7002</differenceType>
+    <className>com/google/cloud/storage/multipartupload/model/ListPartsResponse$Builder</className>
+    <method>com.google.cloud.storage.multipartupload.model.ListPartsResponse$Builder setPartNumberMarker(int)</method>
+  </difference>
+  <difference>
+    <differenceType>7002</differenceType>
+    <className>com/google/cloud/storage/multipartupload/model/ListPartsResponse$Builder</className>
+    <method>com.google.cloud.storage.multipartupload.model.ListPartsResponse$Builder setParts(java.util.List)</method>
+  </difference>
+  <difference>
+    <differenceType>7002</differenceType>
+    <className>com/google/cloud/storage/multipartupload/model/ListPartsResponse$Builder</className>
+    <method>com.google.cloud.storage.multipartupload.model.ListPartsResponse$Builder setStorageClass(com.google.cloud.storage.StorageClass)</method>
+  </difference>
+  <difference>
+    <differenceType>7002</differenceType>
+    <className>com/google/cloud/storage/multipartupload/model/ListPartsResponse$Builder</className>
+    <method>com.google.cloud.storage.multipartupload.model.ListPartsResponse$Builder setUploadId(java.lang.String)</method>
+  </difference>
 </differences>
