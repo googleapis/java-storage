@@ -94,7 +94,7 @@ public final class ListPartsResponse {
    * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  public String getBucket() {
+  public String bucket() {
     return bucket;
   }
 
@@ -105,7 +105,7 @@ public final class ListPartsResponse {
    * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  public String getKey() {
+  public String key() {
     return key;
   }
 
@@ -116,7 +116,7 @@ public final class ListPartsResponse {
    * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  public String getUploadId() {
+  public String uploadId() {
     return uploadId;
   }
 
@@ -127,7 +127,7 @@ public final class ListPartsResponse {
    * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  public int getPartNumberMarker() {
+  public int partNumberMarker() {
     return partNumberMarker;
   }
 
@@ -138,7 +138,7 @@ public final class ListPartsResponse {
    * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  public int getNextPartNumberMarker() {
+  public int nextPartNumberMarker() {
     return nextPartNumberMarker;
   }
 
@@ -149,7 +149,7 @@ public final class ListPartsResponse {
    * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  public int getMaxParts() {
+  public int maxParts() {
     return maxParts;
   }
 
@@ -160,7 +160,7 @@ public final class ListPartsResponse {
    * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  public boolean isTruncated() {
+  public boolean truncated() {
     return isTruncated;
   }
 
@@ -171,7 +171,7 @@ public final class ListPartsResponse {
    * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  public StorageClass getStorageClass() {
+  public StorageClass storageClass() {
     return storageClass;
   }
 
@@ -182,7 +182,7 @@ public final class ListPartsResponse {
    * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  public List<Part> getParts() {
+  public List<Part> parts() {
     return parts;
   }
 
@@ -262,7 +262,7 @@ public final class ListPartsResponse {
      * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
-    public Builder setBucket(String bucket) {
+    public Builder bucket(String bucket) {
       this.bucket = bucket;
       return this;
     }
@@ -275,7 +275,7 @@ public final class ListPartsResponse {
      * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
-    public Builder setKey(String key) {
+    public Builder key(String key) {
       this.key = key;
       return this;
     }
@@ -288,7 +288,7 @@ public final class ListPartsResponse {
      * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
-    public Builder setUploadId(String uploadId) {
+    public Builder uploadId(String uploadId) {
       this.uploadId = uploadId;
       return this;
     }
@@ -301,7 +301,7 @@ public final class ListPartsResponse {
      * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
-    public Builder setPartNumberMarker(int partNumberMarker) {
+    public Builder partNumberMarker(int partNumberMarker) {
       this.partNumberMarker = partNumberMarker;
       return this;
     }
@@ -314,7 +314,7 @@ public final class ListPartsResponse {
      * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
-    public Builder setNextPartNumberMarker(int nextPartNumberMarker) {
+    public Builder nextPartNumberMarker(int nextPartNumberMarker) {
       this.nextPartNumberMarker = nextPartNumberMarker;
       return this;
     }
@@ -327,7 +327,7 @@ public final class ListPartsResponse {
      * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
-    public Builder setMaxParts(int maxParts) {
+    public Builder maxParts(int maxParts) {
       this.maxParts = maxParts;
       return this;
     }
@@ -340,7 +340,7 @@ public final class ListPartsResponse {
      * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
-    public Builder setIsTruncated(boolean isTruncated) {
+    public Builder truncated(boolean isTruncated) {
       this.isTruncated = isTruncated;
       return this;
     }
@@ -353,7 +353,7 @@ public final class ListPartsResponse {
      * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
-    public Builder setStorageClass(StorageClass storageClass) {
+    public Builder storageClass(StorageClass storageClass) {
       this.storageClass = storageClass;
       return this;
     }
@@ -366,7 +366,7 @@ public final class ListPartsResponse {
      * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
-    public Builder setParts(List<Part> parts) {
+    public Builder parts(List<Part> parts) {
       this.parts = parts;
       return this;
     }

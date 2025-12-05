@@ -322,7 +322,7 @@ public final class ITMultipartUploadClientTest {
     ListPartsRequest.Builder listPartsBuilder =
         ListPartsRequest.builder().bucket(info.getBucket()).key(info.getName()).uploadId(uploadId);
     ListPartsResponse listPartsResponse = multipartUploadClient.listParts(listPartsBuilder.build());
-    assertThat(listPartsResponse.getParts()).hasSize(completedParts.size());
+    assertThat(listPartsResponse.parts()).hasSize(completedParts.size());
 
     completeMultipartUpload(info, uploadId, completedParts);
 

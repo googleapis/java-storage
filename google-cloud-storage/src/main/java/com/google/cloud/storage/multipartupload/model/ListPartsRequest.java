@@ -85,7 +85,7 @@ public final class ListPartsRequest {
    * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  public Integer getMaxParts() {
+  public Integer maxParts() {
     return maxParts;
   }
 
@@ -96,7 +96,7 @@ public final class ListPartsRequest {
    * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  public Integer getPartNumberMarker() {
+  public Integer partNumberMarker() {
     return partNumberMarker;
   }
 

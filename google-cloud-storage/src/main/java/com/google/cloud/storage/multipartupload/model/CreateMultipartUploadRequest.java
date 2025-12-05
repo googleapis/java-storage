@@ -96,7 +96,7 @@ public final class CreateMultipartUploadRequest {
    * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  public PredefinedAcl getCannedAcl() {
+  public PredefinedAcl cannedAcl() {
     return cannedAcl;
   }
 
@@ -107,7 +107,7 @@ public final class CreateMultipartUploadRequest {
    * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  public String getContentType() {
+  public String contentType() {
     return contentType;
   }
 
@@ -118,7 +118,7 @@ public final class CreateMultipartUploadRequest {
    * @since 2.61.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  public String getContentDisposition() {
+  public String contentDisposition() {
     return contentDisposition;
   }
 
@@ -129,7 +129,7 @@ public final class CreateMultipartUploadRequest {
    * @since 2.61.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  public String getContentEncoding() {
+  public String contentEncoding() {
     return contentEncoding;
   }
 
@@ -140,7 +140,7 @@ public final class CreateMultipartUploadRequest {
    * @since 2.61.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  public String getContentLanguage() {
+  public String contentLanguage() {
     return contentLanguage;
   }
 
@@ -152,7 +152,7 @@ public final class CreateMultipartUploadRequest {
    * @since 2.61.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  public String getCacheControl() {
+  public String cacheControl() {
     return cacheControl;
   }
 
@@ -163,7 +163,7 @@ public final class CreateMultipartUploadRequest {
    * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  public Map<String, String> getMetadata() {
+  public Map<String, String> metadata() {
     return metadata;
   }
 
@@ -174,7 +174,7 @@ public final class CreateMultipartUploadRequest {
    * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  public StorageClass getStorageClass() {
+  public StorageClass storageClass() {
     return storageClass;
   }
 
@@ -185,7 +185,7 @@ public final class CreateMultipartUploadRequest {
    * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  public OffsetDateTime getCustomTime() {
+  public OffsetDateTime customTime() {
     return customTime;
   }
 
@@ -196,7 +196,7 @@ public final class CreateMultipartUploadRequest {
    * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  public String getKmsKeyName() {
+  public String kmsKeyName() {
     return kmsKeyName;
   }
 
@@ -207,7 +207,7 @@ public final class CreateMultipartUploadRequest {
    * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  public ObjectLockMode getObjectLockMode() {
+  public ObjectLockMode objectLockMode() {
     return objectLockMode;
   }
 
@@ -218,7 +218,7 @@ public final class CreateMultipartUploadRequest {
    * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  public OffsetDateTime getObjectLockRetainUntilDate() {
+  public OffsetDateTime objectLockRetainUntilDate() {
     return objectLockRetainUntilDate;
   }
 
@@ -228,7 +228,7 @@ public final class CreateMultipartUploadRequest {
    * @return The user project
    * @since 2.61.0 This new api is in preview and is subject to breaking changes.
    */
-  public String getUserProject() {
+  public String userProject() {
     return userProject;
   }
 
