@@ -200,6 +200,8 @@ public class StorageImplMockitoTest {
       Storage.BucketListOption.fields();
   private static final Map<StorageRpc.Option, ?> BUCKET_LIST_OPTIONS =
       ImmutableMap.of(StorageRpc.Option.MAX_RESULTS, PAGE_SIZE, StorageRpc.Option.PREFIX, "prefix");
+  private static final Map<StorageRpc.Option, ?> BUCKET_LIST_PARTIAL_SUCCESS_OPTION =
+      ImmutableMap.of(StorageRpc.Option.RETURN_PARTIAL_SUCCESS, true);
 
   // Blob list options
   private static final Storage.BlobListOption BLOB_LIST_PAGE_SIZE =

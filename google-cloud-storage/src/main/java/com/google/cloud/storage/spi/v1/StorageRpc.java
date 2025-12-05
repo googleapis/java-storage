@@ -58,6 +58,7 @@ public interface StorageRpc extends ServiceRpc {
     PROJECTION("projection"),
     MAX_RESULTS("maxResults"),
     PAGE_TOKEN("pageToken"),
+    RETURN_PARTIAL_SUCCESS("returnPartialSuccess"),
     DELIMITER("delimiter"),
     START_OFF_SET("startOffset"),
     END_OFF_SET("endOffset"),
