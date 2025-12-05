@@ -1,5 +1,28 @@
 # Changelog
 
+## [2.61.0-rc1](https://github.com/googleapis/java-storage/compare/v2.60.0...v2.61.0-rc1) (2025-12-05)
+
+
+### Features
+
+* add Content-* , Cache-Control and x-goog-user-project header support to CreateMultipartUploadRequest ([763293b](https://github.com/googleapis/java-storage/commit/763293be11c0cd28717358b54b84db2cfbf4d246))
+* add UploadPartRequest.crc32c property and requisite plumbing ([#3395](https://github.com/googleapis/java-storage/issues/3395)) ([6f4d255](https://github.com/googleapis/java-storage/commit/6f4d255770131f5e3054fd611d3ccd417bc06407))
+
+
+### Bug Fixes
+
+* change [@since](https://github.com/since) to the next version ([2f5450b](https://github.com/googleapis/java-storage/commit/2f5450b820f9bdee26da08c16ec71f856e1b9ebb))
+* **deps:** update the Java code generator (gapic-generator-java) to 2.64.1 ([511ff51](https://github.com/googleapis/java-storage/commit/511ff514410e55425e968ab900ac1b8825fe507a))
+* Fixing formatting issues ([af7800c](https://github.com/googleapis/java-storage/commit/af7800c9a8c1cfcb8e6bab877055b3c12a2051dd))
+* Formatting fixes ([6b14271](https://github.com/googleapis/java-storage/commit/6b1427133e5fa50253296ade71410702cbbc7619))
+* next release candidate ([eec9efa](https://github.com/googleapis/java-storage/commit/eec9efaa88f14bea4f20e1883455a9e5331c278f))
+
+
+### Dependencies
+
+* update gcr.io/cloud-devrel-public-resources/storage-testbench docker tag to v0.59.0 ([f5d8337](https://github.com/googleapis/java-storage/commit/f5d8337ad556770a55cc260975e44e85e8e831b0))
+* update gcr.io/cloud-devrel-public-resources/storage-testbench docker tag to v0.59.0 ([5480ce3](https://github.com/googleapis/java-storage/commit/5480ce347493ec425b675f462a42f45c22b06c28))
+
 ## [2.60.0](https://github.com/googleapis/java-storage/compare/v2.59.0...v2.60.0) (2025-11-07)
 
 
