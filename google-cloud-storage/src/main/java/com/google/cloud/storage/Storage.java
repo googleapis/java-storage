@@ -2476,6 +2476,11 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
       return new BucketListOption(UnifiedOpts.pageToken(pageToken));
     }
 
+    @TransportCompatibility({Transport.HTTP})
+    public static BucketListOption returnPartialSuccess(boolean returnPartialSuccess) {
+      return new BucketListOption(UnifiedOpts.returnPartialSuccess(returnPartialSuccess));
+    }
+
     /**
      * Returns an option to set a prefix to filter results to buckets whose names begin with this
      * prefix.
