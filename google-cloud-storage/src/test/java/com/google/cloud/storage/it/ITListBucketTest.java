@@ -17,22 +17,23 @@
 package com.google.cloud.storage.it;
 
 import static com.google.common.truth.Truth.assertThat;
-import static org.junit.Assert.assertTrue;
 
 import com.google.api.gax.paging.Page;
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.Storage.BucketListOption;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.it.runner.StorageITRunner;
 import com.google.cloud.storage.it.runner.annotations.Backend;
+import com.google.cloud.storage.it.runner.annotations.BucketFixture;
+import com.google.cloud.storage.it.runner.annotations.BucketType;
 import com.google.cloud.storage.it.runner.annotations.CrossRun;
 import com.google.cloud.storage.it.runner.annotations.Inject;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
-import java.util.stream.StreamSupport;
-import org.junit.After;
-import org.junit.Before;
+import com.google.cloud.storage.it.runner.registry.Generator;
+import com.google.common.collect.ImmutableMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -43,93 +44,58 @@ import org.junit.runner.RunWith;
 public class ITListBucketTest {
   @Inject public Storage storage;
 
-  private static final String NORMAL_BUCKET_NAME = "normal_bucket";
-  // For testing purposes, the TESTBENCH considers a bucket to be unreachable if the bucket name
-  // contains "unreachable"
-  private static final String UNREACHABLE_BUCKET_NAME_1 = "unreachable_bucket_1";
-  private static final String UNREACHABLE_BUCKET_NAME_2 = "unreachable_bucket_2";
+  @Inject public BucketInfo defaultBucket;
 
-  // The unreachable buckets are returned as a list of bucket resource names in string form. (e.g.
-  // "projects/_/buckets/bucket1")
-  private static final String EXPECTED_UNREACHABLE_BUCKET_NAME_1 =
-      "projects/_/buckets/" + UNREACHABLE_BUCKET_NAME_1;
-  private static final String EXPECTED_UNREACHABLE_BUCKET_NAME_2 =
-      "projects/_/buckets/" + UNREACHABLE_BUCKET_NAME_2;
+  @Inject
+  @BucketFixture(BucketType.HNS)
+  public BucketInfo hnsBucket;
 
-  @Before
-  public void setup() {
-    Bucket normalBucket = storage.create(BucketInfo.of(NORMAL_BUCKET_NAME));
-    Bucket unreachableBucket = storage.create(BucketInfo.of(UNREACHABLE_BUCKET_NAME_1));
-  }
+  @Inject public Generator generator;
 
-  @After
-  public void tearDown() {
-    BucketCleaner.doCleanup(NORMAL_BUCKET_NAME, storage);
-    BucketCleaner.doCleanup(UNREACHABLE_BUCKET_NAME_1, storage);
+  @Test
+  public void testListBucketWithPartialSuccess() throws Exception {
+    doTest(Reachability.Unreachable, BucketListOption.returnPartialSuccess(true));
   }
 
   @Test
-  public void testListBucketWithPartialSuccess() {
-    Page<Bucket> page = storage.list(Storage.BucketListOption.returnPartialSuccess(true));
-    Iterable<Bucket> allBuckets = page.getValues();
-
-    Bucket actualNormalBucket =
-        Iterables.getOnlyElement(
-            Iterables.filter(allBuckets, b -> b.getName().equals(NORMAL_BUCKET_NAME)));
-
-    Bucket actualUnreachableBucket =
-        Iterables.getOnlyElement(
-            Iterables.filter(allBuckets, b -> b.getName().contains(UNREACHABLE_BUCKET_NAME_1)));
-
-    assertThat(actualNormalBucket.getName()).isEqualTo(NORMAL_BUCKET_NAME);
-    assertThat(actualUnreachableBucket.getName()).isEqualTo(EXPECTED_UNREACHABLE_BUCKET_NAME_1);
-    assertTrue(
-        "The unreachable bucket must have the isUnreachable flag set to true",
-        actualUnreachableBucket.isUnreachable());
+  public void testListBucketWithoutPartialSuccess() throws Exception {
+    doTest(Reachability.Reachable);
   }
 
-  @Test
-  public void testMultipleUnreachableBuckets() {
-    Bucket unreachableBucket2 = storage.create(BucketInfo.of(UNREACHABLE_BUCKET_NAME_2));
+  private void doTest(
+      Reachability expectedReachabilityOfUnreachableBucket, BucketListOption... bucketListOption)
+      throws Exception {
+    // TESTBENCH considers a bucket to be unreachable if the bucket name contains "unreachable"
+    String name = generator.randomBucketName() + ".unreachable";
+    BucketInfo info = BucketInfo.of(name);
+    try (TemporaryBucket tmpBucket =
+        TemporaryBucket.newBuilder().setBucketInfo(info).setStorage(storage).build()) {
+      // bucket name to unreachable status
+      Map<String, Reachability> expected =
+          ImmutableMap.of(
+              defaultBucket.getName(), Reachability.Reachable,
+              hnsBucket.getName(), Reachability.Reachable,
+              tmpBucket.getBucket().getName(), expectedReachabilityOfUnreachableBucket);
 
-    try {
-      Page<Bucket> page = storage.list(Storage.BucketListOption.returnPartialSuccess(true));
-      Iterable<Bucket> allBuckets = page.getValues();
+      Page<Bucket> page = storage.list(bucketListOption);
 
-      Bucket actualNormalBucket =
-          Iterables.getOnlyElement(
-              Iterables.filter(allBuckets, b -> b.getName().equals(NORMAL_BUCKET_NAME)));
+      Map<String, Reachability> actual =
+          page.streamAll().collect(Collectors.toMap(BucketInfo::getName, Reachability::forBucket));
 
-      Bucket actualUnreachableBucket1 =
-          Iterables.getOnlyElement(
-              Iterables.filter(allBuckets, b -> b.getName().contains(UNREACHABLE_BUCKET_NAME_1)));
-
-      Bucket actualUnreachableBucket2 =
-          Iterables.getOnlyElement(
-              Iterables.filter(allBuckets, b -> b.getName().contains(UNREACHABLE_BUCKET_NAME_2)));
-
-      assertThat(actualNormalBucket.getName()).isEqualTo(NORMAL_BUCKET_NAME);
-      assertThat(actualUnreachableBucket1.getName()).isEqualTo(EXPECTED_UNREACHABLE_BUCKET_NAME_1);
-      assertTrue(
-          "The unreachable bucket 1 must have the isUnreachable flag set to true",
-          actualUnreachableBucket1.isUnreachable());
-      assertThat(actualUnreachableBucket2.getName()).isEqualTo(EXPECTED_UNREACHABLE_BUCKET_NAME_2);
-      assertTrue(
-          "The unreachable bucket 2 must have the isUnreachable flag set to true",
-          actualUnreachableBucket2.isUnreachable());
-    } finally {
-      BucketCleaner.doCleanup(UNREACHABLE_BUCKET_NAME_2, storage);
+      assertThat(actual).containsAtLeastEntriesIn(expected);
     }
   }
 
-  @Test
-  public void testListBucketWithoutPartialSuccess() {
-    Page<Bucket> page = storage.list();
-    ImmutableList<String> bucketNames =
-        StreamSupport.stream(page.iterateAll().spliterator(), false)
-            .map(Bucket::getName)
-            .collect(ImmutableList.toImmutableList());
-    assertThat(bucketNames).contains(NORMAL_BUCKET_NAME);
-    assertThat(bucketNames).doesNotContain(EXPECTED_UNREACHABLE_BUCKET_NAME_1);
+  private enum Reachability {
+    Reachable,
+    Unreachable;
+
+    static Reachability forBucket(BucketInfo b) {
+      if (b.isUnreachable() != null && b.isUnreachable()) {
+        return Unreachable;
+      } else {
+        return Reachable;
+      }
+    }
   }
 }

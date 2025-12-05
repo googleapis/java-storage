@@ -18,6 +18,7 @@ package com.google.cloud.storage;
 
 import static com.google.cloud.storage.Storage.BucketField.IP_FILTER;
 import static com.google.cloud.storage.Storage.BucketField.SOFT_DELETE_POLICY;
+import static com.google.cloud.storage.Utils.bucketNameCodec;
 import static com.google.cloud.storage.Utils.dateTimeCodec;
 import static com.google.cloud.storage.Utils.durationSecondsCodec;
 import static com.google.cloud.storage.Utils.ifNonNull;
@@ -609,7 +610,7 @@ final class JsonConversions {
 
   @SuppressWarnings("deprecation")
   private BucketInfo bucketInfoDecode(com.google.api.services.storage.model.Bucket from) {
-    BucketInfo.Builder to = new BucketInfo.BuilderImpl(from.getName());
+    BucketInfo.Builder to = new BucketInfo.BuilderImpl(bucketNameCodec.decode(from.getName()));
     ifNonNull(from.getProjectNumber(), to::setProject);
     ifNonNull(from.getAcl(), toListOf(bucketAcl()::decode), to::setAcl);
     ifNonNull(from.getCors(), toListOf(cors()::decode), to::setCors);
