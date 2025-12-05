@@ -34,7 +34,6 @@ import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.StatusCode;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Scope;
-import java.util.Locale;
 
 @BetaApi
 final class OtelMultipartUploadClientDecorator extends MultipartUploadClient {
