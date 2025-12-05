@@ -90,7 +90,9 @@ public final class CompleteMultipartUploadRequest {
    * Returns the user-project.
    *
    * @return the user-project.
-   * @since 2.62 This new api is in preview and is subject to breaking changes.
+   * @see <a
+   *     href="https://docs.cloud.google.com/storage/docs/xml-api/reference-headers#xgooguserproject">x-goog-user-project</a>
+   * @since 2.61 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
   public String userProject() {
@@ -212,7 +214,9 @@ public final class CompleteMultipartUploadRequest {
      *
      * @param userProject The user-project.
      * @return This builder.
-     * @since 2.62 This new api is in preview and is subject to breaking changes.
+     * @see <a
+     *     href="https://docs.cloud.google.com/storage/docs/xml-api/reference-headers#xgooguserproject">x-goog-user-project</a>
+     * @since 2.61 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
     public Builder userProject(String userProject) {
