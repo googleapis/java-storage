@@ -1,5 +1,39 @@
 # Changelog
 
+## [2.61.0](https://github.com/googleapis/java-storage/compare/v2.60.0...v2.61.0) (2025-12-06)
+
+
+### Features
+
+* Add Content-* , Cache-Control and x-goog-user-project header support to CreateMultipartUploadRequest ([763293b](https://github.com/googleapis/java-storage/commit/763293be11c0cd28717358b54b84db2cfbf4d246))
+* Add preview MultipartUploadClient#listMultipartUploads. ([4111afd](https://github.com/googleapis/java-storage/commit/4111afde04cb3b6284f570063dc604f518671d72))
+* Add UploadPartRequest.crc32c property and requisite plumbing ([#3395](https://github.com/googleapis/java-storage/issues/3395)) ([0701c6b](https://github.com/googleapis/java-storage/commit/0701c6b4888b142ef243bb674f4bf4ff688dafc8))
+* Add UploadPartRequest.crc32c property and requisite plumbing ([#3395](https://github.com/googleapis/java-storage/issues/3395)) ([6f4d255](https://github.com/googleapis/java-storage/commit/6f4d255770131f5e3054fd611d3ccd417bc06407))
+
+
+### Bug Fixes
+
+* Adding & to request uri builder ([a33268c](https://github.com/googleapis/java-storage/commit/a33268c256e751250d846c80f8bc09e0bb3d4401))
+* Adding default for backward compaitbility ([de8dc78](https://github.com/googleapis/java-storage/commit/de8dc789e0e6095a22b11458de137f01d10218c7))
+* Call response.disconnect() after resolving resumable upload url ([#3385](https://github.com/googleapis/java-storage/issues/3385)) ([6af874b](https://github.com/googleapis/java-storage/commit/6af874bfa7f85f081341da9be87dd923a739c85d))
+* Change [@since](https://github.com/since) to the next version ([2f5450b](https://github.com/googleapis/java-storage/commit/2f5450b820f9bdee26da08c16ec71f856e1b9ebb))
+* **deps:** Update the Java code generator (gapic-generator-java) to 2.64.1 ([511ff51](https://github.com/googleapis/java-storage/commit/511ff514410e55425e968ab900ac1b8825fe507a))
+* Fixing formatting issues ([af7800c](https://github.com/googleapis/java-storage/commit/af7800c9a8c1cfcb8e6bab877055b3c12a2051dd))
+* Formatting fixes ([6b14271](https://github.com/googleapis/java-storage/commit/6b1427133e5fa50253296ade71410702cbbc7619))
+* Making function package private ([0ed2945](https://github.com/googleapis/java-storage/commit/0ed2945dae2d96c43ca94f0833d2b8e23f53c0e7))
+* Reverting deleted comments ([b900983](https://github.com/googleapis/java-storage/commit/b90098331c6a0b862e46baf60891bd07f4fb5cef))
+* Update version for ListMulipartUploadsResponse ([194284b](https://github.com/googleapis/java-storage/commit/194284bb1bebd0c763691e8eae44b57ac3779cac))
+* Updating version and formatting code ([37bf4ec](https://github.com/googleapis/java-storage/commit/37bf4ecc259e24d7f6af040402791383f458b617))
+* Using MoreObjects helper ([310754d](https://github.com/googleapis/java-storage/commit/310754dc3ecd766f0a25aca599111dd08b11d2df))
+* Using String Builder ([e14725e](https://github.com/googleapis/java-storage/commit/e14725e279a5753a83d3232eaabaf3018df06406))
+
+
+### Dependencies
+
+* Update dependency com.google.cloud:sdk-platform-java-config to v3.54.1 ([#3381](https://github.com/googleapis/java-storage/issues/3381)) ([ac9387d](https://github.com/googleapis/java-storage/commit/ac9387d7d74dbbaa4f97cecc49a09a81abfeffcf))
+* Update gcr.io/cloud-devrel-public-resources/storage-testbench docker tag to v0.59.0 ([f5d8337](https://github.com/googleapis/java-storage/commit/f5d8337ad556770a55cc260975e44e85e8e831b0))
+* Update gcr.io/cloud-devrel-public-resources/storage-testbench docker tag to v0.59.0 ([5480ce3](https://github.com/googleapis/java-storage/commit/5480ce347493ec425b675f462a42f45c22b06c28))
+
 ## [2.60.0](https://github.com/googleapis/java-storage/compare/v2.59.0...v2.60.0) (2025-11-07)
 
 
