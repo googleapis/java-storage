@@ -22,12 +22,11 @@ import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 public class UploadObjectFromMemory {
   public static void uploadObjectFromMemory(
-      String projectId, String bucketName, String objectName, String contents) throws IOException {
+      String projectId, String bucketName, String objectName, String contents) throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
@@ -40,37 +39,39 @@ public class UploadObjectFromMemory {
     // The string of contents you wish to upload
     // String contents = "Hello world!";
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
-    BlobId blobId = BlobId.of(bucketName, objectName);
-    BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
-    byte[] content = contents.getBytes(StandardCharsets.UTF_8);
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+      BlobId blobId = BlobId.of(bucketName, objectName);
+      BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
+      byte[] content = contents.getBytes(StandardCharsets.UTF_8);
 
-    // Optional: set a generation-match precondition to enable automatic retries, avoid potential
-    // race
-    // conditions and data corruptions. The request returns a 412 error if the
-    // preconditions are not met.
-    Storage.BlobTargetOption precondition;
-    if (storage.get(bucketName, objectName) == null) {
-      // For a target object that does not yet exist, set the DoesNotExist precondition.
-      // This will cause the request to fail if the object is created before the request runs.
-      precondition = Storage.BlobTargetOption.doesNotExist();
-    } else {
-      // If the destination already exists in your bucket, instead set a generation-match
-      // precondition. This will cause the request to fail if the existing object's generation
-      // changes before the request runs.
-      precondition =
-          Storage.BlobTargetOption.generationMatch(
-              storage.get(bucketName, objectName).getGeneration());
+      // Optional: set a generation-match precondition to enable automatic retries, avoid potential
+      // race
+      // conditions and data corruptions. The request returns a 412 error if the
+      // preconditions are not met.
+      Storage.BlobTargetOption precondition;
+      if (storage.get(bucketName, objectName) == null) {
+        // For a target object that does not yet exist, set the DoesNotExist precondition.
+        // This will cause the request to fail if the object is created before the request runs.
+        precondition = Storage.BlobTargetOption.doesNotExist();
+      } else {
+        // If the destination already exists in your bucket, instead set a generation-match
+        // precondition. This will cause the request to fail if the existing object's generation
+        // changes before the request runs.
+        precondition =
+            Storage.BlobTargetOption.generationMatch(
+                storage.get(bucketName, objectName).getGeneration());
+      }
+      storage.create(blobInfo, content, precondition);
+
+      System.out.println(
+          "Object "
+              + objectName
+              + " uploaded to bucket "
+              + bucketName
+              + " with contents "
+              + contents);
     }
-    storage.create(blobInfo, content, precondition);
-
-    System.out.println(
-        "Object "
-            + objectName
-            + " uploaded to bucket "
-            + bucketName
-            + " with contents "
-            + contents);
   }
 }
 // [END storage_file_upload_from_memory]

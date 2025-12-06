@@ -21,24 +21,25 @@ import com.google.cloud.storage.transfermanager.ParallelUploadConfig;
 import com.google.cloud.storage.transfermanager.TransferManager;
 import com.google.cloud.storage.transfermanager.TransferManagerConfig;
 import com.google.cloud.storage.transfermanager.UploadResult;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 
 class UploadMany {
 
-  public static void uploadManyFiles(String bucketName, List<Path> files) throws IOException {
-    TransferManager transferManager = TransferManagerConfig.newBuilder().build().getService();
-    ParallelUploadConfig parallelUploadConfig =
-        ParallelUploadConfig.newBuilder().setBucketName(bucketName).build();
-    List<UploadResult> results =
-        transferManager.uploadFiles(files, parallelUploadConfig).getUploadResults();
-    for (UploadResult result : results) {
-      System.out.println(
-          "Upload for "
-              + result.getInput().getName()
-              + " completed with status "
-              + result.getStatus());
+  public static void uploadManyFiles(String bucketName, List<Path> files) throws Exception {
+    TransferManagerConfig transferManagerConfig = TransferManagerConfig.newBuilder().build();
+    try (TransferManager transferManager = transferManagerConfig.getService()) {
+      ParallelUploadConfig parallelUploadConfig =
+          ParallelUploadConfig.newBuilder().setBucketName(bucketName).build();
+      List<UploadResult> results =
+          transferManager.uploadFiles(files, parallelUploadConfig).getUploadResults();
+      for (UploadResult result : results) {
+        System.out.println(
+            "Upload for "
+                + result.getInput().getName()
+                + " completed with status "
+                + result.getStatus());
+      }
     }
   }
 }
