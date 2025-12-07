@@ -24,6 +24,8 @@ import com.google.cloud.storage.multipartupload.model.CompleteMultipartUploadReq
 import com.google.cloud.storage.multipartupload.model.CompleteMultipartUploadResponse;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadRequest;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadResponse;
+import com.google.cloud.storage.multipartupload.model.ListMultipartUploadsRequest;
+import com.google.cloud.storage.multipartupload.model.ListMultipartUploadsResponse;
 import com.google.cloud.storage.multipartupload.model.ListPartsRequest;
 import com.google.cloud.storage.multipartupload.model.ListPartsResponse;
 import com.google.cloud.storage.multipartupload.model.UploadPartRequest;
@@ -98,6 +100,17 @@ public abstract class MultipartUploadClient {
    */
   @BetaApi
   public abstract UploadPartResponse uploadPart(UploadPartRequest request, RequestBody requestBody);
+
+  /**
+   * Lists all multipart uploads in a bucket.
+   *
+   * @param request The request object containing the details for listing the multipart uploads.
+   * @return A {@link ListMultipartUploadsResponse} object containing the list of multipart uploads.
+   * @since 2.61.0 This new api is in preview and is subject to breaking changes.
+   */
+  @BetaApi
+  public abstract ListMultipartUploadsResponse listMultipartUploads(
+      ListMultipartUploadsRequest request);
 
   /**
    * Creates a new instance of {@link MultipartUploadClient}.
