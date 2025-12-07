@@ -36,6 +36,8 @@ import com.google.cloud.storage.multipartupload.model.CompleteMultipartUploadReq
 import com.google.cloud.storage.multipartupload.model.CompleteMultipartUploadResponse;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadRequest;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadResponse;
+import com.google.cloud.storage.multipartupload.model.ListMultipartUploadsRequest;
+import com.google.cloud.storage.multipartupload.model.ListMultipartUploadsResponse;
 import com.google.cloud.storage.multipartupload.model.ListPartsRequest;
 import com.google.cloud.storage.multipartupload.model.ListPartsResponse;
 import com.google.cloud.storage.multipartupload.model.UploadPartRequest;
@@ -116,6 +118,42 @@ final class MultipartUploadHttpRequestManager {
     httpRequest.setParser(objectParser);
     httpRequest.setThrowExceptionOnExecuteError(true);
     return httpRequest.execute().parseAs(ListPartsResponse.class);
+  }
+
+  ListMultipartUploadsResponse sendListMultipartUploadsRequest(ListMultipartUploadsRequest request)
+      throws IOException {
+
+    ImmutableMap.Builder<String, Object> params =
+        ImmutableMap.<String, Object>builder().put("bucket", request.bucket());
+    if (request.delimiter() != null) {
+      params.put("delimiter", request.delimiter());
+    }
+    if (request.encodingType() != null) {
+      params.put("encoding-type", request.encodingType());
+    }
+    if (request.keyMarker() != null) {
+      params.put("key-marker", request.keyMarker());
+    }
+    if (request.maxUploads() != null) {
+      params.put("max-uploads", request.maxUploads());
+    }
+    if (request.prefix() != null) {
+      params.put("prefix", request.prefix());
+    }
+    if (request.uploadIdMarker() != null) {
+      params.put("upload-id-marker", request.uploadIdMarker());
+    }
+    String listUri =
+        UriTemplate.expand(
+            uri.toString()
+                + "{bucket}?uploads{&delimiter,encoding-type,key-marker,max-uploads,prefix,upload-id-marker}",
+            params.build(),
+            false);
+    HttpRequest httpRequest = requestFactory.buildGetRequest(new GenericUrl(listUri));
+    httpRequest.getHeaders().putAll(headerProvider.getHeaders());
+    httpRequest.setParser(objectParser);
+    httpRequest.setThrowExceptionOnExecuteError(true);
+    return httpRequest.execute().parseAs(ListMultipartUploadsResponse.class);
   }
 
   AbortMultipartUploadResponse sendAbortMultipartUploadRequest(AbortMultipartUploadRequest request)
@@ -282,7 +320,7 @@ final class MultipartUploadHttpRequestManager {
    */
   private static String formatName(String name) {
     // Only lowercase letters, digits, and "-" are allowed
-    return name.toLowerCase().replaceAll("[^\\w\\d\\-]", "-");
+    return name.toLowerCase().replaceAll("[^\\w-]", "-");
   }
 
   private static String formatSemver(String version) {
