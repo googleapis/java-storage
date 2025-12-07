@@ -197,5 +197,13 @@
     <method>void flush()</method>
   </difference>
 
+  <!-- MultipartUploadClient is @InternalExtensionOnly -->
+  <difference>
+    <!-- allow new method to be added at any time -->
+    <differenceType>7013</differenceType>
+    <className>com/google/cloud/storage/MultipartUploadClient</className>
+    <method>* *(*)</method>
+  </difference>
+
 
 </differences>
