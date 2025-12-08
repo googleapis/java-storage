@@ -1,0 +1,58 @@
+/*
+ * Copyright 2025 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.google.storage.v2.samples;
+
+// [START storage_v2_generated_Storage_BidiWriteObject_async]
+import com.google.api.gax.rpc.BidiStream;
+import com.google.storage.v2.BidiWriteObjectRequest;
+import com.google.storage.v2.BidiWriteObjectResponse;
+import com.google.storage.v2.CommonObjectRequestParams;
+import com.google.storage.v2.ObjectChecksums;
+import com.google.storage.v2.StorageClient;
+
+public class AsyncBidiWriteObject {
+
+  public static void main(String[] args) throws Exception {
+    asyncBidiWriteObject();
+  }
+
+  public static void asyncBidiWriteObject() throws Exception {
+    // This snippet has been automatically generated and should be regarded as a code template only.
+    // It will require modifications to work:
+    // - It may require correct/in-range values for request initialization.
+    // - It may require specifying regional endpoints when creating the service client as shown in
+    // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+    try (StorageClient storageClient = StorageClient.create()) {
+      BidiStream<BidiWriteObjectRequest, BidiWriteObjectResponse> bidiStream =
+          storageClient.bidiWriteObjectCallable().call();
+      BidiWriteObjectRequest request =
+          BidiWriteObjectRequest.newBuilder()
+              .setWriteOffset(-1559543565)
+              .setObjectChecksums(ObjectChecksums.newBuilder().build())
+              .setStateLookup(true)
+              .setFlush(true)
+              .setFinishWrite(true)
+              .setCommonObjectRequestParams(CommonObjectRequestParams.newBuilder().build())
+              .build();
+      bidiStream.send(request);
+      for (BidiWriteObjectResponse response : bidiStream) {
+        // Do something when a response is received.
+      }
+    }
+  }
+}
+// [END storage_v2_generated_Storage_BidiWriteObject_async]

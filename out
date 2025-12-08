@@ -1,0 +1,1003 @@
+command stderr:
++ source /usr/local/lib/python3.13/site-packages/library_generation/utils/utilities.sh
+++ set -eo pipefail
+++++ realpath /usr/local/lib/python3.13/site-packages/library_generation/utils/utilities.sh
++++ dirname /usr/local/lib/python3.13/site-packages/library_generation/utils/utilities.sh
+++ utilities_script_dir=/usr/local/lib/python3.13/site-packages/library_generation/utils
++ get_output_folder
++++ pwd
+++ basename /workspace/java-storage
++ [[ java-storage != \o\u\t\p\u\t ]]
+++ pwd
++ echo /workspace/java-storage/output
+command stdout:
+/workspace/java-storage/output
+output_folder: /workspace/java-storage/output
+generating library storage
+command stderr:
++ source /usr/local/lib/python3.13/site-packages/library_generation/utils/utilities.sh
+++ set -eo pipefail
+++++ realpath /usr/local/lib/python3.13/site-packages/library_generation/utils/utilities.sh
++++ dirname /usr/local/lib/python3.13/site-packages/library_generation/utils/utilities.sh
+++ utilities_script_dir=/usr/local/lib/python3.13/site-packages/library_generation/utils
++ mktemp -d
+command stdout:
+/tmp/tmp.Yww39ELIA0
+build_file_folder: /workspace/java-storage/output/google/storage/v2
+arguments: 
+['--proto_path', 'google/storage/v2', '--proto_only', 'false', '--gapic_additional_protos', '  google/cloud/common_resources.proto', '--transport', 'grpc', '--rest_numeric_enums', 'true', '--gapic_yaml', '', '--service_config', 'google/storage/v2/storage_grpc_service_config.json', '--service_yaml', 'google/storage/v2/storage_v2.yaml', '--include_samples', 'true', '--destination_path', 'java-google-storage-v2']
+Generating library from google/storage/v2 to /workspace/java-storage
+/workspace/java-storage/output /workspace/java-storage
+/workspace/java-storage
+/workspace/java-storage/output/temp_preprocessed-28902 /workspace/java-storage
+/workspace/java-storage
+Library generation finished successfully
+command stderr:
++ source /usr/local/lib/python3.13/site-packages/library_generation/utils/utilities.sh
+++ set -eo pipefail
+++++ realpath /usr/local/lib/python3.13/site-packages/library_generation/utils/utilities.sh
++++ dirname /usr/local/lib/python3.13/site-packages/library_generation/utils/utilities.sh
+++ utilities_script_dir=/usr/local/lib/python3.13/site-packages/library_generation/utils
++ build_owlbot_cli_source_folder /workspace/java-storage /tmp/tmp.Yww39ELIA0 /workspace/java-storage/output/java-google-storage-v2 google/storage/v2
++ local postprocessing_target=/workspace/java-storage
++ local target_folder=/tmp/tmp.Yww39ELIA0
++ local preprocessed_sources_path=/workspace/java-storage/output/java-google-storage-v2
++ local proto_path=google/storage/v2
++ [[ -z google/storage/v2 ]]
++ owlbot_staging_folder=/workspace/java-storage/owl-bot-staging
++ mkdir -p /workspace/java-storage/owl-bot-staging
++ mkdir -p /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java
++ copy_directory_if_exists /workspace/java-storage/output/java-google-storage-v2 proto /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library
++ local base_folder=/workspace/java-storage/output/java-google-storage-v2
++ local folder_prefix=proto
++ local destination_folder=/tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library
++ '[' '!' -d /workspace/java-storage/output/java-google-storage-v2 ']'
++ pushd /workspace/java-storage/output/java-google-storage-v2
+++ find . -maxdepth 1 -type d -name 'proto*'
+++ wc -l
++ [[ 1 -gt 0 ]]
++ cp -r /workspace/java-storage/output/java-google-storage-v2/proto-java-google-storage-v2 /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library
++ popd
++ copy_directory_if_exists /workspace/java-storage/output/java-google-storage-v2 grpc /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/grpc-google-cloud-library
++ local base_folder=/workspace/java-storage/output/java-google-storage-v2
++ local folder_prefix=grpc
++ local destination_folder=/tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/grpc-google-cloud-library
++ '[' '!' -d /workspace/java-storage/output/java-google-storage-v2 ']'
++ pushd /workspace/java-storage/output/java-google-storage-v2
+++ find . -maxdepth 1 -type d -name 'grpc*'
+++ wc -l
++ [[ 1 -gt 0 ]]
++ cp -r /workspace/java-storage/output/java-google-storage-v2/grpc-java-google-storage-v2 /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/grpc-google-cloud-library
++ popd
++ copy_directory_if_exists /workspace/java-storage/output/java-google-storage-v2 gapic /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/gapic-google-cloud-library
++ local base_folder=/workspace/java-storage/output/java-google-storage-v2
++ local folder_prefix=gapic
++ local destination_folder=/tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/gapic-google-cloud-library
++ '[' '!' -d /workspace/java-storage/output/java-google-storage-v2 ']'
++ pushd /workspace/java-storage/output/java-google-storage-v2
+++ find . -maxdepth 1 -type d -name 'gapic*'
+++ wc -l
++ [[ 1 -gt 0 ]]
++ cp -r /workspace/java-storage/output/java-google-storage-v2/gapic-java-google-storage-v2 /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/gapic-google-cloud-library
++ popd
++ copy_directory_if_exists /workspace/java-storage/output/java-google-storage-v2 samples /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/samples
++ local base_folder=/workspace/java-storage/output/java-google-storage-v2
++ local folder_prefix=samples
++ local destination_folder=/tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/samples
++ '[' '!' -d /workspace/java-storage/output/java-google-storage-v2 ']'
++ pushd /workspace/java-storage/output/java-google-storage-v2
+++ find . -maxdepth 1 -type d -name 'samples*'
+++ wc -l
++ [[ 1 -gt 0 ]]
++ cp -r /workspace/java-storage/output/java-google-storage-v2/samples /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/samples
++ popd
++ pushd /tmp/tmp.Yww39ELIA0
++ git init
+hint: Using 'master' as the name for the initial branch. This default branch name
+hint: is subject to change. To configure the initial branch name to use in all
+hint: of your new repositories, which will suppress this warning, call:
+hint: 
+hint: 	git config --global init.defaultBranch <name>
+hint: 
+hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+hint: 'development'. The just-created branch can be renamed via this command:
+hint: 
+hint: 	git branch -m <name>
++ git commit --allow-empty -m 'empty commit'
++ popd
+command stdout:
+/workspace/java-storage/output/java-google-storage-v2 /workspace/java-storage/output
+/workspace/java-storage/output
+/workspace/java-storage/output/java-google-storage-v2 /workspace/java-storage/output
+/workspace/java-storage/output
+/workspace/java-storage/output/java-google-storage-v2 /workspace/java-storage/output
+/workspace/java-storage/output
+/workspace/java-storage/output/java-google-storage-v2 /workspace/java-storage/output
+/workspace/java-storage/output
+/tmp/tmp.Yww39ELIA0 /workspace/java-storage/output
+Initialized empty Git repository in /tmp/tmp.Yww39ELIA0/.git/
+[master (root-commit) 484053d] empty commit
+/workspace/java-storage/output
+build_file_folder: /workspace/java-storage/output/google/storage/control/v2
+arguments: 
+['--proto_path', 'google/storage/control/v2', '--proto_only', 'false', '--gapic_additional_protos', '  google/cloud/common_resources.proto google/iam/v1/iam_policy.proto', '--transport', 'grpc+rest', '--rest_numeric_enums', 'true', '--gapic_yaml', '', '--service_config', 'google/storage/control/v2/storage_control_grpc_service_config.json', '--service_yaml', 'google/storage/control/v2/storage_v2.yaml', '--include_samples', 'true', '--destination_path', 'java-google-storage-control-v2']
+Generating library from google/storage/control/v2 to /workspace/java-storage
+/workspace/java-storage/output /workspace/java-storage
+Dec 08, 2025 7:14:06 PM com.google.api.generator.gapic.protoparser.Parser getMethodSelectiveGapicType
+WARNING: Service yaml config is misconfigured. Version in publishing.library_settings (google.storage.control.v2) does not match proto package (google.iam.v1).Disregarding selective generation settings.
+Dec 08, 2025 7:14:06 PM com.google.api.generator.gapic.protoparser.Parser getMethodSelectiveGapicType
+WARNING: Service yaml config is misconfigured. Version in publishing.library_settings (google.storage.control.v2) does not match proto package (google.iam.v1).Disregarding selective generation settings.
+Dec 08, 2025 7:14:06 PM com.google.api.generator.gapic.protoparser.Parser getMethodSelectiveGapicType
+WARNING: Service yaml config is misconfigured. Version in publishing.library_settings (google.storage.control.v2) does not match proto package (google.iam.v1).Disregarding selective generation settings.
+Dec 08, 2025 7:14:06 PM com.google.api.generator.gapic.protoparser.Parser getMethodSelectiveGapicType
+WARNING: Service yaml config is misconfigured. Version in publishing.library_settings (google.storage.control.v2) does not match proto package (google.iam.v1).Disregarding selective generation settings.
+Dec 08, 2025 7:14:06 PM com.google.api.generator.gapic.protoparser.Parser getMethodSelectiveGapicType
+WARNING: Service yaml config is misconfigured. Version in publishing.library_settings (google.storage.control.v2) does not match proto package (google.iam.v1).Disregarding selective generation settings.
+Dec 08, 2025 7:14:06 PM com.google.api.generator.gapic.protoparser.Parser getMethodSelectiveGapicType
+WARNING: Service yaml config is misconfigured. Version in publishing.library_settings (google.storage.control.v2) does not match proto package (google.iam.v1).Disregarding selective generation settings.
+/workspace/java-storage
+/workspace/java-storage/output/temp_preprocessed-31711 /workspace/java-storage
+/workspace/java-storage
+Library generation finished successfully
+command stderr:
++ source /usr/local/lib/python3.13/site-packages/library_generation/utils/utilities.sh
+++ set -eo pipefail
+++++ realpath /usr/local/lib/python3.13/site-packages/library_generation/utils/utilities.sh
++++ dirname /usr/local/lib/python3.13/site-packages/library_generation/utils/utilities.sh
+++ utilities_script_dir=/usr/local/lib/python3.13/site-packages/library_generation/utils
++ build_owlbot_cli_source_folder /workspace/java-storage /tmp/tmp.Yww39ELIA0 /workspace/java-storage/output/java-google-storage-control-v2 google/storage/control/v2
++ local postprocessing_target=/workspace/java-storage
++ local target_folder=/tmp/tmp.Yww39ELIA0
++ local preprocessed_sources_path=/workspace/java-storage/output/java-google-storage-control-v2
++ local proto_path=google/storage/control/v2
++ [[ -z google/storage/control/v2 ]]
++ owlbot_staging_folder=/workspace/java-storage/owl-bot-staging
++ mkdir -p /workspace/java-storage/owl-bot-staging
++ mkdir -p /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java
++ copy_directory_if_exists /workspace/java-storage/output/java-google-storage-control-v2 proto /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library
++ local base_folder=/workspace/java-storage/output/java-google-storage-control-v2
++ local folder_prefix=proto
++ local destination_folder=/tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library
++ '[' '!' -d /workspace/java-storage/output/java-google-storage-control-v2 ']'
++ pushd /workspace/java-storage/output/java-google-storage-control-v2
+++ find . -maxdepth 1 -type d -name 'proto*'
+++ wc -l
++ [[ 1 -gt 0 ]]
++ cp -r /workspace/java-storage/output/java-google-storage-control-v2/proto-java-google-storage-control-v2 /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library
++ popd
++ copy_directory_if_exists /workspace/java-storage/output/java-google-storage-control-v2 grpc /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/grpc-google-cloud-library
++ local base_folder=/workspace/java-storage/output/java-google-storage-control-v2
++ local folder_prefix=grpc
++ local destination_folder=/tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/grpc-google-cloud-library
++ '[' '!' -d /workspace/java-storage/output/java-google-storage-control-v2 ']'
++ pushd /workspace/java-storage/output/java-google-storage-control-v2
+++ find . -maxdepth 1 -type d -name 'grpc*'
+++ wc -l
++ [[ 1 -gt 0 ]]
++ cp -r /workspace/java-storage/output/java-google-storage-control-v2/grpc-java-google-storage-control-v2 /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/grpc-google-cloud-library
++ popd
++ copy_directory_if_exists /workspace/java-storage/output/java-google-storage-control-v2 gapic /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/gapic-google-cloud-library
++ local base_folder=/workspace/java-storage/output/java-google-storage-control-v2
++ local folder_prefix=gapic
++ local destination_folder=/tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/gapic-google-cloud-library
++ '[' '!' -d /workspace/java-storage/output/java-google-storage-control-v2 ']'
++ pushd /workspace/java-storage/output/java-google-storage-control-v2
+++ find . -maxdepth 1 -type d -name 'gapic*'
+++ wc -l
++ [[ 1 -gt 0 ]]
++ cp -r /workspace/java-storage/output/java-google-storage-control-v2/gapic-java-google-storage-control-v2 /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/gapic-google-cloud-library
++ popd
++ copy_directory_if_exists /workspace/java-storage/output/java-google-storage-control-v2 samples /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/samples
++ local base_folder=/workspace/java-storage/output/java-google-storage-control-v2
++ local folder_prefix=samples
++ local destination_folder=/tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/samples
++ '[' '!' -d /workspace/java-storage/output/java-google-storage-control-v2 ']'
++ pushd /workspace/java-storage/output/java-google-storage-control-v2
+++ find . -maxdepth 1 -type d -name 'samples*'
+++ wc -l
++ [[ 1 -gt 0 ]]
++ cp -r /workspace/java-storage/output/java-google-storage-control-v2/samples /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/samples
++ popd
++ pushd /tmp/tmp.Yww39ELIA0
++ git init
++ git commit --allow-empty -m 'empty commit'
++ popd
+command stdout:
+/workspace/java-storage/output/java-google-storage-control-v2 /workspace/java-storage/output
+/workspace/java-storage/output
+/workspace/java-storage/output/java-google-storage-control-v2 /workspace/java-storage/output
+/workspace/java-storage/output
+/workspace/java-storage/output/java-google-storage-control-v2 /workspace/java-storage/output
+/workspace/java-storage/output
+/workspace/java-storage/output/java-google-storage-control-v2 /workspace/java-storage/output
+/workspace/java-storage/output
+/tmp/tmp.Yww39ELIA0 /workspace/java-storage/output
+Reinitialized existing Git repository in /tmp/tmp.Yww39ELIA0/.git/
+[master a081821] empty commit
+/workspace/java-storage/output
++++ readlink -f /usr/local/lib/python3.13/site-packages/library_generation/postprocess_library.sh
+++ dirname /usr/local/lib/python3.13/site-packages/library_generation/postprocess_library.sh
++ scripts_root=/usr/local/lib/python3.13/site-packages/library_generation
++ postprocessing_target=/workspace/java-storage
++ preprocessed_sources_path=
++ versions_file=/workspace/java-storage/versions.txt
++ owlbot_cli_source_folder=/tmp/tmp.Yww39ELIA0
++ is_monorepo=false
++ libraries_bom_version=26.71.0
++ library_version=2.60.0
++ owlbot_yaml_file_name=.OwlBot-hermetic.yaml
++ source /usr/local/lib/python3.13/site-packages/library_generation/utils/utilities.sh
+++ set -eo pipefail
+++++ realpath /usr/local/lib/python3.13/site-packages/library_generation/utils/utilities.sh
++++ dirname /usr/local/lib/python3.13/site-packages/library_generation/utils/utilities.sh
+++ utilities_script_dir=/usr/local/lib/python3.13/site-packages/library_generation/utils
++ required_inputs=('postprocessing_target' 'versions_file' 'is_monorepo')
++ declare -a required_inputs
++ for required_input in "${required_inputs[@]}"
++ [[ -z /workspace/java-storage ]]
++ for required_input in "${required_inputs[@]}"
++ [[ -z /workspace/java-storage/versions.txt ]]
++ for required_input in "${required_inputs[@]}"
++ [[ -z false ]]
++ for owlbot_file in ".repo-metadata.json" "owlbot.py" "${owlbot_yaml_file_name}"
+++ find /workspace/java-storage -name .repo-metadata.json
+++ wc -l
++ [[ 1 -eq 0 ]]
++ for owlbot_file in ".repo-metadata.json" "owlbot.py" "${owlbot_yaml_file_name}"
+++ find /workspace/java-storage -name owlbot.py
+++ wc -l
++ [[ 1 -eq 0 ]]
++ for owlbot_file in ".repo-metadata.json" "owlbot.py" "${owlbot_yaml_file_name}"
+++ find /workspace/java-storage -name .OwlBot-hermetic.yaml
+++ wc -l
++ [[ 1 -eq 0 ]]
++ [[ -z /tmp/tmp.Yww39ELIA0 ]]
++ [[ false == \t\r\u\e ]]
++ owlbot_yaml_relative_path=.github/.OwlBot-hermetic.yaml
++ repo_workspace=/workspace
++ preprocessed_libraries_binding=/tmp/tmp.Yww39ELIA0
++ pushd /workspace/java-storage
+/workspace/java-storage /workspace/java-storage
++ owl-bot copy-code --source-repo-commit-hash=none --source-repo=/tmp/tmp.Yww39ELIA0 --config-file=.github/.OwlBot-hermetic.yaml
+Using local source repo directory /tmp/tmp.Yww39ELIA0
+git config --global --add safe.directory /tmp/tmp.Yww39ELIA0
+rm  /workspace/java-storage/grpc-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/StorageControlGrpc.java
+rm  /workspace/java-storage/grpc-google-cloud-storage-v2/src/main/java/com/google/storage/v2/StorageGrpc.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/AnywhereCache.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/AnywhereCacheName.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/AnywhereCacheOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/BucketName.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/CommonLongRunningOperationMetadata.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/CommonLongRunningOperationMetadataOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/CreateAnywhereCacheMetadata.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/CreateAnywhereCacheMetadataOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/CreateAnywhereCacheRequest.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/CreateAnywhereCacheRequestOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/CreateFolderRequest.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/CreateFolderRequestOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/CreateManagedFolderRequest.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/CreateManagedFolderRequestOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/DeleteFolderRequest.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/DeleteFolderRequestOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/DeleteManagedFolderRequest.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/DeleteManagedFolderRequestOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/DisableAnywhereCacheRequest.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/DisableAnywhereCacheRequestOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/Folder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/FolderName.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/FolderOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/GetAnywhereCacheRequest.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/GetAnywhereCacheRequestOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/GetFolderIntelligenceConfigRequest.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/GetFolderIntelligenceConfigRequestOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/GetFolderRequest.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/GetFolderRequestOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/GetManagedFolderRequest.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/GetManagedFolderRequestOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/GetOrganizationIntelligenceConfigRequest.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/GetOrganizationIntelligenceConfigRequestOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/GetProjectIntelligenceConfigRequest.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/GetProjectIntelligenceConfigRequestOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/GetStorageLayoutRequest.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/GetStorageLayoutRequestOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/IntelligenceConfig.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/IntelligenceConfigName.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/IntelligenceConfigOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/ListAnywhereCachesRequest.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/ListAnywhereCachesRequestOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/ListAnywhereCachesResponse.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/ListAnywhereCachesResponseOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/ListFoldersRequest.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/ListFoldersRequestOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/ListFoldersResponse.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/ListFoldersResponseOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/ListManagedFoldersRequest.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/ListManagedFoldersRequestOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/ListManagedFoldersResponse.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/ListManagedFoldersResponseOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/ManagedFolder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/ManagedFolderName.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/ManagedFolderOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/PauseAnywhereCacheRequest.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/PauseAnywhereCacheRequestOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/PendingRenameInfo.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/PendingRenameInfoOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/RenameFolderMetadata.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/RenameFolderMetadataOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/RenameFolderRequest.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/RenameFolderRequestOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/ResumeAnywhereCacheRequest.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/ResumeAnywhereCacheRequestOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/StorageControlProto.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/StorageLayout.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/StorageLayoutName.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/StorageLayoutOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/UpdateAnywhereCacheMetadata.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/UpdateAnywhereCacheMetadataOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/UpdateAnywhereCacheRequest.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/UpdateAnywhereCacheRequestOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/UpdateFolderIntelligenceConfigRequest.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/UpdateFolderIntelligenceConfigRequestOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/UpdateOrganizationIntelligenceConfigRequest.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/UpdateOrganizationIntelligenceConfigRequestOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/UpdateProjectIntelligenceConfigRequest.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/UpdateProjectIntelligenceConfigRequestOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/proto/google/storage/control/v2/storage_control.proto
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/AppendObjectSpec.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/AppendObjectSpecOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/BidiReadHandle.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/BidiReadHandleOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/BidiReadObjectError.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/BidiReadObjectErrorOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/BidiReadObjectRedirectedError.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/BidiReadObjectRedirectedErrorOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/BidiReadObjectRequest.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/BidiReadObjectRequestOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/BidiReadObjectResponse.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/BidiReadObjectResponseOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/BidiReadObjectSpec.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/BidiReadObjectSpecOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/BidiWriteHandle.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/BidiWriteHandleOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/BidiWriteObjectRedirectedError.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/BidiWriteObjectRedirectedErrorOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/BidiWriteObjectRequest.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/BidiWriteObjectRequestOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/BidiWriteObjectResponse.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/BidiWriteObjectResponseOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/Bucket.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/BucketAccessControl.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/BucketAccessControlOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/BucketName.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/BucketOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/CancelResumableWriteRequest.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/CancelResumableWriteRequestOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/CancelResumableWriteResponse.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/CancelResumableWriteResponseOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ChecksummedData.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ChecksummedDataOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/CommonObjectRequestParams.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/CommonObjectRequestParamsOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ComposeObjectRequest.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ComposeObjectRequestOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ContentRange.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ContentRangeOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/CreateBucketRequest.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/CreateBucketRequestOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/CryptoKeyName.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/CustomerEncryption.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/CustomerEncryptionOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/DeleteBucketRequest.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/DeleteBucketRequestOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/DeleteObjectRequest.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/DeleteObjectRequestOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/GetBucketRequest.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/GetBucketRequestOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/GetObjectRequest.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/GetObjectRequestOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ListBucketsRequest.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ListBucketsRequestOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ListBucketsResponse.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ListBucketsResponseOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ListObjectsRequest.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ListObjectsRequestOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ListObjectsResponse.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ListObjectsResponseOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/LockBucketRetentionPolicyRequest.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/LockBucketRetentionPolicyRequestOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/MoveObjectRequest.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/MoveObjectRequestOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/Object.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ObjectAccessControl.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ObjectAccessControlOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ObjectChecksums.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ObjectChecksumsOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ObjectContexts.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ObjectContextsOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ObjectCustomContextPayload.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ObjectCustomContextPayloadOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ObjectOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ObjectRangeData.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ObjectRangeDataOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/Owner.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/OwnerOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ProjectName.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ProjectTeam.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ProjectTeamOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/QueryWriteStatusRequest.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/QueryWriteStatusRequestOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/QueryWriteStatusResponse.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/QueryWriteStatusResponseOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ReadObjectRequest.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ReadObjectRequestOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ReadObjectResponse.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ReadObjectResponseOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ReadRange.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ReadRangeError.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ReadRangeErrorOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ReadRangeOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/RestoreObjectRequest.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/RestoreObjectRequestOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/RewriteObjectRequest.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/RewriteObjectRequestOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/RewriteResponse.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/RewriteResponseOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ServiceConstants.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ServiceConstantsOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/StartResumableWriteRequest.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/StartResumableWriteRequestOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/StartResumableWriteResponse.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/StartResumableWriteResponseOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/StorageProto.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/UpdateBucketRequest.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/UpdateBucketRequestOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/UpdateObjectRequest.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/UpdateObjectRequestOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/WriteObjectRequest.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/WriteObjectRequestOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/WriteObjectResponse.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/WriteObjectResponseOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/WriteObjectSpec.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/WriteObjectSpecOrBuilder.java
+rm  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/proto/google/storage/v2/storage.proto
+rm  /workspace/java-storage/gapic-google-cloud-storage-v2/src/main/java/com/google/storage/v2/package-info.java
+rm  /workspace/java-storage/gapic-google-cloud-storage-v2/src/main/java/com/google/storage/v2/StorageClient.java
+rm  /workspace/java-storage/gapic-google-cloud-storage-v2/src/main/java/com/google/storage/v2/StorageSettings.java
+rm  /workspace/java-storage/gapic-google-cloud-storage-v2/src/main/java/com/google/storage/v2/stub/GrpcStorageCallableFactory.java
+rm  /workspace/java-storage/gapic-google-cloud-storage-v2/src/main/java/com/google/storage/v2/stub/GrpcStorageStub.java
+rm  /workspace/java-storage/gapic-google-cloud-storage-v2/src/main/java/com/google/storage/v2/stub/StorageStub.java
+rm  /workspace/java-storage/gapic-google-cloud-storage-v2/src/main/java/com/google/storage/v2/stub/StorageStubSettings.java
+rm  /workspace/java-storage/gapic-google-cloud-storage-v2/src/main/resources/com/google/storage/v2/gapic_metadata.json
+rm  /workspace/java-storage/gapic-google-cloud-storage-v2/src/main/resources/META-INF/native-image/com.google.storage.v2/reflect-config.json
+rm  /workspace/java-storage/gapic-google-cloud-storage-v2/src/test/java/com/google/storage/v2/MockStorage.java
+rm  /workspace/java-storage/gapic-google-cloud-storage-v2/src/test/java/com/google/storage/v2/MockStorageImpl.java
+rm  /workspace/java-storage/gapic-google-cloud-storage-v2/src/test/java/com/google/storage/v2/StorageClientTest.java
+rm  /workspace/java-storage/google-cloud-storage-control/src/main/java/com/google/storage/control/v2/gapic_metadata.json
+rm  /workspace/java-storage/google-cloud-storage-control/src/main/java/com/google/storage/control/v2/package-info.java
+rm  /workspace/java-storage/google-cloud-storage-control/src/main/java/com/google/storage/control/v2/StorageControlClient.java
+rm  /workspace/java-storage/google-cloud-storage-control/src/main/java/com/google/storage/control/v2/StorageControlSettings.java
+rm  /workspace/java-storage/google-cloud-storage-control/src/main/java/com/google/storage/control/v2/stub/GrpcStorageControlCallableFactory.java
+rm  /workspace/java-storage/google-cloud-storage-control/src/main/java/com/google/storage/control/v2/stub/GrpcStorageControlStub.java
+rm  /workspace/java-storage/google-cloud-storage-control/src/main/java/com/google/storage/control/v2/stub/HttpJsonStorageControlCallableFactory.java
+rm  /workspace/java-storage/google-cloud-storage-control/src/main/java/com/google/storage/control/v2/stub/HttpJsonStorageControlStub.java
+rm  /workspace/java-storage/google-cloud-storage-control/src/main/java/com/google/storage/control/v2/stub/StorageControlStub.java
+rm  /workspace/java-storage/google-cloud-storage-control/src/main/java/com/google/storage/control/v2/stub/StorageControlStubSettings.java
+rm  /workspace/java-storage/google-cloud-storage-control/src/main/resources/com/google/storage/control/v2/gapic_metadata.json
+rm  /workspace/java-storage/google-cloud-storage-control/src/main/resources/META-INF/native-image/com.google.storage.control.v2/reflect-config.json
+rm  /workspace/java-storage/google-cloud-storage-control/src/test/java/com/google/storage/control/v2/MockStorageControl.java
+rm  /workspace/java-storage/google-cloud-storage-control/src/test/java/com/google/storage/control/v2/MockStorageControlImpl.java
+rm  /workspace/java-storage/google-cloud-storage-control/src/test/java/com/google/storage/control/v2/StorageControlClientHttpJsonTest.java
+rm  /workspace/java-storage/google-cloud-storage-control/src/test/java/com/google/storage/control/v2/StorageControlClientTest.java
+rmdir  /workspace/java-storage/google-cloud-storage-control/src/main/resources/META-INF/native-image/com.google.storage.control.v2
+rmdir  /workspace/java-storage/gapic-google-cloud-storage-v2/src/main/resources/META-INF/native-image/com.google.storage.v2
+rmdir  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2
+rmdir  /workspace/java-storage/grpc-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2
+rmdir  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control
+rmdir  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/proto/google/storage/control/v2
+rmdir  /workspace/java-storage/grpc-google-cloud-storage-control-v2/src/main/java/com/google/storage/control
+rmdir  /workspace/java-storage/google-cloud-storage-control/src/main/java/com/google/storage/control/v2/stub
+rmdir  /workspace/java-storage/google-cloud-storage-control/src/main/resources/com/google/storage/control/v2
+rmdir  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/proto/google/storage/control
+rmdir  /workspace/java-storage/google-cloud-storage-control/src/main/resources/com/google/storage/control
+rmdir  /workspace/java-storage/google-cloud-storage-control/src/main/java/com/google/storage/control/v2
+rmdir  /workspace/java-storage/google-cloud-storage-control/src/test/java/com/google/storage/control/v2
+rmdir  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage
+rmdir  /workspace/java-storage/gapic-google-cloud-storage-v2/src/main/java/com/google/storage/v2/stub
+rmdir  /workspace/java-storage/gapic-google-cloud-storage-v2/src/main/resources/com/google/storage/v2
+rmdir  /workspace/java-storage/gapic-google-cloud-storage-v2/src/main/resources/META-INF/native-image
+rmdir  /workspace/java-storage/grpc-google-cloud-storage-control-v2/src/main/java/com/google/storage
+rmdir  /workspace/java-storage/google-cloud-storage-control/src/main/java/com/google/storage/control
+rmdir  /workspace/java-storage/google-cloud-storage-control/src/main/resources/META-INF/native-image
+rmdir  /workspace/java-storage/google-cloud-storage-control/src/test/java/com/google/storage/control
+rmdir  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/proto/google/storage
+rmdir  /workspace/java-storage/gapic-google-cloud-storage-v2/src/main/resources/com/google/storage
+rmdir  /workspace/java-storage/google-cloud-storage-control/src/main/resources/com/google/storage
+rmdir  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2
+rmdir  /workspace/java-storage/gapic-google-cloud-storage-v2/src/main/java/com/google/storage/v2
+rmdir  /workspace/java-storage/gapic-google-cloud-storage-v2/src/test/java/com/google/storage/v2
+rmdir  /workspace/java-storage/grpc-google-cloud-storage-v2/src/main/java/com/google/storage/v2
+rmdir  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com/google
+rmdir  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google/storage
+rmdir  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/proto/google/storage/v2
+rmdir  /workspace/java-storage/gapic-google-cloud-storage-v2/src/main/java/com/google/storage
+rmdir  /workspace/java-storage/gapic-google-cloud-storage-v2/src/test/java/com/google/storage
+rmdir  /workspace/java-storage/grpc-google-cloud-storage-control-v2/src/main/java/com/google
+rmdir  /workspace/java-storage/grpc-google-cloud-storage-v2/src/main/java/com/google/storage
+rmdir  /workspace/java-storage/google-cloud-storage-control/src/main/java/com/google/storage
+rmdir  /workspace/java-storage/google-cloud-storage-control/src/test/java/com/google/storage
+rmdir  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/proto/google
+rmdir  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/proto/google/storage
+rmdir  /workspace/java-storage/gapic-google-cloud-storage-v2/src/main/resources/com/google
+rmdir  /workspace/java-storage/google-cloud-storage-control/src/main/resources/com/google
+rmdir  /workspace/java-storage/gapic-google-cloud-storage-v2/src/main/resources/META-INF
+rmdir  /workspace/java-storage/google-cloud-storage-control/src/main/resources/META-INF
+rmdir  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java/com
+rmdir  /workspace/java-storage/grpc-google-cloud-storage-control-v2/src/main/java/com
+rmdir  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com/google
+rmdir  /workspace/java-storage/gapic-google-cloud-storage-v2/src/main/java/com/google
+rmdir  /workspace/java-storage/gapic-google-cloud-storage-v2/src/test/java/com/google
+rmdir  /workspace/java-storage/grpc-google-cloud-storage-v2/src/main/java/com/google
+rmdir  /workspace/java-storage/google-cloud-storage-control/src/main/java/com/google
+rmdir  /workspace/java-storage/google-cloud-storage-control/src/test/java/com/google
+rmdir  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/proto
+rmdir  /workspace/java-storage/gapic-google-cloud-storage-v2/src/main/resources/com
+rmdir  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main/java
+rmdir  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/proto/google
+rmdir  /workspace/java-storage/google-cloud-storage-control/src/main/resources/com
+rmdir  /workspace/java-storage/grpc-google-cloud-storage-control-v2/src/main/java
+rmdir  /workspace/java-storage/gapic-google-cloud-storage-v2/src/main/resources
+rmdir  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java/com
+rmdir  /workspace/java-storage/gapic-google-cloud-storage-v2/src/main/java/com
+rmdir  /workspace/java-storage/gapic-google-cloud-storage-v2/src/test/java/com
+rmdir  /workspace/java-storage/google-cloud-storage-control/src/main/resources
+rmdir  /workspace/java-storage/grpc-google-cloud-storage-v2/src/main/java/com
+rmdir  /workspace/java-storage/proto-google-cloud-storage-control-v2/src/main
+rmdir  /workspace/java-storage/google-cloud-storage-control/src/main/java/com
+rmdir  /workspace/java-storage/google-cloud-storage-control/src/test/java/com
+rmdir  /workspace/java-storage/grpc-google-cloud-storage-control-v2/src/main
+rmdir  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/proto
+rmdir  /workspace/java-storage/proto-google-cloud-storage-v2/src/main/java
+rmdir  /workspace/java-storage/gapic-google-cloud-storage-v2/src/main/java
+rmdir  /workspace/java-storage/gapic-google-cloud-storage-v2/src/test/java
+rmdir  /workspace/java-storage/grpc-google-cloud-storage-v2/src/main/java
+rmdir  /workspace/java-storage/google-cloud-storage-control/src/main/java
+rmdir  /workspace/java-storage/google-cloud-storage-control/src/test/java
+rmdir  /workspace/java-storage/proto-google-cloud-storage-control-v2/src
+rmdir  /workspace/java-storage/grpc-google-cloud-storage-control-v2/src
+rmdir  /workspace/java-storage/proto-google-cloud-storage-v2/src/main
+rmdir  /workspace/java-storage/gapic-google-cloud-storage-v2/src/main
+rmdir  /workspace/java-storage/gapic-google-cloud-storage-v2/src/test
+rmdir  /workspace/java-storage/grpc-google-cloud-storage-v2/src/main
+rmdir  /workspace/java-storage/google-cloud-storage-control/src/main
+rmdir  /workspace/java-storage/google-cloud-storage-control/src/test
+rmdir  /workspace/java-storage/proto-google-cloud-storage-v2/src
+rmdir  /workspace/java-storage/gapic-google-cloud-storage-v2/src
+rmdir  /workspace/java-storage/grpc-google-cloud-storage-v2/src
+rmdir  /workspace/java-storage/google-cloud-storage-control/src
+mkdir /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src
+mkdir /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main
+mkdir /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java
+mkdir /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com
+mkdir /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google
+mkdir /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage
+mkdir /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/AppendObjectSpec.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/AppendObjectSpec.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/AppendObjectSpecOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/AppendObjectSpecOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/BidiReadHandle.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/BidiReadHandle.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/BidiReadHandleOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/BidiReadHandleOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/BidiReadObjectError.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/BidiReadObjectError.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/BidiReadObjectErrorOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/BidiReadObjectErrorOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/BidiReadObjectRedirectedError.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/BidiReadObjectRedirectedError.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/BidiReadObjectRedirectedErrorOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/BidiReadObjectRedirectedErrorOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/BidiReadObjectRequest.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/BidiReadObjectRequest.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/BidiReadObjectRequestOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/BidiReadObjectRequestOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/BidiReadObjectResponse.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/BidiReadObjectResponse.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/BidiReadObjectResponseOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/BidiReadObjectResponseOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/BidiReadObjectSpec.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/BidiReadObjectSpec.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/BidiReadObjectSpecOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/BidiReadObjectSpecOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/BidiWriteHandle.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/BidiWriteHandle.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/BidiWriteHandleOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/BidiWriteHandleOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/BidiWriteObjectRedirectedError.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/BidiWriteObjectRedirectedError.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/BidiWriteObjectRedirectedErrorOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/BidiWriteObjectRedirectedErrorOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/BidiWriteObjectRequest.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/BidiWriteObjectRequest.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/BidiWriteObjectRequestOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/BidiWriteObjectRequestOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/BidiWriteObjectResponse.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/BidiWriteObjectResponse.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/BidiWriteObjectResponseOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/BidiWriteObjectResponseOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/Bucket.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/Bucket.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/BucketAccessControl.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/BucketAccessControl.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/BucketAccessControlOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/BucketAccessControlOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/BucketName.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/BucketName.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/BucketOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/BucketOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/CancelResumableWriteRequest.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/CancelResumableWriteRequest.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/CancelResumableWriteRequestOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/CancelResumableWriteRequestOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/CancelResumableWriteResponse.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/CancelResumableWriteResponse.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/CancelResumableWriteResponseOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/CancelResumableWriteResponseOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/ChecksummedData.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ChecksummedData.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/ChecksummedDataOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ChecksummedDataOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/CommonObjectRequestParams.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/CommonObjectRequestParams.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/CommonObjectRequestParamsOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/CommonObjectRequestParamsOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/ComposeObjectRequest.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ComposeObjectRequest.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/ComposeObjectRequestOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ComposeObjectRequestOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/ContentRange.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ContentRange.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/ContentRangeOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ContentRangeOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/CreateBucketRequest.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/CreateBucketRequest.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/CreateBucketRequestOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/CreateBucketRequestOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/CryptoKeyName.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/CryptoKeyName.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/CustomerEncryption.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/CustomerEncryption.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/CustomerEncryptionOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/CustomerEncryptionOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/DeleteBucketRequest.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/DeleteBucketRequest.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/DeleteBucketRequestOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/DeleteBucketRequestOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/DeleteObjectRequest.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/DeleteObjectRequest.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/DeleteObjectRequestOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/DeleteObjectRequestOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/GetBucketRequest.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/GetBucketRequest.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/GetBucketRequestOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/GetBucketRequestOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/GetObjectRequest.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/GetObjectRequest.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/GetObjectRequestOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/GetObjectRequestOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/ListBucketsRequest.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ListBucketsRequest.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/ListBucketsRequestOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ListBucketsRequestOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/ListBucketsResponse.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ListBucketsResponse.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/ListBucketsResponseOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ListBucketsResponseOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/ListObjectsRequest.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ListObjectsRequest.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/ListObjectsRequestOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ListObjectsRequestOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/ListObjectsResponse.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ListObjectsResponse.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/ListObjectsResponseOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ListObjectsResponseOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/LockBucketRetentionPolicyRequest.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/LockBucketRetentionPolicyRequest.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/LockBucketRetentionPolicyRequestOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/LockBucketRetentionPolicyRequestOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/MoveObjectRequest.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/MoveObjectRequest.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/MoveObjectRequestOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/MoveObjectRequestOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/Object.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/Object.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/ObjectAccessControl.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ObjectAccessControl.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/ObjectAccessControlOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ObjectAccessControlOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/ObjectChecksums.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ObjectChecksums.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/ObjectChecksumsOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ObjectChecksumsOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/ObjectContexts.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ObjectContexts.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/ObjectContextsOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ObjectContextsOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/ObjectCustomContextPayload.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ObjectCustomContextPayload.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/ObjectCustomContextPayloadOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ObjectCustomContextPayloadOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/ObjectOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ObjectOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/ObjectRangeData.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ObjectRangeData.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/ObjectRangeDataOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ObjectRangeDataOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/Owner.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/Owner.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/OwnerOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/OwnerOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/ProjectName.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ProjectName.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/ProjectTeam.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ProjectTeam.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/ProjectTeamOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ProjectTeamOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/QueryWriteStatusRequest.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/QueryWriteStatusRequest.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/QueryWriteStatusRequestOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/QueryWriteStatusRequestOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/QueryWriteStatusResponse.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/QueryWriteStatusResponse.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/QueryWriteStatusResponseOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/QueryWriteStatusResponseOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/ReadObjectRequest.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ReadObjectRequest.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/ReadObjectRequestOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ReadObjectRequestOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/ReadObjectResponse.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ReadObjectResponse.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/ReadObjectResponseOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ReadObjectResponseOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/ReadRange.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ReadRange.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/ReadRangeError.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ReadRangeError.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/ReadRangeErrorOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ReadRangeErrorOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/ReadRangeOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ReadRangeOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/RestoreObjectRequest.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/RestoreObjectRequest.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/RestoreObjectRequestOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/RestoreObjectRequestOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/RewriteObjectRequest.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/RewriteObjectRequest.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/RewriteObjectRequestOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/RewriteObjectRequestOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/RewriteResponse.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/RewriteResponse.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/RewriteResponseOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/RewriteResponseOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/ServiceConstants.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ServiceConstants.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/ServiceConstantsOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ServiceConstantsOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/StartResumableWriteRequest.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/StartResumableWriteRequest.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/StartResumableWriteRequestOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/StartResumableWriteRequestOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/StartResumableWriteResponse.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/StartResumableWriteResponse.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/StartResumableWriteResponseOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/StartResumableWriteResponseOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/StorageProto.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/StorageProto.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/UpdateBucketRequest.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/UpdateBucketRequest.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/UpdateBucketRequestOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/UpdateBucketRequestOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/UpdateObjectRequest.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/UpdateObjectRequest.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/UpdateObjectRequestOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/UpdateObjectRequestOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/WriteObjectRequest.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/WriteObjectRequest.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/WriteObjectRequestOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/WriteObjectRequestOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/WriteObjectResponse.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/WriteObjectResponse.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/WriteObjectResponseOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/WriteObjectResponseOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/WriteObjectSpec.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/WriteObjectSpec.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/v2/WriteObjectSpecOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/WriteObjectSpecOrBuilder.java
+mkdir /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/proto
+mkdir /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/proto/google
+mkdir /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/proto/google/storage
+mkdir /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/proto/google/storage/v2
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/proto-google-cloud-library/src/main/proto/google/storage/v2/storage.proto /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-v2/src/main/proto/google/storage/v2/storage.proto
+mkdir /workspace/java-storage/owl-bot-staging/v2/grpc-google-cloud-storage-v2/src
+mkdir /workspace/java-storage/owl-bot-staging/v2/grpc-google-cloud-storage-v2/src/main
+mkdir /workspace/java-storage/owl-bot-staging/v2/grpc-google-cloud-storage-v2/src/main/java
+mkdir /workspace/java-storage/owl-bot-staging/v2/grpc-google-cloud-storage-v2/src/main/java/com
+mkdir /workspace/java-storage/owl-bot-staging/v2/grpc-google-cloud-storage-v2/src/main/java/com/google
+mkdir /workspace/java-storage/owl-bot-staging/v2/grpc-google-cloud-storage-v2/src/main/java/com/google/storage
+mkdir /workspace/java-storage/owl-bot-staging/v2/grpc-google-cloud-storage-v2/src/main/java/com/google/storage/v2
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/grpc-google-cloud-library/src/main/java/com/google/storage/v2/StorageGrpc.java /workspace/java-storage/owl-bot-staging/v2/grpc-google-cloud-storage-v2/src/main/java/com/google/storage/v2/StorageGrpc.java
+mkdir /workspace/java-storage/owl-bot-staging/v2/gapic-google-cloud-storage-v2/src
+mkdir /workspace/java-storage/owl-bot-staging/v2/gapic-google-cloud-storage-v2/src/main
+mkdir /workspace/java-storage/owl-bot-staging/v2/gapic-google-cloud-storage-v2/src/main/java
+mkdir /workspace/java-storage/owl-bot-staging/v2/gapic-google-cloud-storage-v2/src/main/java/com
+mkdir /workspace/java-storage/owl-bot-staging/v2/gapic-google-cloud-storage-v2/src/main/java/com/google
+mkdir /workspace/java-storage/owl-bot-staging/v2/gapic-google-cloud-storage-v2/src/main/java/com/google/storage
+mkdir /workspace/java-storage/owl-bot-staging/v2/gapic-google-cloud-storage-v2/src/main/java/com/google/storage/v2
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/gapic-google-cloud-library/src/main/java/com/google/storage/v2/gapic_metadata.json /workspace/java-storage/owl-bot-staging/v2/gapic-google-cloud-storage-v2/src/main/java/com/google/storage/v2/gapic_metadata.json
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/gapic-google-cloud-library/src/main/java/com/google/storage/v2/package-info.java /workspace/java-storage/owl-bot-staging/v2/gapic-google-cloud-storage-v2/src/main/java/com/google/storage/v2/package-info.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/gapic-google-cloud-library/src/main/java/com/google/storage/v2/StorageClient.java /workspace/java-storage/owl-bot-staging/v2/gapic-google-cloud-storage-v2/src/main/java/com/google/storage/v2/StorageClient.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/gapic-google-cloud-library/src/main/java/com/google/storage/v2/StorageSettings.java /workspace/java-storage/owl-bot-staging/v2/gapic-google-cloud-storage-v2/src/main/java/com/google/storage/v2/StorageSettings.java
+mkdir /workspace/java-storage/owl-bot-staging/v2/gapic-google-cloud-storage-v2/src/main/java/com/google/storage/v2/stub
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/gapic-google-cloud-library/src/main/java/com/google/storage/v2/stub/GrpcStorageCallableFactory.java /workspace/java-storage/owl-bot-staging/v2/gapic-google-cloud-storage-v2/src/main/java/com/google/storage/v2/stub/GrpcStorageCallableFactory.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/gapic-google-cloud-library/src/main/java/com/google/storage/v2/stub/GrpcStorageStub.java /workspace/java-storage/owl-bot-staging/v2/gapic-google-cloud-storage-v2/src/main/java/com/google/storage/v2/stub/GrpcStorageStub.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/gapic-google-cloud-library/src/main/java/com/google/storage/v2/stub/StorageStub.java /workspace/java-storage/owl-bot-staging/v2/gapic-google-cloud-storage-v2/src/main/java/com/google/storage/v2/stub/StorageStub.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/gapic-google-cloud-library/src/main/java/com/google/storage/v2/stub/StorageStubSettings.java /workspace/java-storage/owl-bot-staging/v2/gapic-google-cloud-storage-v2/src/main/java/com/google/storage/v2/stub/StorageStubSettings.java
+mkdir /workspace/java-storage/owl-bot-staging/v2/gapic-google-cloud-storage-v2/src/main/resources
+mkdir /workspace/java-storage/owl-bot-staging/v2/gapic-google-cloud-storage-v2/src/main/resources/META-INF
+mkdir /workspace/java-storage/owl-bot-staging/v2/gapic-google-cloud-storage-v2/src/main/resources/META-INF/native-image
+mkdir /workspace/java-storage/owl-bot-staging/v2/gapic-google-cloud-storage-v2/src/main/resources/META-INF/native-image/com.google.storage.v2
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/gapic-google-cloud-library/src/main/resources/META-INF/native-image/com.google.storage.v2/reflect-config.json /workspace/java-storage/owl-bot-staging/v2/gapic-google-cloud-storage-v2/src/main/resources/META-INF/native-image/com.google.storage.v2/reflect-config.json
+mkdir /workspace/java-storage/owl-bot-staging/v2/gapic-google-cloud-storage-v2/src/test
+mkdir /workspace/java-storage/owl-bot-staging/v2/gapic-google-cloud-storage-v2/src/test/java
+mkdir /workspace/java-storage/owl-bot-staging/v2/gapic-google-cloud-storage-v2/src/test/java/com
+mkdir /workspace/java-storage/owl-bot-staging/v2/gapic-google-cloud-storage-v2/src/test/java/com/google
+mkdir /workspace/java-storage/owl-bot-staging/v2/gapic-google-cloud-storage-v2/src/test/java/com/google/storage
+mkdir /workspace/java-storage/owl-bot-staging/v2/gapic-google-cloud-storage-v2/src/test/java/com/google/storage/v2
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/gapic-google-cloud-library/src/test/java/com/google/storage/v2/MockStorage.java /workspace/java-storage/owl-bot-staging/v2/gapic-google-cloud-storage-v2/src/test/java/com/google/storage/v2/MockStorage.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/gapic-google-cloud-library/src/test/java/com/google/storage/v2/MockStorageImpl.java /workspace/java-storage/owl-bot-staging/v2/gapic-google-cloud-storage-v2/src/test/java/com/google/storage/v2/MockStorageImpl.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/gapic-google-cloud-library/src/test/java/com/google/storage/v2/StorageClientTest.java /workspace/java-storage/owl-bot-staging/v2/gapic-google-cloud-storage-v2/src/test/java/com/google/storage/v2/StorageClientTest.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/v2/generated-java/gapic-google-cloud-library/src/main/java/com/google/storage/v2/gapic_metadata.json /workspace/java-storage/owl-bot-staging/v2/gapic-google-cloud-storage-v2/src/main/resources/com/google/storage/v2/gapic_metadata.json
+mkdir /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src
+mkdir /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main
+mkdir /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java
+mkdir /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com
+mkdir /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google
+mkdir /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage
+mkdir /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control
+mkdir /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/AnywhereCache.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/AnywhereCache.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/AnywhereCacheName.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/AnywhereCacheName.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/AnywhereCacheOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/AnywhereCacheOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/BucketName.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/BucketName.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/CommonLongRunningOperationMetadata.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/CommonLongRunningOperationMetadata.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/CommonLongRunningOperationMetadataOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/CommonLongRunningOperationMetadataOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/CreateAnywhereCacheMetadata.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/CreateAnywhereCacheMetadata.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/CreateAnywhereCacheMetadataOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/CreateAnywhereCacheMetadataOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/CreateAnywhereCacheRequest.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/CreateAnywhereCacheRequest.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/CreateAnywhereCacheRequestOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/CreateAnywhereCacheRequestOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/CreateFolderRequest.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/CreateFolderRequest.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/CreateFolderRequestOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/CreateFolderRequestOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/CreateManagedFolderRequest.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/CreateManagedFolderRequest.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/CreateManagedFolderRequestOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/CreateManagedFolderRequestOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/DeleteFolderRequest.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/DeleteFolderRequest.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/DeleteFolderRequestOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/DeleteFolderRequestOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/DeleteManagedFolderRequest.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/DeleteManagedFolderRequest.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/DeleteManagedFolderRequestOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/DeleteManagedFolderRequestOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/DisableAnywhereCacheRequest.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/DisableAnywhereCacheRequest.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/DisableAnywhereCacheRequestOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/DisableAnywhereCacheRequestOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/Folder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/Folder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/FolderName.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/FolderName.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/FolderOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/FolderOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/GetAnywhereCacheRequest.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/GetAnywhereCacheRequest.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/GetAnywhereCacheRequestOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/GetAnywhereCacheRequestOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/GetFolderIntelligenceConfigRequest.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/GetFolderIntelligenceConfigRequest.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/GetFolderIntelligenceConfigRequestOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/GetFolderIntelligenceConfigRequestOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/GetFolderRequest.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/GetFolderRequest.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/GetFolderRequestOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/GetFolderRequestOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/GetManagedFolderRequest.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/GetManagedFolderRequest.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/GetManagedFolderRequestOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/GetManagedFolderRequestOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/GetOrganizationIntelligenceConfigRequest.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/GetOrganizationIntelligenceConfigRequest.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/GetOrganizationIntelligenceConfigRequestOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/GetOrganizationIntelligenceConfigRequestOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/GetProjectIntelligenceConfigRequest.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/GetProjectIntelligenceConfigRequest.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/GetProjectIntelligenceConfigRequestOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/GetProjectIntelligenceConfigRequestOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/GetStorageLayoutRequest.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/GetStorageLayoutRequest.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/GetStorageLayoutRequestOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/GetStorageLayoutRequestOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/IntelligenceConfig.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/IntelligenceConfig.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/IntelligenceConfigName.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/IntelligenceConfigName.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/IntelligenceConfigOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/IntelligenceConfigOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/ListAnywhereCachesRequest.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/ListAnywhereCachesRequest.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/ListAnywhereCachesRequestOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/ListAnywhereCachesRequestOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/ListAnywhereCachesResponse.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/ListAnywhereCachesResponse.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/ListAnywhereCachesResponseOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/ListAnywhereCachesResponseOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/ListFoldersRequest.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/ListFoldersRequest.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/ListFoldersRequestOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/ListFoldersRequestOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/ListFoldersResponse.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/ListFoldersResponse.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/ListFoldersResponseOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/ListFoldersResponseOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/ListManagedFoldersRequest.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/ListManagedFoldersRequest.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/ListManagedFoldersRequestOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/ListManagedFoldersRequestOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/ListManagedFoldersResponse.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/ListManagedFoldersResponse.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/ListManagedFoldersResponseOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/ListManagedFoldersResponseOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/ManagedFolder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/ManagedFolder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/ManagedFolderName.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/ManagedFolderName.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/ManagedFolderOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/ManagedFolderOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/PauseAnywhereCacheRequest.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/PauseAnywhereCacheRequest.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/PauseAnywhereCacheRequestOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/PauseAnywhereCacheRequestOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/PendingRenameInfo.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/PendingRenameInfo.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/PendingRenameInfoOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/PendingRenameInfoOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/RenameFolderMetadata.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/RenameFolderMetadata.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/RenameFolderMetadataOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/RenameFolderMetadataOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/RenameFolderRequest.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/RenameFolderRequest.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/RenameFolderRequestOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/RenameFolderRequestOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/ResumeAnywhereCacheRequest.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/ResumeAnywhereCacheRequest.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/ResumeAnywhereCacheRequestOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/ResumeAnywhereCacheRequestOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/StorageControlProto.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/StorageControlProto.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/StorageLayout.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/StorageLayout.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/StorageLayoutName.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/StorageLayoutName.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/StorageLayoutOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/StorageLayoutOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/UpdateAnywhereCacheMetadata.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/UpdateAnywhereCacheMetadata.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/UpdateAnywhereCacheMetadataOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/UpdateAnywhereCacheMetadataOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/UpdateAnywhereCacheRequest.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/UpdateAnywhereCacheRequest.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/UpdateAnywhereCacheRequestOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/UpdateAnywhereCacheRequestOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/UpdateFolderIntelligenceConfigRequest.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/UpdateFolderIntelligenceConfigRequest.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/UpdateFolderIntelligenceConfigRequestOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/UpdateFolderIntelligenceConfigRequestOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/UpdateOrganizationIntelligenceConfigRequest.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/UpdateOrganizationIntelligenceConfigRequest.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/UpdateOrganizationIntelligenceConfigRequestOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/UpdateOrganizationIntelligenceConfigRequestOrBuilder.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/UpdateProjectIntelligenceConfigRequest.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/UpdateProjectIntelligenceConfigRequest.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/java/com/google/storage/control/v2/UpdateProjectIntelligenceConfigRequestOrBuilder.java /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/UpdateProjectIntelligenceConfigRequestOrBuilder.java
+mkdir /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/proto
+mkdir /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/proto/google
+mkdir /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/proto/google/storage
+mkdir /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/proto/google/storage/control
+mkdir /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/proto/google/storage/control/v2
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/proto-google-cloud-library/src/main/proto/google/storage/control/v2/storage_control.proto /workspace/java-storage/owl-bot-staging/v2/proto-google-cloud-storage-control-v2/src/main/proto/google/storage/control/v2/storage_control.proto
+mkdir /workspace/java-storage/owl-bot-staging/v2/grpc-google-cloud-storage-control-v2/src
+mkdir /workspace/java-storage/owl-bot-staging/v2/grpc-google-cloud-storage-control-v2/src/main
+mkdir /workspace/java-storage/owl-bot-staging/v2/grpc-google-cloud-storage-control-v2/src/main/java
+mkdir /workspace/java-storage/owl-bot-staging/v2/grpc-google-cloud-storage-control-v2/src/main/java/com
+mkdir /workspace/java-storage/owl-bot-staging/v2/grpc-google-cloud-storage-control-v2/src/main/java/com/google
+mkdir /workspace/java-storage/owl-bot-staging/v2/grpc-google-cloud-storage-control-v2/src/main/java/com/google/storage
+mkdir /workspace/java-storage/owl-bot-staging/v2/grpc-google-cloud-storage-control-v2/src/main/java/com/google/storage/control
+mkdir /workspace/java-storage/owl-bot-staging/v2/grpc-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/grpc-google-cloud-library/src/main/java/com/google/storage/control/v2/StorageControlGrpc.java /workspace/java-storage/owl-bot-staging/v2/grpc-google-cloud-storage-control-v2/src/main/java/com/google/storage/control/v2/StorageControlGrpc.java
+mkdir /workspace/java-storage/owl-bot-staging/v2/google-cloud-storage-control/src
+mkdir /workspace/java-storage/owl-bot-staging/v2/google-cloud-storage-control/src/main
+mkdir /workspace/java-storage/owl-bot-staging/v2/google-cloud-storage-control/src/main/java
+mkdir /workspace/java-storage/owl-bot-staging/v2/google-cloud-storage-control/src/main/java/com
+mkdir /workspace/java-storage/owl-bot-staging/v2/google-cloud-storage-control/src/main/java/com/google
+mkdir /workspace/java-storage/owl-bot-staging/v2/google-cloud-storage-control/src/main/java/com/google/storage
+mkdir /workspace/java-storage/owl-bot-staging/v2/google-cloud-storage-control/src/main/java/com/google/storage/control
+mkdir /workspace/java-storage/owl-bot-staging/v2/google-cloud-storage-control/src/main/java/com/google/storage/control/v2
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/gapic-google-cloud-library/src/main/java/com/google/storage/control/v2/gapic_metadata.json /workspace/java-storage/owl-bot-staging/v2/google-cloud-storage-control/src/main/java/com/google/storage/control/v2/gapic_metadata.json
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/gapic-google-cloud-library/src/main/java/com/google/storage/control/v2/package-info.java /workspace/java-storage/owl-bot-staging/v2/google-cloud-storage-control/src/main/java/com/google/storage/control/v2/package-info.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/gapic-google-cloud-library/src/main/java/com/google/storage/control/v2/StorageControlClient.java /workspace/java-storage/owl-bot-staging/v2/google-cloud-storage-control/src/main/java/com/google/storage/control/v2/StorageControlClient.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/gapic-google-cloud-library/src/main/java/com/google/storage/control/v2/StorageControlSettings.java /workspace/java-storage/owl-bot-staging/v2/google-cloud-storage-control/src/main/java/com/google/storage/control/v2/StorageControlSettings.java
+mkdir /workspace/java-storage/owl-bot-staging/v2/google-cloud-storage-control/src/main/java/com/google/storage/control/v2/stub
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/gapic-google-cloud-library/src/main/java/com/google/storage/control/v2/stub/GrpcStorageControlCallableFactory.java /workspace/java-storage/owl-bot-staging/v2/google-cloud-storage-control/src/main/java/com/google/storage/control/v2/stub/GrpcStorageControlCallableFactory.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/gapic-google-cloud-library/src/main/java/com/google/storage/control/v2/stub/GrpcStorageControlStub.java /workspace/java-storage/owl-bot-staging/v2/google-cloud-storage-control/src/main/java/com/google/storage/control/v2/stub/GrpcStorageControlStub.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/gapic-google-cloud-library/src/main/java/com/google/storage/control/v2/stub/HttpJsonStorageControlCallableFactory.java /workspace/java-storage/owl-bot-staging/v2/google-cloud-storage-control/src/main/java/com/google/storage/control/v2/stub/HttpJsonStorageControlCallableFactory.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/gapic-google-cloud-library/src/main/java/com/google/storage/control/v2/stub/HttpJsonStorageControlStub.java /workspace/java-storage/owl-bot-staging/v2/google-cloud-storage-control/src/main/java/com/google/storage/control/v2/stub/HttpJsonStorageControlStub.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/gapic-google-cloud-library/src/main/java/com/google/storage/control/v2/stub/StorageControlStub.java /workspace/java-storage/owl-bot-staging/v2/google-cloud-storage-control/src/main/java/com/google/storage/control/v2/stub/StorageControlStub.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/gapic-google-cloud-library/src/main/java/com/google/storage/control/v2/stub/StorageControlStubSettings.java /workspace/java-storage/owl-bot-staging/v2/google-cloud-storage-control/src/main/java/com/google/storage/control/v2/stub/StorageControlStubSettings.java
+mkdir /workspace/java-storage/owl-bot-staging/v2/google-cloud-storage-control/src/main/resources
+mkdir /workspace/java-storage/owl-bot-staging/v2/google-cloud-storage-control/src/main/resources/META-INF
+mkdir /workspace/java-storage/owl-bot-staging/v2/google-cloud-storage-control/src/main/resources/META-INF/native-image
+mkdir /workspace/java-storage/owl-bot-staging/v2/google-cloud-storage-control/src/main/resources/META-INF/native-image/com.google.storage.control.v2
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/gapic-google-cloud-library/src/main/resources/META-INF/native-image/com.google.storage.control.v2/reflect-config.json /workspace/java-storage/owl-bot-staging/v2/google-cloud-storage-control/src/main/resources/META-INF/native-image/com.google.storage.control.v2/reflect-config.json
+mkdir /workspace/java-storage/owl-bot-staging/v2/google-cloud-storage-control/src/test
+mkdir /workspace/java-storage/owl-bot-staging/v2/google-cloud-storage-control/src/test/java
+mkdir /workspace/java-storage/owl-bot-staging/v2/google-cloud-storage-control/src/test/java/com
+mkdir /workspace/java-storage/owl-bot-staging/v2/google-cloud-storage-control/src/test/java/com/google
+mkdir /workspace/java-storage/owl-bot-staging/v2/google-cloud-storage-control/src/test/java/com/google/storage
+mkdir /workspace/java-storage/owl-bot-staging/v2/google-cloud-storage-control/src/test/java/com/google/storage/control
+mkdir /workspace/java-storage/owl-bot-staging/v2/google-cloud-storage-control/src/test/java/com/google/storage/control/v2
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/gapic-google-cloud-library/src/test/java/com/google/storage/control/v2/MockStorageControl.java /workspace/java-storage/owl-bot-staging/v2/google-cloud-storage-control/src/test/java/com/google/storage/control/v2/MockStorageControl.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/gapic-google-cloud-library/src/test/java/com/google/storage/control/v2/MockStorageControlImpl.java /workspace/java-storage/owl-bot-staging/v2/google-cloud-storage-control/src/test/java/com/google/storage/control/v2/MockStorageControlImpl.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/gapic-google-cloud-library/src/test/java/com/google/storage/control/v2/StorageControlClientHttpJsonTest.java /workspace/java-storage/owl-bot-staging/v2/google-cloud-storage-control/src/test/java/com/google/storage/control/v2/StorageControlClientHttpJsonTest.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/gapic-google-cloud-library/src/test/java/com/google/storage/control/v2/StorageControlClientTest.java /workspace/java-storage/owl-bot-staging/v2/google-cloud-storage-control/src/test/java/com/google/storage/control/v2/StorageControlClientTest.java
+cp /tmp/tmp.Yww39ELIA0/google/storage/control/v2/generated-java/gapic-google-cloud-library/src/main/java/com/google/storage/control/v2/gapic_metadata.json /workspace/java-storage/owl-bot-staging/v2/google-cloud-storage-control/src/main/resources/com/google/storage/control/v2/gapic_metadata.json
+git log -1 --format=%B
+Wrote commit message to /tmp/tmp-337-W4NZD6pbL4lb/commit-msg--337-Zv9inO5Nmh1L-.txt
++ [[ false == \t\r\u\e ]]
++ echo 'running owl-bot post-processor'
+running owl-bot post-processor
++ pushd /workspace/java-storage
+/workspace/java-storage /workspace/java-storage /workspace/java-storage
++ bash /usr/local/lib/python3.13/site-packages/library_generation/owlbot/bin/entrypoint.sh /usr/local/lib/python3.13/site-packages/library_generation /workspace/java-storage/versions.txt false 26.71.0 2.60.0
++ scripts_root=/usr/local/lib/python3.13/site-packages/library_generation
++ versions_file=/workspace/java-storage/versions.txt
++ is_monorepo=false
++ libraries_bom_version=26.71.0
++ library_version=2.60.0
++ [[ false == \t\r\u\e ]]
++ echo 'Retrieving files from owl-bot-staging directory...'
+Retrieving files from owl-bot-staging directory...
++ '[' -f owlbot.py ']'
++ export SYNTHTOOL_TEMPLATES=/usr/local/lib/python3.13/site-packages/library_generation/owlbot/templates
++ SYNTHTOOL_TEMPLATES=/usr/local/lib/python3.13/site-packages/library_generation/owlbot/templates
++ export SYNTHTOOL_LIBRARIES_BOM_VERSION=26.71.0
++ SYNTHTOOL_LIBRARIES_BOM_VERSION=26.71.0
++ export SYNTHTOOL_LIBRARY_VERSION=2.60.0
++ SYNTHTOOL_LIBRARY_VERSION=2.60.0
++ python3 owlbot.py
+.github/ISSUE_TEMPLATE/bug_report.md
+.github/ISSUE_TEMPLATE/feature_request.md
+.github/ISSUE_TEMPLATE/support_request.md
+.github/PULL_REQUEST_TEMPLATE.md
+.github/auto-label.yaml
+.github/blunderbuss.yml
+.github/dependabot.yml
+.github/generated-files-bot.yml
+.github/release-please.yml
+.github/release-trigger.yml
+.github/scripts/update_generation_config.sh
+.github/snippet-bot.yml
+.github/sync-repo-settings.yaml
+.github/trusted-contribution.yml
+.github/workflows/approve-readme.yaml
+.github/workflows/ci.yaml
+.github/workflows/renovate_config_check.yaml
+.github/workflows/samples.yaml
+.github/workflows/update_generation_config.yaml
+.kokoro/build.sh
+.kokoro/presubmit/graalvm-native-a.cfg
+.kokoro/presubmit/graalvm-native-b.cfg
+.kokoro/presubmit/graalvm-native-c.cfg
+CODE_OF_CONDUCT.md
+CONTRIBUTING.md
+LICENSE
+README.md
+SECURITY.md
+java.header
+license-checks.xml
+renovate.json
+samples/install-without-bom/pom.xml
+samples/pom.xml
+samples/snapshot/pom.xml
+samples/snippets/pom.xml
++ unset SYNTHTOOL_TEMPLATES
++ unset SYNTHTOOL_LIBRARIES_BOM_VERSION
++ unset SYNTHTOOL_LIBRARY_VERSION
++ echo ...done
+...done
++ echo 'Generating missing pom.xml...'
+Generating missing pom.xml...
++ python3 /usr/local/lib/python3.13/site-packages/library_generation/owlbot/src/fix_poms.py /workspace/java-storage/versions.txt false
+/usr/local/lib/python3.13/site-packages/library_generation/owlbot
+working directory: /workspace/java-storage
+monorepo? False
+updating modules in cloud pom.xml
+updating modules in bom pom.xml
+updating modules in parent pom.xml
+updating modules in /workspace/java-storage/versions.txt
++ echo ...done
+...done
++ echo 'Generating clirr-ignored-differences.xml...'
+Generating clirr-ignored-differences.xml...
++ /usr/local/lib/python3.13/site-packages/library_generation/owlbot/bin/write_clirr_ignore.sh /usr/local/lib/python3.13/site-packages/library_generation
++ echo ...done
+...done
++ echo 'Fixing missing license headers...'
+Fixing missing license headers...
++ python3 /usr/local/lib/python3.13/site-packages/library_generation/owlbot/src/fix-license-headers.py
+No replacements made in [PosixPath('/workspace/java-storage/proto-google-cloud-storage-v2/src/**/*Name.java'), PosixPath('/workspace/java-storage/proto-google-cloud-storage-v2/src/**/*Names.java')] for pattern /\*
+ \* Copyright \d{4} Google LLC
+ \*
+ \* Licensed under the Apache License, Version 2.0 \(the "License"\); you may not use this file except
+ \* in compliance with the License. You may obtain a copy of the License at
+ \*
+ \* http://www.apache.org/licenses/LICENSE-2.0
+ \*
+ \* Unless required by applicable law or agreed to in writing, software distributed under the License
+ \* is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ \* or implied. See the License for the specific language governing permissions and limitations under
+ \* the License.
+ \*/
+, maybe replacement is no longer needed?
+No replacements made in [PosixPath('/workspace/java-storage/proto-google-cloud-storage-control-v2/src/**/*Name.java'), PosixPath('/workspace/java-storage/proto-google-cloud-storage-control-v2/src/**/*Names.java')] for pattern /\*
+ \* Copyright \d{4} Google LLC
+ \*
+ \* Licensed under the Apache License, Version 2.0 \(the "License"\); you may not use this file except
+ \* in compliance with the License. You may obtain a copy of the License at
+ \*
+ \* http://www.apache.org/licenses/LICENSE-2.0
+ \*
+ \* Unless required by applicable law or agreed to in writing, software distributed under the License
+ \* is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ \* or implied. See the License for the specific language governing permissions and limitations under
+ \* the License.
+ \*/
+, maybe replacement is no longer needed?
++ echo ...done
+...done
++ echo 'Reformatting source...'
+Reformatting source...
++ /usr/local/lib/python3.13/site-packages/library_generation/owlbot/bin/format_source.sh /usr/local/lib/python3.13/site-packages/library_generation
++ echo ...done
+...done
++ popd
+/workspace/java-storage /workspace/java-storage
+Library postprocessing finished successfully
