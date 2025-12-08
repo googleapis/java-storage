@@ -21,6 +21,12 @@ import static io.grpc.netty.shaded.io.netty.handler.codec.http.HttpHeaderNames.C
 import static io.grpc.netty.shaded.io.netty.handler.codec.http.HttpResponseStatus.OK;
 import static org.junit.Assert.assertThrows;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.api.client.http.HttpResponseException;
@@ -38,8 +44,11 @@ import com.google.cloud.storage.multipartupload.model.CompletedMultipartUpload;
 import com.google.cloud.storage.multipartupload.model.CompletedPart;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadRequest;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadResponse;
+import com.google.cloud.storage.multipartupload.model.ListMultipartUploadsRequest;
+import com.google.cloud.storage.multipartupload.model.ListMultipartUploadsResponse;
 import com.google.cloud.storage.multipartupload.model.ListPartsRequest;
 import com.google.cloud.storage.multipartupload.model.ListPartsResponse;
+import com.google.cloud.storage.multipartupload.model.MultipartUpload;
 import com.google.cloud.storage.multipartupload.model.ObjectLockMode;
 import com.google.cloud.storage.multipartupload.model.Part;
 import com.google.cloud.storage.multipartupload.model.UploadPartRequest;
@@ -72,6 +81,19 @@ public final class ITMultipartUploadHttpRequestManagerTest {
   static {
     xmlMapper = new XmlMapper();
     xmlMapper.registerModule(new JavaTimeModule());
+    xmlMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+    SimpleModule module = new SimpleModule();
+    module.addSerializer(
+        StorageClass.class,
+        new JsonSerializer<StorageClass>() {
+          @Override
+          public void serialize(
+              StorageClass value, JsonGenerator gen, SerializerProvider serializers)
+              throws java.io.IOException {
+            gen.writeString(value.toString());
+          }
+        });
+    xmlMapper.registerModule(module);
   }
 
   @Rule public final TemporaryFolder temp = new TemporaryFolder();
@@ -904,6 +926,53 @@ public final class ITMultipartUploadHttpRequestManagerTest {
   }
 
   @Test
+  public void sendCompleteMultipartUploadRequest_withUserProject() throws Exception {
+    HttpRequestHandler handler =
+        req -> {
+          assertThat(req.headers().get("x-goog-user-project")).isEqualTo("test-project");
+          CompleteMultipartUploadResponse response =
+              CompleteMultipartUploadResponse.builder()
+                  .bucket("test-bucket")
+                  .key("test-key")
+                  .etag("\"test-etag\"")
+                  .build();
+          ByteBuf buf = Unpooled.wrappedBuffer(xmlMapper.writeValueAsBytes(response));
+
+          DefaultFullHttpResponse resp =
+              new DefaultFullHttpResponse(req.protocolVersion(), OK, buf);
+          resp.headers().set(CONTENT_TYPE, "application/xml; charset=utf-8");
+          return resp;
+        };
+
+    try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
+      MultipartUploadHttpRequestManager multipartUploadHttpRequestManager =
+          MultipartUploadHttpRequestManager.createFrom(fakeHttpServer.getHttpStorageOptions());
+      CompleteMultipartUploadRequest request =
+          CompleteMultipartUploadRequest.builder()
+              .bucket("test-bucket")
+              .key("test-key")
+              .uploadId("test-upload-id")
+              .userProject("test-project")
+              .multipartUpload(
+                  CompletedMultipartUpload.builder()
+                      .parts(
+                          ImmutableList.of(
+                              CompletedPart.builder().partNumber(1).eTag("\"etag1\"").build(),
+                              CompletedPart.builder().partNumber(2).eTag("\"etag2\"").build()))
+                      .build())
+              .build();
+
+      CompleteMultipartUploadResponse response =
+          multipartUploadHttpRequestManager.sendCompleteMultipartUploadRequest(request);
+
+      assertThat(response).isNotNull();
+      assertThat(response.bucket()).isEqualTo("test-bucket");
+      assertThat(response.key()).isEqualTo("test-key");
+      assertThat(response.etag()).isEqualTo("\"test-etag\"");
+    }
+  }
+
+  @Test
   public void sendUploadPartRequest_success() throws Exception {
     String etag = "\"af1ed31420542285653c803a34aa839a\"";
     String content = "hello world";
@@ -1051,6 +1120,105 @@ public final class ITMultipartUploadHttpRequestManagerTest {
           () ->
               multipartUploadHttpRequestManager.sendUploadPartRequest(
                   request, RewindableContent.empty()));
+    }
+  }
+
+  @Test
+  public void sendListMultipartUploadsRequest_success() throws Exception {
+    HttpRequestHandler handler =
+        req -> {
+          ListMultipartUploadsResponse listMultipartUploadsResponse =
+              ListMultipartUploadsResponse.builder()
+                  .bucket("test-bucket")
+                  .keyMarker("key-marker")
+                  .uploadIdMarker("upload-id-marker")
+                  .nextKeyMarker("next-key-marker")
+                  .nextUploadIdMarker("next-upload-id-marker")
+                  .maxUploads(1)
+                  .truncated(false)
+                  .uploads(
+                      ImmutableList.of(
+                          MultipartUpload.newBuilder()
+                              .setKey("test-key")
+                              .setUploadId("test-upload-id")
+                              .setStorageClass(StorageClass.STANDARD)
+                              .setInitiated(
+                                  OffsetDateTime.of(2025, 11, 11, 0, 0, 0, 0, ZoneOffset.UTC))
+                              .build()))
+                  .build();
+          // Jackson fails to serialize ImmutableList without GuavaModule.
+          // We use reflection to replace it with ArrayList for the test.
+          forceSetUploads(listMultipartUploadsResponse, listMultipartUploadsResponse.uploads());
+
+          ByteBuf buf =
+              Unpooled.wrappedBuffer(xmlMapper.writeValueAsBytes(listMultipartUploadsResponse));
+
+          DefaultFullHttpResponse resp =
+              new DefaultFullHttpResponse(req.protocolVersion(), OK, buf);
+
+          resp.headers().set("Content-Type", "application/xml; charset=utf-8");
+          resp.headers().set("Content-Length", resp.content().readableBytes());
+          return resp;
+        };
+
+    try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
+      MultipartUploadHttpRequestManager multipartUploadHttpRequestManager =
+          MultipartUploadHttpRequestManager.createFrom(fakeHttpServer.getHttpStorageOptions());
+
+      ListMultipartUploadsRequest request =
+          ListMultipartUploadsRequest.builder()
+              .bucket("test-bucket")
+              .maxUploads(1)
+              .keyMarker("key-marker")
+              .uploadIdMarker("upload-id-marker")
+              .build();
+
+      ListMultipartUploadsResponse response =
+          multipartUploadHttpRequestManager.sendListMultipartUploadsRequest(request);
+
+      assertThat(response).isNotNull();
+      assertThat(response.bucket()).isEqualTo("test-bucket");
+      assertThat(response.uploads()).hasSize(1);
+
+      MultipartUpload upload = response.uploads().get(0);
+      assertThat(upload.getKey()).isEqualTo("test-key");
+      assertThat(upload.getStorageClass()).isEqualTo(StorageClass.STANDARD);
+      assertThat(upload.getInitiated())
+          .isEqualTo(OffsetDateTime.of(2025, 11, 11, 0, 0, 0, 0, ZoneOffset.UTC));
+    }
+  }
+
+  @Test
+  public void sendListMultipartUploadsRequest_error() throws Exception {
+    HttpRequestHandler handler =
+        req -> {
+          FullHttpResponse resp =
+              new DefaultFullHttpResponse(req.protocolVersion(), HttpResponseStatus.BAD_REQUEST);
+          resp.headers().set(CONTENT_TYPE, "text/plain; charset=utf-8");
+          return resp;
+        };
+
+    try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
+      MultipartUploadHttpRequestManager multipartUploadHttpRequestManager =
+          MultipartUploadHttpRequestManager.createFrom(fakeHttpServer.getHttpStorageOptions());
+      ListMultipartUploadsRequest request =
+          ListMultipartUploadsRequest.builder().bucket("test-bucket").build();
+
+      assertThrows(
+          HttpResponseException.class,
+          () -> multipartUploadHttpRequestManager.sendListMultipartUploadsRequest(request));
+    }
+  }
+
+  private void forceSetUploads(
+      ListMultipartUploadsResponse response, java.util.List<MultipartUpload> uploads) {
+    try {
+      java.lang.reflect.Field uploadsField =
+          ListMultipartUploadsResponse.class.getDeclaredField("uploads");
+      uploadsField.setAccessible(true);
+      uploadsField.set(response, new java.util.ArrayList<>(uploads));
+    } catch (Exception e) {
+      throw new RuntimeException(e);
     }
   }
 }
