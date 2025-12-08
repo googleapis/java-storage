@@ -41,12 +41,11 @@ import org.junit.runner.RunWith;
 @CrossRun(
     backends = {Backend.TEST_BENCH},
     transports = {Transport.HTTP, Transport.GRPC})
-
 public class ITListBucketTest {
   @Inject public Storage storage;
 
   @Inject public BucketInfo defaultBucket;
-  
+
   @Inject public Generator generator;
 
   @Inject

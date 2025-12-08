@@ -1666,8 +1666,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
       ListBucketsRequest nextPageReq =
           req.toBuilder().setPageToken(resp.getNextPageToken()).build();
       try {
-        com.google.storage.v2.ListBucketsResponse nextPageResp =
-            listBuckets(ctx, nextPageReq);
+        com.google.storage.v2.ListBucketsResponse nextPageResp = listBuckets(ctx, nextPageReq);
         return new ListBucketsWithPartialSuccessPage(ctx, nextPageReq, nextPageResp, opts);
       } catch (Exception e) {
         throw StorageException.coalesce(e);
