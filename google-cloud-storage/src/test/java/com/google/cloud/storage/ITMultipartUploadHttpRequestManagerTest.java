@@ -588,14 +588,14 @@ public final class ITMultipartUploadHttpRequestManagerTest {
           OffsetDateTime lastModified = OffsetDateTime.of(2024, 5, 8, 17, 50, 0, 0, ZoneOffset.UTC);
           ListPartsResponse listPartsResponse =
               ListPartsResponse.builder()
-                  .setBucket("test-bucket")
-                  .setKey("test-key")
-                  .setUploadId("test-upload-id")
-                  .setPartNumberMarker(0)
-                  .setNextPartNumberMarker(1)
-                  .setMaxParts(1)
-                  .setIsTruncated(false)
-                  .setParts(
+                  .bucket("test-bucket")
+                  .key("test-key")
+                  .uploadId("test-upload-id")
+                  .partNumberMarker(0)
+                  .nextPartNumberMarker(1)
+                  .maxParts(1)
+                  .truncated(false)
+                  .parts(
                       Collections.singletonList(
                           Part.builder()
                               .partNumber(1)
@@ -627,15 +627,15 @@ public final class ITMultipartUploadHttpRequestManagerTest {
       ListPartsResponse response = multipartUploadHttpRequestManager.sendListPartsRequest(request);
 
       assertThat(response).isNotNull();
-      assertThat(response.getBucket()).isEqualTo("test-bucket");
-      assertThat(response.getKey()).isEqualTo("test-key");
-      assertThat(response.getUploadId()).isEqualTo("test-upload-id");
-      assertThat(response.getPartNumberMarker()).isEqualTo(0);
-      assertThat(response.getNextPartNumberMarker()).isEqualTo(1);
-      assertThat(response.getMaxParts()).isEqualTo(1);
-      assertThat(response.isTruncated()).isFalse();
-      assertThat(response.getParts()).hasSize(1);
-      Part part = response.getParts().get(0);
+      assertThat(response.bucket()).isEqualTo("test-bucket");
+      assertThat(response.key()).isEqualTo("test-key");
+      assertThat(response.uploadId()).isEqualTo("test-upload-id");
+      assertThat(response.partNumberMarker()).isEqualTo(0);
+      assertThat(response.nextPartNumberMarker()).isEqualTo(1);
+      assertThat(response.maxParts()).isEqualTo(1);
+      assertThat(response.truncated()).isFalse();
+      assertThat(response.parts()).hasSize(1);
+      Part part = response.parts().get(0);
       assertThat(part.partNumber()).isEqualTo(1);
       assertThat(part.eTag()).isEqualTo("\"etag\"");
       assertThat(part.size()).isEqualTo(123);

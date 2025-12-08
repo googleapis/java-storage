@@ -89,7 +89,7 @@ public class XmlObjectParserTest {
             + "</ListPartsResponse>";
     ListPartsResponse listPartsResponse =
         xmlObjectParser.parseAndClose(new StringReader(xml), ListPartsResponse.class);
-    assertThat(listPartsResponse.getStorageClass()).isNull();
+    assertThat(listPartsResponse.storageClass()).isNull();
   }
 
   @Test
@@ -115,7 +115,7 @@ public class XmlObjectParserTest {
             + "</ListPartsResponse>";
     ListPartsResponse listPartsResponse =
         xmlObjectParser.parseAndClose(new StringReader(xml), ListPartsResponse.class);
-    assertThat(listPartsResponse.getStorageClass()).isNull();
+    assertThat(listPartsResponse.storageClass()).isNull();
   }
 
   @Test
@@ -141,7 +141,7 @@ public class XmlObjectParserTest {
             + "</ListPartsResponse>";
     ListPartsResponse listPartsResponse =
         xmlObjectParser.parseAndClose(new StringReader(xml), ListPartsResponse.class);
-    assertThat(listPartsResponse.getStorageClass()).isEqualTo(StorageClass.STANDARD);
+    assertThat(listPartsResponse.storageClass()).isEqualTo(StorageClass.STANDARD);
   }
 
   private static class TestXmlObject {}
