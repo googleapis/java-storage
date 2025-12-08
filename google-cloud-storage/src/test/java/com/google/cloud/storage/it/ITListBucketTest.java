@@ -52,6 +52,8 @@ public class ITListBucketTest {
 
   @Inject public Generator generator;
 
+  private static final String UNREACHABLE_BUCKET_SUFFIX = ".unreachable";
+
   @Test
   public void testListBucketWithPartialSuccess() throws Exception {
     doTest(Reachability.Unreachable, BucketListOption.returnPartialSuccess(true));
@@ -66,11 +68,10 @@ public class ITListBucketTest {
       Reachability expectedReachabilityOfUnreachableBucket, BucketListOption... bucketListOption)
       throws Exception {
     // TESTBENCH considers a bucket to be unreachable if the bucket name contains "unreachable"
-    String name = generator.randomBucketName() + ".unreachable";
+    String name = generator.randomBucketName() + UNREACHABLE_BUCKET_SUFFIX;
     BucketInfo info = BucketInfo.of(name);
     try (TemporaryBucket tmpBucket =
         TemporaryBucket.newBuilder().setBucketInfo(info).setStorage(storage).build()) {
-      // bucket name to unreachable status
       Map<String, Reachability> expected =
           ImmutableMap.of(
               defaultBucket.getName(), Reachability.Reachable,
