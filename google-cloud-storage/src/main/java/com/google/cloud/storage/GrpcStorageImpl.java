@@ -462,7 +462,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
             .andThen(opts.listBucketsRequest())
             .apply(ListBucketsRequest.newBuilder())
             .build();
-    
+
     if (!request.getReturnPartialSuccess()) {
       try {
         GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
