@@ -454,14 +454,15 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     Opts<BucketListOpt> opts = Opts.unwrap(options).prepend(defaultOpts).prepend(ALL_BUCKET_FIELDS);
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
-    ListBucketsRequest.Builder builder =
+
+    ListBucketsRequest request =
         defaultProjectId
             .get()
             .listBuckets()
             .andThen(opts.listBucketsRequest())
-            .apply(ListBucketsRequest.newBuilder());
-
-    final ListBucketsRequest request = builder.build();
+            .apply(ListBucketsRequest.newBuilder())
+            .build();
+    
     if (!request.getReturnPartialSuccess()) {
       try {
         GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
@@ -478,7 +479,6 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
         throw StorageException.coalesce(e);
       }
     } else {
-      // New logic for partial success
       try {
         com.google.storage.v2.ListBucketsResponse response = listBuckets(grpcCallContext, request);
         return new ListBucketsWithPartialSuccessPage(grpcCallContext, request, response, opts);
