@@ -18,6 +18,7 @@ package com.google.cloud.storage;
 
 import static com.google.common.truth.Truth.assertThat;
 import static io.grpc.netty.shaded.io.netty.handler.codec.http.HttpHeaderNames.CONTENT_TYPE;
+import static io.grpc.netty.shaded.io.netty.handler.codec.http.HttpResponseStatus.NO_CONTENT;
 import static io.grpc.netty.shaded.io.netty.handler.codec.http.HttpResponseStatus.OK;
 import static org.junit.Assert.assertThrows;
 
@@ -746,6 +747,44 @@ public final class ITMultipartUploadHttpRequestManagerTest {
   }
 
   @Test
+  public void sendListPartsRequest_withUserProject() throws Exception {
+    HttpRequestHandler handler =
+        req -> {
+          assertThat(req.headers().get("x-goog-user-project")).isEqualTo("test-project");
+          ListPartsResponse listPartsResponse =
+              ListPartsResponse.builder()
+                  .bucket("test-bucket")
+                  .key("test-key")
+                  .uploadId("test-upload-id")
+                  .maxParts(1)
+                  .partNumberMarker(0)
+                  .parts(ImmutableList.of())
+                  .build();
+          ByteBuf buf = Unpooled.wrappedBuffer(xmlMapper.writeValueAsBytes(listPartsResponse));
+          DefaultFullHttpResponse resp = new DefaultFullHttpResponse(req.protocolVersion(), OK, buf);
+          resp.headers().set(CONTENT_TYPE, "application/xml; charset=utf-8");
+          return resp;
+        };
+
+    try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
+      MultipartUploadHttpRequestManager multipartUploadHttpRequestManager =
+          MultipartUploadHttpRequestManager.createFrom(fakeHttpServer.getHttpStorageOptions());
+      ListPartsRequest request =
+          ListPartsRequest.builder()
+              .bucket("test-bucket")
+              .key("test-key")
+              .uploadId("test-upload-id")
+              .userProject("test-project")
+              .build();
+
+      ListPartsResponse response = multipartUploadHttpRequestManager.sendListPartsRequest(request);
+
+      assertThat(response).isNotNull();
+      assertThat(response.bucket()).isEqualTo("test-bucket");
+    }
+  }
+
+  @Test
   public void sendAbortMultipartUploadRequest_success() throws Exception {
     HttpRequestHandler handler =
         req -> {
@@ -799,6 +838,36 @@ public final class ITMultipartUploadHttpRequestManagerTest {
       assertThrows(
           HttpResponseException.class,
           () -> multipartUploadHttpRequestManager.sendAbortMultipartUploadRequest(request));
+    }
+  }
+
+  @Test
+  public void sendAbortMultipartUploadRequest_withUserProject() throws Exception {
+    HttpRequestHandler handler =
+        req -> {
+          assertThat(req.headers().get("x-goog-user-project")).isEqualTo("test-project");
+          AbortMultipartUploadResponse response = new AbortMultipartUploadResponse();
+          ByteBuf buf = Unpooled.wrappedBuffer(xmlMapper.writeValueAsBytes(response));
+          DefaultFullHttpResponse resp = new DefaultFullHttpResponse(req.protocolVersion(), OK, buf);
+          resp.headers().set(CONTENT_TYPE, "application/xml; charset=utf-8");
+          return resp;
+        };
+
+    try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
+      MultipartUploadHttpRequestManager multipartUploadHttpRequestManager =
+          MultipartUploadHttpRequestManager.createFrom(fakeHttpServer.getHttpStorageOptions());
+      AbortMultipartUploadRequest request =
+          AbortMultipartUploadRequest.builder()
+              .bucket("test-bucket")
+              .key("test-key")
+              .uploadId("test-upload-id")
+              .userProject("test-project")
+              .build();
+
+      AbortMultipartUploadResponse response =
+          multipartUploadHttpRequestManager.sendAbortMultipartUploadRequest(request);
+
+      assertThat(response).isNotNull();
     }
   }
 
@@ -1095,6 +1164,40 @@ public final class ITMultipartUploadHttpRequestManagerTest {
   }
 
   @Test
+  public void sendUploadPartRequest_withUserProject() throws Exception {
+    String etag = "\"af1ed31420542285653c803a34aa839a\"";
+    byte[] contentBytes = "hello world".getBytes(StandardCharsets.UTF_8);
+
+    HttpRequestHandler handler =
+        req -> {
+          assertThat(req.headers().get("x-goog-user-project")).isEqualTo("test-project");
+          DefaultFullHttpResponse resp = new DefaultFullHttpResponse(req.protocolVersion(), OK);
+          resp.headers().set("ETag", etag);
+          return resp;
+        };
+
+    try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
+      MultipartUploadHttpRequestManager multipartUploadHttpRequestManager =
+          MultipartUploadHttpRequestManager.createFrom(fakeHttpServer.getHttpStorageOptions());
+      UploadPartRequest request =
+          UploadPartRequest.builder()
+              .bucket("test-bucket")
+              .key("test-key")
+              .uploadId("test-upload-id")
+              .partNumber(1)
+              .userProject("test-project")
+              .build();
+
+      UploadPartResponse response =
+          multipartUploadHttpRequestManager.sendUploadPartRequest(
+              request, RewindableContent.of(ByteBuffer.wrap(contentBytes)));
+
+      assertThat(response).isNotNull();
+      assertThat(response.eTag()).isEqualTo(etag);
+    }
+  }
+
+  @Test
   public void sendUploadPartRequest_error() throws Exception {
     HttpRequestHandler handler =
         req -> {
@@ -1207,6 +1310,56 @@ public final class ITMultipartUploadHttpRequestManagerTest {
       assertThrows(
           HttpResponseException.class,
           () -> multipartUploadHttpRequestManager.sendListMultipartUploadsRequest(request));
+    }
+  }
+
+  @Test
+  public void sendListMultipartUploadsRequest_withUserProject() throws Exception {
+    HttpRequestHandler handler =
+        req -> {
+          assertThat(req.headers().get("x-goog-user-project")).isEqualTo("test-project");
+          ListMultipartUploadsResponse listMultipartUploadsResponse =
+              ListMultipartUploadsResponse.builder()
+                  .bucket("test-bucket")
+                  .keyMarker("key-marker")
+                  .uploadIdMarker("upload-id-marker")
+                  .nextKeyMarker("next-key-marker")
+                  .nextUploadIdMarker("next-upload-id-marker")
+                  .maxUploads(1)
+                  .truncated(false)
+                  .uploads(ImmutableList.of())
+                  .build();
+          // Jackson fails to serialize ImmutableList without GuavaModule.
+          // We use reflection to replace it with ArrayList for the test.
+          forceSetUploads(listMultipartUploadsResponse, listMultipartUploadsResponse.uploads());
+
+          ByteBuf buf =
+              Unpooled.wrappedBuffer(xmlMapper.writeValueAsBytes(listMultipartUploadsResponse));
+
+          DefaultFullHttpResponse resp =
+              new DefaultFullHttpResponse(req.protocolVersion(), OK, buf);
+
+          resp.headers().set("Content-Type", "application/xml; charset=utf-8");
+          resp.headers().set("Content-Length", resp.content().readableBytes());
+          return resp;
+        };
+
+    try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
+      MultipartUploadHttpRequestManager multipartUploadHttpRequestManager =
+          MultipartUploadHttpRequestManager.createFrom(fakeHttpServer.getHttpStorageOptions());
+
+      ListMultipartUploadsRequest request =
+          ListMultipartUploadsRequest.builder()
+              .bucket("test-bucket")
+              .maxUploads(1)
+              .userProject("test-project")
+              .build();
+
+      ListMultipartUploadsResponse response =
+          multipartUploadHttpRequestManager.sendListMultipartUploadsRequest(request);
+
+      assertThat(response).isNotNull();
+      assertThat(response.bucket()).isEqualTo("test-bucket");
     }
   }
 
