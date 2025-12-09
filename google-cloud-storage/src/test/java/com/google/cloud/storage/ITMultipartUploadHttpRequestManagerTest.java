@@ -588,14 +588,14 @@ public final class ITMultipartUploadHttpRequestManagerTest {
           OffsetDateTime lastModified = OffsetDateTime.of(2024, 5, 8, 17, 50, 0, 0, ZoneOffset.UTC);
           ListPartsResponse listPartsResponse =
               ListPartsResponse.builder()
-                  .setBucket("test-bucket")
-                  .setKey("test-key")
-                  .setUploadId("test-upload-id")
-                  .setPartNumberMarker(0)
-                  .setNextPartNumberMarker(1)
-                  .setMaxParts(1)
-                  .setIsTruncated(false)
-                  .setParts(
+                  .bucket("test-bucket")
+                  .key("test-key")
+                  .uploadId("test-upload-id")
+                  .partNumberMarker(0)
+                  .nextPartNumberMarker(1)
+                  .maxParts(1)
+                  .truncated(false)
+                  .parts(
                       Collections.singletonList(
                           Part.builder()
                               .partNumber(1)
@@ -627,15 +627,15 @@ public final class ITMultipartUploadHttpRequestManagerTest {
       ListPartsResponse response = multipartUploadHttpRequestManager.sendListPartsRequest(request);
 
       assertThat(response).isNotNull();
-      assertThat(response.getBucket()).isEqualTo("test-bucket");
-      assertThat(response.getKey()).isEqualTo("test-key");
-      assertThat(response.getUploadId()).isEqualTo("test-upload-id");
-      assertThat(response.getPartNumberMarker()).isEqualTo(0);
-      assertThat(response.getNextPartNumberMarker()).isEqualTo(1);
-      assertThat(response.getMaxParts()).isEqualTo(1);
-      assertThat(response.isTruncated()).isFalse();
-      assertThat(response.getParts()).hasSize(1);
-      Part part = response.getParts().get(0);
+      assertThat(response.bucket()).isEqualTo("test-bucket");
+      assertThat(response.key()).isEqualTo("test-key");
+      assertThat(response.uploadId()).isEqualTo("test-upload-id");
+      assertThat(response.partNumberMarker()).isEqualTo(0);
+      assertThat(response.nextPartNumberMarker()).isEqualTo(1);
+      assertThat(response.maxParts()).isEqualTo(1);
+      assertThat(response.truncated()).isFalse();
+      assertThat(response.parts()).hasSize(1);
+      Part part = response.parts().get(0);
       assertThat(part.partNumber()).isEqualTo(1);
       assertThat(part.eTag()).isEqualTo("\"etag\"");
       assertThat(part.size()).isEqualTo(123);
@@ -922,6 +922,53 @@ public final class ITMultipartUploadHttpRequestManagerTest {
               .build();
 
       multipartUploadHttpRequestManager.sendCompleteMultipartUploadRequest(request);
+    }
+  }
+
+  @Test
+  public void sendCompleteMultipartUploadRequest_withUserProject() throws Exception {
+    HttpRequestHandler handler =
+        req -> {
+          assertThat(req.headers().get("x-goog-user-project")).isEqualTo("test-project");
+          CompleteMultipartUploadResponse response =
+              CompleteMultipartUploadResponse.builder()
+                  .bucket("test-bucket")
+                  .key("test-key")
+                  .etag("\"test-etag\"")
+                  .build();
+          ByteBuf buf = Unpooled.wrappedBuffer(xmlMapper.writeValueAsBytes(response));
+
+          DefaultFullHttpResponse resp =
+              new DefaultFullHttpResponse(req.protocolVersion(), OK, buf);
+          resp.headers().set(CONTENT_TYPE, "application/xml; charset=utf-8");
+          return resp;
+        };
+
+    try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
+      MultipartUploadHttpRequestManager multipartUploadHttpRequestManager =
+          MultipartUploadHttpRequestManager.createFrom(fakeHttpServer.getHttpStorageOptions());
+      CompleteMultipartUploadRequest request =
+          CompleteMultipartUploadRequest.builder()
+              .bucket("test-bucket")
+              .key("test-key")
+              .uploadId("test-upload-id")
+              .userProject("test-project")
+              .multipartUpload(
+                  CompletedMultipartUpload.builder()
+                      .parts(
+                          ImmutableList.of(
+                              CompletedPart.builder().partNumber(1).eTag("\"etag1\"").build(),
+                              CompletedPart.builder().partNumber(2).eTag("\"etag2\"").build()))
+                      .build())
+              .build();
+
+      CompleteMultipartUploadResponse response =
+          multipartUploadHttpRequestManager.sendCompleteMultipartUploadRequest(request);
+
+      assertThat(response).isNotNull();
+      assertThat(response.bucket()).isEqualTo("test-bucket");
+      assertThat(response.key()).isEqualTo("test-key");
+      assertThat(response.etag()).isEqualTo("\"test-etag\"");
     }
   }
 
