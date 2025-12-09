@@ -53,7 +53,7 @@ public class ITListBucketTest {
   public BucketInfo hnsBucket;
 
   private static final String UNREACHABLE_BUCKET_SUFFIX = ".unreachable";
-  
+
   @Test
   public void testListBucketWithPartialSuccess() throws Exception {
     doTest(Reachability.Unreachable, BucketListOption.returnPartialSuccess(true));
