@@ -925,6 +925,55 @@ public final class ITMultipartUploadHttpRequestManagerTest {
     }
   }
 
+
+  @Test
+  public void sendCompleteMultipartUploadRequest_withCustomChecksum() throws Exception {
+    String etag = "\"af1ed31420542285653c803a34aa839a\"";
+    String crc32c = "yZRlqg==";
+
+    HttpRequestHandler handler =
+        req -> {
+          assertThat(req.headers().get("x-goog-hash")).isEqualTo("crc32c=" + crc32c);
+          CompleteMultipartUploadResponse response =
+              CompleteMultipartUploadResponse.builder()
+                  .bucket("test-bucket")
+                  .key("test-key")
+                  .etag(etag)
+                  .build();
+          ByteBuf buf = Unpooled.wrappedBuffer(xmlMapper.writeValueAsBytes(response));
+
+          DefaultFullHttpResponse resp =
+              new DefaultFullHttpResponse(req.protocolVersion(), OK, buf);
+          resp.headers().set(CONTENT_TYPE, "application/xml; charset=utf-8");
+          return resp;
+        };
+
+    try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
+      MultipartUploadHttpRequestManager multipartUploadHttpRequestManager =
+          MultipartUploadHttpRequestManager.createFrom(fakeHttpServer.getHttpStorageOptions());
+      CompleteMultipartUploadRequest request =
+          CompleteMultipartUploadRequest.builder()
+              .bucket("test-bucket")
+              .key("test-key")
+              .uploadId("test-upload-id")
+              .multipartUpload(
+                  CompletedMultipartUpload.builder()
+                      .parts(
+                          ImmutableList.of(
+                              CompletedPart.builder().partNumber(1).eTag("\"etag1\"").build(),
+                              CompletedPart.builder().partNumber(2).eTag("\"etag2\"").build()))
+                      .build())
+              .crc32c(crc32c)
+              .build();
+
+      CompleteMultipartUploadResponse response =
+          multipartUploadHttpRequestManager.sendCompleteMultipartUploadRequest(request);
+
+      assertThat(response).isNotNull();
+      assertThat(response.etag()).isEqualTo(etag);
+    }
+  }
+
   @Test
   public void sendCompleteMultipartUploadRequest_withUserProject() throws Exception {
     HttpRequestHandler handler =

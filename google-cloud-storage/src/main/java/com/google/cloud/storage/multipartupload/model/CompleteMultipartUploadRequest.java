@@ -19,6 +19,7 @@ package com.google.cloud.storage.multipartupload.model;
 import com.google.api.core.BetaApi;
 import com.google.common.base.MoreObjects;
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * Represents a request to complete a multipart upload.
@@ -31,6 +32,7 @@ public final class CompleteMultipartUploadRequest {
   private final String bucket;
   private final String key;
   private final String uploadId;
+  @Nullable private final String crc32c;
   private final CompletedMultipartUpload multipartUpload;
   private final String userProject;
 
@@ -38,6 +40,7 @@ public final class CompleteMultipartUploadRequest {
     this.bucket = builder.bucket;
     this.key = builder.key;
     this.uploadId = builder.uploadId;
+    this.crc32c = builder.crc32c;
     this.multipartUpload = builder.multipartUpload;
     this.userProject = builder.userProject;
   }
@@ -73,6 +76,18 @@ public final class CompleteMultipartUploadRequest {
   @BetaApi
   public String uploadId() {
     return uploadId;
+  }
+
+  /**
+   * Returns the CRC32C checksum of the object.
+   *
+   * @return The CRC32C checksum of the object.
+   * @since 2.61.0 This new api is in preview and is subject to breaking changes.
+   */
+  @BetaApi
+  @Nullable
+  public String getCrc32c() {
+    return crc32c;
   }
 
   /**
@@ -112,12 +127,13 @@ public final class CompleteMultipartUploadRequest {
         && Objects.equals(key, that.key)
         && Objects.equals(uploadId, that.uploadId)
         && Objects.equals(multipartUpload, that.multipartUpload)
-        && Objects.equals(userProject, that.userProject);
+        && Objects.equals(userProject, that.userProject)
+        && Objects.equals(crc32c, that.crc32c);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(bucket, key, uploadId, multipartUpload, userProject);
+    return Objects.hash(bucket, key, uploadId, crc32c, multipartUpload, userProject);
   }
 
   @Override
@@ -126,6 +142,7 @@ public final class CompleteMultipartUploadRequest {
         .add("bucket", bucket)
         .add("key", key)
         .add("uploadId", uploadId)
+        .add("crc32c", crc32c)
         .add("completedMultipartUpload", multipartUpload)
         .add("userProject", userProject)
         .toString();
@@ -152,6 +169,7 @@ public final class CompleteMultipartUploadRequest {
     private String bucket;
     private String key;
     private String uploadId;
+    @Nullable private String crc32c;
     private CompletedMultipartUpload multipartUpload;
     private String userProject;
 
@@ -193,6 +211,19 @@ public final class CompleteMultipartUploadRequest {
     @BetaApi
     public Builder uploadId(String uploadId) {
       this.uploadId = uploadId;
+      return this;
+    }
+
+    /**
+     * Sets the CRC32C checksum of the object.
+     *
+     * @param crc32c The CRC32C checksum of the object.
+     * @return This builder.
+     * @since 2.61.0 This new api is in preview and is subject to breaking changes.
+     */
+    @BetaApi
+    public Builder crc32c(@Nullable String crc32c) {
+      this.crc32c = crc32c;
       return this;
     }
 

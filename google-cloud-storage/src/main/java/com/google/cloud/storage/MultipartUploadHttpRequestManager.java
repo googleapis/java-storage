@@ -188,13 +188,16 @@ final class MultipartUploadHttpRequestManager {
     if (request.userProject() != null) {
       httpRequest.getHeaders().put("x-goog-user-project", request.userProject());
     }
-    @Nullable Crc32cLengthKnown crc32cValue = Hasher.defaultHasher().hash(ByteBuffer.wrap(bytes));
-    addChecksumHeader(crc32cValue, httpRequest.getHeaders());
+    if (request.getCrc32c() != null) {
+      addChecksumHeader(request.getCrc32c(), httpRequest.getHeaders());
+    } else {
+      @Nullable Crc32cLengthKnown crc32cValue = Hasher.defaultHasher().hash(ByteBuffer.wrap(bytes));
+      addChecksumHeader(crc32cValue, httpRequest.getHeaders());
+    }
     httpRequest.setParser(objectParser);
     httpRequest.setThrowExceptionOnExecuteError(true);
     return ChecksumResponseParser.parseCompleteResponse(httpRequest.execute());
   }
-
   UploadPartResponse sendUploadPartRequest(
       UploadPartRequest request, RewindableContent rewindableContent) throws IOException {
     String uploadUri =
