@@ -79,9 +79,9 @@ public final class CompleteMultipartUploadRequest {
   }
 
   /**
-   * Returns the CRC32C checksum of the object.
+   * Returns the Base64 encoded CRC32C checksum of the object.
    *
-   * @return The CRC32C checksum of the object.
+   * @return The Base64 encoded CRC32C checksum of the object.
    * @since 2.61.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
@@ -215,9 +215,9 @@ public final class CompleteMultipartUploadRequest {
     }
 
     /**
-     * Sets the CRC32C checksum of the object.
+     * Sets the Base64 encoded CRC32C checksum of the object.
      *
-     * @param crc32c The CRC32C checksum of the object.
+     * @param crc32c The Base64 encoded CRC32C checksum of the object.
      * @return This builder.
      * @since 2.61.0 This new api is in preview and is subject to breaking changes.
      */

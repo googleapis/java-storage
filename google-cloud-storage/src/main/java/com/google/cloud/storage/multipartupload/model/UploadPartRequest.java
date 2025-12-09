@@ -89,9 +89,9 @@ public final class UploadPartRequest {
   }
 
   /**
-   * Returns the CRC32C checksum of the part to upload.
+   * Returns the Base64 encoded CRC32C checksum of the part to upload.
    *
-   * @return The CRC32C checksum of the part to upload.
+   * @return The Base64 encoded CRC32C checksum of the part to upload.
    * @since 2.61.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
@@ -211,9 +211,9 @@ public final class UploadPartRequest {
     }
 
     /**
-     * Sets the CRC32C checksum of the part to upload.
+     * Sets the Base64 encoded CRC32C checksum of the part to upload.
      *
-     * @param crc32c The CRC32C checksum of the part to upload.
+     * @param crc32c The Base64 encoded CRC32C checksum of the part to upload.
      * @return This builder.
      * @since 2.61.0 This new api is in preview and is subject to breaking changes.
      */
