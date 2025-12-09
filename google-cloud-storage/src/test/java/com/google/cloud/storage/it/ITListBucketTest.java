@@ -52,8 +52,6 @@ public class ITListBucketTest {
   @BucketFixture(BucketType.HNS)
   public BucketInfo hnsBucket;
 
-  @Inject public Generator generator;
-
   private static final String UNREACHABLE_BUCKET_SUFFIX = ".unreachable";
   
   @Test
