@@ -198,6 +198,7 @@ final class MultipartUploadHttpRequestManager {
     httpRequest.setThrowExceptionOnExecuteError(true);
     return ChecksumResponseParser.parseCompleteResponse(httpRequest.execute());
   }
+
   UploadPartResponse sendUploadPartRequest(
       UploadPartRequest request, RewindableContent rewindableContent) throws IOException {
     String uploadUri =
