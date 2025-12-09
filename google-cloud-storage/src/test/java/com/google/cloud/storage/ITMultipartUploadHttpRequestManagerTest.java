@@ -18,7 +18,6 @@ package com.google.cloud.storage;
 
 import static com.google.common.truth.Truth.assertThat;
 import static io.grpc.netty.shaded.io.netty.handler.codec.http.HttpHeaderNames.CONTENT_TYPE;
-import static io.grpc.netty.shaded.io.netty.handler.codec.http.HttpResponseStatus.NO_CONTENT;
 import static io.grpc.netty.shaded.io.netty.handler.codec.http.HttpResponseStatus.OK;
 import static org.junit.Assert.assertThrows;
 
@@ -761,7 +760,8 @@ public final class ITMultipartUploadHttpRequestManagerTest {
                   .parts(ImmutableList.of())
                   .build();
           ByteBuf buf = Unpooled.wrappedBuffer(xmlMapper.writeValueAsBytes(listPartsResponse));
-          DefaultFullHttpResponse resp = new DefaultFullHttpResponse(req.protocolVersion(), OK, buf);
+          DefaultFullHttpResponse resp =
+              new DefaultFullHttpResponse(req.protocolVersion(), OK, buf);
           resp.headers().set(CONTENT_TYPE, "application/xml; charset=utf-8");
           return resp;
         };
@@ -848,7 +848,8 @@ public final class ITMultipartUploadHttpRequestManagerTest {
           assertThat(req.headers().get("x-goog-user-project")).isEqualTo("test-project");
           AbortMultipartUploadResponse response = new AbortMultipartUploadResponse();
           ByteBuf buf = Unpooled.wrappedBuffer(xmlMapper.writeValueAsBytes(response));
-          DefaultFullHttpResponse resp = new DefaultFullHttpResponse(req.protocolVersion(), OK, buf);
+          DefaultFullHttpResponse resp =
+              new DefaultFullHttpResponse(req.protocolVersion(), OK, buf);
           resp.headers().set(CONTENT_TYPE, "application/xml; charset=utf-8");
           return resp;
         };

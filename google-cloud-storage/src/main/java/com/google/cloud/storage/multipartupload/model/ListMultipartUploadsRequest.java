@@ -172,7 +172,14 @@ public final class ListMultipartUploadsRequest {
   @Override
   public int hashCode() {
     return Objects.hash(
-        bucket, delimiter, encodingType, keyMarker, maxUploads, prefix, uploadIdMarker, userProject);
+        bucket,
+        delimiter,
+        encodingType,
+        keyMarker,
+        maxUploads,
+        prefix,
+        uploadIdMarker,
+        userProject);
   }
 
   @Override
@@ -333,7 +340,14 @@ public final class ListMultipartUploadsRequest {
     @BetaApi
     public ListMultipartUploadsRequest build() {
       return new ListMultipartUploadsRequest(
-          bucket, delimiter, encodingType, keyMarker, maxUploads, prefix, uploadIdMarker, userProject);
+          bucket,
+          delimiter,
+          encodingType,
+          keyMarker,
+          maxUploads,
+          prefix,
+          uploadIdMarker,
+          userProject);
     }
   }
 }

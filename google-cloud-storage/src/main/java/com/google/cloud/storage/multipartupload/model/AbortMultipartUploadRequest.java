@@ -83,7 +83,6 @@ public final class AbortMultipartUploadRequest {
     return userProject;
   }
 
-
   /**
    * Returns a new builder for creating {@link AbortMultipartUploadRequest} instances.
    *
