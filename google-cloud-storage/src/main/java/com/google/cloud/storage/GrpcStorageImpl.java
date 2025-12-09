@@ -1682,8 +1682,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
           resp.getUnreachableList().stream()
               .map(
                   name -> {
-                    String encoded = bucketNameCodec.encode(name);
-                    return BucketInfo.newBuilder(encoded)
+                    String decoded = bucketNameCodec.decode(name);
+                    return BucketInfo.newBuilder(decoded)
                         .setIsUnreachable(true)
                         .build()
                         .asBucket(GrpcStorageImpl.this);
