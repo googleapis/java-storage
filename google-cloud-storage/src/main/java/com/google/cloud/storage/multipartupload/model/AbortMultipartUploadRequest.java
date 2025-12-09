@@ -28,11 +28,13 @@ public final class AbortMultipartUploadRequest {
   private final String bucket;
   private final String key;
   private final String uploadId;
+  private final String userProject;
 
   private AbortMultipartUploadRequest(Builder builder) {
     this.bucket = builder.bucket;
     this.key = builder.key;
     this.uploadId = builder.uploadId;
+    this.userProject = builder.userProject;
   }
 
   /**
@@ -69,6 +71,20 @@ public final class AbortMultipartUploadRequest {
   }
 
   /**
+   * Returns the user-project.
+   *
+   * @return the user-project.
+   * @see <a
+   *     href="https://docs.cloud.google.com/storage/docs/xml-api/reference-headers#xgooguserproject">x-goog-user-project</a>
+   * @since 2.61 This new api is in preview and is subject to breaking changes.
+   */
+  @BetaApi
+  public String userProject() {
+    return userProject;
+  }
+
+
+  /**
    * Returns a new builder for creating {@link AbortMultipartUploadRequest} instances.
    *
    * @return A new {@link Builder}.
@@ -89,6 +105,7 @@ public final class AbortMultipartUploadRequest {
     private String bucket;
     private String key;
     private String uploadId;
+    private String userProject;
 
     private Builder() {}
 
@@ -128,6 +145,21 @@ public final class AbortMultipartUploadRequest {
     @BetaApi
     public Builder uploadId(String uploadId) {
       this.uploadId = uploadId;
+      return this;
+    }
+
+    /**
+     * Sets the user-project.
+     *
+     * @param userProject The user-project.
+     * @return This builder.
+     * @see <a
+     *     href="https://docs.cloud.google.com/storage/docs/xml-api/reference-headers#xgooguserproject">x-goog-user-project</a>
+     * @since 2.61 This new api is in preview and is subject to breaking changes.
+     */
+    @BetaApi
+    public Builder userProject(String userProject) {
+      this.userProject = userProject;
       return this;
     }
 

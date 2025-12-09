@@ -37,6 +37,7 @@ public final class ListMultipartUploadsRequest {
   private final Integer maxUploads;
   private final String prefix;
   private final String uploadIdMarker;
+  private final String userProject;
 
   private ListMultipartUploadsRequest(
       String bucket,
@@ -45,7 +46,8 @@ public final class ListMultipartUploadsRequest {
       String keyMarker,
       Integer maxUploads,
       String prefix,
-      String uploadIdMarker) {
+      String uploadIdMarker,
+      String userProject) {
     this.bucket = bucket;
     this.delimiter = delimiter;
     this.encodingType = encodingType;
@@ -53,6 +55,7 @@ public final class ListMultipartUploadsRequest {
     this.maxUploads = maxUploads;
     this.prefix = prefix;
     this.uploadIdMarker = uploadIdMarker;
+    this.userProject = userProject;
   }
 
   /**
@@ -134,6 +137,19 @@ public final class ListMultipartUploadsRequest {
     return uploadIdMarker;
   }
 
+  /**
+   * Returns the user-project.
+   *
+   * @return the user-project.
+   * @see <a
+   *     href="https://docs.cloud.google.com/storage/docs/xml-api/reference-headers#xgooguserproject">x-goog-user-project</a>
+   * @since 2.61 This new api is in preview and is subject to breaking changes.
+   */
+  @BetaApi
+  public String userProject() {
+    return userProject;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -149,13 +165,14 @@ public final class ListMultipartUploadsRequest {
         && Objects.equals(keyMarker, that.keyMarker)
         && Objects.equals(maxUploads, that.maxUploads)
         && Objects.equals(prefix, that.prefix)
-        && Objects.equals(uploadIdMarker, that.uploadIdMarker);
+        && Objects.equals(uploadIdMarker, that.uploadIdMarker)
+        && Objects.equals(userProject, that.userProject);
   }
 
   @Override
   public int hashCode() {
     return Objects.hash(
-        bucket, delimiter, encodingType, keyMarker, maxUploads, prefix, uploadIdMarker);
+        bucket, delimiter, encodingType, keyMarker, maxUploads, prefix, uploadIdMarker, userProject);
   }
 
   @Override
@@ -168,6 +185,7 @@ public final class ListMultipartUploadsRequest {
         .add("maxUploads", maxUploads)
         .add("prefix", prefix)
         .add("uploadIdMarker", uploadIdMarker)
+        .add("userProject", userProject)
         .toString();
   }
 
@@ -196,6 +214,7 @@ public final class ListMultipartUploadsRequest {
     private Integer maxUploads;
     private String prefix;
     private String uploadIdMarker;
+    private String userProject;
 
     private Builder() {}
 
@@ -291,6 +310,21 @@ public final class ListMultipartUploadsRequest {
     }
 
     /**
+     * Sets the user-project.
+     *
+     * @param userProject The user-project.
+     * @return This builder.
+     * @see <a
+     *     href="https://docs.cloud.google.com/storage/docs/xml-api/reference-headers#xgooguserproject">x-goog-user-project</a>
+     * @since 2.61 This new api is in preview and is subject to breaking changes.
+     */
+    @BetaApi
+    public Builder userProject(String userProject) {
+      this.userProject = userProject;
+      return this;
+    }
+
+    /**
      * Builds the request.
      *
      * @return The built request.
@@ -299,7 +333,7 @@ public final class ListMultipartUploadsRequest {
     @BetaApi
     public ListMultipartUploadsRequest build() {
       return new ListMultipartUploadsRequest(
-          bucket, delimiter, encodingType, keyMarker, maxUploads, prefix, uploadIdMarker);
+          bucket, delimiter, encodingType, keyMarker, maxUploads, prefix, uploadIdMarker, userProject);
     }
   }
 }
