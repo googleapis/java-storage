@@ -40,17 +40,17 @@ import org.junit.runner.RunWith;
 @RunWith(StorageITRunner.class)
 @CrossRun(
     backends = {Backend.TEST_BENCH},
-    transports = {Transport.HTTP})
+    transports = {Transport.HTTP, Transport.GRPC})
 public class ITListBucketTest {
   @Inject public Storage storage;
 
   @Inject public BucketInfo defaultBucket;
 
+  @Inject public Generator generator;
+
   @Inject
   @BucketFixture(BucketType.HNS)
   public BucketInfo hnsBucket;
-
-  @Inject public Generator generator;
 
   private static final String UNREACHABLE_BUCKET_SUFFIX = ".unreachable";
 

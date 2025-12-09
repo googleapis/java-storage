@@ -2470,15 +2470,15 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
       return new BucketListOption(UnifiedOpts.pageSize(pageSize));
     }
 
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    public static BucketListOption returnPartialSuccess(boolean returnPartialSuccess) {
+      return new BucketListOption(UnifiedOpts.returnPartialSuccess(returnPartialSuccess));
+    }
+
     /** Returns an option to specify the page token from which to start listing buckets. */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BucketListOption pageToken(@NonNull String pageToken) {
       return new BucketListOption(UnifiedOpts.pageToken(pageToken));
-    }
-
-    @TransportCompatibility({Transport.HTTP})
-    public static BucketListOption returnPartialSuccess(boolean returnPartialSuccess) {
-      return new BucketListOption(UnifiedOpts.returnPartialSuccess(returnPartialSuccess));
     }
 
     /**
