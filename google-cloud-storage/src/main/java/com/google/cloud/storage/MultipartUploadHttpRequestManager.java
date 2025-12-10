@@ -113,6 +113,9 @@ final class MultipartUploadHttpRequestManager {
             false);
     HttpRequest httpRequest = requestFactory.buildGetRequest(new GenericUrl(listUri));
     httpRequest.getHeaders().putAll(headerProvider.getHeaders());
+    if (request.userProject() != null) {
+      httpRequest.getHeaders().put("x-goog-user-project", request.userProject());
+    }
     httpRequest.setParser(objectParser);
     httpRequest.setThrowExceptionOnExecuteError(true);
     return httpRequest.execute().parseAs(ListPartsResponse.class);
@@ -149,6 +152,9 @@ final class MultipartUploadHttpRequestManager {
             false);
     HttpRequest httpRequest = requestFactory.buildGetRequest(new GenericUrl(listUri));
     httpRequest.getHeaders().putAll(headerProvider.getHeaders());
+    if (request.userProject() != null) {
+      httpRequest.getHeaders().put("x-goog-user-project", request.userProject());
+    }
     httpRequest.setParser(objectParser);
     httpRequest.setThrowExceptionOnExecuteError(true);
     return httpRequest.execute().parseAs(ListMultipartUploadsResponse.class);
@@ -167,6 +173,9 @@ final class MultipartUploadHttpRequestManager {
 
     HttpRequest httpRequest = requestFactory.buildDeleteRequest(new GenericUrl(abortUri));
     httpRequest.getHeaders().putAll(headerProvider.getHeaders());
+    if (request.userProject() != null) {
+      httpRequest.getHeaders().put("x-goog-user-project", request.userProject());
+    }
     httpRequest.setParser(objectParser);
     httpRequest.setThrowExceptionOnExecuteError(true);
     return httpRequest.execute().parseAs(AbortMultipartUploadResponse.class);
@@ -213,6 +222,9 @@ final class MultipartUploadHttpRequestManager {
     HttpRequest httpRequest =
         requestFactory.buildPutRequest(new GenericUrl(uploadUri), rewindableContent);
     httpRequest.getHeaders().putAll(headerProvider.getHeaders());
+    if (request.userProject() != null) {
+      httpRequest.getHeaders().put("x-goog-user-project", request.userProject());
+    }
     if (request.getCrc32c() != null) {
       addChecksumHeader(request.getCrc32c(), httpRequest.getHeaders());
     } else {

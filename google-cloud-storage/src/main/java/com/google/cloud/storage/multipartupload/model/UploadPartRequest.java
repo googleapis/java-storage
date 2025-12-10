@@ -35,6 +35,7 @@ public final class UploadPartRequest {
   private final int partNumber;
   private final String uploadId;
   @Nullable private final String crc32c;
+  private final String userProject;
 
   private UploadPartRequest(Builder builder) {
     this.bucket = builder.bucket;
@@ -42,6 +43,7 @@ public final class UploadPartRequest {
     this.partNumber = builder.partNumber;
     this.uploadId = builder.uploadId;
     this.crc32c = builder.crc32c;
+    this.userProject = builder.userProject;
   }
 
   /**
@@ -100,6 +102,19 @@ public final class UploadPartRequest {
     return crc32c;
   }
 
+  /**
+   * Returns the user-project.
+   *
+   * @return the user-project.
+   * @see <a
+   *     href="https://docs.cloud.google.com/storage/docs/xml-api/reference-headers#xgooguserproject">x-goog-user-project</a>
+   * @since 2.61 This new api is in preview and is subject to breaking changes.
+   */
+  @BetaApi
+  public String userProject() {
+    return userProject;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -113,12 +128,13 @@ public final class UploadPartRequest {
         && Objects.equals(bucket, that.bucket)
         && Objects.equals(key, that.key)
         && Objects.equals(uploadId, that.uploadId)
-        && Objects.equals(crc32c, that.crc32c);
+        && Objects.equals(crc32c, that.crc32c)
+        && Objects.equals(userProject, that.userProject);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(bucket, key, partNumber, uploadId, crc32c);
+    return Objects.hash(bucket, key, partNumber, uploadId, crc32c, userProject);
   }
 
   @Override
@@ -129,6 +145,7 @@ public final class UploadPartRequest {
         .add("partNumber", partNumber)
         .add("uploadId", uploadId)
         .add("crc32c", crc32c)
+        .add("userProject", userProject)
         .toString();
   }
 
@@ -155,6 +172,7 @@ public final class UploadPartRequest {
     private int partNumber;
     private String uploadId;
     @Nullable private String crc32c;
+    private String userProject;
 
     private Builder() {}
 
@@ -220,6 +238,21 @@ public final class UploadPartRequest {
     @BetaApi
     public Builder crc32c(@Nullable String crc32c) {
       this.crc32c = crc32c;
+      return this;
+    }
+
+    /**
+     * Sets the user-project.
+     *
+     * @param userProject The user-project.
+     * @return This builder.
+     * @see <a
+     *     href="https://docs.cloud.google.com/storage/docs/xml-api/reference-headers#xgooguserproject">x-goog-user-project</a>
+     * @since 2.61 This new api is in preview and is subject to breaking changes.
+     */
+    @BetaApi
+    public Builder userProject(String userProject) {
+      this.userProject = userProject;
       return this;
     }
 

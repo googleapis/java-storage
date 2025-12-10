@@ -131,6 +131,7 @@ public class BucketInfo implements Serializable {
       customerManagedEncryptionEnforcementConfig;
   private final @Nullable CustomerSuppliedEncryptionEnforcementConfig
       customerSuppliedEncryptionEnforcementConfig;
+  private final Boolean isUnreachable;
 
   private final transient ImmutableSet<NamedField> modifiedFields;
 
@@ -2638,6 +2639,8 @@ public class BucketInfo implements Serializable {
      */
     public abstract Builder setIpFilter(IpFilter ipFilter);
 
+    public abstract Builder setIsUnreachable(Boolean isUnreachable);
+
     /** Creates a {@code BucketInfo} object. */
     public abstract BucketInfo build();
 
@@ -2708,6 +2711,8 @@ public class BucketInfo implements Serializable {
     abstract Builder clearCustomerManagedEncryptionEnforcementConfig();
 
     abstract Builder clearCustomerSuppliedEncryptionEnforcementConfig();
+
+    abstract Builder clearIsUnreachable();
   }
 
   static final class BuilderImpl extends Builder {
@@ -2751,6 +2756,7 @@ public class BucketInfo implements Serializable {
     private GoogleManagedEncryptionEnforcementConfig googleManagedEncryptionEnforcementConfig;
     private CustomerManagedEncryptionEnforcementConfig customerManagedEncryptionEnforcementConfig;
     private CustomerSuppliedEncryptionEnforcementConfig customerSuppliedEncryptionEnforcementConfig;
+    private Boolean isUnreachable;
     private final ImmutableSet.Builder<NamedField> modifiedFields = ImmutableSet.builder();
 
     BuilderImpl(String name) {
@@ -2799,6 +2805,7 @@ public class BucketInfo implements Serializable {
           bucketInfo.customerManagedEncryptionEnforcementConfig;
       customerSuppliedEncryptionEnforcementConfig =
           bucketInfo.customerSuppliedEncryptionEnforcementConfig;
+      isUnreachable = bucketInfo.isUnreachable;
     }
 
     @Override
@@ -3251,6 +3258,13 @@ public class BucketInfo implements Serializable {
     }
 
     @Override
+    public Builder setIsUnreachable(Boolean isUnreachable) {
+      Boolean tmp = firstNonNull(isUnreachable, Data.<Boolean>nullOf(Boolean.class));
+      this.isUnreachable = tmp;
+      return this;
+    }
+
+    @Override
     public BucketInfo build() {
       checkNotNull(name);
       return new BucketInfo(this);
@@ -3460,6 +3474,12 @@ public class BucketInfo implements Serializable {
       return this;
     }
 
+    @Override
+    BuilderImpl clearIsUnreachable() {
+      this.isUnreachable = null;
+      return this;
+    }
+
     private Builder clearDeleteLifecycleRules() {
       if (lifecycleRules != null && !lifecycleRules.isEmpty()) {
         ImmutableList<LifecycleRule> nonDeleteRules =
@@ -3513,6 +3533,7 @@ public class BucketInfo implements Serializable {
     customerManagedEncryptionEnforcementConfig = builder.customerManagedEncryptionEnforcementConfig;
     customerSuppliedEncryptionEnforcementConfig =
         builder.customerSuppliedEncryptionEnforcementConfig;
+    isUnreachable = builder.isUnreachable;
     modifiedFields = builder.modifiedFields.build();
   }
 
@@ -3886,6 +3907,16 @@ public class BucketInfo implements Serializable {
     return customerSuppliedEncryptionEnforcementConfig;
   }
 
+  /**
+   * Returns a {@code Boolean} with {@code true} if the bucket is unreachable, else {@code null}
+   *
+   * <p>A bucket may be unreachable if the region in which it resides is experiencing an outage or
+   * if there are other temporary access issues.
+   */
+  public Boolean isUnreachable() {
+    return Data.isNull(isUnreachable) ? null : isUnreachable;
+  }
+
   /** Returns a builder for the current bucket. */
   public Builder toBuilder() {
     return new BuilderImpl(this);
@@ -3931,7 +3962,8 @@ public class BucketInfo implements Serializable {
         ipFilter,
         googleManagedEncryptionEnforcementConfig,
         customerManagedEncryptionEnforcementConfig,
-        customerSuppliedEncryptionEnforcementConfig);
+        customerSuppliedEncryptionEnforcementConfig,
+        isUnreachable);
   }
 
   @Override
@@ -3985,7 +4017,8 @@ public class BucketInfo implements Serializable {
             that.customerManagedEncryptionEnforcementConfig)
         && Objects.equals(
             customerSuppliedEncryptionEnforcementConfig,
-            that.customerSuppliedEncryptionEnforcementConfig);
+            that.customerSuppliedEncryptionEnforcementConfig)
+        && Objects.equals(isUnreachable, that.isUnreachable);
   }
 
   @Override
