@@ -167,6 +167,12 @@
     <method>com.google.cloud.storage.BucketInfo$Builder setGoogleManagedEncryptionEnforcementConfig(com.google.cloud.storage.BucketInfo$GoogleManagedEncryptionEnforcementConfig)</method>
   </difference>
 
+  <difference>
+    <differenceType>7013</differenceType>
+    <className>com/google/cloud/storage/BucketInfo$Builder</className>
+    <method>com.google.cloud.storage.BucketInfo$Builder setIsUnreachable(java.lang.Boolean)</method>
+  </difference>
+
   <!-- make beta api constructors private, they still retain their factory methods. -->
   <difference>
     <differenceType>7004</differenceType>
