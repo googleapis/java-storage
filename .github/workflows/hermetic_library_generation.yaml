@@ -77,7 +77,7 @@ jobs:
           echo "SHOULD_RUN=false" >> $GITHUB_ENV
         fi
 
-    - uses: googleapis/sdk-platform-java/.github/scripts@v2.64.1
+    - uses: googleapis/sdk-platform-java/.github/scripts@v2.64.2
       if: env.SHOULD_RUN == 'true'
       with:
         base_ref: ${{ github.base_ref }}
