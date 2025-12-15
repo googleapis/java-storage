@@ -37,11 +37,14 @@ final class JsonResumableSession {
   private final RetrierWithAlg retrier;
   private final JsonResumableWrite resumableWrite;
 
+  private final JsonResumableWriteCtx jsonResumableWriteCtx;
+
   JsonResumableSession(
       HttpClientContext context, RetrierWithAlg retrier, JsonResumableWrite resumableWrite) {
     this.context = context;
     this.retrier = retrier;
     this.resumableWrite = resumableWrite;
+    this.jsonResumableWriteCtx = new JsonResumableWriteCtx();
   }
 
   /**
@@ -55,7 +58,8 @@ final class JsonResumableSession {
   ResumableOperationResult<@Nullable StorageObject> put(
       RewindableContent content, HttpContentRange contentRange) {
     JsonResumableSessionPutTask task =
-        new JsonResumableSessionPutTask(context, resumableWrite, content, contentRange);
+        new JsonResumableSessionPutTask(
+            context, resumableWrite, content, contentRange, jsonResumableWriteCtx);
     HttpRpcContext httpRpcContext = HttpRpcContext.getInstance();
     try {
       httpRpcContext.newInvocationId();

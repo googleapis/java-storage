@@ -50,6 +50,7 @@ import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.Before;
@@ -103,7 +104,8 @@ public final class ITJsonResumableSessionPutTaskTest {
               httpClientContext,
               jsonResumableWrite(uri),
               RewindableContent.empty(),
-              HttpContentRange.of(ByteRangeSpec.explicitClosed(0L, 0L), 0));
+              HttpContentRange.of(ByteRangeSpec.explicitClosed(0L, 0L), 0),
+              new JsonResumableWriteCtx());
 
       ResumableOperationResult<@Nullable StorageObject> operationResult = task.call();
       StorageObject object = operationResult.getObject();
@@ -152,7 +154,8 @@ public final class ITJsonResumableSessionPutTaskTest {
               httpClientContext,
               jsonResumableWrite(uri),
               RewindableContent.empty(),
-              HttpContentRange.of(ByteRangeSpec.explicitClosed(0L, 10L)));
+              HttpContentRange.of(ByteRangeSpec.explicitClosed(0L, 10L)),
+              new JsonResumableWriteCtx());
 
       StorageException se = assertThrows(StorageException.class, task::call);
       assertThat(se.getCode()).isEqualTo(0);
@@ -234,7 +237,8 @@ public final class ITJsonResumableSessionPutTaskTest {
               httpClientContext,
               jsonResumableWrite(uri),
               RewindableContent.of(tmpFile.getPath()),
-              HttpContentRange.of(ByteRangeSpec.explicit(0L, _256KiBL)));
+              HttpContentRange.of(ByteRangeSpec.explicit(0L, _256KiBL)),
+              new JsonResumableWriteCtx());
 
       StorageException se = assertThrows(StorageException.class, task::call);
       assertThat(se.getCode()).isEqualTo(0);
@@ -304,7 +308,8 @@ public final class ITJsonResumableSessionPutTaskTest {
               httpClientContext,
               jsonResumableWrite(uri),
               RewindableContent.empty(),
-              HttpContentRange.of(_256KiBL));
+              HttpContentRange.of(_256KiBL),
+              new JsonResumableWriteCtx());
 
       StorageException se = assertThrows(StorageException.class, task::call);
       assertThat(se.getCode()).isEqualTo(0);
@@ -374,7 +379,8 @@ public final class ITJsonResumableSessionPutTaskTest {
               httpClientContext,
               jsonResumableWrite(uri),
               RewindableContent.empty(),
-              HttpContentRange.of(_512KiBL));
+              HttpContentRange.of(_512KiBL),
+              new JsonResumableWriteCtx());
 
       StorageException se = assertThrows(StorageException.class, task::call);
       assertThat(se.getCode()).isEqualTo(0);
@@ -453,7 +459,8 @@ public final class ITJsonResumableSessionPutTaskTest {
               httpClientContext,
               jsonResumableWrite(uri),
               RewindableContent.empty(),
-              HttpContentRange.of(_256KiBL));
+              HttpContentRange.of(_256KiBL),
+              new JsonResumableWriteCtx());
 
       ResumableOperationResult<@Nullable StorageObject> operationResult = task.call();
       StorageObject call = operationResult.getObject();
@@ -535,7 +542,8 @@ public final class ITJsonResumableSessionPutTaskTest {
               httpClientContext,
               jsonResumableWrite(uri),
               RewindableContent.empty(),
-              HttpContentRange.of(_512KiBL));
+              HttpContentRange.of(_512KiBL),
+              new JsonResumableWriteCtx());
 
       StorageException se = assertThrows(StorageException.class, task::call);
       assertThat(se.getCode()).isEqualTo(0);
@@ -616,7 +624,8 @@ public final class ITJsonResumableSessionPutTaskTest {
               httpClientContext,
               jsonResumableWrite(uri),
               RewindableContent.empty(),
-              HttpContentRange.of(_128KiBL));
+              HttpContentRange.of(_128KiBL),
+              new JsonResumableWriteCtx());
 
       StorageException se = assertThrows(StorageException.class, task::call);
       assertThat(se.getCode()).isEqualTo(0);
@@ -695,7 +704,8 @@ public final class ITJsonResumableSessionPutTaskTest {
               httpClientContext,
               jsonResumableWrite(uri),
               RewindableContent.of(tmpFile.getPath()),
-              HttpContentRange.of(ByteRangeSpec.explicit(_512KiBL, _768KiBL)));
+              HttpContentRange.of(ByteRangeSpec.explicit(_512KiBL, _768KiBL)),
+              new JsonResumableWriteCtx());
 
       StorageException se = assertThrows(StorageException.class, task::call);
       assertThat(se.getCode()).isEqualTo(0);
@@ -728,7 +738,8 @@ public final class ITJsonResumableSessionPutTaskTest {
               httpClientContext,
               jsonResumableWrite(uri),
               RewindableContent.of(tmpFile.getPath()),
-              HttpContentRange.of(ByteRangeSpec.explicit(_512KiBL, _768KiBL)));
+              HttpContentRange.of(ByteRangeSpec.explicit(_512KiBL, _768KiBL)),
+              new JsonResumableWriteCtx());
 
       StorageException se = assertThrows(StorageException.class, task::call);
       assertThat(se.getCode()).isEqualTo(503);
@@ -770,7 +781,8 @@ public final class ITJsonResumableSessionPutTaskTest {
               httpClientContext,
               jsonResumableWrite(uri),
               RewindableContent.empty(),
-              HttpContentRange.of(0));
+              HttpContentRange.of(0),
+              new JsonResumableWriteCtx());
 
       StorageException se = assertThrows(StorageException.class, task::call);
       // the parse error happens while trying to read the success object, make sure we raise it as
@@ -809,7 +821,8 @@ public final class ITJsonResumableSessionPutTaskTest {
               httpClientContext,
               jsonResumableWrite(uri),
               RewindableContent.empty(),
-              HttpContentRange.of(0));
+              HttpContentRange.of(0),
+              new JsonResumableWriteCtx());
 
       ResumableOperationResult<@Nullable StorageObject> operationResult = task.call();
       StorageObject call = operationResult.getObject();
@@ -823,7 +836,11 @@ public final class ITJsonResumableSessionPutTaskTest {
     RewindableContent content = RewindableContent.of();
     JsonResumableSessionPutTask task =
         new JsonResumableSessionPutTask(
-            null, null, content, HttpContentRange.of(ByteRangeSpec.relativeLength(10L, 10L)));
+            null,
+            null,
+            content,
+            HttpContentRange.of(ByteRangeSpec.relativeLength(10L, 10L)),
+            new JsonResumableWriteCtx());
 
     IllegalArgumentException iae =
         assertThrows(IllegalArgumentException.class, () -> task.rewindTo(9));
@@ -835,7 +852,11 @@ public final class ITJsonResumableSessionPutTaskTest {
     RewindableContent content = RewindableContent.of();
     JsonResumableSessionPutTask task =
         new JsonResumableSessionPutTask(
-            null, null, content, HttpContentRange.of(ByteRangeSpec.relativeLength(10L, 10L)));
+            null,
+            null,
+            content,
+            HttpContentRange.of(ByteRangeSpec.relativeLength(10L, 10L)),
+            new JsonResumableWriteCtx());
 
     IllegalArgumentException iae =
         assertThrows(IllegalArgumentException.class, () -> task.rewindTo(20));
@@ -849,7 +870,11 @@ public final class ITJsonResumableSessionPutTaskTest {
     RewindableContent content = RewindableContent.of(buf1, buf2);
     JsonResumableSessionPutTask task =
         new JsonResumableSessionPutTask(
-            null, null, content, HttpContentRange.of(ByteRangeSpec.relativeLength(0L, _512KiBL)));
+            null,
+            null,
+            content,
+            HttpContentRange.of(ByteRangeSpec.relativeLength(0L, _512KiBL)),
+            new JsonResumableWriteCtx());
 
     task.rewindTo(0);
     assertThat(buf1.position()).isEqualTo(0);
@@ -876,7 +901,152 @@ public final class ITJsonResumableSessionPutTaskTest {
     assertThat(buf2.position()).isEqualTo(13);
   }
 
+  @Test
+  public void finalChunkContainsCorrectCrc32cHeader() throws Exception {
+    byte[] chunk1Data = DataGenerator.base64Characters().genBytes(_256KiB);
+    byte[] chunk2Data = DataGenerator.base64Characters().genBytes(_256KiB);
+
+    Crc32cValue.Crc32cLengthKnown crc1 = calculateCrc32c(chunk1Data);
+    Crc32cValue.Crc32cLengthKnown cumulativeCrcExpected = crc1.concat(calculateCrc32c(chunk2Data));
+    String expectedHashHeader =
+        "crc32c=" + Utils.crc32cCodec.encode(cumulativeCrcExpected.getValue());
+
+    AtomicReference<String> capturedInitialHash = new AtomicReference<>();
+    AtomicReference<String> capturedFinalHash = new AtomicReference<>();
+
+    HttpRequestHandler handler =
+        req -> {
+          String contentRange = req.headers().get(CONTENT_RANGE);
+          String currentHash = req.headers().get("X-Goog-Hash");
+
+          if (contentRange.contains("/*")) { // First chunk (non-final)
+            capturedInitialHash.set(currentHash);
+            FullHttpResponse resp =
+                new DefaultFullHttpResponse(req.protocolVersion(), RESUME_INCOMPLETE);
+            resp.headers()
+                .set(
+                    HttpHeaderNames.RANGE,
+                    ByteRangeSpec.explicit(0L, _256KiBL).getHttpRangeHeader());
+            return resp;
+          } else { // Second chunk (final)
+            capturedFinalHash.set(currentHash);
+
+            StorageObject so =
+                new StorageObject().setName("object").setSize(BigInteger.valueOf(_512KiBL));
+            ByteBuf buf = Unpooled.wrappedBuffer(gson.toByteArray(so));
+            FullHttpResponse resp = new DefaultFullHttpResponse(req.protocolVersion(), OK, buf);
+            resp.headers().set(CONTENT_TYPE, "application/json; charset=utf-8");
+            return resp;
+          }
+        };
+
+    try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
+      URI uri =
+          fakeHttpServer.createUri(
+              "/upload/{uploadId}", ImmutableMap.of("uploadId", UUID.randomUUID().toString()));
+
+      JsonResumableWriteCtx ctx = new JsonResumableWriteCtx();
+
+      // 1. Send Chunk 1 (Non-finalizing)
+      JsonResumableSessionPutTask task1 =
+          new JsonResumableSessionPutTask(
+              httpClientContext,
+              jsonResumableWrite(uri),
+              RewindableContent.of(ByteBuffer.wrap(chunk1Data)),
+              HttpContentRange.of(ByteRangeSpec.explicit(0L, _256KiBL)),
+              ctx);
+      task1.call();
+
+      // 2. Send Chunk 2 (Finalizing)
+      JsonResumableSessionPutTask task2 =
+          new JsonResumableSessionPutTask(
+              httpClientContext,
+              jsonResumableWrite(uri).withBeginOffset(_256KiBL), // Update offset
+              RewindableContent.of(ByteBuffer.wrap(chunk2Data)),
+              HttpContentRange.of(
+                  ByteRangeSpec.explicitClosed(_256KiBL, _512KiBL - 1),
+                  _512KiBL), // Finalizing range
+              ctx);
+      task2.call();
+
+      assertThat(capturedInitialHash.get()).isNull();
+      assertThat(capturedFinalHash.get()).isNotNull();
+      assertThat(capturedFinalHash.get()).isEqualTo(expectedHashHeader);
+    }
+  }
+
+  @Test
+  public void chunkFailureDoesNotCommitCrc() throws Exception {
+    byte[] chunk1Data = DataGenerator.base64Characters().genBytes(_256KiB);
+    Crc32cValue.Crc32cLengthKnown expectedCrc = calculateCrc32c(chunk1Data);
+    String expectedHashHeader = "crc32c=" + Utils.crc32cCodec.encode(expectedCrc.getValue());
+
+    AtomicLong requestCount = new AtomicLong(0);
+    AtomicReference<String> capturedFinalHash = new AtomicReference<>();
+
+    HttpRequestHandler handler =
+        req -> {
+          long count = requestCount.incrementAndGet();
+
+          if (count == 1) {
+            // First attempt FAILS (e.g., 503 or network error)
+            // We simulate a failure that allows retry (not 308).
+            // Here we use 503 Service Unavailable.
+            return new DefaultFullHttpResponse(
+                req.protocolVersion(), HttpResponseStatus.SERVICE_UNAVAILABLE);
+          } else if (count == 2) {
+            // Second attempt SUCCEEDS
+            String hashHeader = req.headers().get("x-goog-hash");
+            capturedFinalHash.set(hashHeader);
+
+            StorageObject so =
+                new StorageObject().setName("object").setSize(BigInteger.valueOf(_256KiBL));
+            ByteBuf buf = Unpooled.wrappedBuffer(gson.toByteArray(so));
+            DefaultFullHttpResponse resp =
+                new DefaultFullHttpResponse(req.protocolVersion(), OK, buf);
+            resp.headers().set(CONTENT_TYPE, "application/json; charset=utf-8");
+            return resp;
+          }
+          return new DefaultFullHttpResponse(
+              req.protocolVersion(), HttpResponseStatus.INTERNAL_SERVER_ERROR);
+        };
+
+    try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
+      URI uri =
+          fakeHttpServer.createUri(
+              "/upload/{uploadId}", ImmutableMap.of("uploadId", UUID.randomUUID().toString()));
+
+      JsonResumableWriteCtx ctx = new JsonResumableWriteCtx();
+
+      JsonResumableSessionPutTask task =
+          new JsonResumableSessionPutTask(
+              httpClientContext,
+              jsonResumableWrite(uri),
+              RewindableContent.of(ByteBuffer.wrap(chunk1Data)),
+              HttpContentRange.of(ByteRangeSpec.explicitClosed(0L, _256KiBL - 1), _256KiBL),
+              ctx);
+
+      // Call 1: Will Fail with 503
+      StorageException se = assertThrows(StorageException.class, task::call);
+      assertThat(se.getCode()).isEqualTo(503);
+
+      // Call 2: Retry the SAME task object
+      task.rewindTo(0);
+      ResumableOperationResult<@Nullable StorageObject> result = task.call();
+
+      assertThat(requestCount.get()).isEqualTo(2);
+      assertThat(result.getObject()).isNotNull();
+      assertThat(result.getPersistedSize()).isEqualTo(_256KiBL);
+      assertThat(capturedFinalHash.get()).isNotNull();
+      assertThat(capturedFinalHash.get()).isEqualTo(expectedHashHeader);
+    }
+  }
+
   static @NonNull JsonResumableWrite jsonResumableWrite(URI uploadUrl) {
     return JsonResumableWrite.of(new StorageObject(), ImmutableMap.of(), uploadUrl.toString(), 0);
+  }
+
+  private Crc32cValue.Crc32cLengthKnown calculateCrc32c(byte[] data) {
+    return Hasher.enabled().hash(ByteBuffer.wrap(data));
   }
 }
