@@ -24,6 +24,7 @@ import com.google.api.client.http.HttpResponseException;
 import com.google.api.services.storage.model.StorageObject;
 import com.google.cloud.storage.HttpContentRange.HasRange;
 import com.google.cloud.storage.StorageException.IOExceptionCallable;
+import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import io.opencensus.common.Scope;
@@ -43,20 +44,22 @@ final class JsonResumableSessionPutTask
   private final JsonResumableWrite jsonResumableWrite;
   private final RewindableContent content;
   private final HttpContentRange originalContentRange;
-
   private HttpContentRange contentRange;
+  private final JsonResumableWriteCtx jsonResumableWriteCtx;
 
   @VisibleForTesting
   JsonResumableSessionPutTask(
       HttpClientContext httpClientContext,
       JsonResumableWrite jsonResumableWrite,
       RewindableContent content,
-      HttpContentRange originalContentRange) {
+      HttpContentRange originalContentRange,
+      JsonResumableWriteCtx jsonResumableWriteCtx) {
     this.context = httpClientContext;
     this.jsonResumableWrite = jsonResumableWrite;
     this.content = content;
     this.originalContentRange = originalContentRange;
     this.contentRange = originalContentRange;
+    this.jsonResumableWriteCtx = jsonResumableWriteCtx;
   }
 
   public void rewindTo(long offset) {
@@ -101,11 +104,17 @@ final class JsonResumableSessionPutTask
     for (Entry<String, String> e : jsonResumableWrite.getExtraHeaders().entrySet()) {
       headers.set(e.getKey(), e.getValue());
     }
+    Crc32cValue.Crc32cLengthKnown chunkCrc = content.getCrc32c();
+    Crc32cValue.Crc32cLengthKnown nextCumulativeCrc =
+        jsonResumableWriteCtx.peekCumulative(chunkCrc);
+    if (finalizing && nextCumulativeCrc != null) {
+      String crc32c = Utils.crc32cCodec.encode(nextCumulativeCrc.getValue());
+      headers.set(StorageRpc.Option.X_GOOG_HASH.value(), "crc32c=" + crc32c);
+    }
 
     HttpResponse response = null;
     try {
       response = req.execute();
-
       int code = response.getStatusCode();
 
       if (!finalizing && UploadFailureScenario.isContinue(code)) {
@@ -113,11 +122,13 @@ final class JsonResumableSessionPutTask
         @Nullable String range = response.getHeaders().getRange();
         ByteRangeSpec ackRange = ByteRangeSpec.parse(range);
         if (ackRange.endOffset() == effectiveEnd) {
+          jsonResumableWriteCtx.commit(chunkCrc);
           success = true;
           return ResumableOperationResult.incremental(ackRange.endOffset());
         } else if (ackRange.endOffset() < effectiveEnd) {
           rewindTo(ackRange.endOffset());
           success = true;
+          jsonResumableWriteCtx.commit(chunkCrc);
           return ResumableOperationResult.incremental(ackRange.endOffset());
         } else {
           StorageException se =
@@ -126,6 +137,7 @@ final class JsonResumableSessionPutTask
           throw se;
         }
       } else if (finalizing && UploadFailureScenario.isOk(code)) {
+        jsonResumableWriteCtx.commit(chunkCrc);
         @Nullable StorageObject storageObject;
         BigInteger actualSize = BigInteger.ZERO;
 
