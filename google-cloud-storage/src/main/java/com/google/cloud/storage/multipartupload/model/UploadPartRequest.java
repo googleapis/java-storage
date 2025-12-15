@@ -98,7 +98,7 @@ public final class UploadPartRequest {
    */
   @BetaApi
   @Nullable
-  public String getCrc32c() {
+  public String crc32c() {
     return crc32c;
   }
 
