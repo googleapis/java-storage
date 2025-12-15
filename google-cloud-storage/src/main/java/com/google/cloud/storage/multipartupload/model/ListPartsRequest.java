@@ -37,12 +37,15 @@ public final class ListPartsRequest {
 
   private final Integer partNumberMarker;
 
+  private final String userProject;
+
   private ListPartsRequest(Builder builder) {
     this.bucket = builder.bucket;
     this.key = builder.key;
     this.uploadId = builder.uploadId;
     this.maxParts = builder.maxParts;
     this.partNumberMarker = builder.partNumberMarker;
+    this.userProject = builder.userProject;
   }
 
   /**
@@ -85,7 +88,7 @@ public final class ListPartsRequest {
    * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  public Integer getMaxParts() {
+  public Integer maxParts() {
     return maxParts;
   }
 
@@ -96,8 +99,21 @@ public final class ListPartsRequest {
    * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  public Integer getPartNumberMarker() {
+  public Integer partNumberMarker() {
     return partNumberMarker;
+  }
+
+  /**
+   * Returns the user-project.
+   *
+   * @return the user-project.
+   * @see <a
+   *     href="https://docs.cloud.google.com/storage/docs/xml-api/reference-headers#xgooguserproject">x-goog-user-project</a>
+   * @since 2.61 This new api is in preview and is subject to breaking changes.
+   */
+  @BetaApi
+  public String userProject() {
+    return userProject;
   }
 
   @Override
@@ -113,12 +129,13 @@ public final class ListPartsRequest {
         && Objects.equals(key, that.key)
         && Objects.equals(uploadId, that.uploadId)
         && Objects.equals(maxParts, that.maxParts)
-        && Objects.equals(partNumberMarker, that.partNumberMarker);
+        && Objects.equals(partNumberMarker, that.partNumberMarker)
+        && Objects.equals(userProject, that.userProject);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(bucket, key, uploadId, maxParts, partNumberMarker);
+    return Objects.hash(bucket, key, uploadId, maxParts, partNumberMarker, userProject);
   }
 
   @Override
@@ -129,6 +146,7 @@ public final class ListPartsRequest {
         .add("uploadId", uploadId)
         .add("maxParts", maxParts)
         .add("partNumberMarker", partNumberMarker)
+        .add("userProject", userProject)
         .toString();
   }
 
@@ -155,6 +173,7 @@ public final class ListPartsRequest {
     private String uploadId;
     private Integer maxParts;
     private Integer partNumberMarker;
+    private String userProject;
 
     private Builder() {}
 
@@ -220,6 +239,21 @@ public final class ListPartsRequest {
     @BetaApi
     public Builder partNumberMarker(Integer partNumberMarker) {
       this.partNumberMarker = partNumberMarker;
+      return this;
+    }
+
+    /**
+     * Sets the user-project.
+     *
+     * @param userProject The user-project.
+     * @return This builder.
+     * @see <a
+     *     href="https://docs.cloud.google.com/storage/docs/xml-api/reference-headers#xgooguserproject">x-goog-user-project</a>
+     * @since 2.61 This new api is in preview and is subject to breaking changes.
+     */
+    @BetaApi
+    public Builder userProject(String userProject) {
+      this.userProject = userProject;
       return this;
     }
 
