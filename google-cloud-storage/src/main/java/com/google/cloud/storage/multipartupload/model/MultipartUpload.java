@@ -60,7 +60,7 @@ public final class MultipartUpload {
    * @since 2.61.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  public String getKey() {
+  public String key() {
     return key;
   }
 
@@ -71,7 +71,7 @@ public final class MultipartUpload {
    * @since 2.61.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  public String getUploadId() {
+  public String uploadId() {
     return uploadId;
   }
 
@@ -82,7 +82,7 @@ public final class MultipartUpload {
    * @since 2.61.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  public StorageClass getStorageClass() {
+  public StorageClass storageClass() {
     return storageClass;
   }
 
@@ -93,7 +93,7 @@ public final class MultipartUpload {
    * @since 2.61.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  public OffsetDateTime getInitiated() {
+  public OffsetDateTime initiated() {
     return initiated;
   }
 
@@ -160,7 +160,7 @@ public final class MultipartUpload {
      * @since 2.61.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
-    public Builder setKey(String key) {
+    public Builder key(String key) {
       this.key = key;
       return this;
     }
@@ -173,7 +173,7 @@ public final class MultipartUpload {
      * @since 2.61.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
-    public Builder setUploadId(String uploadId) {
+    public Builder uploadId(String uploadId) {
       this.uploadId = uploadId;
       return this;
     }
@@ -186,7 +186,7 @@ public final class MultipartUpload {
      * @since 2.61.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
-    public Builder setStorageClass(StorageClass storageClass) {
+    public Builder storageClass(StorageClass storageClass) {
       this.storageClass = storageClass;
       return this;
     }
@@ -199,7 +199,7 @@ public final class MultipartUpload {
      * @since 2.61.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
-    public Builder setInitiated(OffsetDateTime initiated) {
+    public Builder initiated(OffsetDateTime initiated) {
       this.initiated = initiated;
       return this;
     }
