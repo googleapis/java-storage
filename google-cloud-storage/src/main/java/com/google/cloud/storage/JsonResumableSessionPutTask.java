@@ -126,9 +126,14 @@ final class JsonResumableSessionPutTask
           success = true;
           return ResumableOperationResult.incremental(ackRange.endOffset());
         } else if (ackRange.endOffset() < effectiveEnd) {
+          long originalBeginOffset =
+              ((HttpContentRange.HasRange<?>) contentRange).range().beginOffset();
+          long bytesAcknowledged = ackRange.endOffset() - originalBeginOffset;
+          Crc32cValue.Crc32cLengthKnown acknowledgedChunkCrc =
+              content.getPartialCrc32c(0, bytesAcknowledged);
+          jsonResumableWriteCtx.commit(acknowledgedChunkCrc);
           rewindTo(ackRange.endOffset());
           success = true;
-          jsonResumableWriteCtx.commit(chunkCrc);
           return ResumableOperationResult.incremental(ackRange.endOffset());
         } else {
           StorageException se =

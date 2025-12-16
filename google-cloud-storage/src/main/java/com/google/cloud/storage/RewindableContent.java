@@ -62,6 +62,9 @@ abstract class RewindableContent extends AbstractHttpContent {
   @Nullable
   abstract Crc32cLengthKnown getCrc32c();
 
+  @Nullable
+  abstract Crc32cLengthKnown getPartialCrc32c(long offset, long length);
+
   static RewindableContent empty() {
     return EmptyRewindableContent.INSTANCE;
   }
@@ -121,6 +124,13 @@ abstract class RewindableContent extends AbstractHttpContent {
 
     @Override
     @Nullable Crc32cLengthKnown getCrc32c() {
+      return Hasher.defaultHasher().initialValue();
+    }
+
+    @Override
+    @Nullable Crc32cLengthKnown getPartialCrc32c(long offset, long length) {
+      Preconditions.checkArgument(
+          offset == 0 && length == 0, "Empty content does not have any range to hash.");
       return Hasher.defaultHasher().initialValue();
     }
   }
@@ -204,6 +214,52 @@ abstract class RewindableContent extends AbstractHttpContent {
         }
       } catch (IOException e) {
         throw new RuntimeException("Failed to read file for CRC32C calculation: " + path, e);
+      }
+      return cumulative;
+    }
+
+    @Override
+    @Nullable Crc32cLengthKnown getPartialCrc32c(long offset, long length) {
+      GuavaHasher hasher;
+      {
+        Hasher defaultHasher = Hasher.defaultHasher();
+        if (defaultHasher instanceof NoOpHasher) {
+          return null;
+        } else {
+          hasher = Hasher.enabled();
+        }
+      }
+      Crc32cLengthKnown cumulative = Crc32cValue.zero();
+
+      if (length == 0) {
+        return cumulative;
+      }
+
+      int bufferSize = 8192; // 8KiB buffer for reading chunks
+      ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
+
+      try (SeekableByteChannel channel = Files.newByteChannel(path, StandardOpenOption.READ)) {
+        channel.position(this.readOffset + offset);
+        long bytesRemainingToRead = length;
+        while (bytesRemainingToRead > 0) {
+          int limit = (int) Math.min(buffer.capacity(), bytesRemainingToRead);
+          buffer.limit(limit);
+
+          int bytesRead = channel.read(buffer);
+          if (bytesRead == -1) {
+            // End of file reached unexpectedly
+            break;
+          }
+          buffer.flip();
+          if (buffer.hasRemaining()) {
+            cumulative = cumulative.concat(hasher.hash(buffer::duplicate));
+          }
+          bytesRemainingToRead -= bytesRead;
+          buffer.clear();
+        }
+      } catch (IOException e) {
+        throw new RuntimeException(
+            "Failed to read file for partial CRC32C calculation: " + path, e);
       }
       return cumulative;
     }
@@ -317,6 +373,55 @@ abstract class RewindableContent extends AbstractHttpContent {
       Crc32cLengthKnown cumulative = Crc32cValue.zero();
       for (ByteBuffer buffer : buffers) {
         cumulative = cumulative.concat(hasher.hash(buffer::duplicate));
+      }
+      return cumulative;
+    }
+
+    @Override
+    @Nullable Crc32cLengthKnown getPartialCrc32c(long offset, long length) {
+      GuavaHasher hasher;
+      {
+        Hasher defaultHasher = Hasher.defaultHasher();
+        if (defaultHasher instanceof NoOpHasher) {
+          return null;
+        } else {
+          hasher = Hasher.enabled();
+        }
+      }
+
+      if (length == 0) {
+        return Crc32cValue.zero();
+      }
+
+      Crc32cLengthKnown cumulative = Crc32cValue.zero();
+
+      long endOffset = offset + length;
+      long currentPos = 0;
+
+      for (int i = 0; i < buffers.length; i++) {
+        ByteBuffer originalBuffer = buffers[i];
+        int originalPosition = positions[i];
+
+        long bufferStart = currentPos;
+        long bufferEnd = bufferStart + (originalBuffer.limit() - originalPosition);
+
+        // Determine the intersection of the buffer's content and the requested range
+        long intersectionStart = Math.max(offset, bufferStart);
+        long intersectionEnd = Math.min(endOffset, bufferEnd);
+
+        if (intersectionStart < intersectionEnd) {
+          // There is an overlap to hash
+          ByteBuffer slice = originalBuffer.duplicate();
+          int sliceStart = (int) (originalPosition + (intersectionStart - bufferStart));
+          int sliceEnd = (int) (originalPosition + (intersectionEnd - bufferStart));
+
+          slice.position(sliceStart).limit(sliceEnd);
+          cumulative = cumulative.concat(hasher.hash(slice::duplicate));
+        }
+        currentPos = bufferEnd;
+        if (currentPos >= endOffset) {
+          break;
+        }
       }
       return cumulative;
     }
