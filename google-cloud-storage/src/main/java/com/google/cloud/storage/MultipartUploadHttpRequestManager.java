@@ -225,8 +225,8 @@ final class MultipartUploadHttpRequestManager {
     if (request.userProject() != null) {
       httpRequest.getHeaders().put("x-goog-user-project", request.userProject());
     }
-    if (request.getCrc32c() != null) {
-      addChecksumHeader(request.getCrc32c(), httpRequest.getHeaders());
+    if (request.crc32c() != null) {
+      addChecksumHeader(request.crc32c(), httpRequest.getHeaders());
     } else {
       addChecksumHeader(rewindableContent.getCrc32c(), httpRequest.getHeaders());
     }

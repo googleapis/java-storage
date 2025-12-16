@@ -1243,10 +1243,10 @@ public final class ITMultipartUploadHttpRequestManagerTest {
                   .uploads(
                       ImmutableList.of(
                           MultipartUpload.newBuilder()
-                              .setKey("test-key")
-                              .setUploadId("test-upload-id")
-                              .setStorageClass(StorageClass.STANDARD)
-                              .setInitiated(
+                              .key("test-key")
+                              .uploadId("test-upload-id")
+                              .storageClass(StorageClass.STANDARD)
+                              .initiated(
                                   OffsetDateTime.of(2025, 11, 11, 0, 0, 0, 0, ZoneOffset.UTC))
                               .build()))
                   .build();
@@ -1285,9 +1285,9 @@ public final class ITMultipartUploadHttpRequestManagerTest {
       assertThat(response.uploads()).hasSize(1);
 
       MultipartUpload upload = response.uploads().get(0);
-      assertThat(upload.getKey()).isEqualTo("test-key");
-      assertThat(upload.getStorageClass()).isEqualTo(StorageClass.STANDARD);
-      assertThat(upload.getInitiated())
+      assertThat(upload.key()).isEqualTo("test-key");
+      assertThat(upload.storageClass()).isEqualTo(StorageClass.STANDARD);
+      assertThat(upload.initiated())
           .isEqualTo(OffsetDateTime.of(2025, 11, 11, 0, 0, 0, 0, ZoneOffset.UTC));
     }
   }
