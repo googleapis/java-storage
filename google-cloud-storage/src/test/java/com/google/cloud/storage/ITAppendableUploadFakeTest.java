@@ -921,6 +921,68 @@ public class ITAppendableUploadFakeTest {
     }
   }
 
+  /**
+   * If a stream is held open for an extended period (i.e. longer than the configured retry timeout)
+   * and the server returns an error, we want to make sure the currently pending request is able to
+   * be retried. To accomplish this, the retry context needs to reset it's attempt elapsed timer
+   * each time a successful response from the server is received.
+   *
+   * <p>This test simulates (using our {@link TestApiClock} the server pausing 60 seconds before
+   * delivering an ACK. After the ACK, we raise an Unavailable error, the client's retries should be
+   * able to handle this and pick up where it left off.
+   */
+  @Test
+  public void
+      receivingASuccessfulMessageOnTheStreamShouldResetTheElapsedTimerForRetryBudgetCalculation()
+          throws Exception {
+
+    TestApiClock testClock = TestApiClock.of(0, TestApiClock.addExact(Duration.ofSeconds(1)));
+    FakeStorage fake =
+        FakeStorage.of(
+            ImmutableMap.of(
+                flush(open_abc),
+                respond -> respond.onNext(res_abc),
+                flush(def),
+                respond -> {
+                  // when receiving the second message, simulate it taking one minute to process
+                  testClock.advance(Duration.ofMinutes(1));
+                  // then return the incremental response before erroring with a retryable error
+                  respond.onNext(incrementalResponse(6));
+                  respond.onError(TestUtils.apiException(Status.Code.UNAVAILABLE, "Unavailable"));
+                },
+                reconnect,
+                respond -> {
+                  BidiWriteObjectResponse.Builder b = res_abc.toBuilder();
+                  b.getResourceBuilder()
+                      .setSize(6)
+                      .setChecksums(
+                          ObjectChecksums.newBuilder()
+                              .setCrc32C(content.slice(0, 6).getCrc32c())
+                              .build());
+                  respond.onNext(b.build());
+                },
+                flush(ghi),
+                respond -> respond.onNext(incrementalResponse(9)),
+                j_finish,
+                respond -> respond.onNext(resource_10)));
+    try (FakeServer fakeServer = FakeServer.of(fake);
+        Storage storage =
+            fakeServer.getGrpcStorageOptions().toBuilder()
+                .setClock(testClock)
+                .build()
+                .getService()) {
+      BlobId id = BlobId.of("b", "o");
+
+      BlobAppendableUpload upload =
+          storage.blobAppendableUpload(BlobInfo.newBuilder(id).build(), UPLOAD_CONFIG);
+      try (AppendableUploadWriteableByteChannel channel = upload.open()) {
+        StorageChannelUtils.blockingEmptyTo(content.asByteBuffer(), channel);
+      }
+      ApiFuture<BlobInfo> result = upload.getResult();
+      result.get(5, TimeUnit.SECONDS);
+    }
+  }
+
   private static Consumer<StreamObserver<BidiWriteObjectResponse>> maxRetries(
       @NonNull BidiWriteObjectRequest req,
       Map<@NonNull BidiWriteObjectRequest, Integer> retryMap,
@@ -1018,6 +1080,10 @@ public class ITAppendableUploadFakeTest {
 
   private static BidiWriteObjectRequest finishMessage(long offset) {
     return BidiWriteObjectRequest.newBuilder().setWriteOffset(offset).setFinishWrite(true).build();
+  }
+
+  private static BidiWriteObjectRequest flush(BidiWriteObjectRequest req) {
+    return req.toBuilder().setStateLookup(true).setFlush(true).build();
   }
 
   private static void runTestFlushMultipleSegments(FakeStorage fake) throws Exception {
