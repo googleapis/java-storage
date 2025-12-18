@@ -36,9 +36,13 @@ import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.StatusCode;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Scope;
+import io.opentelemetry.api.metrics.DoubleHistogram;
+import io.opentelemetry.api.metrics.LongCounter;
+import io.opentelemetry.api.metrics.LongHistogram;
+import io.opentelemetry.api.metrics.Meter; 
 
 /**
- * A decorator for {@link MultipartUploadClient} that adds OpenTelemetry tracing.
+ * A decorator for {@link MultipartUploadClient} that adds OpenTelemetry tracing and metrics.
  *
  * @since 2.62.0 This new api is in preview and is subject to breaking changes.
  */
@@ -47,6 +51,17 @@ final class OtelMultipartUploadClientDecorator extends MultipartUploadClient {
 
   private final MultipartUploadClient delegate;
   private final Tracer tracer;
+  
+  private final Meter meter;
+  private final DoubleHistogram createMultipartUploadLatency;
+  private final DoubleHistogram listPartsLatency;
+  private final DoubleHistogram abortMultipartUploadLatency;
+  private final DoubleHistogram completeMultipartUploadLatency;
+  private final DoubleHistogram uploadPartLatency;
+  private final DoubleHistogram listMultipartUploadsLatency; 
+
+  private final LongCounter uploadedBytes;
+  private final LongHistogram partSize;
 
   private OtelMultipartUploadClientDecorator(
       MultipartUploadClient delegate, OpenTelemetry otel, Attributes baseAttributes) {
@@ -54,21 +69,82 @@ final class OtelMultipartUploadClientDecorator extends MultipartUploadClient {
     this.tracer =
         OtelStorageDecorator.TracerDecorator.decorate(
             null, otel, baseAttributes, MultipartUploadClient.class.getName() + "/");
+
+    this.meter = otel.meterBuilder(MultipartUploadClient.class.getName())
+        .build();
+
+    this.createMultipartUploadLatency = meter
+        .histogramBuilder("storage.multipart_upload.create_multipart_upload.latency")
+        .setDescription("Latency of Create Multipart Upload API calls")
+        .setUnit("ms")
+        .build();
+    this.listPartsLatency = meter
+        .histogramBuilder("storage.multipart_upload.list_parts.latency")
+        .setDescription("Latency of List Parts API calls")
+        .setUnit("ms")
+        .build();
+    this.abortMultipartUploadLatency = meter
+        .histogramBuilder("storage.multipart_upload.abort_multipart_upload.latency")
+        .setDescription("Latency of Abort Multipart Upload API calls")
+        .setUnit("ms")
+        .build();
+    this.completeMultipartUploadLatency = meter
+        .histogramBuilder("storage.multipart_upload.complete_multipart_upload.latency")
+        .setDescription("Latency of Complete Multipart Upload API calls")
+        .setUnit("ms")
+        .build();
+    this.uploadPartLatency = meter
+        .histogramBuilder("storage.multipart_upload.upload_part.latency")
+        .setDescription("Latency of Upload Part API calls")
+        .setUnit("ms")
+        .build();
+    this.listMultipartUploadsLatency = meter
+        .histogramBuilder("storage.multipart_upload.list_multipart_uploads.latency")
+        .setDescription("Latency of List Multipart Uploads API calls")
+        .setUnit("ms")
+        .build();
+    this.uploadedBytes = meter
+        .counterBuilder("storage.multipart_upload.uploaded_bytes")
+        .setDescription("Total bytes uploaded via Multipart Upload")
+        .setUnit("By")
+        .build();
+    this.partSize = meter
+        .histogramBuilder("storage.multipart_upload.part_size")
+        .ofLongs()
+        .setDescription("Size of parts uploaded via Multipart Upload")
+        .setUnit("By")
+        .build();
   }
 
   @Override
   public CreateMultipartUploadResponse createMultipartUpload(CreateMultipartUploadRequest request) {
+    long startTime = System.currentTimeMillis();
     Span span =
         tracer
             .spanBuilder("createMultipartUpload")
             .setAttribute(
                 "gsutil.uri", String.format("gs://%s/%s", request.bucket(), request.key()))
             .startSpan();
+    Attributes metricAttributes = Attributes.builder()
+        .put("bucket", request.bucket())
+        .put("key", request.key())
+        .put("method", "createMultipartUpload")
+        .build();
     try (Scope ignore = span.makeCurrent()) {
-      return delegate.createMultipartUpload(request);
+      CreateMultipartUploadResponse response = delegate.createMultipartUpload(request);
+      long duration = System.currentTimeMillis() - startTime;
+      createMultipartUploadLatency.record((double) duration, metricAttributes.toBuilder()
+          .put("status", "success")
+          .build());
+      return response;
     } catch (Throwable t) {
       span.recordException(t);
       span.setStatus(StatusCode.ERROR, t.getClass().getSimpleName());
+      long duration = System.currentTimeMillis() - startTime;
+      createMultipartUploadLatency.record((double) duration, metricAttributes.toBuilder()
+          .put("status", "error")
+          .put("exception_type", t.getClass().getSimpleName())
+          .build());
       throw t;
     } finally {
       span.end();
@@ -77,17 +153,33 @@ final class OtelMultipartUploadClientDecorator extends MultipartUploadClient {
 
   @Override
   public ListPartsResponse listParts(ListPartsRequest request) {
+    long startTime = System.currentTimeMillis();
     Span span =
         tracer
             .spanBuilder("listParts")
             .setAttribute(
                 "gsutil.uri", String.format("gs://%s/%s", request.bucket(), request.key()))
             .startSpan();
+    Attributes metricAttributes = Attributes.builder()
+        .put("bucket", request.bucket())
+        .put("key", request.key())
+        .put("method", "listParts")
+        .build();
     try (Scope ignore = span.makeCurrent()) {
-      return delegate.listParts(request);
+      ListPartsResponse response = delegate.listParts(request);
+      long duration = System.currentTimeMillis() - startTime;
+      listPartsLatency.record((double) duration, metricAttributes.toBuilder()
+          .put("status", "success")
+          .build());
+      return response;
     } catch (Throwable t) {
       span.recordException(t);
       span.setStatus(StatusCode.ERROR, t.getClass().getSimpleName());
+      long duration = System.currentTimeMillis() - startTime;
+      listPartsLatency.record((double) duration, metricAttributes.toBuilder()
+          .put("status", "error")
+          .put("exception_type", t.getClass().getSimpleName())
+          .build());
       throw t;
     } finally {
       span.end();
@@ -96,17 +188,33 @@ final class OtelMultipartUploadClientDecorator extends MultipartUploadClient {
 
   @Override
   public AbortMultipartUploadResponse abortMultipartUpload(AbortMultipartUploadRequest request) {
+    long startTime = System.currentTimeMillis();
     Span span =
         tracer
             .spanBuilder("abortMultipartUpload")
             .setAttribute(
                 "gsutil.uri", String.format("gs://%s/%s", request.bucket(), request.key()))
             .startSpan();
+    Attributes metricAttributes = Attributes.builder()
+        .put("bucket", request.bucket())
+        .put("key", request.key())
+        .put("method", "abortMultipartUpload")
+        .build();
     try (Scope ignore = span.makeCurrent()) {
-      return delegate.abortMultipartUpload(request);
+      AbortMultipartUploadResponse response = delegate.abortMultipartUpload(request);
+      long duration = System.currentTimeMillis() - startTime;
+      abortMultipartUploadLatency.record((double) duration, metricAttributes.toBuilder()
+          .put("status", "success")
+          .build());
+      return response;
     } catch (Throwable t) {
       span.recordException(t);
       span.setStatus(StatusCode.ERROR, t.getClass().getSimpleName());
+      long duration = System.currentTimeMillis() - startTime;
+      abortMultipartUploadLatency.record((double) duration, metricAttributes.toBuilder()
+          .put("status", "error")
+          .put("exception_type", t.getClass().getSimpleName())
+          .build());
       throw t;
     } finally {
       span.end();
@@ -116,17 +224,33 @@ final class OtelMultipartUploadClientDecorator extends MultipartUploadClient {
   @Override
   public CompleteMultipartUploadResponse completeMultipartUpload(
       CompleteMultipartUploadRequest request) {
+    long startTime = System.currentTimeMillis();
     Span span =
         tracer
             .spanBuilder("completeMultipartUpload")
             .setAttribute(
                 "gsutil.uri", String.format("gs://%s/%s", request.bucket(), request.key()))
             .startSpan();
+    Attributes metricAttributes = Attributes.builder()
+        .put("bucket", request.bucket())
+        .put("key", request.key())
+        .put("method", "completeMultipartUpload")
+        .build();
     try (Scope ignore = span.makeCurrent()) {
-      return delegate.completeMultipartUpload(request);
+      CompleteMultipartUploadResponse response = delegate.completeMultipartUpload(request);
+      long duration = System.currentTimeMillis() - startTime;
+      completeMultipartUploadLatency.record((double) duration, metricAttributes.toBuilder()
+          .put("status", "success")
+          .build());
+      return response;
     } catch (Throwable t) {
       span.recordException(t);
       span.setStatus(StatusCode.ERROR, t.getClass().getSimpleName());
+      long duration = System.currentTimeMillis() - startTime;
+      completeMultipartUploadLatency.record((double) duration, metricAttributes.toBuilder()
+          .put("status", "error")
+          .put("exception_type", t.getClass().getSimpleName())
+          .build());
       throw t;
     } finally {
       span.end();
@@ -135,6 +259,8 @@ final class OtelMultipartUploadClientDecorator extends MultipartUploadClient {
 
   @Override
   public UploadPartResponse uploadPart(UploadPartRequest request, RequestBody requestBody) {
+    long startTime = System.currentTimeMillis();
+    
     Span span =
         tracer
             .spanBuilder("uploadPart")
@@ -142,11 +268,39 @@ final class OtelMultipartUploadClientDecorator extends MultipartUploadClient {
                 "gsutil.uri", String.format("gs://%s/%s", request.bucket(), request.key()))
             .setAttribute("partNumber", request.partNumber())
             .startSpan();
+
+    Attributes metricAttributes = Attributes.builder()
+        .put("bucket", request.bucket())
+        .put("key", request.key())
+        .put("partNumber", request.partNumber())
+        .put("method", "uploadPart")
+        .build();
+
     try (Scope ignore = span.makeCurrent()) {
-      return delegate.uploadPart(request, requestBody);
+      UploadPartResponse response = delegate.uploadPart(request, requestBody);
+
+      long duration = System.currentTimeMillis() - startTime;
+      uploadPartLatency.record((double) duration, metricAttributes.toBuilder()
+          .put("status", "success")
+          .build());
+      uploadedBytes.add(requestBody.getContent().getLength(), metricAttributes.toBuilder()
+          .put("status", "success")
+          .build());
+      partSize.record(requestBody.getContent().getLength(), metricAttributes.toBuilder()
+          .put("status", "success")
+          .build());
+
+      return response;
     } catch (Throwable t) {
       span.recordException(t);
       span.setStatus(StatusCode.ERROR, t.getClass().getSimpleName());
+
+      long duration = System.currentTimeMillis() - startTime;
+      uploadPartLatency.record((double) duration, metricAttributes.toBuilder()
+          .put("status", "error")
+          .put("exception_type", t.getClass().getSimpleName())
+          .build());      
+
       throw t;
     } finally {
       span.end();
@@ -155,16 +309,31 @@ final class OtelMultipartUploadClientDecorator extends MultipartUploadClient {
 
   @Override
   public ListMultipartUploadsResponse listMultipartUploads(ListMultipartUploadsRequest request) {
+    long startTime = System.currentTimeMillis();
     Span span =
         tracer
             .spanBuilder("listMultipartUploads")
             .setAttribute("gsutil.uri", String.format("gs://%s/", request.bucket()))
             .startSpan();
+    Attributes metricAttributes = Attributes.builder()
+        .put("bucket", request.bucket())
+        .put("method", "listMultipartUploads")
+        .build();
     try (Scope ignore = span.makeCurrent()) {
-      return delegate.listMultipartUploads(request);
+      ListMultipartUploadsResponse response = delegate.listMultipartUploads(request);
+      long duration = System.currentTimeMillis() - startTime;
+      listMultipartUploadsLatency.record((double) duration, metricAttributes.toBuilder()
+          .put("status", "success")
+          .build());
+      return response;
     } catch (Throwable t) {
       span.recordException(t);
       span.setStatus(StatusCode.ERROR, t.getClass().getSimpleName());
+      long duration = System.currentTimeMillis() - startTime;
+      listMultipartUploadsLatency.record((double) duration, metricAttributes.toBuilder()
+          .put("status", "error")
+          .put("exception_type", t.getClass().getSimpleName())
+          .build());
       throw t;
     } finally {
       span.end();
