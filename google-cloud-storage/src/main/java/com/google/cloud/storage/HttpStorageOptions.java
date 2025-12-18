@@ -65,6 +65,7 @@ public class HttpStorageOptions extends StorageOptions {
   private transient RetryDependenciesAdapter retryDepsAdapter;
   private final BlobWriteSessionConfig blobWriteSessionConfig;
 
+  private final boolean enableHttpClientsMetrics;
   private transient OpenTelemetry openTelemetry;
 
   private HttpStorageOptions(Builder builder, StorageDefaults serviceDefaults) {
@@ -75,6 +76,7 @@ public class HttpStorageOptions extends StorageOptions {
                 builder.storageRetryStrategy, defaults().getStorageRetryStrategy()));
     retryDepsAdapter = new RetryDependenciesAdapter();
     blobWriteSessionConfig = builder.blobWriteSessionConfig;
+    enableHttpClientsMetrics = builder.enableHttpClientsMetrics;
     openTelemetry = builder.openTelemetry;
   }
 
@@ -99,6 +101,15 @@ public class HttpStorageOptions extends StorageOptions {
   @BetaApi
   @Override
   public OpenTelemetry getOpenTelemetry() {
+    if (openTelemetry == null || openTelemetry == OpenTelemetry.noop()) {
+      if (enableHttpClientsMetrics) {
+        openTelemetry =
+            OpenTelemetryBootstrappingUtils.getHttpOpenTelemetrySdk(
+                getProjectId(), getUniverseDomain(), getHost(), true);
+      } else {
+        return OpenTelemetry.noop();
+      }
+    }
     return openTelemetry;
   }
 
@@ -110,7 +121,11 @@ public class HttpStorageOptions extends StorageOptions {
   @Override
   public int hashCode() {
     return Objects.hash(
-        retryAlgorithmManager, blobWriteSessionConfig, openTelemetry, baseHashCode());
+        retryAlgorithmManager,
+        blobWriteSessionConfig,
+        enableHttpClientsMetrics,
+        openTelemetry,
+        baseHashCode());
   }
 
   @Override
@@ -124,6 +139,7 @@ public class HttpStorageOptions extends StorageOptions {
     HttpStorageOptions that = (HttpStorageOptions) o;
     return Objects.equals(retryAlgorithmManager, that.retryAlgorithmManager)
         && Objects.equals(blobWriteSessionConfig, that.blobWriteSessionConfig)
+        && Objects.equals(enableHttpClientsMetrics, that.enableHttpClientsMetrics)
         && Objects.equals(openTelemetry, that.openTelemetry)
         && this.baseEquals(that);
   }
@@ -156,6 +172,7 @@ public class HttpStorageOptions extends StorageOptions {
     private StorageRetryStrategy storageRetryStrategy;
     private BlobWriteSessionConfig blobWriteSessionConfig =
         HttpStorageDefaults.INSTANCE.getDefaultStorageWriterConfig();
+    private boolean enableHttpClientsMetrics = false;
     private OpenTelemetry openTelemetry = HttpStorageDefaults.INSTANCE.getDefaultOpenTelemetry();
 
     Builder() {}
@@ -165,6 +182,7 @@ public class HttpStorageOptions extends StorageOptions {
       HttpStorageOptions hso = (HttpStorageOptions) options;
       this.storageRetryStrategy = hso.retryAlgorithmManager.retryStrategy;
       this.blobWriteSessionConfig = hso.blobWriteSessionConfig;
+      this.enableHttpClientsMetrics = hso.enableHttpClientsMetrics;
       this.openTelemetry = hso.getOpenTelemetry();
     }
 
@@ -315,6 +333,19 @@ public class HttpStorageOptions extends StorageOptions {
     public HttpStorageOptions.Builder setOpenTelemetry(OpenTelemetry openTelemetry) {
       requireNonNull(openTelemetry, "openTelemetry must be non null");
       this.openTelemetry = openTelemetry;
+      return this;
+    }
+
+    /**
+     * Option for whether this client should emit internal HTTP client internal metrics to Cloud
+     * Monitoring. To enable metric reporting, set this to true. False by default. Emitting metrics
+     * is free and requires minimal CPU and memory.
+     *
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+     */
+    @BetaApi
+    public HttpStorageOptions.Builder setEnableHttpClientsMetrics(boolean enableHttpClientsMetrics) {
+      this.enableHttpClientsMetrics = enableHttpClientsMetrics;
       return this;
     }
   }

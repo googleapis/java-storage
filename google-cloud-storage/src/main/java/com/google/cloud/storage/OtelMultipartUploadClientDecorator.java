@@ -36,7 +36,12 @@ import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.StatusCode;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Scope;
+<<<<<<< HEAD
 import java.util.Locale;
+=======
+import io.opentelemetry.api.metrics.DoubleHistogram;
+import io.opentelemetry.api.metrics.Meter; 
+>>>>>>> 0bcd791c (chore: changes for metric export for MPU)
 
 /**
  * A decorator for {@link MultipartUploadClient} that adds OpenTelemetry tracing.
@@ -48,6 +53,11 @@ final class OtelMultipartUploadClientDecorator extends MultipartUploadClient {
 
   private final MultipartUploadClient delegate;
   private final Tracer tracer;
+  
+  // --- Metric Instrumentation Fields ---
+  private final Meter meter; // Meter for creating instruments
+  private final DoubleHistogram uploadPartLatency; // The specific metric instrument
+  // -------------------------------------
 
   private OtelMultipartUploadClientDecorator(
       MultipartUploadClient delegate, OpenTelemetry otel, Attributes baseAttributes) {
@@ -55,6 +65,19 @@ final class OtelMultipartUploadClientDecorator extends MultipartUploadClient {
     this.tracer =
         OtelStorageDecorator.TracerDecorator.decorate(
             null, otel, baseAttributes, MultipartUploadClient.class.getName() + "/");
+
+    // --- Metric Instrumentation Setup ---
+    // Get the Meter
+    this.meter = otel.meterBuilder(MultipartUploadClient.class.getName())
+        .build();
+
+    // Create the Latency Histogram instrument
+    this.uploadPartLatency = meter
+        .histogramBuilder("storage.multipart_upload.upload_part.latency")
+        .setDescription("Latency of Upload Part API calls")
+        .setUnit("ms") // Milliseconds
+        .build();
+    // ------------------------------------
   }
 
   @Override
@@ -136,6 +159,10 @@ final class OtelMultipartUploadClientDecorator extends MultipartUploadClient {
 
   @Override
   public UploadPartResponse uploadPart(UploadPartRequest request, RequestBody requestBody) {
+    
+    // --- Setup for Metric and Trace ---
+    long startTime = System.currentTimeMillis();
+    
     Span span =
         tracer
             .spanBuilder("uploadPart")
@@ -143,16 +170,48 @@ final class OtelMultipartUploadClientDecorator extends MultipartUploadClient {
                 "gsutil.uri", String.format("gs://%s/%s", request.bucket(), request.key()))
             .setAttribute("partNumber", request.partNumber())
             .startSpan();
+
+    Attributes metricAttributes = Attributes.builder()
+        .put("bucket", request.bucket())
+        .put("key", request.key())
+        .put("partNumber", request.partNumber())
+        .put("method", "uploadPart")
+        .build();
+    // ----------------------------------
+
     try (Scope ignore = span.makeCurrent()) {
-      return delegate.uploadPart(request, requestBody);
+      UploadPartResponse response = delegate.uploadPart(request, requestBody);
+      
+      // --- Metric Recording on Success ---
+      long duration = System.currentTimeMillis() - startTime;
+      
+      // Record the duration of the call (in milliseconds)
+      uploadPartLatency.record((double) duration, metricAttributes.toBuilder()
+          .put("status", "success")
+          .build());
+      // -----------------------------------
+      
+      return response;
     } catch (Throwable t) {
       span.recordException(t);
       span.setStatus(StatusCode.ERROR, t.getClass().getSimpleName());
+      
+      // --- Metric Recording on Failure ---
+      long duration = System.currentTimeMillis() - startTime;
+      
+      // Record the duration of the failed call
+      uploadPartLatency.record((double) duration, metricAttributes.toBuilder()
+          .put("status", "error")
+          .put("exception_type", t.getClass().getSimpleName())
+          .build());
+      // -----------------------------------
+      
       throw t;
     } finally {
       span.end();
     }
   }
+<<<<<<< HEAD
 
   @Override
   public ListMultipartUploadsResponse listMultipartUploads(ListMultipartUploadsRequest request) {
@@ -172,6 +231,8 @@ final class OtelMultipartUploadClientDecorator extends MultipartUploadClient {
     }
   }
 
+=======
+>>>>>>> 0bcd791c (chore: changes for metric export for MPU)
   static MultipartUploadClient decorate(
       MultipartUploadClient delegate, OpenTelemetry otel, Transport transport) {
     if (otel == OpenTelemetry.noop()) {

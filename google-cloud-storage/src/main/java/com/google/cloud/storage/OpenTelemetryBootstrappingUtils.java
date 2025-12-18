@@ -28,6 +28,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.opentelemetry.GrpcOpenTelemetry;
+import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.common.AttributesBuilder;
@@ -140,6 +141,45 @@ final class OpenTelemetryBootstrappingUtils {
           return b;
         };
     return otelConfigurator.andThen(channelConfigurator);
+  }
+
+  @NonNull
+  static OpenTelemetry getHttpOpenTelemetrySdk(
+      String projectId,
+      String universeDomain,
+      String host,
+      boolean shouldSuppressExceptions) {
+    GCPResourceProvider resourceProvider = new GCPResourceProvider();
+    Attributes detectedAttributes = resourceProvider.getAttributes();
+
+    @Nullable
+    String detectedProjectId = detectedAttributes.get(AttributeKey.stringKey("cloud.account.id"));
+    if (projectId == null && detectedProjectId == null) {
+      log.warning(
+          "Unable to determine the Project ID in order to report metrics. No HTTP client metrics"
+              + " will be reported.");
+      return OpenTelemetry.noop();
+    }
+
+    String projectIdToUse = detectedProjectId == null ? projectId : detectedProjectId;
+    if (!projectIdToUse.equals(projectId)) {
+      log.warning(
+          "The Project ID configured for HTTP client metrics is "
+              + projectIdToUse
+              + ", but the Project ID of the storage client is "
+              + projectId
+              + ". Make sure that the service account in use has the required metric writing role "
+              + "(roles/monitoring.metricWriter) in the project "
+              + projectIdToUse
+              + ", or metrics will not be written.");
+    }
+
+    String metricServiceEndpoint = getCloudMonitoringEndpoint(host, universeDomain);
+    SdkMeterProvider provider =
+        createMeterProvider(
+            metricServiceEndpoint, projectIdToUse, detectedAttributes, shouldSuppressExceptions);
+
+    return OpenTelemetrySdk.builder().setMeterProvider(provider).build();
   }
 
   @SuppressWarnings("rawtypes") // ManagedChannelBuilder
