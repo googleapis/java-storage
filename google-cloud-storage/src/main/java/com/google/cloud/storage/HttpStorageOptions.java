@@ -337,11 +337,10 @@ public class HttpStorageOptions extends StorageOptions {
     }
 
     /**
-     * Option for whether this client should emit internal HTTP client internal metrics to Cloud
-     * Monitoring. To enable metric reporting, set this to true. False by default. Emitting metrics
-     * is free and requires minimal CPU and memory.
+     * Option for whether this client should emit internal Otel HTTP client metrics to 
+     * Cloud Monitoring. To enable metric reporting, set this to true. False by default.
      *
-     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.62.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
     public HttpStorageOptions.Builder setEnableHttpClientsMetrics(boolean enableHttpClientsMetrics) {
@@ -390,6 +389,11 @@ public class HttpStorageOptions extends StorageOptions {
     @BetaApi
     public OpenTelemetry getDefaultOpenTelemetry() {
       return OpenTelemetry.noop();
+    }
+
+    @BetaApi
+    public boolean getDefaultEnableHttpClientsMetrics() {
+      return false;
     }
   }
 

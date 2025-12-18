@@ -125,7 +125,7 @@ final class OpenTelemetryBootstrappingUtils {
     String metricServiceEndpoint = getCloudMonitoringEndpoint(endpoint, universeDomain);
     SdkMeterProvider provider =
         createMeterProvider(
-            metricServiceEndpoint, projectIdToUse, detectedAttributes, shouldSuppressExceptions);
+            metricServiceEndpoint, projectIdToUse, detectedAttributes, shouldSuppressExceptions, true);
 
     OpenTelemetrySdk openTelemetrySdk =
         OpenTelemetrySdk.builder().setMeterProvider(provider).build();
@@ -177,7 +177,11 @@ final class OpenTelemetryBootstrappingUtils {
     String metricServiceEndpoint = getCloudMonitoringEndpoint(host, universeDomain);
     SdkMeterProvider provider =
         createMeterProvider(
-            metricServiceEndpoint, projectIdToUse, detectedAttributes, shouldSuppressExceptions);
+            metricServiceEndpoint,
+            projectIdToUse,
+            detectedAttributes,
+            shouldSuppressExceptions,
+            false);
 
     return OpenTelemetrySdk.builder().setMeterProvider(provider).build();
   }
@@ -250,7 +254,8 @@ final class OpenTelemetryBootstrappingUtils {
       String metricServiceEndpoint,
       String projectIdToUse,
       Attributes detectedAttributes,
-      boolean shouldSuppressExceptions) {
+      boolean shouldSuppressExceptions,
+      boolean enableGrpcViews) {
 
     MonitoredResourceDescription monitoredResourceDescription =
         new MonitoredResourceDescription(
@@ -273,11 +278,13 @@ final class OpenTelemetryBootstrappingUtils {
 
     // This replaces the dots with slashes in each metric, which is the format needed for this
     // monitored resource
-    for (String metric :
-        ImmutableList.copyOf(Iterables.concat(METRICS_TO_ENABLE, METRICS_ENABLED_BY_DEFAULT))) {
-      providerBuilder.registerView(
-          InstrumentSelector.builder().setName(metric).build(),
-          View.builder().setName(metric.replace(".", "/")).build());
+    if (enableGrpcViews) {
+      for (String metric :
+          ImmutableList.copyOf(Iterables.concat(METRICS_TO_ENABLE, METRICS_ENABLED_BY_DEFAULT))) {
+        providerBuilder.registerView(
+            InstrumentSelector.builder().setName(metric).build(),
+            View.builder().setName(metric.replace(".", "/")).build());
+      }
     }
     MetricExporter exporter =
         shouldSuppressExceptions
@@ -314,18 +321,20 @@ final class OpenTelemetryBootstrappingUtils {
                 .build())
         .setResource(Resource.create(attributesBuilder.build()));
 
-    addHistogramView(
-        providerBuilder, latencyHistogramBoundaries(), "grpc/client/attempt/duration", "s");
-    addHistogramView(
-        providerBuilder,
-        sizeHistogramBoundaries(),
-        "grpc/client/attempt/rcvd_total_compressed_message_size",
-        "By");
-    addHistogramView(
-        providerBuilder,
-        sizeHistogramBoundaries(),
-        "grpc/client/attempt/sent_total_compressed_message_size",
-        "By");
+    if (enableGrpcViews) {
+      addHistogramView(
+          providerBuilder, latencyHistogramBoundaries(), "grpc/client/attempt/duration", "s");
+      addHistogramView(
+          providerBuilder,
+          sizeHistogramBoundaries(),
+          "grpc/client/attempt/rcvd_total_compressed_message_size",
+          "By");
+      addHistogramView(
+          providerBuilder,
+          sizeHistogramBoundaries(),
+          "grpc/client/attempt/sent_total_compressed_message_size",
+          "By");
+    }
 
     return providerBuilder.build();
   }

@@ -45,7 +45,7 @@ public class ITGrpcMetricsTest {
             "monitoring.googleapis.com:443",
             grpcStorageOptions.getProjectId(),
             detectedAttributes,
-            false);
+            true);
 
     /*
      * SDKMeterProvider doesn't expose the relevant fields we want to test, but they are present in
