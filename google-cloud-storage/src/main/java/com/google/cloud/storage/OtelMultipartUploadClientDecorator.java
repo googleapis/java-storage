@@ -30,7 +30,6 @@ import com.google.cloud.storage.multipartupload.model.ListPartsRequest;
 import com.google.cloud.storage.multipartupload.model.ListPartsResponse;
 import com.google.cloud.storage.multipartupload.model.UploadPartRequest;
 import com.google.cloud.storage.multipartupload.model.UploadPartResponse;
-
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.trace.Span;
@@ -171,7 +170,6 @@ final class OtelMultipartUploadClientDecorator extends MultipartUploadClient {
       span.end();
     }
   }
-
 
   static MultipartUploadClient decorate(
       MultipartUploadClient delegate, OpenTelemetry otel, Transport transport) {
