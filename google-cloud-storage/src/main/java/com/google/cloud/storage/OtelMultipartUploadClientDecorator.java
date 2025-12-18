@@ -35,6 +35,11 @@ import io.opentelemetry.api.trace.StatusCode;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Scope;
 
+/**
+ * A decorator for {@link MultipartUploadClient} that adds OpenTelemetry tracing.
+ *
+ * @since 2.62.0 This new api is in preview and is subject to breaking changes.
+ */
 @BetaApi
 final class OtelMultipartUploadClientDecorator extends MultipartUploadClient {
 
