@@ -29,6 +29,7 @@ import com.google.cloud.storage.multipartupload.model.CompletedMultipartUpload;
 import com.google.cloud.storage.multipartupload.model.CompletedPart;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadRequest;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadResponse;
+import com.google.cloud.storage.multipartupload.model.ListMultipartUploadsRequest;
 import com.google.cloud.storage.multipartupload.model.UploadPartRequest;
 import com.google.cloud.storage.multipartupload.model.UploadPartResponse;
 import com.google.cloud.storage.otel.TestExporter;
@@ -111,10 +112,13 @@ public final class ITOpenTelemetryMPUTest {
                               CompletedPart.builder().partNumber(1).eTag(upload.eTag()).build()))
                       .build())
               .build());
+
+      mpuClient.listMultipartUploads(
+          ListMultipartUploadsRequest.builder().bucket(bucket.getName()).build());
     }
 
     List<SpanData> spans = exporter.getExportedSpans();
-    assertThat(spans).hasSize(3);
+    assertThat(spans).hasSize(4);
 
     SpanData createSpan = spans.get(0);
     assertThat(createSpan.getName())
@@ -134,5 +138,11 @@ public final class ITOpenTelemetryMPUTest {
         .isEqualTo("com.google.cloud.storage.MultipartUploadClient/completeMultipartUpload");
     assertThat(completeSpan.getAttributes().get(AttributeKey.stringKey("gsutil.uri")))
         .isEqualTo(String.format("gs://%s/%s", bucket.getName(), objectName));
+
+    SpanData listSpan = spans.get(3);
+    assertThat(listSpan.getName())
+        .isEqualTo("com.google.cloud.storage.MultipartUploadClient/listMultipartUploads");
+    assertThat(listSpan.getAttributes().get(AttributeKey.stringKey("gsutil.uri")))
+        .isEqualTo(String.format("gs://%s/", bucket.getName()));
   }
 }

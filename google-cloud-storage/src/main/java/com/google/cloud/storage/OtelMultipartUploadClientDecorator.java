@@ -24,10 +24,13 @@ import com.google.cloud.storage.multipartupload.model.CompleteMultipartUploadReq
 import com.google.cloud.storage.multipartupload.model.CompleteMultipartUploadResponse;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadRequest;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadResponse;
+import com.google.cloud.storage.multipartupload.model.ListMultipartUploadsRequest;
+import com.google.cloud.storage.multipartupload.model.ListMultipartUploadsResponse;
 import com.google.cloud.storage.multipartupload.model.ListPartsRequest;
 import com.google.cloud.storage.multipartupload.model.ListPartsResponse;
 import com.google.cloud.storage.multipartupload.model.UploadPartRequest;
 import com.google.cloud.storage.multipartupload.model.UploadPartResponse;
+
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.trace.Span;
@@ -150,6 +153,25 @@ final class OtelMultipartUploadClientDecorator extends MultipartUploadClient {
       span.end();
     }
   }
+
+  @Override
+  public ListMultipartUploadsResponse listMultipartUploads(ListMultipartUploadsRequest request) {
+    Span span =
+        tracer
+            .spanBuilder("listMultipartUploads")
+            .setAttribute("gsutil.uri", String.format("gs://%s/", request.bucket()))
+            .startSpan();
+    try (Scope ignore = span.makeCurrent()) {
+      return delegate.listMultipartUploads(request);
+    } catch (Throwable t) {
+      span.recordException(t);
+      span.setStatus(StatusCode.ERROR, t.getClass().getSimpleName());
+      throw t;
+    } finally {
+      span.end();
+    }
+  }
+
 
   static MultipartUploadClient decorate(
       MultipartUploadClient delegate, OpenTelemetry otel, Transport transport) {
