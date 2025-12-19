@@ -31,6 +31,7 @@ import java.io.Serializable;
 import java.io.StringReader;
 import java.util.Map;
 import java.util.Objects;
+import org.checkerframework.checker.lock.qual.GuardedBy;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -39,6 +40,8 @@ final class JsonResumableWrite implements Serializable {
   private static final Gson gson = new Gson();
 
   @MonotonicNonNull private transient StorageObject object;
+  @MonotonicNonNull private transient Hasher hasher;
+  @MonotonicNonNull private transient Crc32cValue<?> cumulativeCrc32c;
   @MonotonicNonNull private final Map<StorageRpc.Option, ?> options;
 
   @MonotonicNonNull private final String signedUrl;
@@ -48,13 +51,20 @@ final class JsonResumableWrite implements Serializable {
 
   private volatile String objectJson;
 
+  @GuardedBy("objectJson")
+  private String base64CumulativeCrc32c;
+
   private JsonResumableWrite(
       StorageObject object,
+      @MonotonicNonNull Hasher hasher,
+      @MonotonicNonNull Crc32cValue<?> cumulativeCrc32c,
       Map<StorageRpc.Option, ?> options,
       String signedUrl,
       @NonNull String uploadId,
       long beginOffset) {
     this.object = object;
+    this.hasher = hasher;
+    this.cumulativeCrc32c = cumulativeCrc32c;
     this.options = options;
     this.signedUrl = signedUrl;
     this.uploadId = uploadId;
@@ -85,7 +95,20 @@ final class JsonResumableWrite implements Serializable {
         "New beginOffset must be >= existing beginOffset (%s >= %s)",
         newBeginOffset,
         beginOffset);
-    return new JsonResumableWrite(object, options, signedUrl, uploadId, newBeginOffset);
+    return new JsonResumableWrite(
+        object, hasher, cumulativeCrc32c, options, signedUrl, uploadId, newBeginOffset);
+  }
+
+  public @MonotonicNonNull Hasher getHasher() {
+    return hasher;
+  }
+
+  public @MonotonicNonNull Crc32cValue<?> getCumulativeCrc32c() {
+    return cumulativeCrc32c;
+  }
+
+  public void setCumulativeCrc32c(Crc32cValue<?> cumulativeCrc32c) {
+    this.cumulativeCrc32c = cumulativeCrc32c;
   }
 
   @Override
@@ -99,6 +122,8 @@ final class JsonResumableWrite implements Serializable {
     JsonResumableWrite that = (JsonResumableWrite) o;
     return beginOffset == that.beginOffset
         && Objects.equals(object, that.object)
+        && Objects.equals(hasher, that.hasher)
+        && cumulativeCrc32c.eqValue(that.cumulativeCrc32c)
         && Objects.equals(options, that.options)
         && Objects.equals(signedUrl, that.signedUrl)
         && Objects.equals(uploadId, that.uploadId);
@@ -106,13 +131,16 @@ final class JsonResumableWrite implements Serializable {
 
   @Override
   public int hashCode() {
-    return Objects.hash(object, options, signedUrl, uploadId, beginOffset);
+    return Objects.hash(
+        object, hasher, cumulativeCrc32c.getValue(), options, signedUrl, uploadId, beginOffset);
   }
 
   @Override
   public String toString() {
     return MoreObjects.toStringHelper(this)
         .add("object", object)
+        .add("hasher", hasher)
+        .add("cumulativeCrc32c", cumulativeCrc32c)
         .add("options", options)
         .add("signedUrl", signedUrl)
         .add("uploadId", uploadId)
@@ -125,6 +153,7 @@ final class JsonResumableWrite implements Serializable {
       synchronized (this) {
         if (objectJson == null) {
           objectJson = gson.toJson(object);
+          base64CumulativeCrc32c = Utils.crc32cCodec.encode(cumulativeCrc32c.getValue());
         }
       }
     }
@@ -140,14 +169,38 @@ final class JsonResumableWrite implements Serializable {
     in.defaultReadObject();
     JsonReader jsonReader = gson.newJsonReader(new StringReader(this.objectJson));
     this.object = gson.fromJson(jsonReader, StorageObject.class);
+    if (base64CumulativeCrc32c != null) {
+      Integer decode = Utils.crc32cCodec.decode(base64CumulativeCrc32c);
+      if (decode == 0) {
+        this.cumulativeCrc32c = Crc32cValue.zero();
+      } else {
+        this.cumulativeCrc32c = Crc32cValue.of(decode);
+      }
+      this.hasher = Hasher.enabled();
+    }
   }
 
   static JsonResumableWrite of(
       StorageObject req, Map<StorageRpc.Option, ?> options, String uploadId, long beginOffset) {
-    return new JsonResumableWrite(req, options, null, uploadId, beginOffset);
+    return of(req, options, uploadId, beginOffset, Hasher.noop(), null);
+  }
+
+  static JsonResumableWrite of(
+      StorageObject req,
+      Map<StorageRpc.Option, ?> options,
+      String uploadId,
+      long beginOffset,
+      Hasher hasher,
+      Crc32cValue<?> initialValue) {
+    return new JsonResumableWrite(req, hasher, initialValue, options, null, uploadId, beginOffset);
   }
 
   static JsonResumableWrite of(String signedUrl, String uploadId, long beginOffset) {
-    return new JsonResumableWrite(null, null, signedUrl, uploadId, beginOffset);
+    Hasher hasher = Hasher.noop();
+    if (beginOffset == 0) {
+      hasher = Hasher.defaultHasher();
+    }
+    return new JsonResumableWrite(
+        null, hasher, hasher.initialValue(), null, signedUrl, uploadId, beginOffset);
   }
 }
