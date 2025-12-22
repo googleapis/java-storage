@@ -45,7 +45,7 @@ import java.util.concurrent.Executors;
 public class MultipartUploadWriteChannel implements StorageWriteChannel {
 
   private static final int MIN_CHUNK_SIZE = 5 * 1024 * 1024; // 5MB
-  private static final int POOL_SIZE = 8;
+  private static final int POOL_SIZE = 16;
 
   private final SettableApiFuture<BlobInfo> result;
   private final String bucketName;
