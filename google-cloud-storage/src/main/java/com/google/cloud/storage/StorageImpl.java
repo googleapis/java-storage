@@ -753,17 +753,21 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
     BlobInfo updated = opts.blobInfoMapper().apply(builder).build();
 
     StorageObject encode = codecs.blobInfo().encode(updated);
-    // open the resumable session outside the write channel
-    // the exception behavior of open is different from #write(ByteBuffer)
-    Supplier<String> uploadIdSupplier =
-        ResumableMedia.startUploadForBlobInfo(
-            getOptions(),
-            updated,
-            optionsMap,
-            retrier.withAlg(retryAlgorithmManager.getForResumableUploadSessionCreate(optionsMap)));
-    JsonResumableWrite jsonResumableWrite =
-        JsonResumableWrite.of(encode, optionsMap, uploadIdSupplier.get(), 0);
-    return new BlobWriteChannelV2(BlobReadChannelContext.from(this), jsonResumableWrite);
+    // // open the resumable session outside the write channel
+    // // the exception behavior of open is different from #write(ByteBuffer)
+    // Supplier<String> uploadIdSupplier =
+    //     ResumableMedia.startUploadForBlobInfo(
+    //         getOptions(),
+    //         updated,
+    //         optionsMap,
+    //
+    // retrier.withAlg(retryAlgorithmManager.getForResumableUploadSessionCreate(optionsMap)));
+    // JsonResumableWrite jsonResumableWrite =
+    //     JsonResumableWrite.of(encode, optionsMap, uploadIdSupplier.get(), 0);
+    // return new BlobWriteChannelV2(BlobReadChannelContext.from(this), jsonResumableWrite);
+    System.out.println("JSON writer with XML MPU API");
+    return new MultipartUploadWriteChannel(
+        BlobReadChannelContext.from(this), updated.getBucket(), updated.getName());
   }
 
   @Override
