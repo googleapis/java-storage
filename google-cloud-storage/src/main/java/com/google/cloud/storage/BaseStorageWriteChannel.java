@@ -116,8 +116,7 @@ abstract class BaseStorageWriteChannel<T> implements StorageWriteChannel {
         if (!tmp.isOpen()) {
           return 0;
         }
-        int write = tmp.write(src);
-        return write;
+        return tmp.write(src);
       } catch (StorageException e) {
         throw new IOException(e);
       } catch (IOException e) {

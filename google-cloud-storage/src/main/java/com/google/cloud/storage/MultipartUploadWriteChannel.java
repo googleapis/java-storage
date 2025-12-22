@@ -1,0 +1,142 @@
+/*
+ * Copyright 2024 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.google.cloud.storage;
+
+import com.google.api.core.ApiFuture;
+import com.google.api.core.SettableApiFuture;
+import com.google.cloud.RestorableState;
+import com.google.cloud.WriteChannel;
+import com.google.cloud.storage.BlobReadChannelV2.BlobReadChannelContext;
+import com.google.cloud.storage.multipartupload.model.CompleteMultipartUploadRequest;
+import com.google.cloud.storage.multipartupload.model.CompletedMultipartUpload;
+import com.google.cloud.storage.multipartupload.model.CompletedPart;
+import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadRequest;
+import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadResponse;
+import com.google.cloud.storage.multipartupload.model.Part;
+import com.google.cloud.storage.multipartupload.model.UploadPartRequest;
+import com.google.cloud.storage.multipartupload.model.UploadPartResponse;
+import com.google.common.collect.ImmutableList;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
+
+public class MultipartUploadWriteChannel implements StorageWriteChannel {
+
+  private static final int MIN_CHUNK_SIZE = 5 * 1024 * 1024; // 5MB
+
+  private final SettableApiFuture<BlobInfo> result;
+  private final String bucketName;
+  private final String blobName;
+  private final String uploadId;
+  private final MultipartUploadClientImpl client;
+  private final ByteBuffer buffer;
+  List<CompletedPart> completedParts = new ArrayList<>();
+  private int partNumber = 1;
+  private boolean open = true;
+
+  public MultipartUploadWriteChannel(
+      BlobReadChannelContext context, String bucketName, String blobName) {
+    this.result = SettableApiFuture.create();
+    this.bucketName = bucketName;
+    this.blobName = blobName;
+    this.buffer = ByteBuffer.allocate(MIN_CHUNK_SIZE);
+
+    HttpStorageOptions options = context.getStorageOptions();
+    this.client =
+        new MultipartUploadClientImpl(
+            context.getRetrier(),
+            MultipartUploadHttpRequestManager.createFrom(options),
+            options.getRetryAlgorithmManager());
+
+    CreateMultipartUploadRequest createRequest = CreateMultipartUploadRequest.builder().bucket(bucketName).key(blobName).build();
+    CreateMultipartUploadResponse createResponse = client.createMultipartUpload(createRequest);
+    this.uploadId = createResponse.uploadId();
+  }
+
+  @Override
+  public ApiFuture<BlobInfo> getObject() {
+    return result;
+  }
+
+  @Override
+  public void setChunkSize(int i) {
+    // The chunk size is fixed at 5MB
+  }
+
+  @Override
+  public RestorableState<WriteChannel> capture() {
+    return null;
+  }
+
+  @Override
+  public int write(ByteBuffer src) throws IOException {
+    if (!open) {
+      throw new IOException("Channel is closed");
+    }
+    int bytesWritten = 0;
+    while (src.hasRemaining()) {
+      if (buffer.remaining() == 0) {
+        uploadPart();
+      }
+      int bytesToCopy = Math.min(src.remaining(), buffer.remaining());
+      byte[] array = new byte[bytesToCopy];
+      src.get(array);
+      buffer.put(array);
+      bytesWritten += bytesToCopy;
+    }
+    return bytesWritten;
+  }
+
+  private void uploadPart() {
+    buffer.flip();
+    RequestBody requestBody = RequestBody.of(buffer);
+    UploadPartRequest uploadRequest = UploadPartRequest.builder().bucket(bucketName).key(blobName).uploadId(uploadId).partNumber(partNumber).build();
+    UploadPartResponse uploadPartResponse =
+        client.uploadPart(uploadRequest, requestBody);
+    CompletedPart part = CompletedPart.builder()
+        .partNumber(partNumber)
+        .eTag(uploadPartResponse.eTag())
+        .build();
+    completedParts.add(part);
+    partNumber++;
+    buffer.clear();
+  }
+
+
+
+  @Override
+  public boolean isOpen() {
+    return open;
+  }
+
+  @Override
+  public void close() throws IOException {
+    if (!open) {
+      return;
+    }
+    if (buffer.position() > 0) {
+      uploadPart();
+    }
+    CompletedMultipartUpload completedMultipartUpload =
+        CompletedMultipartUpload.builder().parts(completedParts).build();
+    CompleteMultipartUploadRequest completeRequest =
+        CompleteMultipartUploadRequest.builder().uploadId(uploadId).bucket(bucketName).key(blobName).multipartUpload(completedMultipartUpload).build();
+    client.completeMultipartUpload(completeRequest);
+    result.set(null); // Or the actual BlobInfo if available
+    open = false;
+  }
+}
