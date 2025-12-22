@@ -16,6 +16,7 @@
 package com.google.cloud.storage;
 
 import com.google.api.core.ApiFuture;
+import com.google.api.core.ApiFutures;
 import com.google.api.core.SettableApiFuture;
 import com.google.cloud.RestorableState;
 import com.google.cloud.WriteChannel;
@@ -25,14 +26,19 @@ import com.google.cloud.storage.multipartupload.model.CompletedMultipartUpload;
 import com.google.cloud.storage.multipartupload.model.CompletedPart;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadRequest;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadResponse;
-import com.google.cloud.storage.multipartupload.model.Part;
 import com.google.cloud.storage.multipartupload.model.UploadPartRequest;
 import com.google.cloud.storage.multipartupload.model.UploadPartResponse;
-import com.google.common.collect.ImmutableList;
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
 
 public class MultipartUploadWriteChannel implements StorageWriteChannel {
 
@@ -44,7 +50,8 @@ public class MultipartUploadWriteChannel implements StorageWriteChannel {
   private final String uploadId;
   private final MultipartUploadClientImpl client;
   private final ByteBuffer buffer;
-  List<CompletedPart> completedParts = new ArrayList<>();
+  private final ListeningExecutorService executor = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(16));
+  List<ApiFuture<CompletedPart>> completedParts = new ArrayList<>();
   private int partNumber = 1;
   private boolean open = true;
 
@@ -103,16 +110,43 @@ public class MultipartUploadWriteChannel implements StorageWriteChannel {
 
   private void uploadPart() {
     buffer.flip();
-    RequestBody requestBody = RequestBody.of(buffer);
-    UploadPartRequest uploadRequest = UploadPartRequest.builder().bucket(bucketName).key(blobName).uploadId(uploadId).partNumber(partNumber).build();
-    UploadPartResponse uploadPartResponse =
-        client.uploadPart(uploadRequest, requestBody);
-    CompletedPart part = CompletedPart.builder()
-        .partNumber(partNumber)
-        .eTag(uploadPartResponse.eTag())
-        .build();
-    completedParts.add(part);
-    partNumber++;
+    final int partNumber = this.partNumber++;
+    final ByteBuffer partBuffer = ByteBuffer.allocate(buffer.remaining());
+    partBuffer.put(buffer);
+    partBuffer.flip();
+    Callable<CompletedPart> uploadTask =
+        () -> {
+          RequestBody requestBody = RequestBody.of(partBuffer);
+          UploadPartRequest uploadRequest =
+              UploadPartRequest.builder()
+                  .bucket(bucketName)
+                  .key(blobName)
+                  .uploadId(uploadId)
+                  .partNumber(partNumber)
+                  .build();
+          UploadPartResponse uploadPartResponse = client.uploadPart(uploadRequest, requestBody);
+          return CompletedPart.builder()
+              .partNumber(partNumber)
+              .eTag(uploadPartResponse.eTag())
+              .build();
+        };
+    ListenableFuture<CompletedPart> listenableFuture = executor.submit(uploadTask);
+    SettableApiFuture<CompletedPart> settableApiFuture = SettableApiFuture.create();
+    Futures.addCallback(
+        listenableFuture,
+        new FutureCallback<CompletedPart>() {
+          @Override
+          public void onFailure(Throwable t) {
+            settableApiFuture.setException(t);
+          }
+
+          @Override
+          public void onSuccess(CompletedPart result) {
+            settableApiFuture.set(result);
+          }
+        },
+        executor);
+    completedParts.add(settableApiFuture);
     buffer.clear();
   }
 
@@ -131,12 +165,24 @@ public class MultipartUploadWriteChannel implements StorageWriteChannel {
     if (buffer.position() > 0) {
       uploadPart();
     }
-    CompletedMultipartUpload completedMultipartUpload =
-        CompletedMultipartUpload.builder().parts(completedParts).build();
-    CompleteMultipartUploadRequest completeRequest =
-        CompleteMultipartUploadRequest.builder().uploadId(uploadId).bucket(bucketName).key(blobName).multipartUpload(completedMultipartUpload).build();
-    client.completeMultipartUpload(completeRequest);
-    result.set(null); // Or the actual BlobInfo if available
-    open = false;
+    try {
+      List<CompletedPart> parts = ApiFutures.allAsList(completedParts).get();
+      CompletedMultipartUpload completedMultipartUpload =
+          CompletedMultipartUpload.builder().parts(parts).build();
+      CompleteMultipartUploadRequest completeRequest =
+          CompleteMultipartUploadRequest.builder()
+              .uploadId(uploadId)
+              .bucket(bucketName)
+              .key(blobName)
+              .multipartUpload(completedMultipartUpload)
+              .build();
+      client.completeMultipartUpload(completeRequest);
+      result.set(null); // Or the actual BlobInfo if available
+    } catch (Exception e) {
+      throw new IOException(e);
+    } finally {
+      open = false;
+      executor.shutdown();
+    }
   }
 }
