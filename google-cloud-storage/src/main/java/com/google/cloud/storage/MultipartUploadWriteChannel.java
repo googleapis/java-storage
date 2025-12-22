@@ -64,8 +64,7 @@ public class MultipartUploadWriteChannel implements StorageWriteChannel {
   private int partNumber = 1;
   private boolean open = true;
 
-  MultipartUploadWriteChannel(
-      BlobReadChannelContext context, String bucketName, String blobName) {
+  MultipartUploadWriteChannel(BlobReadChannelContext context, String bucketName, String blobName) {
     this.context = context;
     this.bucketName = bucketName;
     this.blobName = blobName;
@@ -255,12 +254,12 @@ public class MultipartUploadWriteChannel implements StorageWriteChannel {
         listenableFuture,
         new FutureCallback<T>() {
           @Override
-  public void onSuccess(T result) {
+          public void onSuccess(T result) {
             settable.set(result);
           }
 
           @Override
-  public void onFailure(Throwable t) {
+          public void onFailure(Throwable t) {
             settable.setException(t);
           }
         },

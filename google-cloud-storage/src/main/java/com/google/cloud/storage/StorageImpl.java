@@ -760,12 +760,14 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
     //         getOptions(),
     //         updated,
     //         optionsMap,
-    //         retrier.withAlg(retryAlgorithmManager.getForResumableUploadSessionCreate(optionsMap)));
+    //
+    // retrier.withAlg(retryAlgorithmManager.getForResumableUploadSessionCreate(optionsMap)));
     // JsonResumableWrite jsonResumableWrite =
     //     JsonResumableWrite.of(encode, optionsMap, uploadIdSupplier.get(), 0);
     // return new BlobWriteChannelV2(BlobReadChannelContext.from(this), jsonResumableWrite);
     System.out.println("JSON writer with XML MPU API");
-    return new MultipartUploadWriteChannel(BlobReadChannelContext.from(this), updated.getBucket(), updated.getName());
+    return new MultipartUploadWriteChannel(
+        BlobReadChannelContext.from(this), updated.getBucket(), updated.getName());
   }
 
   @Override
