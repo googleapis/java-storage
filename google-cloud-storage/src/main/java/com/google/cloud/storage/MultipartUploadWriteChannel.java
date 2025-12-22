@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Google LLC
+ * Copyright 2025 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,30 +37,46 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 
 public class MultipartUploadWriteChannel implements StorageWriteChannel {
 
   private static final int MIN_CHUNK_SIZE = 5 * 1024 * 1024; // 5MB
+  private static final int POOL_SIZE = 8;
 
   private final SettableApiFuture<BlobInfo> result;
   private final String bucketName;
   private final String blobName;
   private final String uploadId;
   private final MultipartUploadClientImpl client;
-  private final ByteBuffer buffer;
-  private final ListeningExecutorService executor = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(16));
+  private final ListeningExecutorService executor =
+      MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(POOL_SIZE));
+  private final BlockingQueue<ByteBuffer> bufferQueue;
+  private ByteBuffer currentBuffer;
   List<ApiFuture<CompletedPart>> completedParts = new ArrayList<>();
   private int partNumber = 1;
   private boolean open = true;
 
-  public MultipartUploadWriteChannel(
+  MultipartUploadWriteChannel(
       BlobReadChannelContext context, String bucketName, String blobName) {
     this.result = SettableApiFuture.create();
     this.bucketName = bucketName;
     this.blobName = blobName;
-    this.buffer = ByteBuffer.allocate(MIN_CHUNK_SIZE);
+
+    this.bufferQueue = new ArrayBlockingQueue<>(POOL_SIZE);
+    for (int i = 0; i < POOL_SIZE; i++) {
+      //noinspection ResultOfMethodCallIgnored
+      this.bufferQueue.offer(ByteBuffer.allocate(MIN_CHUNK_SIZE));
+    }
+    try {
+      this.currentBuffer = bufferQueue.take();
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+      throw new RuntimeException(e);
+    }
 
     HttpStorageOptions options = context.getStorageOptions();
     this.client =
@@ -69,7 +85,8 @@ public class MultipartUploadWriteChannel implements StorageWriteChannel {
             MultipartUploadHttpRequestManager.createFrom(options),
             options.getRetryAlgorithmManager());
 
-    CreateMultipartUploadRequest createRequest = CreateMultipartUploadRequest.builder().bucket(bucketName).key(blobName).build();
+    CreateMultipartUploadRequest createRequest =
+        CreateMultipartUploadRequest.builder().bucket(bucketName).key(blobName).build();
     CreateMultipartUploadResponse createResponse = client.createMultipartUpload(createRequest);
     this.uploadId = createResponse.uploadId();
   }
@@ -96,61 +113,69 @@ public class MultipartUploadWriteChannel implements StorageWriteChannel {
     }
     int bytesWritten = 0;
     while (src.hasRemaining()) {
-      if (buffer.remaining() == 0) {
+      if (currentBuffer.remaining() == 0) {
         uploadPart();
       }
-      int bytesToCopy = Math.min(src.remaining(), buffer.remaining());
-      byte[] array = new byte[bytesToCopy];
-      src.get(array);
-      buffer.put(array);
+      int bytesToCopy = Math.min(src.remaining(), currentBuffer.remaining());
+      int originalLimit = src.limit();
+      src.limit(src.position() + bytesToCopy);
+      currentBuffer.put(src);
+      src.limit(originalLimit);
       bytesWritten += bytesToCopy;
     }
     return bytesWritten;
   }
 
-  private void uploadPart() {
-    buffer.flip();
-    final int partNumber = this.partNumber++;
-    final ByteBuffer partBuffer = ByteBuffer.allocate(buffer.remaining());
-    partBuffer.put(buffer);
-    partBuffer.flip();
-    Callable<CompletedPart> uploadTask =
-        () -> {
-          RequestBody requestBody = RequestBody.of(partBuffer);
-          UploadPartRequest uploadRequest =
-              UploadPartRequest.builder()
-                  .bucket(bucketName)
-                  .key(blobName)
-                  .uploadId(uploadId)
+  private void uploadPart() throws IOException {
+    try {
+      final ByteBuffer bufferToUpload = currentBuffer;
+      currentBuffer = bufferQueue.take();
+
+      bufferToUpload.flip();
+      final int partNumber = this.partNumber++;
+      Callable<CompletedPart> uploadTask =
+          () -> {
+            try {
+              RequestBody requestBody = RequestBody.of(bufferToUpload);
+              UploadPartRequest uploadRequest =
+                  UploadPartRequest.builder()
+                      .bucket(bucketName)
+                      .key(blobName)
+                      .uploadId(uploadId)
+                      .partNumber(partNumber)
+                      .build();
+              UploadPartResponse uploadPartResponse = client.uploadPart(uploadRequest, requestBody);
+              return CompletedPart.builder()
                   .partNumber(partNumber)
+                  .eTag(uploadPartResponse.eTag())
                   .build();
-          UploadPartResponse uploadPartResponse = client.uploadPart(uploadRequest, requestBody);
-          return CompletedPart.builder()
-              .partNumber(partNumber)
-              .eTag(uploadPartResponse.eTag())
-              .build();
-        };
-    ListenableFuture<CompletedPart> listenableFuture = executor.submit(uploadTask);
-    SettableApiFuture<CompletedPart> settableApiFuture = SettableApiFuture.create();
-    Futures.addCallback(
-        listenableFuture,
-        new FutureCallback<CompletedPart>() {
-          @Override
-          public void onFailure(Throwable t) {
-            settableApiFuture.setException(t);
-          }
+            } finally {
+              bufferToUpload.clear();
+              bufferQueue.put(bufferToUpload);
+            }
+          };
+      ListenableFuture<CompletedPart> listenableFuture = executor.submit(uploadTask);
+      SettableApiFuture<CompletedPart> settableApiFuture = SettableApiFuture.create();
+      Futures.addCallback(
+          listenableFuture,
+          new FutureCallback<CompletedPart>() {
+            @Override
+            public void onFailure(Throwable t) {
+              settableApiFuture.setException(t);
+            }
 
-          @Override
-          public void onSuccess(CompletedPart result) {
-            settableApiFuture.set(result);
-          }
-        },
-        executor);
-    completedParts.add(settableApiFuture);
-    buffer.clear();
+            @Override
+            public void onSuccess(CompletedPart result) {
+              settableApiFuture.set(result);
+            }
+          },
+          executor);
+      completedParts.add(settableApiFuture);
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+      throw new IOException("Interrupted while waiting for a buffer", e);
+    }
   }
-
-
 
   @Override
   public boolean isOpen() {
@@ -162,9 +187,17 @@ public class MultipartUploadWriteChannel implements StorageWriteChannel {
     if (!open) {
       return;
     }
-    if (buffer.position() > 0) {
+    if (currentBuffer.position() > 0) {
       uploadPart();
     }
+
+    if (currentBuffer != null) {
+      currentBuffer.clear();
+      //noinspection ResultOfMethodCallIgnored
+      bufferQueue.offer(currentBuffer);
+      currentBuffer = null;
+    }
+
     try {
       List<CompletedPart> parts = ApiFutures.allAsList(completedParts).get();
       CompletedMultipartUpload completedMultipartUpload =
