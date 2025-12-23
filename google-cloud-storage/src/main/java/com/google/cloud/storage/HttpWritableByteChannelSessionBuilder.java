@@ -124,14 +124,9 @@ final class HttpWritableByteChannelSessionBuilder {
       // function read them into local variables which will be closed over rather than the class
       // fields.
       RetrierWithAlg boundRetrier = retrier;
-      Hasher boundHasher = hasher;
       return (start, resultFuture) ->
           new ApiaryUnbufferedWritableByteChannel(
-              httpClientContext,
-              boundRetrier,
-              start,
-              resultFuture,
-              committedBytesCallback);
+              httpClientContext, boundRetrier, start, resultFuture, committedBytesCallback);
     }
 
     final class UnbufferedResumableUploadBuilder {
