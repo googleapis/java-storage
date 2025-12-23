@@ -44,8 +44,7 @@ final class ApiaryUnbufferedWritableByteChannel implements UnbufferedWritableByt
       RetrierWithAlg retrier,
       JsonResumableWrite resumableWrite,
       SettableApiFuture<StorageObject> result,
-      LongConsumer committedBytesCallback,
-      Hasher hasher) {
+      LongConsumer committedBytesCallback) {
     this.session = ResumableSession.json(httpClientContext, retrier, resumableWrite);
     this.result = result;
     this.committedBytesCallback = committedBytesCallback;

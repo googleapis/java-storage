@@ -131,8 +131,7 @@ final class HttpWritableByteChannelSessionBuilder {
               boundRetrier,
               start,
               resultFuture,
-              committedBytesCallback,
-              boundHasher);
+              committedBytesCallback);
     }
 
     final class UnbufferedResumableUploadBuilder {
