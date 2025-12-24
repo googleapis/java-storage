@@ -216,7 +216,13 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
             optionsMap,
             retrier.withAlg(retryAlgorithmManager.getForResumableUploadSessionCreate(optionsMap)));
     JsonResumableWrite jsonResumableWrite =
-        JsonResumableWrite.of(encode, optionsMap, uploadIdSupplier.get(), 0);
+        JsonResumableWrite.of(
+            encode,
+            optionsMap,
+            uploadIdSupplier.get(),
+            0,
+            opts.getHasher(),
+            opts.getHasher().initialValue());
 
     JsonResumableSession session =
         ResumableSession.json(
@@ -762,7 +768,13 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
             optionsMap,
             retrier.withAlg(retryAlgorithmManager.getForResumableUploadSessionCreate(optionsMap)));
     JsonResumableWrite jsonResumableWrite =
-        JsonResumableWrite.of(encode, optionsMap, uploadIdSupplier.get(), 0);
+        JsonResumableWrite.of(
+            encode,
+            optionsMap,
+            uploadIdSupplier.get(),
+            0,
+            opts.getHasher(),
+            opts.getHasher().initialValue());
     return new BlobWriteChannelV2(BlobReadChannelContext.from(this), jsonResumableWrite);
   }
 
@@ -1724,7 +1736,13 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
             optionsMap,
             retrier.withAlg(retryAlgorithmManager.getForResumableUploadSessionCreate(optionsMap)));
     JsonResumableWrite jsonResumableWrite =
-        JsonResumableWrite.of(encode, optionsMap, uploadIdSupplier.get(), 0);
+        JsonResumableWrite.of(
+            encode,
+            optionsMap,
+            uploadIdSupplier.get(),
+            0,
+            opts.getHasher(),
+            opts.getHasher().initialValue());
 
     JsonResumableSession session =
         ResumableSession.json(
