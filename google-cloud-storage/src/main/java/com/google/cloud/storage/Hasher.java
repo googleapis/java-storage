@@ -73,8 +73,8 @@ interface Hasher {
   void validateUnchecked(Crc32cValue<?> expected, ByteString byteString)
       throws UncheckedChecksumMismatchException;
 
-  @Nullable Crc32cLengthKnown nullSafeConcat(
-      @Nullable Crc32cLengthKnown r1, @NonNull Crc32cLengthKnown r2);
+  @Nullable <C extends Crc32cValue<?>> C nullSafeConcat(
+      @Nullable C r1, @Nullable Crc32cLengthKnown r2);
 
   /**
    * The initial value to use for this hasher.
@@ -123,8 +123,8 @@ interface Hasher {
     public void validateUnchecked(Crc32cValue<?> expected, ByteString byteString) {}
 
     @Override
-    public @Nullable Crc32cLengthKnown nullSafeConcat(
-        @Nullable Crc32cLengthKnown r1, @NonNull Crc32cLengthKnown r2) {
+    public <C extends Crc32cValue<?>> @Nullable C nullSafeConcat(
+        @Nullable C r1, @Nullable Crc32cLengthKnown r2) {
       return null;
     }
 
@@ -189,14 +189,16 @@ interface Hasher {
       }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    @Nullable
-    public Crc32cLengthKnown nullSafeConcat(
-        @Nullable Crc32cLengthKnown r1, @NonNull Crc32cLengthKnown r2) {
+    public <C extends Crc32cValue<?>> @Nullable C nullSafeConcat(
+        @Nullable C r1, @Nullable Crc32cLengthKnown r2) {
       if (r1 == null) {
         return null;
+      } else if (r2 == null) {
+        return r1;
       } else {
-        return r1.concat(r2);
+        return (C) r1.concat(r2);
       }
     }
 
