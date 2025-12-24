@@ -114,7 +114,7 @@ public class ITObjectSnippets extends TestBase {
   @Inject public KmsFixture kmsFixture;
 
   @Test
-  public void testChangeObjectStorageClass() {
+  public void testChangeObjectStorageClass() throws Exception {
     String objectName = generator.randomObjectName();
     BlobInfo gen1 = storage.create(info(objectName), CONTENT, BlobTargetOption.doesNotExist());
     Assert.assertNotEquals(StorageClass.COLDLINE, gen1.getStorageClass());
@@ -143,7 +143,7 @@ public class ITObjectSnippets extends TestBase {
   }
 
   @Test
-  public void testDeleteObject() {
+  public void testDeleteObject() throws Exception {
     String blob = generator.randomObjectName();
     storage.create(BlobInfo.newBuilder(BlobId.of(bucket.getName(), blob)).build());
     assertNotNull(storage.get(bucket.getName(), blob));
@@ -166,7 +166,7 @@ public class ITObjectSnippets extends TestBase {
   }
 
   @Test
-  public void testDownloadObjectIntoMemory() throws IOException {
+  public void testDownloadObjectIntoMemory() throws Exception {
     String objectName = generator.randomObjectName();
     storage.create(info(objectName), CONTENT, BlobTargetOption.doesNotExist());
     DownloadObjectIntoMemory.downloadObjectIntoMemory(
@@ -204,7 +204,7 @@ public class ITObjectSnippets extends TestBase {
   }
 
   @Test
-  public void testGetObjectMetadata() {
+  public void testGetObjectMetadata() throws Exception {
     String blobName = generator.randomObjectName();
     BlobId blobId = BlobId.of(bucket.getName(), blobName);
     BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setMetadata(ImmutableMap.of("k", "v")).build();
@@ -245,7 +245,7 @@ public class ITObjectSnippets extends TestBase {
   }
 
   @Test
-  public void testListObjects() {
+  public void testListObjects() throws Exception {
     String name1 = generator.randomObjectName();
     storage.create(info(name1), BlobTargetOption.doesNotExist());
     ListObjects.listObjects(GOOGLE_CLOUD_PROJECT, bucket.getName());
@@ -254,7 +254,7 @@ public class ITObjectSnippets extends TestBase {
   }
 
   @Test
-  public void testListObjectsWithPrefix() {
+  public void testListObjectsWithPrefix() throws Exception {
     String prefix = generator.randomObjectName();
     storage.create(BlobInfo.newBuilder(bucket.getName(), prefix + "a/1.txt").build());
     storage.create(BlobInfo.newBuilder(bucket.getName(), prefix + "a/b/2.txt").build());
@@ -287,7 +287,7 @@ public class ITObjectSnippets extends TestBase {
   }
 
   @Test
-  public void testAtomicMoveObject() {
+  public void testAtomicMoveObject() throws Exception {
     String blob1 = generator.randomObjectName();
     String blob2 = generator.randomObjectName();
 
@@ -300,7 +300,7 @@ public class ITObjectSnippets extends TestBase {
   }
 
   @Test
-  public void testSetObjectMetadata() {
+  public void testSetObjectMetadata() throws Exception {
     String bucketName = bucket.getName();
     String name1 = generator.randomObjectName();
     BlobInfo b1Gen1 = storage.create(BlobInfo.newBuilder(bucketName, name1).build());
@@ -321,11 +321,13 @@ public class ITObjectSnippets extends TestBase {
       byte[] expected = Files.readAllBytes(file1.getPath());
       byte[] actual = storage.readAllBytes(bucket.getName(), objectName);
       assertArrayEquals(expected, actual);
+    } catch (Exception e) {
+      throw new RuntimeException(e);
     }
   }
 
   @Test
-  public void testUploadObjectFromMemory() throws IOException {
+  public void testUploadObjectFromMemory() throws Exception {
     String objectName = "uploadobjectfrommemorytest";
     UploadObjectFromMemory.uploadObjectFromMemory(
         GOOGLE_CLOUD_PROJECT, bucket.getName(), objectName, STRING_CONTENT);
@@ -334,7 +336,7 @@ public class ITObjectSnippets extends TestBase {
   }
 
   @Test
-  public void testObjectCSEKOperations() throws IOException {
+  public void testObjectCSEKOperations() throws Exception {
     GenerateEncryptionKey.generateEncryptionKey();
     String snippetOutput = stdOut.getCapturedOutputAsUtf8String();
     String encryptionKey = snippetOutput.split(": ")[1].trim();
@@ -417,7 +419,7 @@ public class ITObjectSnippets extends TestBase {
   }
 
   @Test
-  public void testV4SignedURLs() throws IOException {
+  public void testV4SignedURLs() throws Exception {
     String tempObject = "test-upload-signed-url-object";
     GenerateV4PutObjectSignedUrl.generateV4PutObjectSignedUrl(
         GOOGLE_CLOUD_PROJECT, bucket.getName(), tempObject);
@@ -447,7 +449,7 @@ public class ITObjectSnippets extends TestBase {
 
   @Ignore("TODO(b/456381873): Test fails in CI due to project's public access prevention policy.")
   @Test
-  public void testMakeObjectPublic() {
+  public void testMakeObjectPublic() throws Exception {
     String aclBlob = generator.randomObjectName();
     assertNull(
         storage
@@ -458,7 +460,7 @@ public class ITObjectSnippets extends TestBase {
   }
 
   @Test
-  public void testComposeObject() {
+  public void testComposeObject() throws Exception {
     String firstObject = generator.randomObjectName();
     String secondObject = generator.randomObjectName();
     String targetObject = generator.randomObjectName();
@@ -494,7 +496,7 @@ public class ITObjectSnippets extends TestBase {
   }
 
   @Test
-  public void testUploadKMSEncryptedObject() {
+  public void testUploadKMSEncryptedObject() throws Exception {
     String blobName = generator.randomObjectName();
     UploadKmsEncryptedObject.uploadKmsEncryptedObject(
         GOOGLE_CLOUD_PROJECT, bucket.getName(), blobName, kmsFixture.getKey1().getName());
@@ -502,7 +504,7 @@ public class ITObjectSnippets extends TestBase {
   }
 
   @Test
-  public void testBatchSetObjectMetadata() {
+  public void testBatchSetObjectMetadata() throws Exception {
     String prefix = generator.randomObjectName();
     String name1 = prefix + "/1.txt";
     String name2 = prefix + "/2.txt";
@@ -521,7 +523,7 @@ public class ITObjectSnippets extends TestBase {
   }
 
   @Test
-  public void testSetObjectRetentionPolicy() {
+  public void testSetObjectRetentionPolicy() throws Exception {
     BucketInfo bucketInfo = BucketInfo.newBuilder(generator.randomBucketName()).build();
     Bucket tmpBucket = storage.create(bucketInfo, BucketTargetOption.enableObjectRetention(true));
     String tempBucket = tmpBucket.getName();
