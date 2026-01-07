@@ -582,6 +582,71 @@ public final class ITMultipartUploadHttpRequestManagerTest {
   }
 
   @Test
+  public void sendCreateMultipartUploadRequest_withContentType() throws Exception {
+    HttpRequestHandler handler =
+        req -> {
+          assertThat(req.headers().getAll("Content-Type")).containsExactly("audio/mp4");
+
+          CreateMultipartUploadResponse response =
+              CreateMultipartUploadResponse.builder()
+                  .bucket("test-bucket")
+                  .key("test-key")
+                  .uploadId("test-upload-id")
+                  .build();
+          ByteBuf buf = Unpooled.wrappedBuffer(xmlMapper.writeValueAsBytes(response));
+
+          DefaultFullHttpResponse resp =
+              new DefaultFullHttpResponse(req.protocolVersion(), OK, buf);
+          resp.headers().set(CONTENT_TYPE, "application/xml; charset=utf-8");
+          return resp;
+        };
+
+    try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
+      MultipartUploadHttpRequestManager multipartUploadHttpRequestManager =
+          MultipartUploadHttpRequestManager.createFrom(fakeHttpServer.getHttpStorageOptions());
+      CreateMultipartUploadRequest request =
+          CreateMultipartUploadRequest.builder()
+              .bucket("test-bucket")
+              .key("test-key")
+              .contentType("audio/mp4")
+              .build();
+
+      multipartUploadHttpRequestManager.sendCreateMultipartUploadRequest(request);
+    }
+  }
+
+  @Test
+  public void sendCreateMultipartUploadRequest_sendsContentLength() throws Exception {
+    HttpRequestHandler handler =
+        req -> {
+          // See https://docs.cloud.google.com/storage/docs/xml-api/reference-headers#contentlength
+          assertThat(req.headers().get("Content-Length")).isEqualTo("0");
+
+          CreateMultipartUploadResponse response =
+              CreateMultipartUploadResponse.builder()
+                  .bucket("test-bucket")
+                  .key("test-key")
+                  .uploadId("test-upload-id")
+                  .build();
+          ByteBuf buf = Unpooled.wrappedBuffer(xmlMapper.writeValueAsBytes(response));
+
+          DefaultFullHttpResponse resp =
+              new DefaultFullHttpResponse(req.protocolVersion(), OK, buf);
+          resp.headers().set(CONTENT_TYPE, "application/xml; charset=utf-8");
+          return resp;
+        };
+
+    try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
+      MultipartUploadHttpRequestManager multipartUploadHttpRequestManager =
+          MultipartUploadHttpRequestManager.createFrom(fakeHttpServer.getHttpStorageOptions());
+      CreateMultipartUploadRequest request =
+          CreateMultipartUploadRequest.builder().bucket("test-bucket").key("test-key").build();
+
+      multipartUploadHttpRequestManager.sendCreateMultipartUploadRequest(request);
+    }
+  }
+
+  @Test
   public void sendListPartsRequest_success() throws Exception {
     HttpRequestHandler handler =
         req -> {

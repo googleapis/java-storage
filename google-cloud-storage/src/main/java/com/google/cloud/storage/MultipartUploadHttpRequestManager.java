@@ -83,7 +83,7 @@ final class MultipartUploadHttpRequestManager {
 
     HttpRequest httpRequest =
         requestFactory.buildPostRequest(
-            new GenericUrl(createUri), new ByteArrayContent(request.contentType(), new byte[0]));
+            new GenericUrl(createUri), new ByteArrayContent(null, new byte[0]));
     httpRequest.getHeaders().putAll(headerProvider.getHeaders());
     addHeadersForCreateMultipartUpload(request, httpRequest.getHeaders());
     httpRequest.setParser(objectParser);
