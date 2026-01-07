@@ -93,6 +93,10 @@ final class FakeHttpServer implements AutoCloseable {
   }
 
   static FakeHttpServer of(HttpRequestHandler server) {
+    return of(server, true);
+  }
+
+  static FakeHttpServer of(HttpRequestHandler server, boolean trailingSlash) {
     // based on
     // https://github.com/netty/netty/blob/59aa6e635b9996cf21cd946e64353270679adc73/example/src/main/java/io/netty/example/http/helloworld/HttpHelloWorldServer.java
     InetSocketAddress address = new InetSocketAddress("localhost", 0);
@@ -124,7 +128,8 @@ final class FakeHttpServer implements AutoCloseable {
     Channel channel = b.bind(address).syncUninterruptibly().channel();
 
     InetSocketAddress socketAddress = (InetSocketAddress) channel.localAddress();
-    URI endpoint = URI.create("http://localhost:" + socketAddress.getPort() + "/");
+    String suffix = trailingSlash ? "/" : "";
+    URI endpoint = URI.create("http://localhost:" + socketAddress.getPort() + suffix);
     HttpStorageOptions httpStorageOptions =
         HttpStorageOptions.http()
             .setHost(endpoint.toString())

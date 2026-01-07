@@ -1364,6 +1364,40 @@ public final class ITMultipartUploadHttpRequestManagerTest {
     }
   }
 
+  @Test
+  public void hostWithoutTrailingSlash_urlConstructedCorrectly() throws Exception {
+    HttpRequestHandler handler =
+        req -> {
+          assertThat(req.uri()).startsWith("/test-bucket/test-key");
+          CreateMultipartUploadResponse response =
+              CreateMultipartUploadResponse.builder()
+                  .bucket("test-bucket")
+                  .key("test-key")
+                  .uploadId("test-upload-id")
+                  .build();
+          ByteBuf buf = Unpooled.wrappedBuffer(xmlMapper.writeValueAsBytes(response));
+          DefaultFullHttpResponse resp =
+              new DefaultFullHttpResponse(req.protocolVersion(), OK, buf);
+          resp.headers().set(CONTENT_TYPE, "application/xml; charset=utf-8");
+          return resp;
+        };
+
+    try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler, false)) {
+      MultipartUploadHttpRequestManager manager =
+          MultipartUploadHttpRequestManager.createFrom(fakeHttpServer.getHttpStorageOptions());
+      CreateMultipartUploadRequest request =
+          CreateMultipartUploadRequest.builder()
+              .bucket("test-bucket")
+              .key("test-key")
+              .contentType("application/octet-stream")
+              .build();
+
+      CreateMultipartUploadResponse response = manager.sendCreateMultipartUploadRequest(request);
+
+      assertThat(response.bucket()).isEqualTo("test-bucket");
+    }
+  }
+
   private void forceSetUploads(
       ListMultipartUploadsResponse response, java.util.List<MultipartUpload> uploads) {
     try {
