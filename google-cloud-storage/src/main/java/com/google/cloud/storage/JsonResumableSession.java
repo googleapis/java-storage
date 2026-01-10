@@ -105,7 +105,8 @@ final class JsonResumableSession {
               0,
               String.format(
                   Locale.US,
-                  "Result persistedSize (%d) did not match expected end of contentRange (%s) and contentRange does not have range to allow automatic recovery",
+                  "Result persistedSize (%d) did not match expected end of contentRange (%s) and"
+                      + " contentRange does not have range to allow automatic recovery",
                   persistedSize,
                   contentRange));
         }
