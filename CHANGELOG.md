@@ -1,5 +1,33 @@
 # Changelog
 
+## [2.61.0](https://github.com/googleapis/java-storage/compare/v2.60.0...v2.61.0) (2025-12-15)
+
+
+### Features
+
+* Add support for partial success in ListBuckets for json ([#3415](https://github.com/googleapis/java-storage/issues/3415)) ([37ef7f3](https://github.com/googleapis/java-storage/commit/37ef7f3894a867257d5366ab36129043b9a884f8))
+* Modifying getters and setters to be more inline with s3 interface. ([0a8bbea](https://github.com/googleapis/java-storage/commit/0a8bbeaf8babd296fce0690421d2e480b361ca7e))
+* **mpu:** Breaking change modifying getters and setters in MPU to be more inline with s3 interface. ([66d54e2](https://github.com/googleapis/java-storage/commit/66d54e2dc36d90853bae4d529a620f45a7001487))
+
+
+### Bug Fixes
+
+* **deps:** Update the Java code generator (gapic-generator-java) to 2.64.1 ([511ff51](https://github.com/googleapis/java-storage/commit/511ff514410e55425e968ab900ac1b8825fe507a))
+
+
+### Dependencies
+
+* Update actions/checkout action to v6 ([d934ad9](https://github.com/googleapis/java-storage/commit/d934ad91aa1bf50e04870b1af747f1947fb2cbea))
+* Update actions/checkout action to v6 ([d99dd53](https://github.com/googleapis/java-storage/commit/d99dd53a0401f5460a63be7a6b927a27cdad0997))
+* Update dependency com.google.apis:google-api-services-storage to v1-rev20251118-2.0.0 ([f48fa3f](https://github.com/googleapis/java-storage/commit/f48fa3f1dc5feabd89be063b138804b83f722c0c))
+* Update dependency com.google.apis:google-api-services-storage to v1-rev20251118-2.0.0 ([#3427](https://github.com/googleapis/java-storage/issues/3427)) ([4612e72](https://github.com/googleapis/java-storage/commit/4612e72051d35b22135811a8723a65646a90d45e))
+* Update dependency com.google.cloud:sdk-platform-java-config to v3.54.2 ([90a71be](https://github.com/googleapis/java-storage/commit/90a71be0899d06995b515d875c65cdc5f852c7b0))
+* Update dependency com.google.cloud:sdk-platform-java-config to v3.54.2 ([#3424](https://github.com/googleapis/java-storage/issues/3424)) ([c989dc3](https://github.com/googleapis/java-storage/commit/c989dc3e65386e55bc25d2f6f63e499deda3fc69))
+* Update gcr.io/cloud-devrel-public-resources/storage-testbench docker tag to v0.59.0 ([f5d8337](https://github.com/googleapis/java-storage/commit/f5d8337ad556770a55cc260975e44e85e8e831b0))
+* Update gcr.io/cloud-devrel-public-resources/storage-testbench docker tag to v0.59.0 ([5480ce3](https://github.com/googleapis/java-storage/commit/5480ce347493ec425b675f462a42f45c22b06c28))
+* Update googleapis/sdk-platform-java action to v2.64.2 ([23494d7](https://github.com/googleapis/java-storage/commit/23494d79d3a2785c30c75f50fd3b0a03598c3599))
+* Update googleapis/sdk-platform-java action to v2.64.2 ([#3425](https://github.com/googleapis/java-storage/issues/3425)) ([fad2d7a](https://github.com/googleapis/java-storage/commit/fad2d7a780a084acd8ccdf2bb2f97a335c438594))
+
 ## [2.60.0](https://github.com/googleapis/java-storage/compare/v2.59.0...v2.60.0) (2025-11-07)
 
 

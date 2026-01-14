@@ -23,11 +23,12 @@ import com.google.cloud.storage.multipartupload.model.CompleteMultipartUploadReq
 import com.google.cloud.storage.multipartupload.model.CompleteMultipartUploadResponse;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadRequest;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadResponse;
+import com.google.cloud.storage.multipartupload.model.ListMultipartUploadsRequest;
+import com.google.cloud.storage.multipartupload.model.ListMultipartUploadsResponse;
 import com.google.cloud.storage.multipartupload.model.ListPartsRequest;
 import com.google.cloud.storage.multipartupload.model.ListPartsResponse;
 import com.google.cloud.storage.multipartupload.model.UploadPartRequest;
 import com.google.cloud.storage.multipartupload.model.UploadPartResponse;
-import java.net.URI;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -38,17 +39,14 @@ final class MultipartUploadClientImpl extends MultipartUploadClient {
 
   private final MultipartUploadHttpRequestManager httpRequestManager;
   private final Retrier retrier;
-  private final URI uri;
   private final HttpRetryAlgorithmManager retryAlgorithmManager;
 
   MultipartUploadClientImpl(
-      URI uri,
       Retrier retrier,
       MultipartUploadHttpRequestManager multipartUploadHttpRequestManager,
       HttpRetryAlgorithmManager retryAlgorithmManager) {
     this.httpRequestManager = multipartUploadHttpRequestManager;
     this.retrier = retrier;
-    this.uri = uri;
     this.retryAlgorithmManager = retryAlgorithmManager;
   }
 
@@ -56,7 +54,7 @@ final class MultipartUploadClientImpl extends MultipartUploadClient {
   public CreateMultipartUploadResponse createMultipartUpload(CreateMultipartUploadRequest request) {
     return retrier.run(
         retryAlgorithmManager.nonIdempotent(),
-        () -> httpRequestManager.sendCreateMultipartUploadRequest(uri, request),
+        () -> httpRequestManager.sendCreateMultipartUploadRequest(request),
         Decoder.identity());
   }
 
@@ -65,7 +63,7 @@ final class MultipartUploadClientImpl extends MultipartUploadClient {
 
     return retrier.run(
         retryAlgorithmManager.idempotent(),
-        () -> httpRequestManager.sendListPartsRequest(uri, request),
+        () -> httpRequestManager.sendListPartsRequest(request),
         Decoder.identity());
   }
 
@@ -74,7 +72,7 @@ final class MultipartUploadClientImpl extends MultipartUploadClient {
 
     return retrier.run(
         retryAlgorithmManager.idempotent(),
-        () -> httpRequestManager.sendAbortMultipartUploadRequest(uri, request),
+        () -> httpRequestManager.sendAbortMultipartUploadRequest(request),
         Decoder.identity());
   }
 
@@ -83,7 +81,7 @@ final class MultipartUploadClientImpl extends MultipartUploadClient {
       CompleteMultipartUploadRequest request) {
     return retrier.run(
         retryAlgorithmManager.idempotent(),
-        () -> httpRequestManager.sendCompleteMultipartUploadRequest(uri, request),
+        () -> httpRequestManager.sendCompleteMultipartUploadRequest(request),
         Decoder.identity());
   }
 
@@ -96,8 +94,16 @@ final class MultipartUploadClientImpl extends MultipartUploadClient {
           if (dirty.getAndSet(true)) {
             requestBody.getContent().rewindTo(0);
           }
-          return httpRequestManager.sendUploadPartRequest(uri, request, requestBody.getContent());
+          return httpRequestManager.sendUploadPartRequest(request, requestBody.getContent());
         },
+        Decoder.identity());
+  }
+
+  @Override
+  public ListMultipartUploadsResponse listMultipartUploads(ListMultipartUploadsRequest request) {
+    return retrier.run(
+        retryAlgorithmManager.idempotent(),
+        () -> httpRequestManager.sendListMultipartUploadsRequest(request),
         Decoder.identity());
   }
 }

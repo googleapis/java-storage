@@ -16,12 +16,6 @@
 name: Hermetic library generation upon generation config change through pull requests
 on:
   pull_request:
-    paths:
-      - 'generation_config.yaml'
-      - '.readme-partials.yaml'
-      - 'owlbot.py'
-      - 'versions.txt'
-      - '.github/.OwlBot-hermetic.yaml'
 
 env:
   REPO_FULL_NAME: ${{ github.event.pull_request.head.repo.full_name }}
@@ -38,12 +32,52 @@ jobs:
         else
           echo "SHOULD_RUN=true" >> $GITHUB_ENV
         fi
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
       if: env.SHOULD_RUN == 'true'
       with:
         fetch-depth: 0
         token: ${{ secrets.CLOUD_JAVA_BOT_TOKEN }}
-    - uses: googleapis/sdk-platform-java/.github/scripts@v2.64.1
+    - name: is applicable
+      env:
+        # set our branch names to be the names in the "origin" remote since we aren't actually checking these branches out
+        base_ref: origin/${{ github.base_ref }}
+        head_ref: origin/${{ github.head_ref }}
+      run: |
+        #!/bin/bash -x
+        
+        # verify we have refs so error messages are clearer
+        git rev-parse --verify "$base_ref"
+        git rev-parse --verify "$head_ref"
+        
+        # list all paths that are changed between before and after
+        changed_paths=$(git diff --name-only "$base_ref" "$head_ref")
+        
+        # define our array of paths that are included
+        include_list=()
+        
+        # push our include regex values onto the array
+        include_list+=("^.github/workflows/hermetic_library_generation.yaml$")
+        include_list+=("^generation_config.yaml$")
+        include_list+=("^.readme-partials.yaml$")
+        include_list+=("^owlbot.py$")
+        include_list+=("^versions.txt$")
+        include_list+=("^.github/.OwlBot-hermetic.yaml$")
+        
+        # join all the paths into a single regex
+        pattern="$(IFS=$'|' ; echo "${include_list[*]}")"
+        
+        # check if we have any paths that match our include list
+        match=0
+        echo -e "${changed_paths}" | grep -E "${pattern}" 2>&1 || match=1
+        
+        if [[ $match == 0 ]]; then
+          echo "SHOULD_RUN=true" >> $GITHUB_ENV
+        else
+          echo "This PR does not match the include list"
+          echo "SHOULD_RUN=false" >> $GITHUB_ENV
+        fi
+
+    - uses: googleapis/sdk-platform-java/.github/scripts@v2.64.2
       if: env.SHOULD_RUN == 'true'
       with:
         base_ref: ${{ github.base_ref }}
