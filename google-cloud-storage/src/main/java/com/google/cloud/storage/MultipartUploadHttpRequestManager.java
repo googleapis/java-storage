@@ -253,7 +253,11 @@ final class MultipartUploadHttpRequestManager {
         storage.getRequestFactory(),
         new XmlObjectParser(new XmlMapper()),
         options.getMergedHeaderProvider(FixedHeaderProvider.create(stableHeaders.build())),
-        URI.create(options.getHost()));
+        URI.create(ensureTrailingSlash(options.getHost())));
+  }
+
+  private static String ensureTrailingSlash(String host) {
+    return host.endsWith("/") ? host : host + "/";
   }
 
   private void addChecksumHeader(@Nullable Crc32cLengthKnown crc32c, HttpHeaders headers) {
