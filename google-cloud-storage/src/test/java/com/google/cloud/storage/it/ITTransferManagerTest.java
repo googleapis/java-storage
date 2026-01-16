@@ -41,6 +41,7 @@ import com.google.cloud.storage.transfermanager.DownloadJob;
 import com.google.cloud.storage.transfermanager.DownloadResult;
 import com.google.cloud.storage.transfermanager.ParallelDownloadConfig;
 import com.google.cloud.storage.transfermanager.ParallelUploadConfig;
+import com.google.cloud.storage.transfermanager.PathTraversalBlockedException;
 import com.google.cloud.storage.transfermanager.TransferManager;
 import com.google.cloud.storage.transfermanager.TransferManagerConfig;
 import com.google.cloud.storage.transfermanager.TransferManagerConfigTestingInstances;
@@ -632,6 +633,87 @@ public class ITTransferManagerTest {
       assertThat(failedToStart).isPresent();
       UploadResult result = failedToStart.get();
       assertThat(result.getException()).isInstanceOf(BucketNameMismatchException.class);
+    }
+  }
+
+  @Test
+  public void downloadBlobsPathTraversalBlocked() throws Exception {
+    TransferManagerConfig config =
+        TransferManagerConfigTestingInstances.defaults(storage.getOptions());
+    try (TransferManager transferManager = config.getService()) {
+      String bucketName = bucket.getName();
+      // Create an object with a name that attempts to "escape" the target directory
+      String maliciousName = "../malicious.txt";
+      BlobInfo maliciousBlob = BlobInfo.newBuilder(BlobId.of(bucketName, maliciousName)).build();
+      storage.create(
+          maliciousBlob, "malicious content".getBytes(java.nio.charset.StandardCharsets.UTF_8));
+
+      ParallelDownloadConfig parallelDownloadConfig =
+          ParallelDownloadConfig.newBuilder()
+              .setBucketName(bucketName)
+              .setDownloadDirectory(baseDir) // baseDir is the target
+              .build();
+
+      List<BlobInfo> blobsToDownload = new ArrayList<>(blobs);
+      blobsToDownload.add(maliciousBlob);
+
+      DownloadJob job = transferManager.downloadBlobs(blobsToDownload, parallelDownloadConfig);
+      List<DownloadResult> results = job.getDownloadResults();
+
+      try {
+        long successCount =
+            results.stream().filter(res -> res.getStatus() == TransferStatus.SUCCESS).count();
+        assertThat(successCount).isEqualTo(blobs.size());
+
+        // Verify that the malicious blob was blocked/skipped
+        Optional<DownloadResult> blockedResult =
+            results.stream()
+                .filter(res -> res.getInput().getName().equals(maliciousName))
+                .findFirst();
+
+        assertThat(blockedResult.isPresent()).isTrue();
+        assertThat(blockedResult.get().getStatus()).isEqualTo(TransferStatus.FAILED_TO_START);
+        assertThat(blockedResult.get().getException())
+            .isInstanceOf(PathTraversalBlockedException.class);
+        assertThat(blockedResult.get().getException().getMessage()).contains("blocked");
+      } finally {
+        storage.delete(maliciousBlob.getBlobId());
+      }
+    }
+  }
+
+  @Test
+  public void downloadBlobsPathTraversalAllowedWithinTarget() throws Exception {
+    TransferManagerConfig config =
+        TransferManagerConfigTestingInstances.defaults(storage.getOptions());
+    try (TransferManager transferManager = config.getService()) {
+      String bucketName = bucket.getName();
+      // This name resolves to 'safe.txt' inside the target directory
+      String safeNameWithDots = "subdir/../safe.txt";
+      BlobInfo safeBlob = BlobInfo.newBuilder(BlobId.of(bucketName, safeNameWithDots)).build();
+      storage.create(safeBlob, "safe content".getBytes(java.nio.charset.StandardCharsets.UTF_8));
+
+      ParallelDownloadConfig parallelDownloadConfig =
+          ParallelDownloadConfig.newBuilder()
+              .setBucketName(bucketName)
+              .setDownloadDirectory(baseDir)
+              .build();
+
+      DownloadJob job =
+          transferManager.downloadBlobs(
+              Collections.singletonList(safeBlob), parallelDownloadConfig);
+      List<DownloadResult> results = job.getDownloadResults();
+
+      try {
+        assertThat(results.get(0).getStatus()).isEqualTo(TransferStatus.SUCCESS);
+        // Verify it was saved to the correct normalized location
+        Path expectedPath = baseDir.resolve("safe.txt").toAbsolutePath().normalize();
+        assertThat(results.get(0).getOutputDestination().toAbsolutePath().normalize())
+            .isEqualTo(expectedPath);
+      } finally {
+        cleanUpFiles(results);
+        storage.delete(safeBlob.getBlobId());
+      }
     }
   }
 
