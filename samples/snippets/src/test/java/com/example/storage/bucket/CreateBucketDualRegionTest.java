@@ -27,7 +27,7 @@ import org.junit.Test;
 public class CreateBucketDualRegionTest extends TestBase {
 
   @Test
-  public void testCreateBucketDualRegion() {
+  public void testCreateBucketDualRegion() throws Exception {
     assertNotNull("Unable to determine Project ID", GOOGLE_CLOUD_PROJECT);
     String newBucket = RemoteStorageHelper.generateBucketName();
     CreateBucketDualRegion.createBucketDualRegion(

@@ -30,7 +30,7 @@ import org.junit.Test;
 public class AddBlobOwnerTest extends TestBase {
 
   @Test
-  public void testAddBlobOwner() {
+  public void testAddBlobOwner() throws Exception {
     // Check for user email before the actual test.
     assertWithMessage("Unable to determine user email").that(IT_SERVICE_ACCOUNT_EMAIL).isNotEmpty();
 
