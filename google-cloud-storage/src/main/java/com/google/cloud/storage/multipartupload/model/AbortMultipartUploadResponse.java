@@ -24,5 +24,4 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
  * @since 2.60.0
  */
 @JacksonXmlRootElement(localName = "AbortMultipartUploadResponse")
-public final class AbortMultipartUploadResponse {
-}
+public final class AbortMultipartUploadResponse {}
