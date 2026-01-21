@@ -16,7 +16,6 @@
 package com.google.cloud.storage.multipartupload.model;
 
 import com.google.api.core.ApiFunction;
-import com.google.api.core.BetaApi;
 import com.google.cloud.StringEnumType;
 import com.google.cloud.StringEnumValue;
 
@@ -25,9 +24,8 @@ import com.google.cloud.StringEnumValue;
  * href="https://cloud.google.com/storage/docs/object-lock">https://cloud.google.com/storage/docs/object-lock</a>
  * for details.
  *
- * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+ * @since 2.60.0
  */
-@BetaApi
 public final class ObjectLockMode extends StringEnumValue {
   private static final long serialVersionUID = -1882734434792102329L;
 
@@ -45,26 +43,25 @@ public final class ObjectLockMode extends StringEnumValue {
    * href="https://cloud.google.com/storage/docs/object-lock">https://cloud.google.com/storage/docs/object-lock</a>
    * for details.
    *
-   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.60.0
    */
-  @BetaApi public static final ObjectLockMode GOVERNANCE = type.createAndRegister("GOVERNANCE");
+  public static final ObjectLockMode GOVERNANCE = type.createAndRegister("GOVERNANCE");
 
   /**
    * Compliance mode. See <a
    * href="https://cloud.google.com/storage/docs/object-lock">https://cloud.google.com/storage/docs/object-lock</a>
    * for details.
    *
-   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.60.0
    */
-  @BetaApi public static final ObjectLockMode COMPLIANCE = type.createAndRegister("COMPLIANCE");
+  public static final ObjectLockMode COMPLIANCE = type.createAndRegister("COMPLIANCE");
 
   /**
    * Get the ObjectLockMode for the given String constant, and throw an exception if the constant is
    * not recognized.
    *
-   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.60.0
    */
-  @BetaApi
   public static ObjectLockMode valueOfStrict(String constant) {
     return type.valueOfStrict(constant);
   }
@@ -72,9 +69,8 @@ public final class ObjectLockMode extends StringEnumValue {
   /**
    * Get the ObjectLockMode for the given String constant, and allow unrecognized values.
    *
-   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.60.0
    */
-  @BetaApi
   public static ObjectLockMode valueOf(String constant) {
     return type.valueOf(constant);
   }
@@ -82,9 +78,8 @@ public final class ObjectLockMode extends StringEnumValue {
   /**
    * Return the known values for ObjectLockMode.
    *
-   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.60.0
    */
-  @BetaApi
   public static ObjectLockMode[] values() {
     return type.values();
   }
