@@ -151,6 +151,14 @@
     <dependency>
       <groupId>io.grpc</groupId>
       <artifactId>grpc-opentelemetry</artifactId>
+        <exclusions>
+            <exclusion>
+                <!-- grpc depends on opentelemetry 1.52.0 but the version in shared config
+                is 1.51.0 -->
+                <groupId>io.opentelemetry</groupId>
+                <artifactId>opentelemetry-api</artifactId>
+            </exclusion>
+        </exclusions>
     </dependency>
     <dependency>
       <groupId>io.opentelemetry</groupId>
