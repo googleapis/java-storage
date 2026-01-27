@@ -18,8 +18,7 @@ package com.google.cloud.storage.multipartupload.model;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
 /**
- * Represents a response to an abort multipart upload request. This class is
- * currently empty as the
+ * Represents a response to an abort multipart upload request. This class is currently empty as the
  * abort operation does not return any specific data in its response body.
  *
  * @since 2.60.0
