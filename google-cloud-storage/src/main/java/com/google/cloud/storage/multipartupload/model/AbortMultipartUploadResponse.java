@@ -23,5 +23,10 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
  *
  * @since 2.60.0
  */
+<<<<<<< HEAD
 @JacksonXmlRootElement(localName = "AbortMultipartUploadResponse")
 public final class AbortMultipartUploadResponse {}
+=======
+public final class AbortMultipartUploadResponse {
+}
+>>>>>>> be5395a5 (chore: unblocking stuck kokoro test)
