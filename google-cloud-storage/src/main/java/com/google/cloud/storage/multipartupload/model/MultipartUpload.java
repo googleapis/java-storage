@@ -17,7 +17,6 @@
 package com.google.cloud.storage.multipartupload.model;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.google.api.core.BetaApi;
 import com.google.cloud.storage.StorageClass;
 import com.google.common.base.MoreObjects;
 import java.time.OffsetDateTime;
@@ -26,9 +25,8 @@ import java.util.Objects;
 /**
  * Represents a multipart upload that is in progress.
  *
- * @since 2.61.0 This new api is in preview and is subject to breaking changes.
+ * @since 2.61.0
  */
-@BetaApi
 public final class MultipartUpload {
 
   @JacksonXmlProperty(localName = "Key")
@@ -57,9 +55,8 @@ public final class MultipartUpload {
    * The object name for which the multipart upload was initiated.
    *
    * @return The object name.
-   * @since 2.61.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.61.0
    */
-  @BetaApi
   public String key() {
     return key;
   }
@@ -68,9 +65,8 @@ public final class MultipartUpload {
    * The ID of the multipart upload.
    *
    * @return The upload ID.
-   * @since 2.61.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.61.0
    */
-  @BetaApi
   public String uploadId() {
     return uploadId;
   }
@@ -79,9 +75,8 @@ public final class MultipartUpload {
    * The storage class of the object.
    *
    * @return The storage class.
-   * @since 2.61.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.61.0
    */
-  @BetaApi
   public StorageClass storageClass() {
     return storageClass;
   }
@@ -90,9 +85,8 @@ public final class MultipartUpload {
    * The date and time at which the multipart upload was initiated.
    *
    * @return The initiation date and time.
-   * @since 2.61.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.61.0
    */
-  @BetaApi
   public OffsetDateTime initiated() {
     return initiated;
   }
@@ -131,9 +125,8 @@ public final class MultipartUpload {
    * Returns a new builder for this multipart upload.
    *
    * @return A new builder.
-   * @since 2.61.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.61.0
    */
-  @BetaApi
   public static Builder newBuilder() {
     return new Builder();
   }
@@ -141,9 +134,8 @@ public final class MultipartUpload {
   /**
    * A builder for {@link MultipartUpload}.
    *
-   * @since 2.61.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.61.0
    */
-  @BetaApi
   public static final class Builder {
     private String key;
     private String uploadId;
@@ -157,9 +149,8 @@ public final class MultipartUpload {
      *
      * @param key The object name.
      * @return This builder.
-     * @since 2.61.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.61.0
      */
-    @BetaApi
     public Builder key(String key) {
       this.key = key;
       return this;
@@ -170,9 +161,8 @@ public final class MultipartUpload {
      *
      * @param uploadId The upload ID.
      * @return This builder.
-     * @since 2.61.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.61.0
      */
-    @BetaApi
     public Builder uploadId(String uploadId) {
       this.uploadId = uploadId;
       return this;
@@ -183,9 +173,8 @@ public final class MultipartUpload {
      *
      * @param storageClass The storage class.
      * @return This builder.
-     * @since 2.61.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.61.0
      */
-    @BetaApi
     public Builder storageClass(StorageClass storageClass) {
       this.storageClass = storageClass;
       return this;
@@ -196,9 +185,8 @@ public final class MultipartUpload {
      *
      * @param initiated The initiation date and time.
      * @return This builder.
-     * @since 2.61.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.61.0
      */
-    @BetaApi
     public Builder initiated(OffsetDateTime initiated) {
       this.initiated = initiated;
       return this;
@@ -208,9 +196,8 @@ public final class MultipartUpload {
      * Builds the multipart upload.
      *
      * @return The built multipart upload.
-     * @since 2.61.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.61.0
      */
-    @BetaApi
     public MultipartUpload build() {
       return new MultipartUpload(key, uploadId, storageClass, initiated);
     }
