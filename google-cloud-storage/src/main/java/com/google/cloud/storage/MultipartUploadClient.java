@@ -16,7 +16,6 @@
 
 package com.google.cloud.storage;
 
-import com.google.api.core.BetaApi;
 import com.google.api.core.InternalExtensionOnly;
 import com.google.cloud.storage.multipartupload.model.AbortMultipartUploadRequest;
 import com.google.cloud.storage.multipartupload.model.AbortMultipartUploadResponse;
@@ -38,9 +37,8 @@ import com.google.cloud.storage.multipartupload.model.UploadPartResponse;
  * low-level interface for creating and managing multipart uploads.
  *
  * @see <a href="https://cloud.google.com/storage/docs/multipart-uploads">Multipart Uploads</a>
- * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+ * @since 2.60.0
  */
-@BetaApi
 @InternalExtensionOnly
 public abstract class MultipartUploadClient {
 
@@ -51,9 +49,8 @@ public abstract class MultipartUploadClient {
    *
    * @param request The request object containing the details for creating the multipart upload.
    * @return A {@link CreateMultipartUploadResponse} object containing the upload ID.
-   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.60.0
    */
-  @BetaApi
   public abstract CreateMultipartUploadResponse createMultipartUpload(
       CreateMultipartUploadRequest request);
 
@@ -62,9 +59,8 @@ public abstract class MultipartUploadClient {
    *
    * @param listPartsRequest The request object containing the details for listing the parts.
    * @return A {@link ListPartsResponse} object containing the list of parts.
-   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.60.0
    */
-  @BetaApi
   public abstract ListPartsResponse listParts(ListPartsRequest listPartsRequest);
 
   /**
@@ -72,9 +68,8 @@ public abstract class MultipartUploadClient {
    *
    * @param request The request object containing the details for aborting the multipart upload.
    * @return An {@link AbortMultipartUploadResponse} object.
-   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.60.0
    */
-  @BetaApi
   public abstract AbortMultipartUploadResponse abortMultipartUpload(
       AbortMultipartUploadRequest request);
 
@@ -84,9 +79,8 @@ public abstract class MultipartUploadClient {
    * @param request The request object containing the details for completing the multipart upload.
    * @return A {@link CompleteMultipartUploadResponse} object containing information about the
    *     completed upload.
-   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.60.0
    */
-  @BetaApi
   public abstract CompleteMultipartUploadResponse completeMultipartUpload(
       CompleteMultipartUploadRequest request);
 
@@ -96,9 +90,8 @@ public abstract class MultipartUploadClient {
    * @param request The request object containing the details for uploading the part.
    * @param requestBody The content of the part to upload.
    * @return An {@link UploadPartResponse} object containing the ETag of the uploaded part.
-   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.60.0
    */
-  @BetaApi
   public abstract UploadPartResponse uploadPart(UploadPartRequest request, RequestBody requestBody);
 
   /**
@@ -106,9 +99,8 @@ public abstract class MultipartUploadClient {
    *
    * @param request The request object containing the details for listing the multipart uploads.
    * @return A {@link ListMultipartUploadsResponse} object containing the list of multipart uploads.
-   * @since 2.61.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.61.0
    */
-  @BetaApi
   public abstract ListMultipartUploadsResponse listMultipartUploads(
       ListMultipartUploadsRequest request);
 
@@ -117,9 +109,8 @@ public abstract class MultipartUploadClient {
    *
    * @param config The configuration for the client.
    * @return A new {@link MultipartUploadClient} instance.
-   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.60.0
    */
-  @BetaApi
   public static MultipartUploadClient create(MultipartUploadSettings config) {
     HttpStorageOptions options = config.getOptions();
     return new MultipartUploadClientImpl(
