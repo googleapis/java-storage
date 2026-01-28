@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.62.1](https://github.com/googleapis/java-storage/compare/v2.62.0...v2.62.1) (2026-01-28)
+
+
+### Bug Fixes
+
+* **deps:** Update the Java code generator (gapic-generator-java) to 2.66.0 ([557be35](https://github.com/googleapis/java-storage/commit/557be35b220bdb8b732fb593e5abf869a0c2bb53))
+
+
+### Dependencies
+
+* Update dependency com.google.cloud:sdk-platform-java-config to v3.56.0 ([#3468](https://github.com/googleapis/java-storage/issues/3468)) ([d2a1a3a](https://github.com/googleapis/java-storage/commit/d2a1a3a661f42f1327a53dd14295ccaa4cd19e4e))
+* Update gcr.io/cloud-devrel-public-resources/storage-testbench docker tag to v0.60.0 ([#3466](https://github.com/googleapis/java-storage/issues/3466)) ([2b860e3](https://github.com/googleapis/java-storage/commit/2b860e356fba0037d40ba0eaa1320fb3e4a9e0ae))
+* Update googleapis/sdk-platform-java action to v2.66.0 ([#3469](https://github.com/googleapis/java-storage/issues/3469)) ([bd2f0c6](https://github.com/googleapis/java-storage/commit/bd2f0c6c881db6b1cf41c85c5bd4bb7df11bc7a6))
+
 ## [2.62.0](https://github.com/googleapis/java-storage/compare/v2.61.0...v2.62.0) (2026-01-15)
 
 
