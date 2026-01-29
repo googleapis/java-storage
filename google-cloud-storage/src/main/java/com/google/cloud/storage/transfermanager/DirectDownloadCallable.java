@@ -92,7 +92,7 @@ final class DirectDownloadCallable implements Callable<DownloadResult> {
     }
     DownloadResult result =
         DownloadResult.newBuilder(originalBlob, TransferStatus.SUCCESS)
-            .setOutputDestination(destPath.toAbsolutePath())
+            .setOutputDestination(destPath)
             .build();
     return result;
   }

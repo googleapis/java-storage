@@ -27,14 +27,11 @@ final class TransferManagerUtils {
   private TransferManagerUtils() {}
 
   static Path createAndValidateDestPath(ParallelDownloadConfig config, BlobInfo originalBlob) {
+    Path targetDirectory = config.getDownloadDirectory();
     Path newPath =
-        config
-            .getDownloadDirectory()
+        targetDirectory
             .resolve(originalBlob.getName().replaceFirst(config.getStripPrefix(), ""))
-            .toAbsolutePath()
             .normalize();
-
-    Path targetDirectory = config.getDownloadDirectory().toAbsolutePath().normalize();
 
     // Security check: Verify the resolved path is inside the target directory
     // This catches ".." sequences that attempt to "escape" the folder.

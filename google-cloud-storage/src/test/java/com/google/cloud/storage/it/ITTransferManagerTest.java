@@ -671,13 +671,17 @@ public class ITTransferManagerTest {
                 .filter(res -> res.getInput().getName().equals(maliciousName))
                 .findFirst();
 
-        assertThat(blockedResult.isPresent()).isTrue();
+        assertThat(blockedResult).isPresent();
         assertThat(blockedResult.get().getStatus()).isEqualTo(TransferStatus.FAILED_TO_START);
         assertThat(blockedResult.get().getException())
             .isInstanceOf(PathTraversalBlockedException.class);
         assertThat(blockedResult.get().getException().getMessage()).contains("blocked");
       } finally {
         storage.delete(maliciousBlob.getBlobId());
+        cleanUpFiles(
+            results.stream()
+                .filter(res -> res.getStatus() == TransferStatus.SUCCESS)
+                .collect(Collectors.toList()));
       }
     }
   }
