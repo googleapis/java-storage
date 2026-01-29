@@ -19,7 +19,6 @@ package com.google.cloud.storage.multipartupload.model;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.google.api.core.BetaApi;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
@@ -31,9 +30,8 @@ import java.util.Objects;
  *
  * @see <a href="https://cloud.google.com/storage/docs/multipart-uploads#listing-uploads">Listing
  *     multipart uploads</a>
- * @since 2.60.1 This new api is in preview and is subject to breaking changes.
+ * @since 2.60.1
  */
-@BetaApi
 public final class ListMultipartUploadsResponse {
 
   @JacksonXmlElementWrapper(useWrapping = false)
@@ -116,9 +114,8 @@ public final class ListMultipartUploadsResponse {
    * The list of multipart uploads.
    *
    * @return The list of multipart uploads.
-   * @since 2.61.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.61.0
    */
-  @BetaApi
   public ImmutableList<MultipartUpload> uploads() {
     return uploads == null ? ImmutableList.of() : ImmutableList.copyOf(uploads);
   }
@@ -127,9 +124,8 @@ public final class ListMultipartUploadsResponse {
    * The bucket that contains the multipart uploads.
    *
    * @return The bucket name.
-   * @since 2.61.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.61.0
    */
-  @BetaApi
   public String bucket() {
     return bucket;
   }
@@ -138,9 +134,8 @@ public final class ListMultipartUploadsResponse {
    * The delimiter applied to the request.
    *
    * @return The delimiter applied to the request.
-   * @since 2.61.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.61.0
    */
-  @BetaApi
   public String delimiter() {
     return delimiter;
   }
@@ -149,9 +144,8 @@ public final class ListMultipartUploadsResponse {
    * The encoding type used by Cloud Storage to encode object names in the response.
    *
    * @return The encoding type.
-   * @since 2.61.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.61.0
    */
-  @BetaApi
   public String encodingType() {
     return encodingType;
   }
@@ -160,9 +154,8 @@ public final class ListMultipartUploadsResponse {
    * The key at or after which the listing began.
    *
    * @return The key marker.
-   * @since 2.61.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.61.0
    */
-  @BetaApi
   public String keyMarker() {
     return keyMarker;
   }
@@ -171,9 +164,8 @@ public final class ListMultipartUploadsResponse {
    * The upload ID at or after which the listing began.
    *
    * @return The upload ID marker.
-   * @since 2.61.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.61.0
    */
-  @BetaApi
   public String uploadIdMarker() {
     return uploadIdMarker;
   }
@@ -182,9 +174,8 @@ public final class ListMultipartUploadsResponse {
    * The key after which listing should begin.
    *
    * @return The key after which listing should begin.
-   * @since 2.61.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.61.0
    */
-  @BetaApi
   public String nextKeyMarker() {
     return nextKeyMarker;
   }
@@ -193,9 +184,8 @@ public final class ListMultipartUploadsResponse {
    * The upload ID after which listing should begin.
    *
    * @return The upload ID after which listing should begin.
-   * @since 2.61.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.61.0
    */
-  @BetaApi
   public String nextUploadIdMarker() {
     return nextUploadIdMarker;
   }
@@ -204,9 +194,8 @@ public final class ListMultipartUploadsResponse {
    * The maximum number of uploads to return.
    *
    * @return The maximum number of uploads.
-   * @since 2.61.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.61.0
    */
-  @BetaApi
   public int maxUploads() {
     return maxUploads;
   }
@@ -215,9 +204,8 @@ public final class ListMultipartUploadsResponse {
    * The prefix applied to the request.
    *
    * @return The prefix applied to the request.
-   * @since 2.61.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.61.0
    */
-  @BetaApi
   public String prefix() {
     return prefix;
   }
@@ -226,9 +214,8 @@ public final class ListMultipartUploadsResponse {
    * A flag indicating whether or not the returned results are truncated.
    *
    * @return A flag indicating whether or not the returned results are truncated.
-   * @since 2.61.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.61.0
    */
-  @BetaApi
   public boolean truncated() {
     return isTruncated;
   }
@@ -237,9 +224,8 @@ public final class ListMultipartUploadsResponse {
    * If you specify a delimiter in the request, this element is returned.
    *
    * @return The common prefixes.
-   * @since 2.61.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.61.0
    */
-  @BetaApi
   public ImmutableList<String> commonPrefixes() {
     if (commonPrefixes == null) {
       return ImmutableList.of();
@@ -309,9 +295,8 @@ public final class ListMultipartUploadsResponse {
    * Returns a new builder for this response.
    *
    * @return A new builder.
-   * @since 2.61.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.61.0
    */
-  @BetaApi
   public static Builder builder() {
     return new Builder();
   }
@@ -324,9 +309,8 @@ public final class ListMultipartUploadsResponse {
   /**
    * A builder for {@link ListMultipartUploadsResponse}.
    *
-   * @since 2.61.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.61.0
    */
-  @BetaApi
   public static final class Builder {
     private ImmutableList<MultipartUpload> uploads;
     private String bucket;
@@ -350,7 +334,6 @@ public final class ListMultipartUploadsResponse {
      * @return This builder.
      * @since 2.61.0 This new api is in preview.
      */
-    @BetaApi
     public Builder uploads(ImmutableList<MultipartUpload> uploads) {
       this.uploads = uploads;
       return this;
@@ -363,7 +346,6 @@ public final class ListMultipartUploadsResponse {
      * @return This builder.
      * @since 2.61.0 This new api is in preview.
      */
-    @BetaApi
     public Builder bucket(String bucket) {
       this.bucket = bucket;
       return this;
@@ -376,7 +358,6 @@ public final class ListMultipartUploadsResponse {
      * @return This builder.
      * @since 2.61.0 This new api is in preview.
      */
-    @BetaApi
     public Builder delimiter(String delimiter) {
       this.delimiter = delimiter;
       return this;
@@ -389,7 +370,6 @@ public final class ListMultipartUploadsResponse {
      * @return This builder.
      * @since 2.61.0 This new api is in preview.
      */
-    @BetaApi
     public Builder encodingType(String encodingType) {
       this.encodingType = encodingType;
       return this;
@@ -402,7 +382,6 @@ public final class ListMultipartUploadsResponse {
      * @return This builder.
      * @since 2.61.0 This new api is in preview.
      */
-    @BetaApi
     public Builder keyMarker(String keyMarker) {
       this.keyMarker = keyMarker;
       return this;
@@ -415,7 +394,6 @@ public final class ListMultipartUploadsResponse {
      * @return This builder.
      * @since 2.61.0 This new api is in preview.
      */
-    @BetaApi
     public Builder uploadIdMarker(String uploadIdMarker) {
       this.uploadIdMarker = uploadIdMarker;
       return this;
@@ -428,7 +406,6 @@ public final class ListMultipartUploadsResponse {
      * @return This builder.
      * @since 2.61.0 This new api is in preview.
      */
-    @BetaApi
     public Builder nextKeyMarker(String nextKeyMarker) {
       this.nextKeyMarker = nextKeyMarker;
       return this;
@@ -441,7 +418,6 @@ public final class ListMultipartUploadsResponse {
      * @return This builder.
      * @since 2.61.0 This new api is in preview.
      */
-    @BetaApi
     public Builder nextUploadIdMarker(String nextUploadIdMarker) {
       this.nextUploadIdMarker = nextUploadIdMarker;
       return this;
@@ -454,7 +430,6 @@ public final class ListMultipartUploadsResponse {
      * @return This builder.
      * @since 2.61.0 This new api is in preview.
      */
-    @BetaApi
     public Builder maxUploads(int maxUploads) {
       this.maxUploads = maxUploads;
       return this;
@@ -467,7 +442,6 @@ public final class ListMultipartUploadsResponse {
      * @return This builder.
      * @since 2.61.0 This new api is in preview.
      */
-    @BetaApi
     public Builder prefix(String prefix) {
       this.prefix = prefix;
       return this;
@@ -480,7 +454,6 @@ public final class ListMultipartUploadsResponse {
      * @return This builder.
      * @since 2.61.0 This new api is in preview.
      */
-    @BetaApi
     public Builder truncated(boolean isTruncated) {
       this.isTruncated = isTruncated;
       return this;
@@ -493,7 +466,6 @@ public final class ListMultipartUploadsResponse {
      * @return This builder.
      * @since 2.61.0 This new api is in preview.
      */
-    @BetaApi
     public Builder commonPrefixes(ImmutableList<String> commonPrefixes) {
       this.commonPrefixes = commonPrefixes;
       return this;
@@ -503,9 +475,8 @@ public final class ListMultipartUploadsResponse {
      * Builds the response.
      *
      * @return The built response.
-     * @since 2.61.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.61.0
      */
-    @BetaApi
     public ListMultipartUploadsResponse build() {
       return new ListMultipartUploadsResponse(
           uploads,

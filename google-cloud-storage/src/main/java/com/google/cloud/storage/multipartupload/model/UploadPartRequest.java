@@ -16,7 +16,6 @@
 
 package com.google.cloud.storage.multipartupload.model;
 
-import com.google.api.core.BetaApi;
 import com.google.common.base.MoreObjects;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -25,9 +24,8 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * An object to represent an upload part request. An upload part request is used to upload a single
  * part of a multipart upload.
  *
- * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+ * @since 2.60.0
  */
-@BetaApi
 public final class UploadPartRequest {
 
   private final String bucket;
@@ -50,9 +48,8 @@ public final class UploadPartRequest {
    * Returns the bucket to upload the part to.
    *
    * @return The bucket to upload the part to.
-   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.60.0
    */
-  @BetaApi
   public String bucket() {
     return bucket;
   }
@@ -61,9 +58,8 @@ public final class UploadPartRequest {
    * Returns the key of the object to upload the part to.
    *
    * @return The key of the object to upload the part to.
-   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.60.0
    */
-  @BetaApi
   public String key() {
     return key;
   }
@@ -72,9 +68,8 @@ public final class UploadPartRequest {
    * Returns the part number of the part to upload.
    *
    * @return The part number of the part to upload.
-   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.60.0
    */
-  @BetaApi
   public int partNumber() {
     return partNumber;
   }
@@ -83,9 +78,8 @@ public final class UploadPartRequest {
    * Returns the upload ID of the multipart upload.
    *
    * @return The upload ID of the multipart upload.
-   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.60.0
    */
-  @BetaApi
   public String uploadId() {
     return uploadId;
   }
@@ -94,9 +88,8 @@ public final class UploadPartRequest {
    * Returns the CRC32C checksum of the part to upload.
    *
    * @return The CRC32C checksum of the part to upload.
-   * @since 2.61.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.61.0
    */
-  @BetaApi
   @Nullable
   public String crc32c() {
     return crc32c;
@@ -108,9 +101,8 @@ public final class UploadPartRequest {
    * @return the user-project.
    * @see <a
    *     href="https://docs.cloud.google.com/storage/docs/xml-api/reference-headers#xgooguserproject">x-goog-user-project</a>
-   * @since 2.61 This new api is in preview and is subject to breaking changes.
+   * @since 2.61.0
    */
-  @BetaApi
   public String userProject() {
     return userProject;
   }
@@ -153,9 +145,8 @@ public final class UploadPartRequest {
    * Returns a new builder for an {@link UploadPartRequest}.
    *
    * @return A new builder.
-   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.60.0
    */
-  @BetaApi
   public static Builder builder() {
     return new Builder();
   }
@@ -163,9 +154,8 @@ public final class UploadPartRequest {
   /**
    * A builder for {@link UploadPartRequest}.
    *
-   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+   * @since 2.60.0
    */
-  @BetaApi
   public static class Builder {
     private String bucket;
     private String key;
@@ -181,9 +171,8 @@ public final class UploadPartRequest {
      *
      * @param bucket The bucket to upload the part to.
      * @return This builder.
-     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.60.0
      */
-    @BetaApi
     public Builder bucket(String bucket) {
       this.bucket = bucket;
       return this;
@@ -194,9 +183,8 @@ public final class UploadPartRequest {
      *
      * @param key The key of the object to upload the part to.
      * @return This builder.
-     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.60.0
      */
-    @BetaApi
     public Builder key(String key) {
       this.key = key;
       return this;
@@ -207,9 +195,8 @@ public final class UploadPartRequest {
      *
      * @param partNumber The part number of the part to upload.
      * @return This builder.
-     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.60.0
      */
-    @BetaApi
     public Builder partNumber(int partNumber) {
       this.partNumber = partNumber;
       return this;
@@ -220,9 +207,8 @@ public final class UploadPartRequest {
      *
      * @param uploadId The upload ID of the multipart upload.
      * @return This builder.
-     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.60.0
      */
-    @BetaApi
     public Builder uploadId(String uploadId) {
       this.uploadId = uploadId;
       return this;
@@ -233,9 +219,8 @@ public final class UploadPartRequest {
      *
      * @param crc32c The CRC32C checksum of the part to upload.
      * @return This builder.
-     * @since 2.61.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.61.0
      */
-    @BetaApi
     public Builder crc32c(@Nullable String crc32c) {
       this.crc32c = crc32c;
       return this;
@@ -248,9 +233,8 @@ public final class UploadPartRequest {
      * @return This builder.
      * @see <a
      *     href="https://docs.cloud.google.com/storage/docs/xml-api/reference-headers#xgooguserproject">x-goog-user-project</a>
-     * @since 2.61 This new api is in preview and is subject to breaking changes.
+     * @since 2.61.0
      */
-    @BetaApi
     public Builder userProject(String userProject) {
       this.userProject = userProject;
       return this;
@@ -260,9 +244,8 @@ public final class UploadPartRequest {
      * Builds the {@link UploadPartRequest}.
      *
      * @return The built {@link UploadPartRequest}.
-     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
+     * @since 2.60.0
      */
-    @BetaApi
     public UploadPartRequest build() {
       return new UploadPartRequest(this);
     }
