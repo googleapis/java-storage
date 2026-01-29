@@ -37,6 +37,7 @@ final class ByteSizeConstants {
   static final long _256KiBL = 262144L;
   static final long _512KiBL = 524288L;
   static final long _768KiBL = 786432L;
+  static final long _1MiBL = 1048576L;
 
   private ByteSizeConstants() {}
 }
