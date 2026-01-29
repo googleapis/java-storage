@@ -5,7 +5,7 @@
 # https://help.github.com/en/github/creating-cloning-and-archiving-repositories/about-code-owners#codeowners-syntax
 
 # The @googleapis/gcs-sdk-team is the default owner for changes in this repo
-*                       @googleapis/yoshi-java @googleapis/gcs-sdk-team
+*                       @googleapis/cloud-sdk-java-team @googleapis/gcs-sdk-team
 
 # for handwritten libraries, keep codeowner_team in .repo-metadata.json as owner
 **/*.java               @googleapis/gcs-sdk-team
@@ -15,4 +15,4 @@
 samples/**/*.java       @googleapis/java-samples-reviewers
 
 # Generated snippets should not be owned by samples reviewers
-samples/snippets/generated/       @googleapis/yoshi-java
+samples/snippets/generated/       @googleapis/cloud-sdk-java-team
