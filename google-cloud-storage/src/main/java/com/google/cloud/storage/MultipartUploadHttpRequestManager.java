@@ -237,18 +237,19 @@ final class MultipartUploadHttpRequestManager {
   @SuppressWarnings("DataFlowIssue")
   static MultipartUploadHttpRequestManager createFrom(HttpStorageOptions options) {
     Storage storage = options.getStorageRpcV1().getStorage();
-    ImmutableMap.Builder<String, String> stableHeaders =
-        ImmutableMap.<String, String>builder()
-            // http-java-client will automatically append its own version to the user-agent
-            .put("User-Agent", "gcloud-java/" + options.getLibraryVersion())
-            .put(
-                "x-goog-api-client",
-                String.format(
-                    "gl-java/%s gccl/%s %s/%s",
-                    GaxProperties.getJavaVersion(),
-                    options.getLibraryVersion(),
-                    formatName(StandardSystemProperty.OS_NAME.value()),
-                    formatSemver(StandardSystemProperty.OS_VERSION.value())));
+    ImmutableMap.Builder<String, String> stableHeaders = ImmutableMap.<String, String>builder();
+    // http-java-client will automatically add its value the user-agent
+    if (!options.getMergedHeaderProvider(FixedHeaderProvider.create(ImmutableMap.of())).getHeaders().containsKey("User-Agent")) {
+      stableHeaders.put("User-Agent", "gcloud-java/" + options.getLibraryVersion());
+    }
+    stableHeaders.put(
+        "x-goog-api-client",
+        String.format(
+            "gl-java/%s gccl/%s %s/%s",
+            GaxProperties.getJavaVersion(),
+            options.getLibraryVersion(),
+            formatName(StandardSystemProperty.OS_NAME.value()),
+            formatSemver(StandardSystemProperty.OS_VERSION.value())));
     return new MultipartUploadHttpRequestManager(
         storage.getRequestFactory(),
         new XmlObjectParser(new XmlMapper()),
