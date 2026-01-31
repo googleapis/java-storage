@@ -276,7 +276,7 @@ public interface BidiReadObjectSpecOrBuilder
    * <code>optional .google.protobuf.FieldMask read_mask = 12 [deprecated = true];</code>
    *
    * @deprecated google.storage.v2.BidiReadObjectSpec.read_mask is deprecated. See
-   *     google/storage/v2/storage.proto;l=1187
+   *     google/storage/v2/storage.proto;l=1189
    * @return Whether the readMask field is set.
    */
   @java.lang.Deprecated
@@ -298,7 +298,7 @@ public interface BidiReadObjectSpecOrBuilder
    * <code>optional .google.protobuf.FieldMask read_mask = 12 [deprecated = true];</code>
    *
    * @deprecated google.storage.v2.BidiReadObjectSpec.read_mask is deprecated. See
-   *     google/storage/v2/storage.proto;l=1187
+   *     google/storage/v2/storage.proto;l=1189
    * @return The readMask.
    */
   @java.lang.Deprecated

@@ -405,7 +405,7 @@ import javax.annotation.Generated;
  *    <tr>
  *      <td><p> BidiReadObject</td>
  *      <td><p> Reads an object's data.
- * <p>  This bi-directional API reads data from an object, allowing you to request multiple data ranges within a single stream, even across several messages. If an error occurs with any request, the stream closes with a relevant error code. Since you can have multiple outstanding requests, the error response includes a `BidiReadObjectRangesError` field detailing the specific error for each pending `read_id`.
+ * <p>  This bi-directional API reads data from an object, allowing you to request multiple data ranges within a single stream, even across several messages. If an error occurs with any request, the stream closes with a relevant error code. Since you can have multiple outstanding requests, the error response includes a `BidiReadObjectError` proto in its `details` field, reporting the specific error, if any, for each pending `read_id`.
  * <p>  &#42;&#42;IAM Permissions&#42;&#42;:
  * <p>  Requires `storage.objects.get` IAM permission on the bucket.</td>
  *      <td>
@@ -2139,6 +2139,7 @@ public class StorageClient implements BackgroundResource {
    *                   .toString())
    *           .setCommonObjectRequestParams(CommonObjectRequestParams.newBuilder().build())
    *           .setObjectChecksums(ObjectChecksums.newBuilder().build())
+   *           .setDeleteSourceObjects(true)
    *           .build();
    *   Object response = storageClient.composeObject(request);
    * }
@@ -2185,6 +2186,7 @@ public class StorageClient implements BackgroundResource {
    *                   .toString())
    *           .setCommonObjectRequestParams(CommonObjectRequestParams.newBuilder().build())
    *           .setObjectChecksums(ObjectChecksums.newBuilder().build())
+   *           .setDeleteSourceObjects(true)
    *           .build();
    *   ApiFuture<Object> future = storageClient.composeObjectCallable().futureCall(request);
    *   // Do something.
@@ -3093,8 +3095,8 @@ public class StorageClient implements BackgroundResource {
    * <p>This bi-directional API reads data from an object, allowing you to request multiple data
    * ranges within a single stream, even across several messages. If an error occurs with any
    * request, the stream closes with a relevant error code. Since you can have multiple outstanding
-   * requests, the error response includes a `BidiReadObjectRangesError` field detailing the
-   * specific error for each pending `read_id`.
+   * requests, the error response includes a `BidiReadObjectError` proto in its `details` field,
+   * reporting the specific error, if any, for each pending `read_id`.
    *
    * <p>&#42;&#42;IAM Permissions&#42;&#42;:
    *
