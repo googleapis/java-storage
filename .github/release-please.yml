@@ -2,67 +2,28 @@ bumpMinorPreMajor: true
 handleGHRelease: true
 releaseType: java-yoshi
 extraFiles:
-  - README.md
-  - .readme-partials.yaml
+    - README.md
+    - .readme-partials.yaml
 branches:
-  - bumpMinorPreMajor: true
-    handleGHRelease: true
-    releaseType: java-lts
-    branch: 1.113.14-sp
-  - bumpMinorPreMajor: true
-    handleGHRelease: true
-    releaseType: java-yoshi
-    branch: 1.106.1-patch
-  - bumpMinorPreMajor: true
-    handleGHRelease: true
-    releaseType: java-yoshi
-    branch: 1.111.3-patch
-  - bumpMinorPreMajor: true
-    handleGHRelease: true
-    releaseType: java-yoshi
-    branch: java7
-  - bumpMinorPreMajor: true
-    handleGHRelease: true
-    releaseType: java-yoshi
-    branch: 2.1.x
-  - bumpMinorPreMajor: true
-    handleGHRelease: true
-    releaseType: java-backport
-    branch: 2.6.x
-  - bumpMinorPreMajor: true
-    handleGHRelease: true
-    releaseType: java-backport
-    branch: 2.15.x
-  - bumpMinorPreMajor: true
-    handleGHRelease: true
-    releaseType: java-backport
-    extraFiles:
-      - README.md
-    branch: 2.22.x
-  - bumpMinorPreMajor: true
-    handleGHRelease: true
-    releaseType: java-backport
-    extraFiles:
-      - README.md
-    branch: 2.30.x
-  - bumpMinorPreMajor: true
-    handleGHRelease: true
-    releaseType: java-backport
-    extraFiles:
-      - README.md
-      - .readme-partials.yaml
-    branch: 2.38.x
-  - bumpMinorPreMajor: true
-    handleGHRelease: true
-    releaseType: java-backport
-    extraFiles:
-      - README.md
-      - .readme-partials.yaml
-    branch: 2.47.x
-  - bumpMinorPreMajor: true
-    handleGHRelease: true
-    releaseType: java-backport
-    extraFiles:
-      - README.md
-      - .readme-partials.yaml
-    branch: 2.49.x
+    - branch: 1.113.14-sp
+      releaseType: java-lts
+    - branch: 1.106.1-patch
+    - branch: 1.111.3-patch
+    - branch: java7
+    - branch: 2.1.x
+    - branch: 2.6.x
+      releaseType: java-backport
+    - branch: 2.15.x
+      releaseType: java-backport
+    - branch: 2.22.x
+      releaseType: java-backport
+    - branch: 2.30.x
+      releaseType: java-backport
+    - branch: 2.38.x
+      releaseType: java-backport
+    - branch: 2.47.x
+      releaseType: java-backport
+    - branch: 2.49.x
+      releaseType: java-backport
+    - branch: protobuf-4.x-rc
+      manifest: true

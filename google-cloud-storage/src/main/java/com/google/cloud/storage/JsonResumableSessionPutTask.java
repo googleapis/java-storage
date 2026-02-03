@@ -43,6 +43,7 @@ final class JsonResumableSessionPutTask
   private final JsonResumableWrite jsonResumableWrite;
   private final RewindableContent content;
   private final HttpContentRange originalContentRange;
+  private final @Nullable Crc32cValue<?> cumulativeCrc32c;
 
   private HttpContentRange contentRange;
 
@@ -52,11 +53,22 @@ final class JsonResumableSessionPutTask
       JsonResumableWrite jsonResumableWrite,
       RewindableContent content,
       HttpContentRange originalContentRange) {
+    this(httpClientContext, jsonResumableWrite, content, originalContentRange, null);
+  }
+
+  @VisibleForTesting
+  JsonResumableSessionPutTask(
+      HttpClientContext httpClientContext,
+      JsonResumableWrite jsonResumableWrite,
+      RewindableContent content,
+      HttpContentRange originalContentRange,
+      @Nullable Crc32cValue<?> cumulativeCrc32c) {
     this.context = httpClientContext;
     this.jsonResumableWrite = jsonResumableWrite;
     this.content = content;
     this.originalContentRange = originalContentRange;
     this.contentRange = originalContentRange;
+    this.cumulativeCrc32c = cumulativeCrc32c;
   }
 
   public void rewindTo(long offset) {
@@ -100,6 +112,9 @@ final class JsonResumableSessionPutTask
     headers.setContentRange(contentRange.getHeaderValue());
     for (Entry<String, String> e : jsonResumableWrite.getExtraHeaders().entrySet()) {
       headers.set(e.getKey(), e.getValue());
+    }
+    if (cumulativeCrc32c != null) {
+      headers.set("x-goog-hash", "crc32c=" + Utils.crc32cCodec.encode(cumulativeCrc32c.getValue()));
     }
 
     HttpResponse response = null;

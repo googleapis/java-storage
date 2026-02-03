@@ -15,8 +15,6 @@
  */
 package com.google.cloud.storage;
 
-import static com.google.cloud.storage.Utils.ifNonNull;
-
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.google.api.client.http.ByteArrayContent;
 import com.google.api.client.http.GenericUrl;
@@ -36,6 +34,8 @@ import com.google.cloud.storage.multipartupload.model.CompleteMultipartUploadReq
 import com.google.cloud.storage.multipartupload.model.CompleteMultipartUploadResponse;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadRequest;
 import com.google.cloud.storage.multipartupload.model.CreateMultipartUploadResponse;
+import com.google.cloud.storage.multipartupload.model.ListMultipartUploadsRequest;
+import com.google.cloud.storage.multipartupload.model.ListMultipartUploadsResponse;
 import com.google.cloud.storage.multipartupload.model.ListPartsRequest;
 import com.google.cloud.storage.multipartupload.model.ListPartsResponse;
 import com.google.cloud.storage.multipartupload.model.UploadPartRequest;
@@ -83,7 +83,7 @@ final class MultipartUploadHttpRequestManager {
 
     HttpRequest httpRequest =
         requestFactory.buildPostRequest(
-            new GenericUrl(createUri), new ByteArrayContent(request.getContentType(), new byte[0]));
+            new GenericUrl(createUri), new ByteArrayContent(null, new byte[0]));
     httpRequest.getHeaders().putAll(headerProvider.getHeaders());
     addHeadersForCreateMultipartUpload(request, httpRequest.getHeaders());
     httpRequest.setParser(objectParser);
@@ -98,11 +98,11 @@ final class MultipartUploadHttpRequestManager {
             .put("bucket", request.bucket())
             .put("key", request.key())
             .put("uploadId", request.uploadId());
-    if (request.getMaxParts() != null) {
-      params.put("max-parts", request.getMaxParts());
+    if (request.maxParts() != null) {
+      params.put("max-parts", request.maxParts());
     }
-    if (request.getPartNumberMarker() != null) {
-      params.put("part-number-marker", request.getPartNumberMarker());
+    if (request.partNumberMarker() != null) {
+      params.put("part-number-marker", request.partNumberMarker());
     }
 
     String listUri =
@@ -113,9 +113,51 @@ final class MultipartUploadHttpRequestManager {
             false);
     HttpRequest httpRequest = requestFactory.buildGetRequest(new GenericUrl(listUri));
     httpRequest.getHeaders().putAll(headerProvider.getHeaders());
+    if (request.userProject() != null) {
+      httpRequest.getHeaders().put("x-goog-user-project", request.userProject());
+    }
     httpRequest.setParser(objectParser);
     httpRequest.setThrowExceptionOnExecuteError(true);
     return httpRequest.execute().parseAs(ListPartsResponse.class);
+  }
+
+  ListMultipartUploadsResponse sendListMultipartUploadsRequest(ListMultipartUploadsRequest request)
+      throws IOException {
+
+    ImmutableMap.Builder<String, Object> params =
+        ImmutableMap.<String, Object>builder().put("bucket", request.bucket());
+    if (request.delimiter() != null) {
+      params.put("delimiter", request.delimiter());
+    }
+    if (request.encodingType() != null) {
+      params.put("encoding-type", request.encodingType());
+    }
+    if (request.keyMarker() != null) {
+      params.put("key-marker", request.keyMarker());
+    }
+    if (request.maxUploads() != null) {
+      params.put("max-uploads", request.maxUploads());
+    }
+    if (request.prefix() != null) {
+      params.put("prefix", request.prefix());
+    }
+    if (request.uploadIdMarker() != null) {
+      params.put("upload-id-marker", request.uploadIdMarker());
+    }
+    String listUri =
+        UriTemplate.expand(
+            uri.toString()
+                + "{bucket}?uploads{&delimiter,encoding-type,key-marker,max-uploads,prefix,upload-id-marker}",
+            params.build(),
+            false);
+    HttpRequest httpRequest = requestFactory.buildGetRequest(new GenericUrl(listUri));
+    httpRequest.getHeaders().putAll(headerProvider.getHeaders());
+    if (request.userProject() != null) {
+      httpRequest.getHeaders().put("x-goog-user-project", request.userProject());
+    }
+    httpRequest.setParser(objectParser);
+    httpRequest.setThrowExceptionOnExecuteError(true);
+    return httpRequest.execute().parseAs(ListMultipartUploadsResponse.class);
   }
 
   AbortMultipartUploadResponse sendAbortMultipartUploadRequest(AbortMultipartUploadRequest request)
@@ -131,6 +173,9 @@ final class MultipartUploadHttpRequestManager {
 
     HttpRequest httpRequest = requestFactory.buildDeleteRequest(new GenericUrl(abortUri));
     httpRequest.getHeaders().putAll(headerProvider.getHeaders());
+    if (request.userProject() != null) {
+      httpRequest.getHeaders().put("x-goog-user-project", request.userProject());
+    }
     httpRequest.setParser(objectParser);
     httpRequest.setThrowExceptionOnExecuteError(true);
     return httpRequest.execute().parseAs(AbortMultipartUploadResponse.class);
@@ -149,6 +194,9 @@ final class MultipartUploadHttpRequestManager {
         requestFactory.buildPostRequest(
             new GenericUrl(completeUri), new ByteArrayContent("application/xml", bytes));
     httpRequest.getHeaders().putAll(headerProvider.getHeaders());
+    if (request.userProject() != null) {
+      httpRequest.getHeaders().put("x-goog-user-project", request.userProject());
+    }
     @Nullable Crc32cLengthKnown crc32cValue = Hasher.defaultHasher().hash(ByteBuffer.wrap(bytes));
     addChecksumHeader(crc32cValue, httpRequest.getHeaders());
     httpRequest.setParser(objectParser);
@@ -174,8 +222,11 @@ final class MultipartUploadHttpRequestManager {
     HttpRequest httpRequest =
         requestFactory.buildPutRequest(new GenericUrl(uploadUri), rewindableContent);
     httpRequest.getHeaders().putAll(headerProvider.getHeaders());
-    if (request.getCrc32c() != null) {
-      addChecksumHeader(request.getCrc32c(), httpRequest.getHeaders());
+    if (request.userProject() != null) {
+      httpRequest.getHeaders().put("x-goog-user-project", request.userProject());
+    }
+    if (request.crc32c() != null) {
+      addChecksumHeader(request.crc32c(), httpRequest.getHeaders());
     } else {
       addChecksumHeader(rewindableContent.getCrc32c(), httpRequest.getHeaders());
     }
@@ -198,12 +249,15 @@ final class MultipartUploadHttpRequestManager {
                     options.getLibraryVersion(),
                     formatName(StandardSystemProperty.OS_NAME.value()),
                     formatSemver(StandardSystemProperty.OS_VERSION.value())));
-    ifNonNull(options.getProjectId(), pid -> stableHeaders.put("x-goog-user-project", pid));
     return new MultipartUploadHttpRequestManager(
         storage.getRequestFactory(),
         new XmlObjectParser(new XmlMapper()),
         options.getMergedHeaderProvider(FixedHeaderProvider.create(stableHeaders.build())),
-        URI.create(options.getHost()));
+        URI.create(ensureTrailingSlash(options.getHost())));
+  }
+
+  private static String ensureTrailingSlash(String host) {
+    return host.endsWith("/") ? host : host + "/";
   }
 
   private void addChecksumHeader(@Nullable Crc32cLengthKnown crc32c, HttpHeaders headers) {
@@ -220,51 +274,51 @@ final class MultipartUploadHttpRequestManager {
 
   private void addHeadersForCreateMultipartUpload(
       CreateMultipartUploadRequest request, HttpHeaders headers) {
-    if (request.getCannedAcl() != null) {
-      headers.put("x-goog-acl", request.getCannedAcl().getXmlEntry());
+    if (request.cannedAcl() != null) {
+      headers.put("x-goog-acl", request.cannedAcl().getXmlEntry());
     }
-    if (request.getMetadata() != null) {
-      for (Map.Entry<String, String> entry : request.getMetadata().entrySet()) {
+    if (request.metadata() != null) {
+      for (Map.Entry<String, String> entry : request.metadata().entrySet()) {
         if (entry.getKey() != null || entry.getValue() != null) {
           headers.put("x-goog-meta-" + urlEncode(entry.getKey()), urlEncode(entry.getValue()));
         }
       }
     }
-    if (request.getContentType() != null) {
-      headers.put("Content-Type", request.getContentType());
+    if (request.contentType() != null) {
+      headers.put("Content-Type", request.contentType());
     }
-    if (request.getContentDisposition() != null) {
-      headers.put("Content-Disposition", request.getContentDisposition());
+    if (request.contentDisposition() != null) {
+      headers.put("Content-Disposition", request.contentDisposition());
     }
-    if (request.getContentEncoding() != null) {
-      headers.put("Content-Encoding", request.getContentEncoding());
+    if (request.contentEncoding() != null) {
+      headers.put("Content-Encoding", request.contentEncoding());
     }
-    if (request.getContentLanguage() != null) {
-      headers.put("Content-Language", request.getContentLanguage());
+    if (request.contentLanguage() != null) {
+      headers.put("Content-Language", request.contentLanguage());
     }
-    if (request.getCacheControl() != null) {
-      headers.put("Cache-Control", request.getCacheControl());
+    if (request.cacheControl() != null) {
+      headers.put("Cache-Control", request.cacheControl());
     }
-    if (request.getStorageClass() != null) {
-      headers.put("x-goog-storage-class", request.getStorageClass().toString());
+    if (request.storageClass() != null) {
+      headers.put("x-goog-storage-class", request.storageClass().toString());
     }
-    if (request.getKmsKeyName() != null && !request.getKmsKeyName().isEmpty()) {
-      headers.put("x-goog-encryption-kms-key-name", request.getKmsKeyName());
+    if (request.kmsKeyName() != null && !request.kmsKeyName().isEmpty()) {
+      headers.put("x-goog-encryption-kms-key-name", request.kmsKeyName());
     }
-    if (request.getObjectLockMode() != null) {
-      headers.put("x-goog-object-lock-mode", request.getObjectLockMode().toString());
+    if (request.objectLockMode() != null) {
+      headers.put("x-goog-object-lock-mode", request.objectLockMode().toString());
     }
-    if (request.getObjectLockRetainUntilDate() != null) {
+    if (request.objectLockRetainUntilDate() != null) {
       headers.put(
           "x-goog-object-lock-retain-until-date",
-          Utils.offsetDateTimeRfc3339Codec.encode(request.getObjectLockRetainUntilDate()));
+          Utils.offsetDateTimeRfc3339Codec.encode(request.objectLockRetainUntilDate()));
     }
-    if (request.getCustomTime() != null) {
+    if (request.customTime() != null) {
       headers.put(
-          "x-goog-custom-time", Utils.offsetDateTimeRfc3339Codec.encode(request.getCustomTime()));
+          "x-goog-custom-time", Utils.offsetDateTimeRfc3339Codec.encode(request.customTime()));
     }
-    if (request.getUserProject() != null) {
-      headers.put("x-goog-user-project", request.getUserProject());
+    if (request.userProject() != null) {
+      headers.put("x-goog-user-project", request.userProject());
     }
   }
 
@@ -282,7 +336,7 @@ final class MultipartUploadHttpRequestManager {
    */
   private static String formatName(String name) {
     // Only lowercase letters, digits, and "-" are allowed
-    return name.toLowerCase().replaceAll("[^\\w\\d\\-]", "-");
+    return name.toLowerCase().replaceAll("[^\\w-]", "-");
   }
 
   private static String formatSemver(String version) {
