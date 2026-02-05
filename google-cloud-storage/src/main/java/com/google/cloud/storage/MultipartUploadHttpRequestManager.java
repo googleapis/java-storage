@@ -239,7 +239,10 @@ final class MultipartUploadHttpRequestManager {
     Storage storage = options.getStorageRpcV1().getStorage();
     ImmutableMap.Builder<String, String> stableHeaders = ImmutableMap.<String, String>builder();
     // http-java-client will automatically add its value the user-agent
-    if (!options.getMergedHeaderProvider(FixedHeaderProvider.create(ImmutableMap.of())).getHeaders().containsKey("User-Agent")) {
+    if (!options
+        .getMergedHeaderProvider(FixedHeaderProvider.create(ImmutableMap.of()))
+        .getHeaders()
+        .containsKey("User-Agent")) {
       stableHeaders.put("User-Agent", "gcloud-java/" + options.getLibraryVersion());
     }
     stableHeaders.put(
