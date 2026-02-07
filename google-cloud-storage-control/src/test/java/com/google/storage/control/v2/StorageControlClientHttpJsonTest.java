@@ -104,6 +104,12 @@ public class StorageControlClientHttpJsonTest {
   }
 
   @Test
+  public void deleteFolderRecursiveUnsupportedMethodTest() throws Exception {
+    // The deleteFolderRecursive() method is not supported in REST transport.
+    // This empty test is generated for technical reasons.
+  }
+
+  @Test
   public void getStorageLayoutUnsupportedMethodTest() throws Exception {
     // The getStorageLayout() method is not supported in REST transport.
     // This empty test is generated for technical reasons.
