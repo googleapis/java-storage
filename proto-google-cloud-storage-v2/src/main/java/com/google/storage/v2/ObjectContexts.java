@@ -120,6 +120,9 @@ public final class ObjectContexts extends com.google.protobuf.GeneratedMessage
    *
    * <pre>
    * Optional. User-defined object contexts.
+   * The maximum key or value size is `256` characters.
+   * The maximum number of entries is `50`.
+   * The maximum total serialized size of all entries is `25KiB`.
    * </pre>
    *
    * <code>
@@ -147,6 +150,9 @@ public final class ObjectContexts extends com.google.protobuf.GeneratedMessage
    *
    * <pre>
    * Optional. User-defined object contexts.
+   * The maximum key or value size is `256` characters.
+   * The maximum number of entries is `50`.
+   * The maximum total serialized size of all entries is `25KiB`.
    * </pre>
    *
    * <code>
@@ -164,6 +170,9 @@ public final class ObjectContexts extends com.google.protobuf.GeneratedMessage
    *
    * <pre>
    * Optional. User-defined object contexts.
+   * The maximum key or value size is `256` characters.
+   * The maximum number of entries is `50`.
+   * The maximum total serialized size of all entries is `25KiB`.
    * </pre>
    *
    * <code>
@@ -188,6 +197,9 @@ public final class ObjectContexts extends com.google.protobuf.GeneratedMessage
    *
    * <pre>
    * Optional. User-defined object contexts.
+   * The maximum key or value size is `256` characters.
+   * The maximum number of entries is `50`.
+   * The maximum total serialized size of all entries is `25KiB`.
    * </pre>
    *
    * <code>
@@ -617,6 +629,9 @@ public final class ObjectContexts extends com.google.protobuf.GeneratedMessage
      *
      * <pre>
      * Optional. User-defined object contexts.
+     * The maximum key or value size is `256` characters.
+     * The maximum number of entries is `50`.
+     * The maximum total serialized size of all entries is `25KiB`.
      * </pre>
      *
      * <code>
@@ -644,6 +659,9 @@ public final class ObjectContexts extends com.google.protobuf.GeneratedMessage
      *
      * <pre>
      * Optional. User-defined object contexts.
+     * The maximum key or value size is `256` characters.
+     * The maximum number of entries is `50`.
+     * The maximum total serialized size of all entries is `25KiB`.
      * </pre>
      *
      * <code>
@@ -661,6 +679,9 @@ public final class ObjectContexts extends com.google.protobuf.GeneratedMessage
      *
      * <pre>
      * Optional. User-defined object contexts.
+     * The maximum key or value size is `256` characters.
+     * The maximum number of entries is `50`.
+     * The maximum total serialized size of all entries is `25KiB`.
      * </pre>
      *
      * <code>
@@ -685,6 +706,9 @@ public final class ObjectContexts extends com.google.protobuf.GeneratedMessage
      *
      * <pre>
      * Optional. User-defined object contexts.
+     * The maximum key or value size is `256` characters.
+     * The maximum number of entries is `50`.
+     * The maximum total serialized size of all entries is `25KiB`.
      * </pre>
      *
      * <code>
@@ -715,6 +739,9 @@ public final class ObjectContexts extends com.google.protobuf.GeneratedMessage
      *
      * <pre>
      * Optional. User-defined object contexts.
+     * The maximum key or value size is `256` characters.
+     * The maximum number of entries is `50`.
+     * The maximum total serialized size of all entries is `25KiB`.
      * </pre>
      *
      * <code>
@@ -742,6 +769,9 @@ public final class ObjectContexts extends com.google.protobuf.GeneratedMessage
      *
      * <pre>
      * Optional. User-defined object contexts.
+     * The maximum key or value size is `256` characters.
+     * The maximum number of entries is `50`.
+     * The maximum total serialized size of all entries is `25KiB`.
      * </pre>
      *
      * <code>
@@ -766,6 +796,9 @@ public final class ObjectContexts extends com.google.protobuf.GeneratedMessage
      *
      * <pre>
      * Optional. User-defined object contexts.
+     * The maximum key or value size is `256` characters.
+     * The maximum number of entries is `50`.
+     * The maximum total serialized size of all entries is `25KiB`.
      * </pre>
      *
      * <code>
@@ -790,6 +823,9 @@ public final class ObjectContexts extends com.google.protobuf.GeneratedMessage
      *
      * <pre>
      * Optional. User-defined object contexts.
+     * The maximum key or value size is `256` characters.
+     * The maximum number of entries is `50`.
+     * The maximum total serialized size of all entries is `25KiB`.
      * </pre>
      *
      * <code>

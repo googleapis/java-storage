@@ -156,6 +156,19 @@ public class StorageControlSettings extends ClientSettings<StorageControlSetting
     return ((StorageControlStubSettings) getStubSettings()).renameFolderOperationSettings();
   }
 
+  /** Returns the object with the settings used for calls to deleteFolderRecursive. */
+  public UnaryCallSettings<DeleteFolderRecursiveRequest, Operation>
+      deleteFolderRecursiveSettings() {
+    return ((StorageControlStubSettings) getStubSettings()).deleteFolderRecursiveSettings();
+  }
+
+  /** Returns the object with the settings used for calls to deleteFolderRecursive. */
+  public OperationCallSettings<DeleteFolderRecursiveRequest, Empty, DeleteFolderRecursiveMetadata>
+      deleteFolderRecursiveOperationSettings() {
+    return ((StorageControlStubSettings) getStubSettings())
+        .deleteFolderRecursiveOperationSettings();
+  }
+
   /** Returns the object with the settings used for calls to getStorageLayout. */
   public UnaryCallSettings<GetStorageLayoutRequest, StorageLayout> getStorageLayoutSettings() {
     return ((StorageControlStubSettings) getStubSettings()).getStorageLayoutSettings();
@@ -438,6 +451,19 @@ public class StorageControlSettings extends ClientSettings<StorageControlSetting
     public OperationCallSettings.Builder<RenameFolderRequest, Folder, RenameFolderMetadata>
         renameFolderOperationSettings() {
       return getStubSettingsBuilder().renameFolderOperationSettings();
+    }
+
+    /** Returns the builder for the settings used for calls to deleteFolderRecursive. */
+    public UnaryCallSettings.Builder<DeleteFolderRecursiveRequest, Operation>
+        deleteFolderRecursiveSettings() {
+      return getStubSettingsBuilder().deleteFolderRecursiveSettings();
+    }
+
+    /** Returns the builder for the settings used for calls to deleteFolderRecursive. */
+    public OperationCallSettings.Builder<
+            DeleteFolderRecursiveRequest, Empty, DeleteFolderRecursiveMetadata>
+        deleteFolderRecursiveOperationSettings() {
+      return getStubSettingsBuilder().deleteFolderRecursiveOperationSettings();
     }
 
     /** Returns the builder for the settings used for calls to getStorageLayout. */

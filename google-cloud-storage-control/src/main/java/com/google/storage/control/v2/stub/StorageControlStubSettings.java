@@ -66,6 +66,8 @@ import com.google.storage.control.v2.CreateAnywhereCacheMetadata;
 import com.google.storage.control.v2.CreateAnywhereCacheRequest;
 import com.google.storage.control.v2.CreateFolderRequest;
 import com.google.storage.control.v2.CreateManagedFolderRequest;
+import com.google.storage.control.v2.DeleteFolderRecursiveMetadata;
+import com.google.storage.control.v2.DeleteFolderRecursiveRequest;
 import com.google.storage.control.v2.DeleteFolderRequest;
 import com.google.storage.control.v2.DeleteManagedFolderRequest;
 import com.google.storage.control.v2.DisableAnywhereCacheRequest;
@@ -196,6 +198,11 @@ public class StorageControlStubSettings extends StubSettings<StorageControlStubS
   private final UnaryCallSettings<RenameFolderRequest, Operation> renameFolderSettings;
   private final OperationCallSettings<RenameFolderRequest, Folder, RenameFolderMetadata>
       renameFolderOperationSettings;
+  private final UnaryCallSettings<DeleteFolderRecursiveRequest, Operation>
+      deleteFolderRecursiveSettings;
+  private final OperationCallSettings<
+          DeleteFolderRecursiveRequest, Empty, DeleteFolderRecursiveMetadata>
+      deleteFolderRecursiveOperationSettings;
   private final UnaryCallSettings<GetStorageLayoutRequest, StorageLayout> getStorageLayoutSettings;
   private final UnaryCallSettings<CreateManagedFolderRequest, ManagedFolder>
       createManagedFolderSettings;
@@ -440,6 +447,18 @@ public class StorageControlStubSettings extends StubSettings<StorageControlStubS
   public OperationCallSettings<RenameFolderRequest, Folder, RenameFolderMetadata>
       renameFolderOperationSettings() {
     return renameFolderOperationSettings;
+  }
+
+  /** Returns the object with the settings used for calls to deleteFolderRecursive. */
+  public UnaryCallSettings<DeleteFolderRecursiveRequest, Operation>
+      deleteFolderRecursiveSettings() {
+    return deleteFolderRecursiveSettings;
+  }
+
+  /** Returns the object with the settings used for calls to deleteFolderRecursive. */
+  public OperationCallSettings<DeleteFolderRecursiveRequest, Empty, DeleteFolderRecursiveMetadata>
+      deleteFolderRecursiveOperationSettings() {
+    return deleteFolderRecursiveOperationSettings;
   }
 
   /** Returns the object with the settings used for calls to getStorageLayout. */
@@ -694,6 +713,9 @@ public class StorageControlStubSettings extends StubSettings<StorageControlStubS
     listFoldersSettings = settingsBuilder.listFoldersSettings().build();
     renameFolderSettings = settingsBuilder.renameFolderSettings().build();
     renameFolderOperationSettings = settingsBuilder.renameFolderOperationSettings().build();
+    deleteFolderRecursiveSettings = settingsBuilder.deleteFolderRecursiveSettings().build();
+    deleteFolderRecursiveOperationSettings =
+        settingsBuilder.deleteFolderRecursiveOperationSettings().build();
     getStorageLayoutSettings = settingsBuilder.getStorageLayoutSettings().build();
     createManagedFolderSettings = settingsBuilder.createManagedFolderSettings().build();
     deleteManagedFolderSettings = settingsBuilder.deleteManagedFolderSettings().build();
@@ -739,6 +761,11 @@ public class StorageControlStubSettings extends StubSettings<StorageControlStubS
     private final UnaryCallSettings.Builder<RenameFolderRequest, Operation> renameFolderSettings;
     private final OperationCallSettings.Builder<RenameFolderRequest, Folder, RenameFolderMetadata>
         renameFolderOperationSettings;
+    private final UnaryCallSettings.Builder<DeleteFolderRecursiveRequest, Operation>
+        deleteFolderRecursiveSettings;
+    private final OperationCallSettings.Builder<
+            DeleteFolderRecursiveRequest, Empty, DeleteFolderRecursiveMetadata>
+        deleteFolderRecursiveOperationSettings;
     private final UnaryCallSettings.Builder<GetStorageLayoutRequest, StorageLayout>
         getStorageLayoutSettings;
     private final UnaryCallSettings.Builder<CreateManagedFolderRequest, ManagedFolder>
@@ -851,6 +878,8 @@ public class StorageControlStubSettings extends StubSettings<StorageControlStubS
       listFoldersSettings = PagedCallSettings.newBuilder(LIST_FOLDERS_PAGE_STR_FACT);
       renameFolderSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();
       renameFolderOperationSettings = OperationCallSettings.newBuilder();
+      deleteFolderRecursiveSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();
+      deleteFolderRecursiveOperationSettings = OperationCallSettings.newBuilder();
       getStorageLayoutSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();
       createManagedFolderSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();
       deleteManagedFolderSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();
@@ -883,6 +912,7 @@ public class StorageControlStubSettings extends StubSettings<StorageControlStubS
               getFolderSettings,
               listFoldersSettings,
               renameFolderSettings,
+              deleteFolderRecursiveSettings,
               getStorageLayoutSettings,
               createManagedFolderSettings,
               deleteManagedFolderSettings,
@@ -916,6 +946,9 @@ public class StorageControlStubSettings extends StubSettings<StorageControlStubS
       listFoldersSettings = settings.listFoldersSettings.toBuilder();
       renameFolderSettings = settings.renameFolderSettings.toBuilder();
       renameFolderOperationSettings = settings.renameFolderOperationSettings.toBuilder();
+      deleteFolderRecursiveSettings = settings.deleteFolderRecursiveSettings.toBuilder();
+      deleteFolderRecursiveOperationSettings =
+          settings.deleteFolderRecursiveOperationSettings.toBuilder();
       getStorageLayoutSettings = settings.getStorageLayoutSettings.toBuilder();
       createManagedFolderSettings = settings.createManagedFolderSettings.toBuilder();
       deleteManagedFolderSettings = settings.deleteManagedFolderSettings.toBuilder();
@@ -955,6 +988,7 @@ public class StorageControlStubSettings extends StubSettings<StorageControlStubS
               getFolderSettings,
               listFoldersSettings,
               renameFolderSettings,
+              deleteFolderRecursiveSettings,
               getStorageLayoutSettings,
               createManagedFolderSettings,
               deleteManagedFolderSettings,
@@ -1025,6 +1059,11 @@ public class StorageControlStubSettings extends StubSettings<StorageControlStubS
 
       builder
           .renameFolderSettings()
+          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get("retry_policy_0_codes"))
+          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get("retry_policy_0_params"));
+
+      builder
+          .deleteFolderRecursiveSettings()
           .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get("retry_policy_0_codes"))
           .setRetrySettings(RETRY_PARAM_DEFINITIONS.get("retry_policy_0_params"));
 
@@ -1158,6 +1197,31 @@ public class StorageControlStubSettings extends StubSettings<StorageControlStubS
                       .build()));
 
       builder
+          .deleteFolderRecursiveOperationSettings()
+          .setInitialCallSettings(
+              UnaryCallSettings
+                  .<DeleteFolderRecursiveRequest, OperationSnapshot>newUnaryCallSettingsBuilder()
+                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get("retry_policy_0_codes"))
+                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get("retry_policy_0_params"))
+                  .build())
+          .setResponseTransformer(
+              ProtoOperationTransformers.ResponseTransformer.create(Empty.class))
+          .setMetadataTransformer(
+              ProtoOperationTransformers.MetadataTransformer.create(
+                  DeleteFolderRecursiveMetadata.class))
+          .setPollingAlgorithm(
+              OperationTimedPollAlgorithm.create(
+                  RetrySettings.newBuilder()
+                      .setInitialRetryDelayDuration(Duration.ofMillis(5000L))
+                      .setRetryDelayMultiplier(1.5)
+                      .setMaxRetryDelayDuration(Duration.ofMillis(45000L))
+                      .setInitialRpcTimeoutDuration(Duration.ZERO)
+                      .setRpcTimeoutMultiplier(1.0)
+                      .setMaxRpcTimeoutDuration(Duration.ZERO)
+                      .setTotalTimeoutDuration(Duration.ofMillis(300000L))
+                      .build()));
+
+      builder
           .createAnywhereCacheOperationSettings()
           .setInitialCallSettings(
               UnaryCallSettings
@@ -1256,6 +1320,19 @@ public class StorageControlStubSettings extends StubSettings<StorageControlStubS
     public OperationCallSettings.Builder<RenameFolderRequest, Folder, RenameFolderMetadata>
         renameFolderOperationSettings() {
       return renameFolderOperationSettings;
+    }
+
+    /** Returns the builder for the settings used for calls to deleteFolderRecursive. */
+    public UnaryCallSettings.Builder<DeleteFolderRecursiveRequest, Operation>
+        deleteFolderRecursiveSettings() {
+      return deleteFolderRecursiveSettings;
+    }
+
+    /** Returns the builder for the settings used for calls to deleteFolderRecursive. */
+    public OperationCallSettings.Builder<
+            DeleteFolderRecursiveRequest, Empty, DeleteFolderRecursiveMetadata>
+        deleteFolderRecursiveOperationSettings() {
+      return deleteFolderRecursiveOperationSettings;
     }
 
     /** Returns the builder for the settings used for calls to getStorageLayout. */

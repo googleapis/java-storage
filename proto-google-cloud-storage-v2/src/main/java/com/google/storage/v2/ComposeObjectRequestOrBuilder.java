@@ -353,4 +353,30 @@ public interface ComposeObjectRequestOrBuilder
    * </code>
    */
   com.google.storage.v2.ObjectChecksumsOrBuilder getObjectChecksumsOrBuilder();
+
+  /**
+   *
+   *
+   * <pre>
+   * Whether the source objects should be deleted in the compose request.
+   * </pre>
+   *
+   * <code>optional bool delete_source_objects = 11;</code>
+   *
+   * @return Whether the deleteSourceObjects field is set.
+   */
+  boolean hasDeleteSourceObjects();
+
+  /**
+   *
+   *
+   * <pre>
+   * Whether the source objects should be deleted in the compose request.
+   * </pre>
+   *
+   * <code>optional bool delete_source_objects = 11;</code>
+   *
+   * @return The deleteSourceObjects.
+   */
+  boolean getDeleteSourceObjects();
 }

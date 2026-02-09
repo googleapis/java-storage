@@ -541,6 +541,92 @@ public class StorageControlClientTest {
   }
 
   @Test
+  public void deleteFolderRecursiveTest() throws Exception {
+    Empty expectedResponse = Empty.newBuilder().build();
+    Operation resultOperation =
+        Operation.newBuilder()
+            .setName("deleteFolderRecursiveTest")
+            .setDone(true)
+            .setResponse(Any.pack(expectedResponse))
+            .build();
+    mockStorageControl.addResponse(resultOperation);
+
+    FolderName name = FolderName.of("[PROJECT]", "[BUCKET]", "[FOLDER]");
+
+    client.deleteFolderRecursiveAsync(name).get();
+
+    List<AbstractMessage> actualRequests = mockStorageControl.getRequests();
+    Assert.assertEquals(1, actualRequests.size());
+    DeleteFolderRecursiveRequest actualRequest =
+        ((DeleteFolderRecursiveRequest) actualRequests.get(0));
+
+    Assert.assertEquals(name.toString(), actualRequest.getName());
+    Assert.assertTrue(
+        channelProvider.isHeaderSent(
+            ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
+            GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
+  }
+
+  @Test
+  public void deleteFolderRecursiveExceptionTest() throws Exception {
+    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
+    mockStorageControl.addException(exception);
+
+    try {
+      FolderName name = FolderName.of("[PROJECT]", "[BUCKET]", "[FOLDER]");
+      client.deleteFolderRecursiveAsync(name).get();
+      Assert.fail("No exception raised");
+    } catch (ExecutionException e) {
+      Assert.assertEquals(InvalidArgumentException.class, e.getCause().getClass());
+      InvalidArgumentException apiException = ((InvalidArgumentException) e.getCause());
+      Assert.assertEquals(StatusCode.Code.INVALID_ARGUMENT, apiException.getStatusCode().getCode());
+    }
+  }
+
+  @Test
+  public void deleteFolderRecursiveTest2() throws Exception {
+    Empty expectedResponse = Empty.newBuilder().build();
+    Operation resultOperation =
+        Operation.newBuilder()
+            .setName("deleteFolderRecursiveTest")
+            .setDone(true)
+            .setResponse(Any.pack(expectedResponse))
+            .build();
+    mockStorageControl.addResponse(resultOperation);
+
+    String name = "name3373707";
+
+    client.deleteFolderRecursiveAsync(name).get();
+
+    List<AbstractMessage> actualRequests = mockStorageControl.getRequests();
+    Assert.assertEquals(1, actualRequests.size());
+    DeleteFolderRecursiveRequest actualRequest =
+        ((DeleteFolderRecursiveRequest) actualRequests.get(0));
+
+    Assert.assertEquals(name, actualRequest.getName());
+    Assert.assertTrue(
+        channelProvider.isHeaderSent(
+            ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
+            GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
+  }
+
+  @Test
+  public void deleteFolderRecursiveExceptionTest2() throws Exception {
+    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
+    mockStorageControl.addException(exception);
+
+    try {
+      String name = "name3373707";
+      client.deleteFolderRecursiveAsync(name).get();
+      Assert.fail("No exception raised");
+    } catch (ExecutionException e) {
+      Assert.assertEquals(InvalidArgumentException.class, e.getCause().getClass());
+      InvalidArgumentException apiException = ((InvalidArgumentException) e.getCause());
+      Assert.assertEquals(StatusCode.Code.INVALID_ARGUMENT, apiException.getStatusCode().getCode());
+    }
+  }
+
+  @Test
   public void getStorageLayoutTest() throws Exception {
     StorageLayout expectedResponse =
         StorageLayout.newBuilder()
