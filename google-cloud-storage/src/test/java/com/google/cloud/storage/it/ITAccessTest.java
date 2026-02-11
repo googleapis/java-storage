@@ -634,7 +634,7 @@ public class ITAccessTest {
   }
 
   @Test
-  @Ignore("TODO: fix b/468377909 to enable test again")
+  @Ignore("TODO: fix b/468377909 to enable test again.")
   @SuppressWarnings({"unchecked", "deprecation"})
   public void testEnableAndDisableBucketPolicyOnlyOnExistingBucket() throws Exception {
     String bpoBucket = generator.randomBucketName();
