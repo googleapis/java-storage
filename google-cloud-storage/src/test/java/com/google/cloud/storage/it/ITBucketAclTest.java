@@ -46,7 +46,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
