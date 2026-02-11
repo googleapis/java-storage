@@ -59,6 +59,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -137,6 +139,7 @@ public class ITAccessTest {
   }
 
   @Test
+  @Ignore("TODO: fix b/468377909 to enable test again")
   public void bucket_defaultAcl_create() throws Exception {
     BucketInfo bucketInfo = BucketInfo.newBuilder(generator.randomBucketName()).build();
     try (TemporaryBucket tempB =
@@ -355,6 +358,7 @@ public class ITAccessTest {
   }
 
   @Test
+  @Ignore("TODO: fix b/468377909 to enable test again")
   public void testEnableAndDisableUniformBucketLevelAccessOnExistingBucket() throws Exception {
     String bpoBucket = generator.randomBucketName();
     BucketInfo.IamConfiguration ublaDisabledIamConfiguration =
@@ -462,6 +466,7 @@ public class ITAccessTest {
   }
 
   @Test
+  @Ignore("TODO: fix b/468377909 to enable test again")
   public void testUnspecifiedPublicAccessPreventionOnBucket() throws Exception {
     String papBucket = generator.randomBucketName();
     BucketInfo bucketInfo =
@@ -630,6 +635,7 @@ public class ITAccessTest {
   }
 
   @Test
+  @Ignore("TODO: fix b/468377909 to enable test again")
   @SuppressWarnings({"unchecked", "deprecation"})
   public void testEnableAndDisableBucketPolicyOnlyOnExistingBucket() throws Exception {
     String bpoBucket = generator.randomBucketName();

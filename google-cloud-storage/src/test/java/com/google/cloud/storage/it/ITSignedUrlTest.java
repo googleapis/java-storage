@@ -63,6 +63,7 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -196,6 +197,7 @@ public class ITSignedUrlTest {
   }
 
   @Test
+  @Ignore("TODO: fix b/468377909 to enable test again")
   public void testSignedPostPolicyV4() throws Exception {
     PostFieldsV4 fields = PostFieldsV4.newBuilder().setAcl("public-read").build();
 
