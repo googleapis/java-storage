@@ -52,13 +52,13 @@ public class ListParts {
 
     ListPartsResponse listPartsResponse = mpuClient.listParts(listPartsRequest);
 
-    if (listPartsResponse.getParts() == null || listPartsResponse.getParts().isEmpty()) {
+    if (listPartsResponse.parts() == null || listPartsResponse.parts().isEmpty()) {
       System.out.println("No parts have been uploaded yet.");
       return;
     }
 
     System.out.println("Uploaded Parts:");
-    for (Part part : listPartsResponse.getParts()) {
+    for (Part part : listPartsResponse.parts()) {
       System.out.println("  - Part Number: " + part.partNumber());
       System.out.println("    ETag: " + part.eTag());
       System.out.println("    Size: " + part.size() + " bytes");
