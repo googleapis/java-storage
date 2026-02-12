@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Google LLC
+ * Copyright 2026 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,6 +43,8 @@ import com.google.storage.control.v2.CreateAnywhereCacheMetadata;
 import com.google.storage.control.v2.CreateAnywhereCacheRequest;
 import com.google.storage.control.v2.CreateFolderRequest;
 import com.google.storage.control.v2.CreateManagedFolderRequest;
+import com.google.storage.control.v2.DeleteFolderRecursiveMetadata;
+import com.google.storage.control.v2.DeleteFolderRecursiveRequest;
 import com.google.storage.control.v2.DeleteFolderRequest;
 import com.google.storage.control.v2.DeleteManagedFolderRequest;
 import com.google.storage.control.v2.DisableAnywhereCacheRequest;
@@ -131,6 +133,17 @@ public class GrpcStorageControlStub extends StorageControlStub {
               .setType(MethodDescriptor.MethodType.UNARY)
               .setFullMethodName("google.storage.control.v2.StorageControl/RenameFolder")
               .setRequestMarshaller(ProtoUtils.marshaller(RenameFolderRequest.getDefaultInstance()))
+              .setResponseMarshaller(ProtoUtils.marshaller(Operation.getDefaultInstance()))
+              .setSampledToLocalTracing(true)
+              .build();
+
+  private static final MethodDescriptor<DeleteFolderRecursiveRequest, Operation>
+      deleteFolderRecursiveMethodDescriptor =
+          MethodDescriptor.<DeleteFolderRecursiveRequest, Operation>newBuilder()
+              .setType(MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName("google.storage.control.v2.StorageControl/DeleteFolderRecursive")
+              .setRequestMarshaller(
+                  ProtoUtils.marshaller(DeleteFolderRecursiveRequest.getDefaultInstance()))
               .setResponseMarshaller(ProtoUtils.marshaller(Operation.getDefaultInstance()))
               .setSampledToLocalTracing(true)
               .build();
@@ -387,6 +400,11 @@ public class GrpcStorageControlStub extends StorageControlStub {
   private final UnaryCallable<RenameFolderRequest, Operation> renameFolderCallable;
   private final OperationCallable<RenameFolderRequest, Folder, RenameFolderMetadata>
       renameFolderOperationCallable;
+  private final UnaryCallable<DeleteFolderRecursiveRequest, Operation>
+      deleteFolderRecursiveCallable;
+  private final OperationCallable<
+          DeleteFolderRecursiveRequest, Empty, DeleteFolderRecursiveMetadata>
+      deleteFolderRecursiveOperationCallable;
   private final UnaryCallable<GetStorageLayoutRequest, StorageLayout> getStorageLayoutCallable;
   private final UnaryCallable<CreateManagedFolderRequest, ManagedFolder>
       createManagedFolderCallable;
@@ -444,6 +462,8 @@ public class GrpcStorageControlStub extends StorageControlStub {
   private static final PathTemplate LIST_FOLDERS_0_PATH_TEMPLATE =
       PathTemplate.create("{bucket=**}");
   private static final PathTemplate RENAME_FOLDER_0_PATH_TEMPLATE =
+      PathTemplate.create("{bucket=projects/*/buckets/*}/**");
+  private static final PathTemplate DELETE_FOLDER_RECURSIVE_0_PATH_TEMPLATE =
       PathTemplate.create("{bucket=projects/*/buckets/*}/**");
   private static final PathTemplate GET_STORAGE_LAYOUT_0_PATH_TEMPLATE =
       PathTemplate.create("{bucket=projects/*/buckets/*}/**");
@@ -606,6 +626,26 @@ public class GrpcStorageControlStub extends StorageControlStub {
                   return requestBuilder.build();
                 })
             .build();
+    GrpcCallSettings<DeleteFolderRecursiveRequest, Operation>
+        deleteFolderRecursiveTransportSettings =
+            GrpcCallSettings.<DeleteFolderRecursiveRequest, Operation>newBuilder()
+                .setMethodDescriptor(deleteFolderRecursiveMethodDescriptor)
+                .setParamsExtractor(
+                    request -> {
+                      RequestParamsBuilder builder = RequestParamsBuilder.create();
+                      builder.add(
+                          request.getName(), "bucket", DELETE_FOLDER_RECURSIVE_0_PATH_TEMPLATE);
+                      return builder.build();
+                    })
+                .setRequestMutator(
+                    request -> {
+                      DeleteFolderRecursiveRequest.Builder requestBuilder = request.toBuilder();
+                      if (Strings.isNullOrEmpty(request.getRequestId())) {
+                        requestBuilder.setRequestId(UUID.randomUUID().toString());
+                      }
+                      return requestBuilder.build();
+                    })
+                .build();
     GrpcCallSettings<GetStorageLayoutRequest, StorageLayout> getStorageLayoutTransportSettings =
         GrpcCallSettings.<GetStorageLayoutRequest, StorageLayout>newBuilder()
             .setMethodDescriptor(getStorageLayoutMethodDescriptor)
@@ -975,6 +1015,17 @@ public class GrpcStorageControlStub extends StorageControlStub {
             settings.renameFolderOperationSettings(),
             clientContext,
             operationsStub);
+    this.deleteFolderRecursiveCallable =
+        callableFactory.createUnaryCallable(
+            deleteFolderRecursiveTransportSettings,
+            settings.deleteFolderRecursiveSettings(),
+            clientContext);
+    this.deleteFolderRecursiveOperationCallable =
+        callableFactory.createOperationCallable(
+            deleteFolderRecursiveTransportSettings,
+            settings.deleteFolderRecursiveOperationSettings(),
+            clientContext,
+            operationsStub);
     this.getStorageLayoutCallable =
         callableFactory.createUnaryCallable(
             getStorageLayoutTransportSettings, settings.getStorageLayoutSettings(), clientContext);
@@ -1135,6 +1186,17 @@ public class GrpcStorageControlStub extends StorageControlStub {
   public OperationCallable<RenameFolderRequest, Folder, RenameFolderMetadata>
       renameFolderOperationCallable() {
     return renameFolderOperationCallable;
+  }
+
+  @Override
+  public UnaryCallable<DeleteFolderRecursiveRequest, Operation> deleteFolderRecursiveCallable() {
+    return deleteFolderRecursiveCallable;
+  }
+
+  @Override
+  public OperationCallable<DeleteFolderRecursiveRequest, Empty, DeleteFolderRecursiveMetadata>
+      deleteFolderRecursiveOperationCallable() {
+    return deleteFolderRecursiveOperationCallable;
   }
 
   @Override

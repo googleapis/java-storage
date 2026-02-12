@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Google LLC
+ * Copyright 2026 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,6 +36,8 @@ import com.google.storage.control.v2.CreateAnywhereCacheMetadata;
 import com.google.storage.control.v2.CreateAnywhereCacheRequest;
 import com.google.storage.control.v2.CreateFolderRequest;
 import com.google.storage.control.v2.CreateManagedFolderRequest;
+import com.google.storage.control.v2.DeleteFolderRecursiveMetadata;
+import com.google.storage.control.v2.DeleteFolderRecursiveRequest;
 import com.google.storage.control.v2.DeleteFolderRequest;
 import com.google.storage.control.v2.DeleteManagedFolderRequest;
 import com.google.storage.control.v2.DisableAnywhereCacheRequest;
@@ -111,6 +113,16 @@ public abstract class StorageControlStub implements BackgroundResource {
 
   public UnaryCallable<RenameFolderRequest, Operation> renameFolderCallable() {
     throw new UnsupportedOperationException("Not implemented: renameFolderCallable()");
+  }
+
+  public OperationCallable<DeleteFolderRecursiveRequest, Empty, DeleteFolderRecursiveMetadata>
+      deleteFolderRecursiveOperationCallable() {
+    throw new UnsupportedOperationException(
+        "Not implemented: deleteFolderRecursiveOperationCallable()");
+  }
+
+  public UnaryCallable<DeleteFolderRecursiveRequest, Operation> deleteFolderRecursiveCallable() {
+    throw new UnsupportedOperationException("Not implemented: deleteFolderRecursiveCallable()");
   }
 
   public UnaryCallable<GetStorageLayoutRequest, StorageLayout> getStorageLayoutCallable() {

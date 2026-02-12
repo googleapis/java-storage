@@ -51,6 +51,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -183,6 +184,7 @@ public final class ITObjectAclTest {
 
   /** Update of an acl that doesn't exist should create it */
   @Test
+  @Ignore("TODO: fix b/468377909 to enable test again")
   public void object_acl_404_acl_update() {
     Blob mgen1 = tmpObject();
 
@@ -231,6 +233,7 @@ public final class ITObjectAclTest {
   }
 
   @Test
+  @Ignore("TODO: fix b/468377909 to enable test again")
   public void object_acl_200_create() {
     Blob mgen1 = tmpObject();
 

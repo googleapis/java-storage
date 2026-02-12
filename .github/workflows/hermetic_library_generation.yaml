@@ -36,7 +36,7 @@ jobs:
       if: env.SHOULD_RUN == 'true'
       with:
         fetch-depth: 0
-        token: ${{ secrets.CLOUD_JAVA_BOT_TOKEN }}
+        token: ${{ secrets.CLOUD_JAVA_BOT_GITHUB_TOKEN }}
     - name: is applicable
       env:
         # set our branch names to be the names in the "origin" remote since we aren't actually checking these branches out
@@ -77,9 +77,9 @@ jobs:
           echo "SHOULD_RUN=false" >> $GITHUB_ENV
         fi
 
-    - uses: googleapis/sdk-platform-java/.github/scripts@v2.64.2
+    - uses: googleapis/sdk-platform-java/.github/scripts@v2.66.1
       if: env.SHOULD_RUN == 'true'
       with:
         base_ref: ${{ github.base_ref }}
         head_ref: ${{ github.head_ref }}
-        token: ${{ secrets.CLOUD_JAVA_BOT_TOKEN }}
+        token: ${{ secrets.CLOUD_JAVA_BOT_GITHUB_TOKEN }}
