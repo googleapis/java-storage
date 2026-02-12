@@ -29,7 +29,8 @@ public final class PathTraversalBlockedException extends RuntimeException {
     super(
         String.format(
             Locale.US,
-            "Download of object '%s' was blocked because it would escape the target directory '%s'.",
+            "Download of object '%s' was blocked because it would escape the target directory"
+                + " '%s'.",
             objectName,
             targetDirectory));
   }
