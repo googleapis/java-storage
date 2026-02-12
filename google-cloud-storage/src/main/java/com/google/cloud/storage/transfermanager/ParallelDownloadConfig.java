@@ -159,7 +159,7 @@ public final class ParallelDownloadConfig {
      * @see ParallelDownloadConfig#getDownloadDirectory()
      */
     public Builder setDownloadDirectory(Path downloadDirectory) {
-      this.downloadDirectory = downloadDirectory;
+      this.downloadDirectory = downloadDirectory.toAbsolutePath().normalize();
       return this;
     }
 

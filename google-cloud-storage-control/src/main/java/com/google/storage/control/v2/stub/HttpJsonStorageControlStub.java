@@ -42,6 +42,8 @@ import com.google.storage.control.v2.CreateAnywhereCacheMetadata;
 import com.google.storage.control.v2.CreateAnywhereCacheRequest;
 import com.google.storage.control.v2.CreateFolderRequest;
 import com.google.storage.control.v2.CreateManagedFolderRequest;
+import com.google.storage.control.v2.DeleteFolderRecursiveMetadata;
+import com.google.storage.control.v2.DeleteFolderRecursiveRequest;
 import com.google.storage.control.v2.DeleteFolderRequest;
 import com.google.storage.control.v2.DeleteManagedFolderRequest;
 import com.google.storage.control.v2.DisableAnywhereCacheRequest;
@@ -89,10 +91,12 @@ import javax.annotation.Generated;
 public class HttpJsonStorageControlStub extends StorageControlStub {
   private static final TypeRegistry typeRegistry =
       TypeRegistry.newBuilder()
+          .add(Empty.getDescriptor())
           .add(RenameFolderMetadata.getDescriptor())
           .add(Folder.getDescriptor())
           .add(AnywhereCache.getDescriptor())
           .add(UpdateAnywhereCacheMetadata.getDescriptor())
+          .add(DeleteFolderRecursiveMetadata.getDescriptor())
           .add(CreateAnywhereCacheMetadata.getDescriptor())
           .build();
 
@@ -606,6 +610,13 @@ public class HttpJsonStorageControlStub extends StorageControlStub {
     throw new UnsupportedOperationException(
         "Not implemented: renameFolderCallable(). REST transport is not implemented for this method"
             + " yet.");
+  }
+
+  @Override
+  public UnaryCallable<DeleteFolderRecursiveRequest, Operation> deleteFolderRecursiveCallable() {
+    throw new UnsupportedOperationException(
+        "Not implemented: deleteFolderRecursiveCallable(). REST transport is not implemented for"
+            + " this method yet.");
   }
 
   @Override
