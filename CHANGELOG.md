@@ -1,5 +1,26 @@
 # Changelog
 
+## [2.63.0](https://github.com/googleapis/java-storage/compare/v2.62.1...v2.63.0) (2026-02-12)
+
+
+### Features
+
+* Add a DeleteFolderRecursive API definition ([87642bd](https://github.com/googleapis/java-storage/commit/87642bd58759a61f5fdf04b1765b77297ea443ea))
+* Added a new field `ComposeObjectRequest.delete_source_objects` field ([87642bd](https://github.com/googleapis/java-storage/commit/87642bd58759a61f5fdf04b1765b77297ea443ea))
+* Next release from main branch is 2.63.0 ([#3486](https://github.com/googleapis/java-storage/issues/3486)) ([412b5fb](https://github.com/googleapis/java-storage/commit/412b5fbe7e724e1220561f04a59251746c8a99a2))
+
+
+### Bug Fixes
+
+* **deps:** Update the Java code generator (gapic-generator-java) to 2.66.1 ([87642bd](https://github.com/googleapis/java-storage/commit/87642bd58759a61f5fdf04b1765b77297ea443ea))
+* Validate blob paths to prevent directory traversal in TransferManager downloads ([#3455](https://github.com/googleapis/java-storage/issues/3455)) ([49abf75](https://github.com/googleapis/java-storage/commit/49abf7559028d890e1c4848a5a356f266f6788be))
+
+
+### Dependencies
+
+* Update dependency com.google.cloud:sdk-platform-java-config to v3.56.1 ([#3484](https://github.com/googleapis/java-storage/issues/3484)) ([3a5deee](https://github.com/googleapis/java-storage/commit/3a5deee364175fc8c879cb22f176354a62117d22))
+* Update dependency node to v24 ([#3368](https://github.com/googleapis/java-storage/issues/3368)) ([ed2ddb7](https://github.com/googleapis/java-storage/commit/ed2ddb79c215fb7a9400e4168d10a7516ca2e664))
+
 ## [2.62.1](https://github.com/googleapis/java-storage/compare/v2.62.0...v2.62.1) (2026-01-28)
 
 
