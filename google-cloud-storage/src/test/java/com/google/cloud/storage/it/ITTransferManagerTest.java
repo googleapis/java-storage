@@ -378,6 +378,69 @@ public class ITTransferManagerTest {
   }
 
   @Test
+  public void downloadBlobsSkipIfExists() throws Exception {
+    TransferManagerConfig config =
+        TransferManagerConfigTestingInstances.defaults(storage.getOptions());
+    try (TransferManager transferManager = config.getService()) {
+      String bucketName = bucket.getName();
+      ParallelDownloadConfig parallelDownloadConfig =
+          ParallelDownloadConfig.newBuilder()
+              .setBucketName(bucketName)
+              .setDownloadDirectory(baseDir)
+              .setSkipIfExists(true)
+              .build();
+      // First download to ensure files exist
+      DownloadJob job1 = transferManager.downloadBlobs(blobs, parallelDownloadConfig);
+      List<DownloadResult> results1 = job1.getDownloadResults();
+      assertThat(results1.stream().allMatch(r -> r.getStatus() == TransferStatus.SUCCESS)).isTrue();
+
+      // Second download with skipIfExists=true
+      DownloadJob job2 = transferManager.downloadBlobs(blobs, parallelDownloadConfig);
+      List<DownloadResult> results2 = job2.getDownloadResults();
+      try {
+        assertThat(results2).hasSize(3);
+        assertThat(results2.stream().allMatch(r -> r.getStatus() == TransferStatus.SKIPPED))
+            .isTrue();
+      } finally {
+        cleanUpFiles(results1);
+      }
+    }
+  }
+
+  @Test
+  public void downloadBlobsSkipIfExistsChunked() throws Exception {
+    TransferManagerConfig config =
+        TransferManagerConfigTestingInstances.defaults(storage.getOptions()).toBuilder()
+            .setAllowDivideAndConquerDownload(true)
+            .setPerWorkerBufferSize(128 * 1024)
+            .build();
+    try (TransferManager transferManager = config.getService()) {
+      String bucketName = bucket.getName();
+      ParallelDownloadConfig parallelDownloadConfig =
+          ParallelDownloadConfig.newBuilder()
+              .setBucketName(bucketName)
+              .setDownloadDirectory(baseDir)
+              .setSkipIfExists(true)
+              .build();
+      // First download to ensure files exist
+      DownloadJob job1 = transferManager.downloadBlobs(blobs, parallelDownloadConfig);
+      List<DownloadResult> results1 = job1.getDownloadResults();
+      assertThat(results1.stream().allMatch(r -> r.getStatus() == TransferStatus.SUCCESS)).isTrue();
+
+      // Second download with skipIfExists=true
+      DownloadJob job2 = transferManager.downloadBlobs(blobs, parallelDownloadConfig);
+      List<DownloadResult> results2 = job2.getDownloadResults();
+      try {
+        assertThat(results2).hasSize(3);
+        assertThat(results2.stream().allMatch(r -> r.getStatus() == TransferStatus.SKIPPED))
+            .isTrue();
+      } finally {
+        cleanUpFiles(results1);
+      }
+    }
+  }
+
+  @Test
   public void uploadFilesAllowPCU() throws Exception {
     TransferManagerConfig config =
         TransferManagerConfigTestingInstances.defaults(storage.getOptions()).toBuilder()

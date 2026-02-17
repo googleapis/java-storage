@@ -147,13 +147,30 @@ final class TransferManagerImpl implements TransferManager {
     List<ApiFuture<DownloadResult>> downloadTasks = new ArrayList<>();
     if (!transferManagerConfig.isAllowDivideAndConquerDownload()) {
       for (BlobInfo blob : blobs) {
-        DirectDownloadCallable callable = new DirectDownloadCallable(storage, blob, config, opts);
-        downloadTasks.add(convert(executor.submit(callable)));
+        Path destPath = TransferManagerUtils.createDestPath(config, blob);
+        if (config.isSkipIfExists() && Files.exists(destPath)) {
+          downloadTasks.add(
+              ApiFutures.immediateFuture(
+                  DownloadResult.newBuilder(blob, TransferStatus.SKIPPED)
+                      .setOutputDestination(destPath)
+                      .build()));
+        } else {
+          DirectDownloadCallable callable = new DirectDownloadCallable(storage, blob, config, opts);
+          downloadTasks.add(convert(executor.submit(callable)));
+        }
       }
     } else {
       for (BlobInfo blob : blobs) {
         BlobInfo validatedBlob = retrieveSizeAndGeneration(storage, blob, config.getBucketName());
         Path destPath = TransferManagerUtils.createDestPath(config, blob);
+        if (config.isSkipIfExists() && Files.exists(destPath)) {
+          downloadTasks.add(
+              ApiFutures.immediateFuture(
+                  DownloadResult.newBuilder(blob, TransferStatus.SKIPPED)
+                      .setOutputDestination(destPath)
+                      .build()));
+          continue;
+        }
         if (validatedBlob != null && qos.divideAndConquer(validatedBlob.getSize())) {
           DownloadResult optimisticResult =
               DownloadResult.newBuilder(validatedBlob, TransferStatus.SUCCESS)
