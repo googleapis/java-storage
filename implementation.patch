@@ -1,0 +1,147 @@
+diff --git a/go.mod b/go.mod
+index 4531b4d140..72da38e5df 100644
+--- a/go.mod
++++ b/go.mod
+@@ -11,7 +11,7 @@ require (
+	go.opentelemetry.io/otel/sdk v1.40.0
+	go.opentelemetry.io/otel/trace v1.40.0
+	golang.org/x/oauth2 v0.35.0
+-	google.golang.org/api v0.265.0
++	google.golang.org/api v0.267.0
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20260203192932-546029d2fa20
+	google.golang.org/grpc v1.78.0
+	google.golang.org/protobuf v1.36.11
+diff --git a/go.sum b/go.sum
+index 65a831cac2..b3dce7e1da 100644
+--- a/go.sum
++++ b/go.sum
+@@ -113,6 +113,8 @@ gonum.org/v1/gonum v0.16.0 h1:5+ul4Swaf3ESvrOnidPp4GZbzf0mxVQpDCYUQE7OJfk=
+ gonum.org/v1/gonum v0.16.0/go.mod h1:fef3am4MQ93R2HHpKnLk4/Tbh/s0+wqD5nfa6Pnwy4E=
+ google.golang.org/api v0.265.0 h1:FZvfUdI8nfmuNrE34aOWFPmLC+qRBEiNm3JdivTvAAU=
+ google.golang.org/api v0.265.0/go.mod h1:uAvfEl3SLUj/7n6k+lJutcswVojHPp2Sp08jWCu8hLY=
++google.golang.org/api v0.267.0 h1:w+vfWPMPYeRs8qH1aYYsFX68jMls5acWl/jocfLomwE=
++google.golang.org/api v0.267.0/go.mod h1:Jzc0+ZfLnyvXma3UtaTl023TdhZu6OMBP9tJ+0EmFD0=
+ google.golang.org/genproto v0.0.0-20260128011058-8636f8732409 h1:VQZ/yAbAtjkHgH80teYd2em3xtIkkHd7ZhqfH2N9CsM=
+ google.golang.org/genproto v0.0.0-20260128011058-8636f8732409/go.mod h1:rxKD3IEILWEu3P44seeNOAwZN4SaoKaQ/2eTg4mM6EM=
+ google.golang.org/genproto/googleapis/api v0.0.0-20260128011058-8636f8732409 h1:merA0rdPeUV3YIIfHHcH4qBkiQAc1nfCKSI7lB4cV2M=
+diff --git a/storage/bucket.go b/storage/bucket.go
+index 509d8693cf..552dddd46c 100644
+--- a/storage/bucket.go
++++ b/storage/bucket.go
+@@ -1137,6 +1137,45 @@ type CORS struct {
+	ResponseHeaders []string
+ }
+
++// EncryptionEnforcementRestrictionMode describes the enforcement mode for encryption.
++type EncryptionEnforcementRestrictionMode string
++
++const (
++	// EncryptionEnforcementRestrictionModeUnspecified is the default value.
++	EncryptionEnforcementRestrictionModeUnspecified EncryptionEnforcementRestrictionMode = "Unspecified"
++	// EncryptionEnforcementRestrictionModeNotRestricted means encryption is not restricted.
++	EncryptionEnforcementRestrictionModeNotRestricted EncryptionEnforcementRestrictionMode = "NotRestricted"
++	// EncryptionEnforcementRestrictionModeFullyRestricted means encryption is fully restricted.
++	EncryptionEnforcementRestrictionModeFullyRestricted EncryptionEnforcementRestrictionMode = "FullyRestricted"
++)
++
++// GoogleManagedEncryptionEnforcementConfig describes the Google Managed Encryption Enforcement Config.
++type GoogleManagedEncryptionEnforcementConfig struct {
++	// RestrictionMode determines the restriction mode.
++	RestrictionMode EncryptionEnforcementRestrictionMode
++	// EffectiveTime is the time when the policy became effective.
++	// This field is read-only.
++	EffectiveTime time.Time
++}
++
++// CustomerManagedEncryptionEnforcementConfig describes the Customer Managed Encryption Enforcement Config.
++type CustomerManagedEncryptionEnforcementConfig struct {
++	// RestrictionMode determines the restriction mode.
++	RestrictionMode EncryptionEnforcementRestrictionMode
++	// EffectiveTime is the time when the policy became effective.
++	// This field is read-only.
++	EffectiveTime time.Time
++}
++
++// CustomerSuppliedEncryptionEnforcementConfig describes the Customer Supplied Encryption Enforcement Config.
++type CustomerSuppliedEncryptionEnforcementConfig struct {
++	// RestrictionMode determines the restriction mode.
++	RestrictionMode EncryptionEnforcementRestrictionMode
++	// EffectiveTime is the time when the policy became effective.
++	// This field is read-only.
++	EffectiveTime time.Time
++}
++
+ // BucketEncryption is a bucket's encryption configuration.
+ type BucketEncryption struct {
+	// A Cloud KMS key name, in the form
+@@ -1144,6 +1183,15 @@ type BucketEncryption struct {
+	// objects inserted into this bucket, if no encryption method is specified.
+	// The key's location must be the same as the bucket's.
+	DefaultKMSKeyName string
++
++	// GoogleManagedEncryptionEnforcementConfig describes the Google Managed Encryption Enforcement Config.
++	GoogleManagedEncryptionEnforcementConfig *GoogleManagedEncryptionEnforcementConfig
++
++	// CustomerManagedEncryptionEnforcementConfig describes the Customer Managed Encryption Enforcement Config.
++	CustomerManagedEncryptionEnforcementConfig *CustomerManagedEncryptionEnforcementConfig
++
++	// CustomerSuppliedEncryptionEnforcementConfig describes the Customer Supplied Encryption Enforcement Config.
++	CustomerSuppliedEncryptionEnforcementConfig *CustomerSuppliedEncryptionEnforcementConfig
+ }
+
+ // BucketAttrsToUpdate define the attributes to update during an Update call.
+@@ -1851,9 +1899,25 @@ func (e *BucketEncryption) toProtoBucketEncryption() *storagepb.Bucket_Encryptio
+	if e == nil {
+		return nil
+	}
+-	return &storagepb.Bucket_Encryption{
++	enc := &storagepb.Bucket_Encryption{
+		DefaultKmsKey: e.DefaultKMSKeyName,
+	}
++	if e.GoogleManagedEncryptionEnforcementConfig != nil {
++		enc.GoogleManagedEncryptionEnforcementConfig = &storagepb.Bucket_Encryption_GoogleManagedEncryptionEnforcementConfig{
++			RestrictionMode: proto.String(string(e.GoogleManagedEncryptionEnforcementConfig.RestrictionMode)),
++		}
++	}
++	if e.CustomerManagedEncryptionEnforcementConfig != nil {
++		enc.CustomerManagedEncryptionEnforcementConfig = &storagepb.Bucket_Encryption_CustomerManagedEncryptionEnforcementConfig{
++			RestrictionMode: proto.String(string(e.CustomerManagedEncryptionEnforcementConfig.RestrictionMode)),
++		}
++	}
++	if e.CustomerSuppliedEncryptionEnforcementConfig != nil {
++		enc.CustomerSuppliedEncryptionEnforcementConfig = &storagepb.Bucket_Encryption_CustomerSuppliedEncryptionEnforcementConfig{
++			RestrictionMode: proto.String(string(e.CustomerSuppliedEncryptionEnforcementConfig.RestrictionMode)),
++		}
++	}
++	return enc
+ }
+
+ func toBucketEncryption(e *raw.BucketEncryption) *BucketEncryption {
+@@ -1867,7 +1931,26 @@ func toBucketEncryptionFromProto(e *storagepb.Bucket_Encryption) *BucketEncrypti
+	if e == nil {
+		return nil
+	}
+-	return &BucketEncryption{DefaultKMSKeyName: e.GetDefaultKmsKey()}
++	enc := &BucketEncryption{DefaultKMSKeyName: e.GetDefaultKmsKey()}
++	if v := e.GetGoogleManagedEncryptionEnforcementConfig(); v != nil {
++		enc.GoogleManagedEncryptionEnforcementConfig = &GoogleManagedEncryptionEnforcementConfig{
++			RestrictionMode: EncryptionEnforcementRestrictionMode(v.GetRestrictionMode()),
++			EffectiveTime:   v.GetEffectiveTime().AsTime(),
++		}
++	}
++	if v := e.GetCustomerManagedEncryptionEnforcementConfig(); v != nil {
++		enc.CustomerManagedEncryptionEnforcementConfig = &CustomerManagedEncryptionEnforcementConfig{
++			RestrictionMode: EncryptionEnforcementRestrictionMode(v.GetRestrictionMode()),
++			EffectiveTime:   v.GetEffectiveTime().AsTime(),
++		}
++	}
++	if v := e.GetCustomerSuppliedEncryptionEnforcementConfig(); v != nil {
++		enc.CustomerSuppliedEncryptionEnforcementConfig = &CustomerSuppliedEncryptionEnforcementConfig{
++			RestrictionMode: EncryptionEnforcementRestrictionMode(v.GetRestrictionMode()),
++			EffectiveTime:   v.GetEffectiveTime().AsTime(),
++		}
++	}
++	return enc
+ }
+
+ func (b *BucketLogging) toRawBucketLogging() *raw.BucketLogging {
