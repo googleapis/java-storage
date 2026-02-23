@@ -4045,6 +4045,8 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
   /**
    * Returns the requested bucket or {@code null} if not found.
    *
+   * <p>Note: A {@link StorageException} is thrown in case of any failure.
+   *
    * <p>Accepts an optional userProject {@link BucketGetOption} option which defines the project id
    * to assign operational costs.
    *
@@ -4066,6 +4068,8 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
   /**
    * Locks bucket retention policy. Requires a local metageneration value in the request. Review
    * example below.
+   *
+   * <p>Note: A {@link StorageException} is thrown in case of any failure.
    *
    * <p>Accepts an optional userProject {@link BucketTargetOption} option which defines the project
    * id to assign operational costs.
@@ -4090,6 +4094,8 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
   /**
    * Returns the requested blob or {@code null} if not found.
    *
+   * <p>Note: A {@link StorageException} is thrown in case of any failure.
+   *
    * <p>Accepts an optional userProject {@link BlobGetOption} option which defines the project id to
    * assign operational costs.
    *
@@ -4111,6 +4117,8 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
 
   /**
    * Returns the requested blob or {@code null} if not found.
+   *
+   * <p>Note: A {@link StorageException} is thrown in case of any failure.
    *
    * <p>Accepts an optional userProject {@link BlobGetOption} option which defines the project id to
    * assign operational costs.
@@ -4148,6 +4156,8 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
 
   /**
    * Returns the requested blob or {@code null} if not found.
+   *
+   * <p>Note: A {@link StorageException} is thrown in case of any failure.
    *
    * <p>Example of getting information on a blob.
    *
