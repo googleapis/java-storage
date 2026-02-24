@@ -38,6 +38,7 @@ jobs:
         fetch-depth: 0
         token: ${{ secrets.CLOUD_JAVA_BOT_GITHUB_TOKEN }}
     - name: is applicable
+      if: env.SHOULD_RUN == 'true' 
       env:
         # set our branch names to be the names in the "origin" remote since we aren't actually checking these branches out
         base_ref: origin/${{ github.base_ref }}
