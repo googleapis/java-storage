@@ -157,6 +157,14 @@ final class TransferManagerImpl implements TransferManager {
         downloadTasks.add(ApiFutures.immediateFuture(skipped));
         continue;
       }
+      if (config.isSkipIfExists() && Files.exists(destPath)) {
+        DownloadResult skipped =
+            DownloadResult.newBuilder(blob, TransferStatus.SKIPPED)
+                .setOutputDestination(destPath)
+                .build();
+        downloadTasks.add(ApiFutures.immediateFuture(skipped));
+        continue;
+      }
       if (transferManagerConfig.isAllowDivideAndConquerDownload()) {
         BlobInfo validatedBlob = retrieveSizeAndGeneration(storage, blob, config.getBucketName());
         if (validatedBlob != null && qos.divideAndConquer(validatedBlob.getSize())) {
