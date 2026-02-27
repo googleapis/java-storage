@@ -1,5 +1,24 @@
 # Changelog
 
+## [2.64.0](https://github.com/googleapis/java-storage/compare/v2.63.0...v2.64.0) (2026-02-27)
+
+
+### Features
+
+* Adding Otel for MPU ([#3387](https://github.com/googleapis/java-storage/issues/3387)) ([2fef010](https://github.com/googleapis/java-storage/commit/2fef01016bede7892340b3434e1c229ddfa83904))
+
+
+### Bug Fixes
+
+* **deps:** Update the Java code generator (gapic-generator-java) to 2.67.0 ([ce2e03a](https://github.com/googleapis/java-storage/commit/ce2e03a80ea4308ac1365697306071e3abd92a88))
+
+
+### Dependencies
+
+* Update dependency com.google.cloud:sdk-platform-java-config to v3.57.0 ([#3500](https://github.com/googleapis/java-storage/issues/3500)) ([1617b39](https://github.com/googleapis/java-storage/commit/1617b39bdca6bedb8a5e909794acb00eebcdbbcd))
+* Update dependency node to v24 ([#3492](https://github.com/googleapis/java-storage/issues/3492)) ([0ae3315](https://github.com/googleapis/java-storage/commit/0ae3315c1f06547de3308704c772a72645c9ab88))
+* Update googleapis/sdk-platform-java action to v2.67.0 ([#3501](https://github.com/googleapis/java-storage/issues/3501)) ([f1ff0c9](https://github.com/googleapis/java-storage/commit/f1ff0c9e061e38d2c0414bc6a82b53123e59c106))
+
 ## [2.63.0](https://github.com/googleapis/java-storage/compare/v2.62.1...v2.63.0) (2026-02-12)
 
 
