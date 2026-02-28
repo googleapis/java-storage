@@ -34,20 +34,32 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  */
 public final class ParallelDownloadConfig {
 
+  private final boolean skipIfExists;
   @NonNull private final String stripPrefix;
   @NonNull private final Path downloadDirectory;
   @NonNull private final String bucketName;
   @NonNull private final List<BlobSourceOption> optionsPerRequest;
 
   private ParallelDownloadConfig(
+      boolean skipIfExists,
       @NonNull String stripPrefix,
       @NonNull Path downloadDirectory,
       @NonNull String bucketName,
       @NonNull List<BlobSourceOption> optionsPerRequest) {
+    this.skipIfExists = skipIfExists;
     this.stripPrefix = stripPrefix;
     this.downloadDirectory = downloadDirectory;
     this.bucketName = bucketName;
     this.optionsPerRequest = optionsPerRequest;
+  }
+
+  /**
+   * If set Transfer Manager will skip downloading an object if it already exists.
+   *
+   * @see Builder#setSkipIfExists(boolean)
+   */
+  public boolean isSkipIfExists() {
+    return skipIfExists;
   }
 
   /**
@@ -96,7 +108,8 @@ public final class ParallelDownloadConfig {
       return false;
     }
     ParallelDownloadConfig that = (ParallelDownloadConfig) o;
-    return stripPrefix.equals(that.stripPrefix)
+    return skipIfExists == that.skipIfExists
+        && stripPrefix.equals(that.stripPrefix)
         && downloadDirectory.equals(that.downloadDirectory)
         && bucketName.equals(that.bucketName)
         && optionsPerRequest.equals(that.optionsPerRequest);
@@ -104,12 +117,14 @@ public final class ParallelDownloadConfig {
 
   @Override
   public int hashCode() {
-    return Objects.hash(stripPrefix, downloadDirectory, bucketName, optionsPerRequest);
+    return Objects.hash(
+        skipIfExists, stripPrefix, downloadDirectory, bucketName, optionsPerRequest);
   }
 
   @Override
   public String toString() {
     return MoreObjects.toStringHelper(this)
+        .add("skipIfExists", skipIfExists)
         .add("stripPrefix", stripPrefix)
         .add("downloadDirectory", downloadDirectory)
         .add("bucketName", bucketName)
@@ -128,16 +143,30 @@ public final class ParallelDownloadConfig {
 
   public static final class Builder {
 
+    private boolean skipIfExists;
     @NonNull private String stripPrefix;
     @NonNull private Path downloadDirectory;
     @NonNull private String bucketName;
     @NonNull private List<BlobSourceOption> optionsPerRequest;
 
     private Builder() {
+      this.skipIfExists = false;
       this.stripPrefix = "";
       this.downloadDirectory = Paths.get("");
       this.bucketName = "";
       this.optionsPerRequest = ImmutableList.of();
+    }
+
+    /**
+     * Sets the parameter for skipIfExists. When set to true Transfer Manager will skip downloading
+     * an object if it already exists.
+     *
+     * @return the builder instance with the value for skipIfExists modified.
+     * @see ParallelDownloadConfig#isSkipIfExists()
+     */
+    public Builder setSkipIfExists(boolean skipIfExists) {
+      this.skipIfExists = skipIfExists;
+      return this;
     }
 
     /**
@@ -197,7 +226,7 @@ public final class ParallelDownloadConfig {
       checkNotNull(downloadDirectory);
       checkNotNull(optionsPerRequest);
       return new ParallelDownloadConfig(
-          stripPrefix, downloadDirectory, bucketName, optionsPerRequest);
+          skipIfExists, stripPrefix, downloadDirectory, bucketName, optionsPerRequest);
     }
   }
 }
