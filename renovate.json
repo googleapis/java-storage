@@ -128,6 +128,16 @@
         "^ch.qos.logback:logback-classic"
       ],
       "allowedVersions": "<1.4.0"
+    },
+    {
+      "description": "Disable updates for templatized GitHub Actions",
+      "matchManagers": [
+        "github-actions"
+      ],
+      "matchFileNames": [
+        ".github/workflows/**"
+      ],
+      "enabled": false
     }
   ],
   "semanticCommits": true,
