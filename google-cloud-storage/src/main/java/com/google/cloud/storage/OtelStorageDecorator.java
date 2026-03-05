@@ -56,6 +56,7 @@ import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.channels.WritableByteChannel;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
@@ -1985,6 +1986,36 @@ final class OtelStorageDecorator implements Storage {
         readRangeSpan.recordException(t);
         readRangeSpan.setStatus(StatusCode.ERROR, t.getClass().getSimpleName());
         readRangeSpan.end();
+        throw t;
+      }
+    }
+
+    @Override
+    public <Projection> java.util.List<Projection> readAllAs(
+        java.util.List<ReadProjectionConfig<Projection>> configs) {
+      java.util.List<Span> spans = new ArrayList<>(configs.size());
+      java.util.List<ReadProjectionConfig<Projection>> otrConfigs =
+          new ArrayList<>(configs.size());
+
+      for (ReadProjectionConfig<Projection> config : configs) {
+        Span readRangeSpan =
+            tracer
+                .spanBuilder(BLOB_READ_SESSION + "/readAs")
+                .setAttribute("gsutil.uri", id.toGsUtilUriWithGeneration())
+                .setParent(blobReadSessionContext)
+                .startSpan();
+        spans.add(readRangeSpan);
+        otrConfigs.add(new OtelReadProjectionConfig<>(config, readRangeSpan));
+      }
+
+      try {
+        return delegate.readAllAs(otrConfigs);
+      } catch (Throwable t) {
+        for (Span span : spans) {
+          span.recordException(t);
+          span.setStatus(StatusCode.ERROR, t.getClass().getSimpleName());
+          span.end();
+        }
         throw t;
       }
     }

@@ -98,6 +98,46 @@ final class ObjectReadSessionImpl implements ObjectReadSession {
   }
 
   @Override
+  public <Projection> java.util.List<Projection> readAllAs(
+      java.util.List<ReadProjectionConfig<Projection>> configs) {
+    checkState(open, "Session already closed");
+    java.util.List<Projection> results = new ArrayList<>(configs.size());
+
+    // Filter for STREAM_READ configs to batch
+    List<ObjectReadSessionStreamRead<Projection>> batchedReads = new ArrayList<>();
+    List<Long> batchedReadIds = new ArrayList<>();
+
+    for (ReadProjectionConfig<Projection> config : configs) {
+      switch (config.getType()) {
+        case STREAM_READ:
+          long readId = state.newReadId();
+          ObjectReadSessionStreamRead<Projection> read =
+              config.cast().newRead(readId, retryContextProvider.create());
+          batchedReads.add(read);
+          batchedReadIds.add(readId);
+          results.add(read.project());
+          break;
+        case SESSION_USER:
+          results.add(config.project(this, IOAutoCloseable.noOp()));
+          break;
+        default:
+          throw new IllegalStateException(
+              String.format(
+                  Locale.US,
+                  "Broken java enum %s value=%s",
+                  ProjectionType.class.getName(),
+                  config.getType().name()));
+      }
+    }
+
+    if (!batchedReads.isEmpty()) {
+      registerBatchReadsInState(batchedReadIds, batchedReads);
+    }
+
+    return results;
+  }
+
+  @Override
   public void close() throws IOException {
     try {
       if (!open) {
@@ -133,6 +173,61 @@ final class ObjectReadSessionImpl implements ObjectReadSession {
             newStream.close();
           });
       child.putOutstandingRead(readId, read);
+      newStream.send(request);
+    }
+  }
+
+  private void registerBatchReadsInState(
+      List<Long> readIds, List<? extends ObjectReadSessionStreamRead<?>> reads) {
+    // 1. Check if the current state can handle ALL new reads
+    //    We assume if it can handle one valid read of the batch, it can handle all,
+    //    BUT we must ensure transactionality or consistency if they differ.
+    //    However, usually they differ only by offset/length.
+    //    Let's check all or check if they are compatible with each other + state.
+    //    For now, we check if state can handle the first one?
+    //    Correctness: we should check all or rely on the fact they come from same session/context.
+    //    If state implies "same generation/metadata", then all reads should be fine if one is fine.
+    //    Let's verify strict correctness:
+    boolean allCompatible = true;
+    for (ObjectReadSessionStreamRead<?> read : reads) {
+      if (!state.canHandleNewRead(read)) {
+        allCompatible = false;
+        break;
+      }
+    }
+
+    // Prepare Request Builder
+    BidiReadObjectRequest.Builder requestBuilder = BidiReadObjectRequest.newBuilder();
+    for (ObjectReadSessionStreamRead<?> read : reads) {
+      requestBuilder.addReadRanges(read.makeReadRange());
+    }
+    BidiReadObjectRequest request = requestBuilder.build();
+
+    if (allCompatible) {
+      for (int i = 0; i < readIds.size(); i++) {
+        state.putOutstandingRead(readIds.get(i), reads.get(i));
+      }
+      stream.send(request);
+    } else {
+      // Fork a new child for this BATCH
+      ObjectReadSessionState child = state.forkChild();
+      ObjectReadSessionStream newStream =
+          ObjectReadSessionStream.create(executor, callable, child, retryContextProvider.create());
+      children.put(newStream, child);
+
+      // We only need one close callback for the stream closure, so we can attach it to the first read
+      // or all? If we attach to all, we might try to close multiple times, which is fine (concurrent map remove).
+      IOAutoCloseable closeCallback =
+          () -> {
+            children.remove(newStream);
+            newStream.close();
+          };
+
+      for (int i = 0; i < readIds.size(); i++) {
+        ObjectReadSessionStreamRead<?> read = reads.get(i);
+        read.setOnCloseCallback(closeCallback);
+        child.putOutstandingRead(readIds.get(i), read);
+      }
       newStream.send(request);
     }
   }
