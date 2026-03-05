@@ -57,6 +57,22 @@ public interface BlobReadSession extends AutoCloseable, Closeable {
   <Projection> Projection readAs(ReadProjectionConfig<Projection> config);
 
   /**
+   * Read all {@code configs} from this session as a specific {@code Projection} as dictated by the
+   * provided {@code configs}.
+   *
+   * <p>This allows for batching multiple reads into a single request, which can be more efficient
+   * than calling {@link #readAs(ReadProjectionConfig)} in a loop.
+   *
+   * @see ReadProjectionConfig
+   * @see ReadProjectionConfigs
+   * @since 2.51.0 This new api is in preview and is subject to breaking changes.
+   */
+  @BetaApi
+  @TransportCompatibility({Transport.GRPC})
+  <Projection> java.util.List<Projection> readAllAs(
+      java.util.List<ReadProjectionConfig<Projection>> configs);
+
+  /**
    * Close this session and any {@code Projection}s produced by {@link
    * #readAs(ReadProjectionConfig)}.
    *

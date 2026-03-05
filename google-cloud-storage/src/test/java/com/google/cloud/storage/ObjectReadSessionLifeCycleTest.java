@@ -45,6 +45,12 @@ public final class ObjectReadSessionLifeCycleTest {
           }
 
           @Override
+          public <Projection> java.util.List<Projection> readAllAs(
+              java.util.List<ReadProjectionConfig<Projection>> configs) {
+            throw new UnsupportedOperationException();
+          }
+
+          @Override
           public void close() throws IOException {
             sessionCloseCount.getAndIncrement();
           }
