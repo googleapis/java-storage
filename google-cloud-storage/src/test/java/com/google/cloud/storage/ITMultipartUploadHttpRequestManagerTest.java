@@ -61,6 +61,7 @@ import io.grpc.netty.shaded.io.netty.buffer.Unpooled;
 import io.grpc.netty.shaded.io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.grpc.netty.shaded.io.netty.handler.codec.http.FullHttpRequest;
 import io.grpc.netty.shaded.io.netty.handler.codec.http.FullHttpResponse;
+import com.google.api.gax.rpc.FixedHeaderProvider;
 import io.grpc.netty.shaded.io.netty.handler.codec.http.HttpResponseStatus;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -133,6 +134,87 @@ public final class ITMultipartUploadHttpRequestManagerTest {
       assertThat(response.bucket()).isEqualTo("test-bucket");
       assertThat(response.key()).isEqualTo("test-key");
       assertThat(response.uploadId()).isEqualTo("test-upload-id");
+    }
+  }
+
+  @Test
+  public void createFrom_withExistingUserAgent() throws Exception {
+    HttpRequestHandler handler =
+        req -> {
+          boolean hasCustom = req.headers().getAll("User-Agent").stream()
+              .anyMatch(agent -> agent.contains("my-custom-agent"));
+          assertThat(hasCustom).isTrue();
+          // check that it does not also contain the gcloud-java generated header
+          boolean hasDefault = req.headers().getAll("User-Agent").stream()
+              .anyMatch(agent -> agent.contains("gcloud-java/"));
+          assertThat(hasDefault).isFalse();
+
+          CreateMultipartUploadResponse response =
+              CreateMultipartUploadResponse.builder()
+                  .bucket("test-bucket")
+                  .key("test-key")
+                  .uploadId("test-upload-id")
+                  .build();
+          ByteBuf buf = Unpooled.wrappedBuffer(xmlMapper.writeValueAsBytes(response));
+
+          DefaultFullHttpResponse resp =
+              new DefaultFullHttpResponse(req.protocolVersion(), OK, buf);
+          resp.headers().set(CONTENT_TYPE, "application/xml; charset=utf-8");
+          return resp;
+        };
+
+    try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
+      HttpStorageOptions options =
+          fakeHttpServer.getHttpStorageOptions().toBuilder()
+              .setHeaderProvider(FixedHeaderProvider.create(ImmutableMap.of("User-Agent", "my-custom-agent")))
+              .build();
+
+      MultipartUploadHttpRequestManager multipartUploadHttpRequestManager =
+          MultipartUploadHttpRequestManager.createFrom(options);
+      CreateMultipartUploadRequest request =
+          CreateMultipartUploadRequest.builder()
+              .bucket("test-bucket")
+              .key("test-key")
+              .contentType("application/octet-stream")
+              .build();
+
+      multipartUploadHttpRequestManager.sendCreateMultipartUploadRequest(request);
+    }
+  }
+
+  @Test
+  public void createFrom_withoutExistingUserAgent() throws Exception {
+    HttpRequestHandler handler =
+        req -> {
+          boolean hasDefault = req.headers().getAll("User-Agent").stream()
+              .anyMatch(agent -> agent.startsWith("gcloud-java/"));
+          assertThat(hasDefault).isTrue();
+
+          CreateMultipartUploadResponse response =
+              CreateMultipartUploadResponse.builder()
+                  .bucket("test-bucket")
+                  .key("test-key")
+                  .uploadId("test-upload-id")
+                  .build();
+          ByteBuf buf = Unpooled.wrappedBuffer(xmlMapper.writeValueAsBytes(response));
+
+          DefaultFullHttpResponse resp =
+              new DefaultFullHttpResponse(req.protocolVersion(), OK, buf);
+          resp.headers().set(CONTENT_TYPE, "application/xml; charset=utf-8");
+          return resp;
+        };
+
+    try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
+      MultipartUploadHttpRequestManager multipartUploadHttpRequestManager =
+          MultipartUploadHttpRequestManager.createFrom(fakeHttpServer.getHttpStorageOptions());
+      CreateMultipartUploadRequest request =
+          CreateMultipartUploadRequest.builder()
+              .bucket("test-bucket")
+              .key("test-key")
+              .contentType("application/octet-stream")
+              .build();
+
+      multipartUploadHttpRequestManager.sendCreateMultipartUploadRequest(request);
     }
   }
 
