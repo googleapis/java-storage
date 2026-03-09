@@ -36,27 +36,30 @@ final class DirectDownloadCallable implements Callable<DownloadResult> {
 
   private final Storage.BlobSourceOption[] opts;
 
+  private final Path destPath;
+
   DirectDownloadCallable(
       Storage storage,
       BlobInfo originalBlob,
       ParallelDownloadConfig parallelDownloadConfig,
-      BlobSourceOption[] opts) {
+      BlobSourceOption[] opts,
+      Path destPath) {
     this.originalBlob = originalBlob;
     this.parallelDownloadConfig = parallelDownloadConfig;
     this.storage = storage;
     this.opts = opts;
+    this.destPath = destPath;
   }
 
   @Override
   public DownloadResult call() {
-    Path path = TransferManagerUtils.createDestPath(parallelDownloadConfig, originalBlob);
     long bytesCopied = -1L;
     try (ReadChannel rc =
             storage.reader(
                 BlobId.of(parallelDownloadConfig.getBucketName(), originalBlob.getName()), opts);
         FileChannel wc =
             FileChannel.open(
-                path,
+                destPath,
                 StandardOpenOption.WRITE,
                 StandardOpenOption.CREATE,
                 StandardOpenOption.TRUNCATE_EXISTING)) {
@@ -89,7 +92,7 @@ final class DirectDownloadCallable implements Callable<DownloadResult> {
     }
     DownloadResult result =
         DownloadResult.newBuilder(originalBlob, TransferStatus.SUCCESS)
-            .setOutputDestination(path.toAbsolutePath())
+            .setOutputDestination(destPath)
             .build();
     return result;
   }

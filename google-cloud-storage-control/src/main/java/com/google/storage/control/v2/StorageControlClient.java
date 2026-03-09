@@ -174,6 +174,26 @@ import javax.annotation.Generated;
  *       </td>
  *    </tr>
  *    <tr>
+ *      <td><p> DeleteFolderRecursive</td>
+ *      <td><p> Deletes a folder recursively. This operation is only applicable to a hierarchical namespace enabled bucket.</td>
+ *      <td>
+ *      <p>Request object method variants only take one parameter, a request object, which must be constructed before the call.</p>
+ *      <ul>
+ *           <li><p> deleteFolderRecursiveAsync(DeleteFolderRecursiveRequest request)
+ *      </ul>
+ *      <p>Methods that return long-running operations have "Async" method variants that return `OperationFuture`, which is used to track polling of the service.</p>
+ *      <ul>
+ *           <li><p> deleteFolderRecursiveAsync(FolderName name)
+ *           <li><p> deleteFolderRecursiveAsync(String name)
+ *      </ul>
+ *      <p>Callable method variants take no parameters and return an immutable API callable object, which can be used to initiate calls to the service.</p>
+ *      <ul>
+ *           <li><p> deleteFolderRecursiveOperationCallable()
+ *           <li><p> deleteFolderRecursiveCallable()
+ *      </ul>
+ *       </td>
+ *    </tr>
+ *    <tr>
  *      <td><p> GetStorageLayout</td>
  *      <td><p> Returns the storage layout configuration for a given bucket.</td>
  *      <td>
@@ -1448,6 +1468,167 @@ public class StorageControlClient implements BackgroundResource {
    */
   public final UnaryCallable<RenameFolderRequest, Operation> renameFolderCallable() {
     return stub.renameFolderCallable();
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Deletes a folder recursively. This operation is only applicable to a hierarchical namespace
+   * enabled bucket.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   FolderName name = FolderName.of("[PROJECT]", "[BUCKET]", "[FOLDER]");
+   *   storageControlClient.deleteFolderRecursiveAsync(name).get();
+   * }
+   * }</pre>
+   *
+   * @param name Required. Name of the folder being deleted, however all of its contents will be
+   *     deleted too. Format: `projects/{project}/buckets/{bucket}/folders/{folder}`
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final OperationFuture<Empty, DeleteFolderRecursiveMetadata> deleteFolderRecursiveAsync(
+      FolderName name) {
+    DeleteFolderRecursiveRequest request =
+        DeleteFolderRecursiveRequest.newBuilder()
+            .setName(name == null ? null : name.toString())
+            .build();
+    return deleteFolderRecursiveAsync(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Deletes a folder recursively. This operation is only applicable to a hierarchical namespace
+   * enabled bucket.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   String name = FolderName.of("[PROJECT]", "[BUCKET]", "[FOLDER]").toString();
+   *   storageControlClient.deleteFolderRecursiveAsync(name).get();
+   * }
+   * }</pre>
+   *
+   * @param name Required. Name of the folder being deleted, however all of its contents will be
+   *     deleted too. Format: `projects/{project}/buckets/{bucket}/folders/{folder}`
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final OperationFuture<Empty, DeleteFolderRecursiveMetadata> deleteFolderRecursiveAsync(
+      String name) {
+    DeleteFolderRecursiveRequest request =
+        DeleteFolderRecursiveRequest.newBuilder().setName(name).build();
+    return deleteFolderRecursiveAsync(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Deletes a folder recursively. This operation is only applicable to a hierarchical namespace
+   * enabled bucket.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   DeleteFolderRecursiveRequest request =
+   *       DeleteFolderRecursiveRequest.newBuilder()
+   *           .setName(FolderName.of("[PROJECT]", "[BUCKET]", "[FOLDER]").toString())
+   *           .setIfMetagenerationMatch(1043427781)
+   *           .setIfMetagenerationNotMatch(1025430873)
+   *           .setRequestId("requestId693933066")
+   *           .build();
+   *   storageControlClient.deleteFolderRecursiveAsync(request).get();
+   * }
+   * }</pre>
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final OperationFuture<Empty, DeleteFolderRecursiveMetadata> deleteFolderRecursiveAsync(
+      DeleteFolderRecursiveRequest request) {
+    return deleteFolderRecursiveOperationCallable().futureCall(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Deletes a folder recursively. This operation is only applicable to a hierarchical namespace
+   * enabled bucket.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   DeleteFolderRecursiveRequest request =
+   *       DeleteFolderRecursiveRequest.newBuilder()
+   *           .setName(FolderName.of("[PROJECT]", "[BUCKET]", "[FOLDER]").toString())
+   *           .setIfMetagenerationMatch(1043427781)
+   *           .setIfMetagenerationNotMatch(1025430873)
+   *           .setRequestId("requestId693933066")
+   *           .build();
+   *   OperationFuture<Empty, DeleteFolderRecursiveMetadata> future =
+   *       storageControlClient.deleteFolderRecursiveOperationCallable().futureCall(request);
+   *   // Do something.
+   *   future.get();
+   * }
+   * }</pre>
+   */
+  public final OperationCallable<DeleteFolderRecursiveRequest, Empty, DeleteFolderRecursiveMetadata>
+      deleteFolderRecursiveOperationCallable() {
+    return stub.deleteFolderRecursiveOperationCallable();
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Deletes a folder recursively. This operation is only applicable to a hierarchical namespace
+   * enabled bucket.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageControlClient storageControlClient = StorageControlClient.create()) {
+   *   DeleteFolderRecursiveRequest request =
+   *       DeleteFolderRecursiveRequest.newBuilder()
+   *           .setName(FolderName.of("[PROJECT]", "[BUCKET]", "[FOLDER]").toString())
+   *           .setIfMetagenerationMatch(1043427781)
+   *           .setIfMetagenerationNotMatch(1025430873)
+   *           .setRequestId("requestId693933066")
+   *           .build();
+   *   ApiFuture<Operation> future =
+   *       storageControlClient.deleteFolderRecursiveCallable().futureCall(request);
+   *   // Do something.
+   *   future.get();
+   * }
+   * }</pre>
+   */
+  public final UnaryCallable<DeleteFolderRecursiveRequest, Operation>
+      deleteFolderRecursiveCallable() {
+    return stub.deleteFolderRecursiveCallable();
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.

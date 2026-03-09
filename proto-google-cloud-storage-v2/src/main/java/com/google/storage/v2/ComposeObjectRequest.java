@@ -2254,6 +2254,41 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
         : objectChecksums_;
   }
 
+  public static final int DELETE_SOURCE_OBJECTS_FIELD_NUMBER = 11;
+  private boolean deleteSourceObjects_ = false;
+
+  /**
+   *
+   *
+   * <pre>
+   * Whether the source objects should be deleted in the compose request.
+   * </pre>
+   *
+   * <code>optional bool delete_source_objects = 11;</code>
+   *
+   * @return Whether the deleteSourceObjects field is set.
+   */
+  @java.lang.Override
+  public boolean hasDeleteSourceObjects() {
+    return ((bitField0_ & 0x00000020) != 0);
+  }
+
+  /**
+   *
+   *
+   * <pre>
+   * Whether the source objects should be deleted in the compose request.
+   * </pre>
+   *
+   * <code>optional bool delete_source_objects = 11;</code>
+   *
+   * @return The deleteSourceObjects.
+   */
+  @java.lang.Override
+  public boolean getDeleteSourceObjects() {
+    return deleteSourceObjects_;
+  }
+
   private byte memoizedIsInitialized = -1;
 
   @java.lang.Override
@@ -2292,6 +2327,9 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
     if (((bitField0_ & 0x00000010) != 0)) {
       output.writeMessage(10, getObjectChecksums());
     }
+    if (((bitField0_ & 0x00000020) != 0)) {
+      output.writeBool(11, deleteSourceObjects_);
+    }
     getUnknownFields().writeTo(output);
   }
 
@@ -2326,6 +2364,9 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
     }
     if (((bitField0_ & 0x00000010) != 0)) {
       size += com.google.protobuf.CodedOutputStream.computeMessageSize(10, getObjectChecksums());
+    }
+    if (((bitField0_ & 0x00000020) != 0)) {
+      size += com.google.protobuf.CodedOutputStream.computeBoolSize(11, deleteSourceObjects_);
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -2367,6 +2408,10 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
     if (hasObjectChecksums()) {
       if (!getObjectChecksums().equals(other.getObjectChecksums())) return false;
     }
+    if (hasDeleteSourceObjects() != other.hasDeleteSourceObjects()) return false;
+    if (hasDeleteSourceObjects()) {
+      if (getDeleteSourceObjects() != other.getDeleteSourceObjects()) return false;
+    }
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -2405,6 +2450,10 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
     if (hasObjectChecksums()) {
       hash = (37 * hash) + OBJECT_CHECKSUMS_FIELD_NUMBER;
       hash = (53 * hash) + getObjectChecksums().hashCode();
+    }
+    if (hasDeleteSourceObjects()) {
+      hash = (37 * hash) + DELETE_SOURCE_OBJECTS_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getDeleteSourceObjects());
     }
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
@@ -2584,6 +2633,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
         objectChecksumsBuilder_.dispose();
         objectChecksumsBuilder_ = null;
       }
+      deleteSourceObjects_ = false;
       return this;
     }
 
@@ -2665,6 +2715,10 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
             objectChecksumsBuilder_ == null ? objectChecksums_ : objectChecksumsBuilder_.build();
         to_bitField0_ |= 0x00000010;
       }
+      if (((from_bitField0_ & 0x00000100) != 0)) {
+        result.deleteSourceObjects_ = deleteSourceObjects_;
+        to_bitField0_ |= 0x00000020;
+      }
       result.bitField0_ |= to_bitField0_;
     }
 
@@ -2731,6 +2785,9 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
       }
       if (other.hasObjectChecksums()) {
         mergeObjectChecksums(other.getObjectChecksums());
+      }
+      if (other.hasDeleteSourceObjects()) {
+        setDeleteSourceObjects(other.getDeleteSourceObjects());
       }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
@@ -2818,6 +2875,12 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
                 bitField0_ |= 0x00000080;
                 break;
               } // case 82
+            case 88:
+              {
+                deleteSourceObjects_ = input.readBool();
+                bitField0_ |= 0x00000100;
+                break;
+              } // case 88
             default:
               {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
@@ -4338,6 +4401,78 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
         objectChecksums_ = null;
       }
       return objectChecksumsBuilder_;
+    }
+
+    private boolean deleteSourceObjects_;
+
+    /**
+     *
+     *
+     * <pre>
+     * Whether the source objects should be deleted in the compose request.
+     * </pre>
+     *
+     * <code>optional bool delete_source_objects = 11;</code>
+     *
+     * @return Whether the deleteSourceObjects field is set.
+     */
+    @java.lang.Override
+    public boolean hasDeleteSourceObjects() {
+      return ((bitField0_ & 0x00000100) != 0);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Whether the source objects should be deleted in the compose request.
+     * </pre>
+     *
+     * <code>optional bool delete_source_objects = 11;</code>
+     *
+     * @return The deleteSourceObjects.
+     */
+    @java.lang.Override
+    public boolean getDeleteSourceObjects() {
+      return deleteSourceObjects_;
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Whether the source objects should be deleted in the compose request.
+     * </pre>
+     *
+     * <code>optional bool delete_source_objects = 11;</code>
+     *
+     * @param value The deleteSourceObjects to set.
+     * @return This builder for chaining.
+     */
+    public Builder setDeleteSourceObjects(boolean value) {
+
+      deleteSourceObjects_ = value;
+      bitField0_ |= 0x00000100;
+      onChanged();
+      return this;
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Whether the source objects should be deleted in the compose request.
+     * </pre>
+     *
+     * <code>optional bool delete_source_objects = 11;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearDeleteSourceObjects() {
+      bitField0_ = (bitField0_ & ~0x00000100);
+      deleteSourceObjects_ = false;
+      onChanged();
+      return this;
     }
 
     // @@protoc_insertion_point(builder_scope:google.storage.v2.ComposeObjectRequest)

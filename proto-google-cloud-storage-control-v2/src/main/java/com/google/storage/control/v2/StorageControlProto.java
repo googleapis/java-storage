@@ -73,6 +73,10 @@ public final class StorageControlProto extends com.google.protobuf.GeneratedFile
   static final com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_google_storage_control_v2_RenameFolderRequest_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_google_storage_control_v2_DeleteFolderRecursiveRequest_descriptor;
+  static final com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_google_storage_control_v2_DeleteFolderRecursiveRequest_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
       internal_static_google_storage_control_v2_CommonLongRunningOperationMetadata_descriptor;
   static final com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_google_storage_control_v2_CommonLongRunningOperationMetadata_fieldAccessorTable;
@@ -80,6 +84,10 @@ public final class StorageControlProto extends com.google.protobuf.GeneratedFile
       internal_static_google_storage_control_v2_RenameFolderMetadata_descriptor;
   static final com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_google_storage_control_v2_RenameFolderMetadata_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_google_storage_control_v2_DeleteFolderRecursiveMetadata_descriptor;
+  static final com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_google_storage_control_v2_DeleteFolderRecursiveMetadata_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
       internal_static_google_storage_control_v2_StorageLayout_descriptor;
   static final com.google.protobuf.GeneratedMessage.FieldAccessorTable
@@ -289,6 +297,15 @@ public final class StorageControlProto extends com.google.protobuf.GeneratedFile
           + "\033if_metageneration_not_match\030\005 \001(\003H\001\210\001\001\022\037\n\n"
           + "request_id\030\006 \001(\tB\013\340A\001\342\214\317\327\010\002\010\001B\032\n"
           + "\030_if_metageneration_matchB\036\n"
+          + "\034_if_metageneration_not_match\"\212\002\n"
+          + "\034DeleteFolderRecursiveRequest\0223\n"
+          + "\004name\030\001 \001(\tB%\340A\002\372A\037\n"
+          + "\035storage.googleapis.com/Folder\022)\n"
+          + "\027if_metageneration_match\030\002 \001(\003B\003\340A\001H\000\210\001\001\022-\n"
+          + "\033if_metageneration_not_match\030\003"
+          + " \001(\003B\003\340A\001H\001\210\001\001\022\037\n\n"
+          + "request_id\030\004 \001(\tB\013\340A\001\342\214\317\327\010\002\010\001B\032\n"
+          + "\030_if_metageneration_matchB\036\n"
           + "\034_if_metageneration_not_match\"\232\002\n"
           + "\"CommonLongRunningOperationMetadata\0224\n"
           + "\013create_time\030\001 \001(\0132\032.google.protobuf.TimestampB\003\340A\003\0221\n"
@@ -299,24 +316,28 @@ public final class StorageControlProto extends com.google.protobuf.GeneratedFile
           + "\026requested_cancellation\030\005 \001(\010B\003\340A\003\022\035\n"
           + "\020progress_percent\030\006 \001(\005B\003\340A\003\"\247\001\n"
           + "\024RenameFolderMetadata\022V\n"
-          + "\017common_metadata\030\001 \001(\0132=.google.storage.cont"
-          + "rol.v2.CommonLongRunningOperationMetadata\022\030\n"
+          + "\017common_metadata\030\001"
+          + " \001(\0132=.google.storage.control.v2.CommonLongRunningOperationMetadata\022\030\n"
           + "\020source_folder_id\030\002 \001(\t\022\035\n"
-          + "\025destination_folder_id\030\003 \001(\t\"\370\003\n\r"
+          + "\025destination_folder_id\030\003 \001(\t\"\212\001\n"
+          + "\035DeleteFolderRecursiveMetadata\022V\n"
+          + "\017common_metadata\030\001 \001(\0132=.google.stor"
+          + "age.control.v2.CommonLongRunningOperationMetadata\022\021\n"
+          + "\tfolder_id\030\002 \001(\t\"\370\003\n\r"
           + "StorageLayout\022\021\n"
           + "\004name\030\001 \001(\tB\003\340A\003\022\025\n"
           + "\010location\030\002 \001(\tB\003\340A\003\022\032\n\r"
           + "location_type\030\003 \001(\tB\003\340A\003\022d\n"
-          + "\027custom_placement_config\030\004 \001(\0132>.google.storage.con"
-          + "trol.v2.StorageLayout.CustomPlacementConfigB\003\340A\003\022c\n"
-          + "\026hierarchical_namespace\030\005 \001(\013"
-          + "2>.google.storage.control.v2.StorageLayout.HierarchicalNamespaceB\003\340A\003\032/\n"
+          + "\027custom_placement_config\030\004 \001(\0132>.google.s"
+          + "torage.control.v2.StorageLayout.CustomPlacementConfigB\003\340A\003\022c\n"
+          + "\026hierarchical_namespace\030\005 \001(\0132>.google.storage.control.v2.S"
+          + "torageLayout.HierarchicalNamespaceB\003\340A\003\032/\n"
           + "\025CustomPlacementConfig\022\026\n"
           + "\016data_locations\030\001 \003(\t\032(\n"
           + "\025HierarchicalNamespace\022\017\n"
           + "\007enabled\030\001 \001(\010:{\352Ax\n"
-          + "$storage.googleapis.com/StorageLay"
-          + "out\0221projects/{project}/buckets/{bucket}/storageLayout*\016storageLayouts2\r"
+          + "$storage.googleapis.com/StorageLayout\0221projects/{project}/bucket"
+          + "s/{bucket}/storageLayout*\016storageLayouts2\r"
           + "storageLayout\"\206\001\n"
           + "\027GetStorageLayoutRequest\022:\n"
           + "\004name\030\001 \001(\tB,\340A\002\372A&\n"
@@ -327,10 +348,10 @@ public final class StorageControlProto extends com.google.protobuf.GeneratedFile
           + "\004name\030\001 \001(\tB\003\340A\010\022\033\n"
           + "\016metageneration\030\003 \001(\003B\003\340A\003\0224\n"
           + "\013create_time\030\004 \001(\0132\032.google.protobuf.TimestampB\003\340A\003\0224\n"
-          + "\013update_time\030\005 "
-          + "\001(\0132\032.google.protobuf.TimestampB\003\340A\003:\221\001\352A\215\001\n"
-          + "$storage.googleapis.com/ManagedFolder\022Fprojects/{project}/buckets/{bucket}/m"
-          + "anagedFolders/{managed_folder=**}*\016managedFolders2\r"
+          + "\013update_time\030\005"
+          + " \001(\0132\032.google.protobuf.TimestampB\003\340A\003:\221\001\352A\215\001\n"
+          + "$storage.googleapis.com/ManagedFolder\022Fprojects/{project}/buckets/"
+          + "{bucket}/managedFolders/{managed_folder=**}*\016managedFolders2\r"
           + "managedFolder\"\202\002\n"
           + "\027GetManagedFolderRequest\022:\n"
           + "\004name\030\006 \001(\tB,\340A\002\372A&\n"
@@ -343,8 +364,8 @@ public final class StorageControlProto extends com.google.protobuf.GeneratedFile
           + "\032CreateManagedFolderRequest\022<\n"
           + "\006parent\030\001 \001("
           + "\tB,\340A\002\372A&\022$storage.googleapis.com/ManagedFolder\022E\n"
-          + "\016managed_folder\030\002 \001"
-          + "(\0132(.google.storage.control.v2.ManagedFolderB\003\340A\002\022\036\n"
+          + "\016managed_folder\030\002"
+          + " \001(\0132(.google.storage.control.v2.ManagedFolderB\003\340A\002\022\036\n"
           + "\021managed_folder_id\030\003 \001(\tB\003\340A\002\022\037\n\n"
           + "request_id\030\004 \001(\tB\013\340A\001\342\214\317\327\010\002\010\001\"\236\002\n"
           + "\032DeleteManagedFolderRequest\022:\n"
@@ -368,8 +389,8 @@ public final class StorageControlProto extends com.google.protobuf.GeneratedFile
           + " \003(\0132(.google.storage.control.v2.ManagedFolder\022\027\n"
           + "\017next_page_token\030\002 \001(\t\"\260\002\n"
           + "\033CreateAnywhereCacheMetadata\022V\n"
-          + "\017common_metadata\030\001 \001(\0132=.google.storage.contr"
-          + "ol.v2.CommonLongRunningOperationMetadata\022\036\n"
+          + "\017common_metadata\030\001 \001(\0132=.google.sto"
+          + "rage.control.v2.CommonLongRunningOperationMetadata\022\036\n"
           + "\021anywhere_cache_id\030\002 \001(\tH\000\210\001\001\022\021\n"
           + "\004zone\030\006 \001(\tH\001\210\001\001\022+\n"
           + "\003ttl\030\003 \001(\0132\031.google.protobuf.DurationH\002\210\001\001\022\035\n"
@@ -400,14 +421,14 @@ public final class StorageControlProto extends com.google.protobuf.GeneratedFile
           + "\013update_time\030\007"
           + " \001(\0132\032.google.protobuf.TimestampB\003\340A\003\022\033\n"
           + "\016pending_update\030\010 \001(\010B\003\340A\003:\216\001\352A\212\001\n"
-          + "$storage.googleapis.com/AnywhereCache\022Cprojects/{project}/b"
-          + "uckets/{bucket}/anywhereCaches/{anywhere_cache}*\016anywhereCaches2\r"
+          + "$storage.googleapis.com/AnywhereCache\022Cprojects/{"
+          + "project}/buckets/{bucket}/anywhereCaches/{anywhere_cache}*\016anywhereCaches2\r"
           + "anywhereCache\"\302\001\n"
           + "\032CreateAnywhereCacheRequest\022<\n"
           + "\006parent\030\001 \001("
           + "\tB,\340A\002\372A&\022$storage.googleapis.com/AnywhereCache\022E\n"
-          + "\016anywhere_cache\030\003 \001(\0132(.go"
-          + "ogle.storage.control.v2.AnywhereCacheB\003\340A\002\022\037\n\n"
+          + "\016anywhere_cache\030\003"
+          + " \001(\0132(.google.storage.control.v2.AnywhereCacheB\003\340A\002\022\037\n\n"
           + "request_id\030\004 \001(\tB\013\340A\001\342\214\317\327\010\002\010\001\"\272\001\n"
           + "\032UpdateAnywhereCacheRequest\022E\n"
           + "\016anywhere_cache\030\001"
@@ -421,8 +442,7 @@ public final class StorageControlProto extends com.google.protobuf.GeneratedFile
           + "request_id\030\002 \001(\tB\013\340A\001\342\214\317\327\010\002\010\001\"x\n"
           + "\031PauseAnywhereCacheRequest\022:\n"
           + "\004name\030\001 \001(\tB,\340A\002\372A&\n"
-          + "$storage.googleapis.com/AnywhereCache\022\037\n"
-          + "\n"
+          + "$storage.googleapis.com/AnywhereCache\022\037\n\n"
           + "request_id\030\002 \001(\tB\013\340A\001\342\214\317\327\010\002\010\001\"y\n"
           + "\032ResumeAnywhereCacheRequest\022:\n"
           + "\004name\030\001 \001(\tB,\340A\002\372A&\n"
@@ -433,8 +453,8 @@ public final class StorageControlProto extends com.google.protobuf.GeneratedFile
           + "$storage.googleapis.com/AnywhereCache\022\037\n\n"
           + "request_id\030\002 \001(\tB\013\340A\001\342\214\317\327\010\002\010\001\"\241\001\n"
           + "\031ListAnywhereCachesRequest\022<\n"
-          + "\006parent\030\001 \001(\tB"
-          + ",\340A\002\372A&\022$storage.googleapis.com/AnywhereCache\022\021\n"
+          + "\006parent\030\001 \001("
+          + "\tB,\340A\002\372A&\022$storage.googleapis.com/AnywhereCache\022\021\n"
           + "\tpage_size\030\002 \001(\005\022\022\n\n"
           + "page_token\030\003 \001(\t\022\037\n\n"
           + "request_id\030\004 \001(\tB\013\340A\001\342\214\317\327\010\002\010\001\"x\n"
@@ -444,24 +464,26 @@ public final class StorageControlProto extends com.google.protobuf.GeneratedFile
           + "\017next_page_token\030\002 \001(\t\"\216\016\n"
           + "\022IntelligenceConfig\022\021\n"
           + "\004name\030\001 \001(\tB\003\340A\010\022X\n"
-          + "\016edition_config\030\002 \001(\0162;.google.stora"
-          + "ge.control.v2.IntelligenceConfig.EditionConfigB\003\340A\001\0224\n"
+          + "\016edition_config\030\002 \001(\0162;.go"
+          + "ogle.storage.control.v2.IntelligenceConfig.EditionConfigB\003\340A\001\0224\n"
           + "\013update_time\030\003 \001(\0132\032.google.protobuf.TimestampB\003\340A\003\022I\n"
-          + "\006filter\030\004 \001("
-          + "\01324.google.storage.control.v2.IntelligenceConfig.FilterB\003\340A\001\022u\n"
-          + "\035effective_intelligence_config\030\005 \001(\0132I.google.storage.con"
-          + "trol.v2.IntelligenceConfig.EffectiveIntelligenceConfigB\003\340A\003\022O\n"
-          + "\014trial_config\030\007 \001("
-          + "\01329.google.storage.control.v2.IntelligenceConfig.TrialConfig\032\374\004\n"
+          + "\006filter\030\004"
+          + " \001(\01324.google.storage.control.v2.IntelligenceConfig.FilterB\003\340A\001\022u\n"
+          + "\035effective_intelligence_config\030\005 \001(\0132I.google.s"
+          + "torage.control.v2.IntelligenceConfig.EffectiveIntelligenceConfigB\003\340A\003\022O\n"
+          + "\014trial_config\030\007"
+          + " \001(\01329.google.storage.control.v2.IntelligenceConfig.TrialConfig\032\374\004\n"
           + "\006Filter\022v\n"
-          + " included_cloud_storage_locations\030\001 \001(\0132J.goog"
-          + "le.storage.control.v2.IntelligenceConfig.Filter.CloudStorageLocationsH\000\022v\n"
-          + " excluded_cloud_storage_locations\030\002 \001(\0132J.goog"
-          + "le.storage.control.v2.IntelligenceConfig.Filter.CloudStorageLocationsH\000\022r\n"
-          + "\036included_cloud_storage_buckets\030\003 \001(\0132H.google"
-          + ".storage.control.v2.IntelligenceConfig.Filter.CloudStorageBucketsH\001\022r\n"
-          + "\036excluded_cloud_storage_buckets\030\004 \001(\0132H.google.sto"
-          + "rage.control.v2.IntelligenceConfig.Filter.CloudStorageBucketsH\001\032/\n"
+          + " included_cloud_storage_locations\030\001 "
+          + "\001(\0132J.google.storage.control.v2.Intellig"
+          + "enceConfig.Filter.CloudStorageLocationsH\000\022v\n"
+          + " excluded_cloud_storage_locations\030\002 "
+          + "\001(\0132J.google.storage.control.v2.Intellig"
+          + "enceConfig.Filter.CloudStorageLocationsH\000\022r\n"
+          + "\036included_cloud_storage_buckets\030\003 \001("
+          + "\0132H.google.storage.control.v2.IntelligenceConfig.Filter.CloudStorageBucketsH\001\022r\n"
+          + "\036excluded_cloud_storage_buckets\030\004 \001(\0132H."
+          + "google.storage.control.v2.IntelligenceConfig.Filter.CloudStorageBucketsH\001\032/\n"
           + "\025CloudStorageLocations\022\026\n"
           + "\tlocations\030\001 \003(\tB\003\340A\001\0325\n"
           + "\023CloudStorageBuckets\022\036\n"
@@ -469,26 +491,25 @@ public final class StorageControlProto extends com.google.protobuf.GeneratedFile
           + "\027cloud_storage_locationsB\027\n"
           + "\025cloud_storage_buckets\032\212\002\n"
           + "\033EffectiveIntelligenceConfig\022z\n"
-          + "\021effective_edition\030\001 \001(\0162Z.google.storage.control.v2.IntelligenceC"
-          + "onfig.EffectiveIntelligenceConfig.EffectiveEditionB\003\340A\003\022 \n"
+          + "\021effective_edition\030\001 \001(\0162Z.google.storage.control.v2.Int"
+          + "elligenceConfig.EffectiveIntelligenceConfig.EffectiveEditionB\003\340A\003\022 \n"
           + "\023intelligence_config\030\002 \001(\tB\003\340A\003\"M\n"
           + "\020EffectiveEdition\022!\n"
           + "\035EFFECTIVE_EDITION_UNSPECIFIED\020\000\022\010\n"
           + "\004NONE\020\001\022\014\n"
           + "\010STANDARD\020\002\032C\n"
           + "\013TrialConfig\0224\n"
-          + "\013expire_time\030\003 \001(\0132\032.google.protobuf.TimestampB\003\340A\003\"c\n"
-          + "\r"
+          + "\013expire_time\030\003 \001(\0132\032.google.protobuf.TimestampB\003\340A\003\"c\n\r"
           + "EditionConfig\022\036\n"
           + "\032EDITION_CONFIG_UNSPECIFIED\020\000\022\013\n"
           + "\007INHERIT\020\001\022\014\n"
           + "\010DISABLED\020\002\022\014\n"
           + "\010STANDARD\020\003\022\t\n"
           + "\005TRIAL\020\005:\213\002\352A\207\002\n"
-          + ")storage.googleapis.com/IntelligenceConfig\0228folders/{f"
-          + "older}/locations/{location}/intelligenceConfig\022;organizations/{org}/locations/{l"
-          + "ocation}/intelligenceConfig\022:projects/{project}/locations/{location}/intelligenc"
-          + "eConfig*\023intelligenceConfigs2\022intelligenceConfig\"\325\001\n"
+          + ")storage.googleapis.com/IntelligenceConfig\0228"
+          + "folders/{folder}/locations/{location}/intelligenceConfig\022;organizations/{org}/lo"
+          + "cations/{location}/intelligenceConfig\022:projects/{project}/locations/{location}/i"
+          + "ntelligenceConfig*\023intelligenceConfigs2\022intelligenceConfig\"\325\001\n"
           + "+UpdateOrganizationIntelligenceConfigRequest\022O\n"
           + "\023intelligence_config\030\001"
           + " \001(\0132-.google.storage.control.v2.IntelligenceConfigB\003\340A\002\0224\n"
@@ -502,8 +523,8 @@ public final class StorageControlProto extends com.google.protobuf.GeneratedFile
           + " \001(\0132\032.google.protobuf.FieldMaskB\003\340A\002\022\037\n\n"
           + "request_id\030\003 \001(\tB\013\340A\001\342\214\317\327\010\002\010\001\"\320\001\n"
           + "&UpdateProjectIntelligenceConfigRequest\022O\n"
-          + "\023intelligence_config\030\001 \001(\0132-.google.stor"
-          + "age.control.v2.IntelligenceConfigB\003\340A\002\0224\n"
+          + "\023intelligence_config\030\001 \001(\0132-.g"
+          + "oogle.storage.control.v2.IntelligenceConfigB\003\340A\002\0224\n"
           + "\013update_mask\030\002"
           + " \001(\0132\032.google.protobuf.FieldMaskB\003\340A\002\022\037\n\n"
           + "request_id\030\003 \001(\tB\013\340A\001\342\214\317\327\010\002\010\001\"k\n"
@@ -515,123 +536,131 @@ public final class StorageControlProto extends com.google.protobuf.GeneratedFile
           + ")storage.googleapis.com/IntelligenceConfig\"f\n"
           + "#GetProjectIntelligenceConfigRequest\022?\n"
           + "\004name\030\001 \001(\tB1\340A\002\372A+\n"
-          + ")storage.googleapis.com/IntelligenceConfig2\356*\n"
+          + ")storage.googleapis.com/IntelligenceConfig2\322,\n"
           + "\016StorageControl\022\232\001\n"
-          + "\014CreateFolder\022..google.storage.control.v2.CreateFolderRe"
-          + "quest\032!.google.storage.control.v2.Folder\"7\332A\027parent,folder,folder_id\212\323\344\223\002\027\022\025\n"
+          + "\014CreateFolder\022..google.storage.control.v2.Crea"
+          + "teFolderRequest\032!.google.storage.control"
+          + ".v2.Folder\"7\332A\027parent,folder,folder_id\212\323\344\223\002\027\022\025\n"
           + "\006parent\022\013{bucket=**}\022\217\001\n"
-          + "\014DeleteFolder\022..google.storage.control.v2.DeleteFolderReque"
-          + "st\032\026.google.protobuf.Empty\"7\332A\004name\212\323\344\223\002*\022(\n"
+          + "\014DeleteFolder\022..google.storage.control.v2.DeleteF"
+          + "olderRequest\032\026.google.protobuf.Empty\"7\332A\004name\212\323\344\223\002*\022(\n"
           + "\004name\022 {bucket=projects/*/buckets/*}/**\022\224\001\n"
-          + "\tGetFolder\022+.google.storage.contr"
-          + "ol.v2.GetFolderRequest\032!.google.storage.control.v2.Folder\"7\332A\004name\212\323\344\223\002*\022(\n"
+          + "\tGetFolder\022+.google.storage.control.v2.GetFolderRequest\032!.googl"
+          + "e.storage.control.v2.Folder\"7\332A\004name\212\323\344\223\002*\022(\n"
           + "\004name\022 {bucket=projects/*/buckets/*}/**\022\224\001\n"
-          + "\013ListFolders\022-.google.storage.control.v2.L"
-          + "istFoldersRequest\032..google.storage.contr"
-          + "ol.v2.ListFoldersResponse\"&\332A\006parent\212\323\344\223\002\027\022\025\n"
+          + "\013ListFolders\022-.google.storage.control.v2.ListFoldersRequest\032..google.sto"
+          + "rage.control.v2.ListFoldersResponse\"&\332A\006parent\212\323\344\223\002\027\022\025\n"
           + "\006parent\022\013{bucket=**}\022\315\001\n"
-          + "\014RenameFolder\022..google.storage.control.v2.RenameFol"
-          + "derRequest\032\035.google.longrunning.Operation\"n\312A\036\n"
-          + "\006Folder\022\024RenameFolderMetadata\332A\032name,destination_folder_id\212\323\344\223\002*\022(\n"
+          + "\014RenameFolder\022..google.storage.control.v2"
+          + ".RenameFolderRequest\032\035.google.longrunning.Operation\"n\312A\036\n"
+          + "\006Folder\022\024RenameFolderMe"
+          + "tadata\332A\032name,destination_folder_id\212\323\344\223\002*\022(\n"
+          + "\004name\022 {bucket=projects/*/buckets/*}/**\022\341\001\n"
+          + "\025DeleteFolderRecursive\0227.google.storage.control.v2.DeleteFolderRecursiveR"
+          + "equest\032\035.google.longrunning.Operation\"p\312A6\n"
+          + "\025google.protobuf.Empty\022\035DeleteFolderRecursiveMetadata\332A\004name\212\323\344\223\002*\022(\n"
           + "\004name\022 {bucket=projects/*/buckets/*}/**\022\251\001\n"
-          + "\020GetStorageLayout\0222.google.storage.control."
-          + "v2.GetStorageLayoutRequest\032(.google.stor"
-          + "age.control.v2.StorageLayout\"7\332A\004name\212\323\344\223\002*\022(\n"
+          + "\020GetStorageLayout\0222.google.storage.control.v2"
+          + ".GetStorageLayoutRequest\032(.google.storag"
+          + "e.control.v2.StorageLayout\"7\332A\004name\212\323\344\223\002*\022(\n"
           + "\004name\022 {bucket=projects/*/buckets/*}/**\022\277\001\n"
-          + "\023CreateManagedFolder\0225.google.storage.control.v2.CreateManagedFolderReq"
-          + "uest\032(.google.storage.control.v2.Managed"
-          + "Folder\"G\332A\'parent,managed_folder,managed_folder_id\212\323\344\223\002\027\022\025\n"
+          + "\023CreateManagedFolder\0225.google.storage.control.v2.CreateManagedFolderReque"
+          + "st\032(.google.storage.control.v2.ManagedFo"
+          + "lder\"G\332A\'parent,managed_folder,managed_folder_id\212\323\344\223\002\027\022\025\n"
           + "\006parent\022\013{bucket=**}\022\235\001\n"
-          + "\023DeleteManagedFolder\0225.google.storage"
-          + ".control.v2.DeleteManagedFolderRequest\032\026.google.protobuf.Empty\"7\332A\004name\212\323\344\223\002*\022(\n"
+          + "\023DeleteManagedFolder\0225.google.storage.c"
+          + "ontrol.v2.DeleteManagedFolderRequest\032\026.google.protobuf.Empty\"7\332A\004name\212\323\344\223\002*\022(\n"
           + "\004name\022 {bucket=projects/*/buckets/*}/**\022\251\001\n"
-          + "\020GetManagedFolder\0222.google.storage.control.v2.GetManagedFolderRequest\032(.googl"
-          + "e.storage.control.v2.ManagedFolder\"7\332A\004name\212\323\344\223\002*\022(\n"
+          + "\020GetManagedFolder\0222.google.storage.cont"
+          + "rol.v2.GetManagedFolderRequest\032(.google."
+          + "storage.control.v2.ManagedFolder\"7\332A\004name\212\323\344\223\002*\022(\n"
           + "\004name\022 {bucket=projects/*/buckets/*}/**\022\251\001\n"
-          + "\022ListManagedFolders\0224.google.storage.control.v2.ListManagedFolder"
-          + "sRequest\0325.google.storage.control.v2.Lis"
-          + "tManagedFoldersResponse\"&\332A\006parent\212\323\344\223\002\027\022\025\n"
+          + "\022ListManagedFolders\0224.google.storage.control.v2.ListManagedFoldersR"
+          + "equest\0325.google.storage.control.v2.ListM"
+          + "anagedFoldersResponse\"&\332A\006parent\212\323\344\223\002\027\022\025\n"
           + "\006parent\022\013{bucket=**}\022\321\001\n"
-          + "\023CreateAnywhereCache\0225.google.storage.control.v2.Crea"
-          + "teAnywhereCacheRequest\032\035.google.longrunning.Operation\"d\312A,\n\r"
-          + "AnywhereCache\022\033Creat"
-          + "eAnywhereCacheMetadata\332A\025parent,anywhere_cache\212\323\344\223\002\027\022\025\n"
+          + "\023CreateAnywhereCache\0225.google.storage.control.v2.Create"
+          + "AnywhereCacheRequest\032\035.google.longrunning.Operation\"d\312A,\n\r"
+          + "AnywhereCache\022\033CreateA"
+          + "nywhereCacheMetadata\332A\025parent,anywhere_cache\212\323\344\223\002\027\022\025\n"
           + "\006parent\022\013{bucket=**}\022\371\001\n"
-          + "\023UpdateAnywhereCache\0225.google.storage.con"
-          + "trol.v2.UpdateAnywhereCacheRequest\032\035.google.longrunning.Operation\"\213\001\312A,\n\r"
-          + "Anywher"
-          + "eCache\022\033UpdateAnywhereCacheMetadata\332A\032anywhere_cache,update_mask\212\323\344\223\0029\0227\n"
+          + "\023UpdateAnywhereCache\0225.google.storage.contr"
+          + "ol.v2.UpdateAnywhereCacheRequest\032\035.google.longrunning.Operation\"\213\001\312A,\n\r"
+          + "AnywhereC"
+          + "ache\022\033UpdateAnywhereCacheMetadata\332A\032anywhere_cache,update_mask\212\323\344\223\0029\0227\n"
           + "\023anywhere_cache.name\022 {bucket=projects/*/buckets/*}/**\022\261\001\n"
-          + "\024DisableAnywhereCache\0226.google.storage.control.v2.DisableAnywhereCach"
-          + "eRequest\032(.google.storage.control.v2.AnywhereCache\"7\332A\004name\212\323\344\223\002*\022(\n"
+          + "\024DisableAnywhereCache\0226.google.storage.control.v2.DisableAnywhereCacheR"
+          + "equest\032(.google.storage.control.v2.AnywhereCache\"7\332A\004name\212\323\344\223\002*\022(\n"
           + "\004name\022 {bucket=projects/*/buckets/*}/**\022\255\001\n"
-          + "\022PauseAnywhereCache\0224.google.storage.control.v2.P"
-          + "auseAnywhereCacheRequest\032(.google.storag"
-          + "e.control.v2.AnywhereCache\"7\332A\004name\212\323\344\223\002*\022(\n"
+          + "\022PauseAnywhereCache\0224.google.storage.control.v2.Pau"
+          + "seAnywhereCacheRequest\032(.google.storage."
+          + "control.v2.AnywhereCache\"7\332A\004name\212\323\344\223\002*\022(\n"
           + "\004name\022 {bucket=projects/*/buckets/*}/**\022\257\001\n"
-          + "\023ResumeAnywhereCache\0225.google.storage.control.v2.ResumeAnywhereCacheReque"
-          + "st\032(.google.storage.control.v2.AnywhereCache\"7\332A\004name\212\323\344\223\002*\022(\n"
+          + "\023ResumeAnywhereCache\0225.google.storage.control.v2.ResumeAnywhereCacheRequest"
+          + "\032(.google.storage.control.v2.AnywhereCache\"7\332A\004name\212\323\344\223\002*\022(\n"
           + "\004name\022 {bucket=projects/*/buckets/*}/**\022\251\001\n"
-          + "\020GetAnywhereCache\0222.google.storage.control.v2.GetAnywhe"
-          + "reCacheRequest\032(.google.storage.control.v2.AnywhereCache\"7\332A\004name\212\323\344\223\002*\022(\n"
+          + "\020GetAnywhereCache\0222.google.storage.control.v2.GetAnywhere"
+          + "CacheRequest\032(.google.storage.control.v2.AnywhereCache\"7\332A\004name\212\323\344\223\002*\022(\n"
           + "\004name\022 {bucket=projects/*/buckets/*}/**\022\251\001\n"
-          + "\022ListAnywhereCaches\0224.google.storage.contro"
-          + "l.v2.ListAnywhereCachesRequest\0325.google."
-          + "storage.control.v2.ListAnywhereCachesResponse\"&\332A\006parent\212\323\344\223\002\027\022\025\n"
+          + "\022ListAnywhereCaches\0224.google.storage.control."
+          + "v2.ListAnywhereCachesRequest\0325.google.st"
+          + "orage.control.v2.ListAnywhereCachesResponse\"&\332A\006parent\212\323\344\223\002\027\022\025\n"
           + "\006parent\022\013{bucket=**}\022\322\001\n"
-          + "\034GetProjectIntelligenceConfig\022>.google.storage.control.v2.GetProjectInt"
-          + "elligenceConfigRequest\032-.google.storage."
-          + "control.v2.IntelligenceConfig\"C\332A\004name\202\323"
-          + "\344\223\0026\0224/v2/{name=projects/*/locations/*/intelligenceConfig}\022\235\002\n"
-          + "\037UpdateProjectIntelligenceConfig\022A.google.storage.control."
-          + "v2.UpdateProjectIntelligenceConfigRequest\032-.google.storage.control.v2.Intelligen"
-          + "ceConfig\"\207\001\332A\037intelligence_config,update"
-          + "_mask\202\323\344\223\002_2H/v2/{intelligence_config.na"
-          + "me=projects/*/locations/*/intelligenceConfig}:\023intelligence_config\022\317\001\n"
-          + "\033GetFolderIntelligenceConfig\022=.google.storage.cont"
-          + "rol.v2.GetFolderIntelligenceConfigRequest\032-.google.storage.control.v2.Intelligen"
-          + "ceConfig\"B\332A\004name\202\323\344\223\0025\0223/v2/{name=folders/*/locations/*/intelligenceConfig}\022\232\002\n"
-          + "\036UpdateFolderIntelligenceConfig\022@.google.storage.control.v2.UpdateFolderIntellig"
-          + "enceConfigRequest\032-.google.storage.contr"
-          + "ol.v2.IntelligenceConfig\"\206\001\332A\037intelligen"
-          + "ce_config,update_mask\202\323\344\223\002^2G/v2/{intell"
-          + "igence_config.name=folders/*/locations/*"
-          + "/intelligenceConfig}:\023intelligence_config\022\341\001\n"
-          + "!GetOrganizationIntelligenceConfig\022C.google.storage.control.v2.GetOrganizat"
-          + "ionIntelligenceConfigRequest\032-.google.st"
-          + "orage.control.v2.IntelligenceConfig\"H\332A\004"
-          + "name\202\323\344\223\002;\0229/v2/{name=organizations/*/locations/*/intelligenceConfig}\022\254\002\n"
-          + "$UpdateOrganizationIntelligenceConfig\022F.google."
-          + "storage.control.v2.UpdateOrganizationIntelligenceConfigRequest\032-.google.storage."
-          + "control.v2.IntelligenceConfig\"\214\001\332A\037intel"
-          + "ligence_config,update_mask\202\323\344\223\002d2M/v2/{i"
-          + "ntelligence_config.name=organizations/*/"
-          + "locations/*/intelligenceConfig}:\023intelligence_config\022\243\001\n"
-          + "\014GetIamPolicy\022\".google.i"
-          + "am.v1.GetIamPolicyRequest\032\025.google.iam.v1.Policy\"X\332A\010resource\212\323\344\223\002G\022\027\n"
+          + "\034GetProjectIntelligenceConfig\022>.google.storage.control.v2.GetProjectIntel"
+          + "ligenceConfigRequest\032-.google.storage.co"
+          + "ntrol.v2.IntelligenceConfig\"C\332A\004name\202\323\344\223"
+          + "\0026\0224/v2/{name=projects/*/locations/*/intelligenceConfig}\022\235\002\n"
+          + "\037UpdateProjectIntelligenceConfig\022A.google.storage.control.v2"
+          + ".UpdateProjectIntelligenceConfigRequest\032-.google.storage.control.v2.Intelligence"
+          + "Config\"\207\001\332A\037intelligence_config,update_m"
+          + "ask\202\323\344\223\002_2H/v2/{intelligence_config.name"
+          + "=projects/*/locations/*/intelligenceConfig}:\023intelligence_config\022\317\001\n"
+          + "\033GetFolderIntelligenceConfig\022=.google.storage.contro"
+          + "l.v2.GetFolderIntelligenceConfigRequest\032-.google.storage.control.v2.Intelligence"
+          + "Config\"B\332A\004name\202\323\344\223\0025\0223/v2/{name=folders/*/locations/*/intelligenceConfig}\022\232\002\n"
+          + "\036UpdateFolderIntelligenceConfig\022@.google.s"
+          + "torage.control.v2.UpdateFolderIntelligenceConfigRequest\032-.google.storage.control"
+          + ".v2.IntelligenceConfig\"\206\001\332A\037intelligence"
+          + "_config,update_mask\202\323\344\223\002^2G/v2/{intellig"
+          + "ence_config.name=folders/*/locations/*/i"
+          + "ntelligenceConfig}:\023intelligence_config\022\341\001\n"
+          + "!GetOrganizationIntelligenceConfig\022C.google.storage.control.v2.GetOrganizatio"
+          + "nIntelligenceConfigRequest\032-.google.stor"
+          + "age.control.v2.IntelligenceConfig\"H\332A\004na"
+          + "me\202\323\344\223\002;\0229/v2/{name=organizations/*/locations/*/intelligenceConfig}\022\254\002\n"
+          + "$UpdateOrganizationIntelligenceConfig\022F.google.st"
+          + "orage.control.v2.UpdateOrganizationIntelligenceConfigRequest\032-.google.storage.co"
+          + "ntrol.v2.IntelligenceConfig\"\214\001\332A\037intelli"
+          + "gence_config,update_mask\202\323\344\223\002d2M/v2/{int"
+          + "elligence_config.name=organizations/*/lo"
+          + "cations/*/intelligenceConfig}:\023intelligence_config\022\243\001\n"
+          + "\014GetIamPolicy\022\".google.iam"
+          + ".v1.GetIamPolicyRequest\032\025.google.iam.v1.Policy\"X\332A\010resource\212\323\344\223\002G\022\027\n"
           + "\010resource\022\013{bucket=**}\022,\n"
           + "\010resource\022 {bucket=projects/*/buckets/*}/**\022\252\001\n"
-          + "\014SetIamPolicy\022\".google.iam.v1.SetIamPolicyRequest\032\025.google"
-          + ".iam.v1.Policy\"_\332A\017resource,policy\212\323\344\223\002G\022\027\n"
+          + "\014SetIamPolicy\022\".google.iam.v1.SetIamPolicyRequest\032\025.google.i"
+          + "am.v1.Policy\"_\332A\017resource,policy\212\323\344\223\002G\022\027\n"
           + "\010resource\022\013{bucket=**}\022,\n"
           + "\010resource\022 {bucket=projects/*/buckets/*}/**\022\226\002\n"
-          + "\022TestIamPermissions\022(.google.iam.v1.TestIamPe"
-          + "rmissionsRequest\032).google.iam.v1.TestIam"
-          + "PermissionsResponse\"\252\001\332A\024resource,permissions\212\323\344\223\002\214\001\022\027\n"
+          + "\022TestIamPermissions\022(.google.iam.v1.TestIamPerm"
+          + "issionsRequest\032).google.iam.v1.TestIamPe"
+          + "rmissionsResponse\"\252\001\332A\024resource,permissions\212\323\344\223\002\214\001\022\027\n"
           + "\010resource\022\013{bucket=**}\0224\n"
           + "\010resource\022({bucket=projects/*/buckets/*}/objects/**\022;\n"
-          + "\010resource\022/{bucket=project"
-          + "s/*/buckets/*}/managedFolders/**\032\247\002\312A\026st"
-          + "orage.googleapis.com\322A\212\002https://www.goog"
-          + "leapis.com/auth/cloud-platform,https://www.googleapis.com/auth/cloud-platform.re"
-          + "ad-only,https://www.googleapis.com/auth/devstorage.full_control,https://www.goog"
-          + "leapis.com/auth/devstorage.read_only,htt"
-          + "ps://www.googleapis.com/auth/devstorage.read_writeB\246\002\n"
-          + "\035com.google.storage.control.v2B\023StorageControlProtoP\001Z=cloud.googl"
-          + "e.com/go/storage/control/apiv2/controlpb"
-          + ";controlpb\252\002\037Google.Cloud.Storage.Contro"
-          + "l.V2\312\002\037Google\\Cloud\\Storage\\Control\\V2\352\002#Google::Cloud::Storage::Control::V2\352AD\n"
-          + "\035storage.googleapis.com/Bucket\022#projects/{project}/buckets/{bucket}b\006proto3"
+          + "\010resource\022/{bucket=projects/"
+          + "*/buckets/*}/managedFolders/**\032\247\002\312A\026stor"
+          + "age.googleapis.com\322A\212\002https://www.google"
+          + "apis.com/auth/cloud-platform,https://www.googleapis.com/auth/cloud-platform.read"
+          + "-only,https://www.googleapis.com/auth/devstorage.full_control,https://www.google"
+          + "apis.com/auth/devstorage.read_only,https"
+          + "://www.googleapis.com/auth/devstorage.read_writeB\246\002\n"
+          + "\035com.google.storage.control.v2B\023StorageControlProtoP\001Z=cloud.google."
+          + "com/go/storage/control/apiv2/controlpb;c"
+          + "ontrolpb\252\002\037Google.Cloud.Storage.Control.",
+      "V2\312\002\037Google\\Cloud\\Storage\\Control\\V2\352\002#G"
+          + "oogle::Cloud::Storage::Control::V2\352AD\n\035s"
+          + "torage.googleapis.com/Bucket\022#projects/{"
+          + "project}/buckets/{bucket}b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -725,8 +754,16 @@ public final class StorageControlProto extends com.google.protobuf.GeneratedFile
               "IfMetagenerationNotMatch",
               "RequestId",
             });
-    internal_static_google_storage_control_v2_CommonLongRunningOperationMetadata_descriptor =
+    internal_static_google_storage_control_v2_DeleteFolderRecursiveRequest_descriptor =
         getDescriptor().getMessageType(8);
+    internal_static_google_storage_control_v2_DeleteFolderRecursiveRequest_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+            internal_static_google_storage_control_v2_DeleteFolderRecursiveRequest_descriptor,
+            new java.lang.String[] {
+              "Name", "IfMetagenerationMatch", "IfMetagenerationNotMatch", "RequestId",
+            });
+    internal_static_google_storage_control_v2_CommonLongRunningOperationMetadata_descriptor =
+        getDescriptor().getMessageType(9);
     internal_static_google_storage_control_v2_CommonLongRunningOperationMetadata_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessage.FieldAccessorTable(
             internal_static_google_storage_control_v2_CommonLongRunningOperationMetadata_descriptor,
@@ -739,15 +776,23 @@ public final class StorageControlProto extends com.google.protobuf.GeneratedFile
               "ProgressPercent",
             });
     internal_static_google_storage_control_v2_RenameFolderMetadata_descriptor =
-        getDescriptor().getMessageType(9);
+        getDescriptor().getMessageType(10);
     internal_static_google_storage_control_v2_RenameFolderMetadata_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessage.FieldAccessorTable(
             internal_static_google_storage_control_v2_RenameFolderMetadata_descriptor,
             new java.lang.String[] {
               "CommonMetadata", "SourceFolderId", "DestinationFolderId",
             });
+    internal_static_google_storage_control_v2_DeleteFolderRecursiveMetadata_descriptor =
+        getDescriptor().getMessageType(11);
+    internal_static_google_storage_control_v2_DeleteFolderRecursiveMetadata_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+            internal_static_google_storage_control_v2_DeleteFolderRecursiveMetadata_descriptor,
+            new java.lang.String[] {
+              "CommonMetadata", "FolderId",
+            });
     internal_static_google_storage_control_v2_StorageLayout_descriptor =
-        getDescriptor().getMessageType(10);
+        getDescriptor().getMessageType(12);
     internal_static_google_storage_control_v2_StorageLayout_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessage.FieldAccessorTable(
             internal_static_google_storage_control_v2_StorageLayout_descriptor,
@@ -771,7 +816,7 @@ public final class StorageControlProto extends com.google.protobuf.GeneratedFile
               "Enabled",
             });
     internal_static_google_storage_control_v2_GetStorageLayoutRequest_descriptor =
-        getDescriptor().getMessageType(11);
+        getDescriptor().getMessageType(13);
     internal_static_google_storage_control_v2_GetStorageLayoutRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessage.FieldAccessorTable(
             internal_static_google_storage_control_v2_GetStorageLayoutRequest_descriptor,
@@ -779,7 +824,7 @@ public final class StorageControlProto extends com.google.protobuf.GeneratedFile
               "Name", "Prefix", "RequestId",
             });
     internal_static_google_storage_control_v2_ManagedFolder_descriptor =
-        getDescriptor().getMessageType(12);
+        getDescriptor().getMessageType(14);
     internal_static_google_storage_control_v2_ManagedFolder_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessage.FieldAccessorTable(
             internal_static_google_storage_control_v2_ManagedFolder_descriptor,
@@ -787,7 +832,7 @@ public final class StorageControlProto extends com.google.protobuf.GeneratedFile
               "Name", "Metageneration", "CreateTime", "UpdateTime",
             });
     internal_static_google_storage_control_v2_GetManagedFolderRequest_descriptor =
-        getDescriptor().getMessageType(13);
+        getDescriptor().getMessageType(15);
     internal_static_google_storage_control_v2_GetManagedFolderRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessage.FieldAccessorTable(
             internal_static_google_storage_control_v2_GetManagedFolderRequest_descriptor,
@@ -795,7 +840,7 @@ public final class StorageControlProto extends com.google.protobuf.GeneratedFile
               "Name", "IfMetagenerationMatch", "IfMetagenerationNotMatch", "RequestId",
             });
     internal_static_google_storage_control_v2_CreateManagedFolderRequest_descriptor =
-        getDescriptor().getMessageType(14);
+        getDescriptor().getMessageType(16);
     internal_static_google_storage_control_v2_CreateManagedFolderRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessage.FieldAccessorTable(
             internal_static_google_storage_control_v2_CreateManagedFolderRequest_descriptor,
@@ -803,7 +848,7 @@ public final class StorageControlProto extends com.google.protobuf.GeneratedFile
               "Parent", "ManagedFolder", "ManagedFolderId", "RequestId",
             });
     internal_static_google_storage_control_v2_DeleteManagedFolderRequest_descriptor =
-        getDescriptor().getMessageType(15);
+        getDescriptor().getMessageType(17);
     internal_static_google_storage_control_v2_DeleteManagedFolderRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessage.FieldAccessorTable(
             internal_static_google_storage_control_v2_DeleteManagedFolderRequest_descriptor,
@@ -815,7 +860,7 @@ public final class StorageControlProto extends com.google.protobuf.GeneratedFile
               "RequestId",
             });
     internal_static_google_storage_control_v2_ListManagedFoldersRequest_descriptor =
-        getDescriptor().getMessageType(16);
+        getDescriptor().getMessageType(18);
     internal_static_google_storage_control_v2_ListManagedFoldersRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessage.FieldAccessorTable(
             internal_static_google_storage_control_v2_ListManagedFoldersRequest_descriptor,
@@ -823,7 +868,7 @@ public final class StorageControlProto extends com.google.protobuf.GeneratedFile
               "Parent", "PageSize", "PageToken", "Prefix", "RequestId",
             });
     internal_static_google_storage_control_v2_ListManagedFoldersResponse_descriptor =
-        getDescriptor().getMessageType(17);
+        getDescriptor().getMessageType(19);
     internal_static_google_storage_control_v2_ListManagedFoldersResponse_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessage.FieldAccessorTable(
             internal_static_google_storage_control_v2_ListManagedFoldersResponse_descriptor,
@@ -831,7 +876,7 @@ public final class StorageControlProto extends com.google.protobuf.GeneratedFile
               "ManagedFolders", "NextPageToken",
             });
     internal_static_google_storage_control_v2_CreateAnywhereCacheMetadata_descriptor =
-        getDescriptor().getMessageType(18);
+        getDescriptor().getMessageType(20);
     internal_static_google_storage_control_v2_CreateAnywhereCacheMetadata_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessage.FieldAccessorTable(
             internal_static_google_storage_control_v2_CreateAnywhereCacheMetadata_descriptor,
@@ -839,7 +884,7 @@ public final class StorageControlProto extends com.google.protobuf.GeneratedFile
               "CommonMetadata", "AnywhereCacheId", "Zone", "Ttl", "AdmissionPolicy",
             });
     internal_static_google_storage_control_v2_UpdateAnywhereCacheMetadata_descriptor =
-        getDescriptor().getMessageType(19);
+        getDescriptor().getMessageType(21);
     internal_static_google_storage_control_v2_UpdateAnywhereCacheMetadata_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessage.FieldAccessorTable(
             internal_static_google_storage_control_v2_UpdateAnywhereCacheMetadata_descriptor,
@@ -847,7 +892,7 @@ public final class StorageControlProto extends com.google.protobuf.GeneratedFile
               "CommonMetadata", "AnywhereCacheId", "Zone", "Ttl", "AdmissionPolicy",
             });
     internal_static_google_storage_control_v2_AnywhereCache_descriptor =
-        getDescriptor().getMessageType(20);
+        getDescriptor().getMessageType(22);
     internal_static_google_storage_control_v2_AnywhereCache_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessage.FieldAccessorTable(
             internal_static_google_storage_control_v2_AnywhereCache_descriptor,
@@ -862,7 +907,7 @@ public final class StorageControlProto extends com.google.protobuf.GeneratedFile
               "PendingUpdate",
             });
     internal_static_google_storage_control_v2_CreateAnywhereCacheRequest_descriptor =
-        getDescriptor().getMessageType(21);
+        getDescriptor().getMessageType(23);
     internal_static_google_storage_control_v2_CreateAnywhereCacheRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessage.FieldAccessorTable(
             internal_static_google_storage_control_v2_CreateAnywhereCacheRequest_descriptor,
@@ -870,7 +915,7 @@ public final class StorageControlProto extends com.google.protobuf.GeneratedFile
               "Parent", "AnywhereCache", "RequestId",
             });
     internal_static_google_storage_control_v2_UpdateAnywhereCacheRequest_descriptor =
-        getDescriptor().getMessageType(22);
+        getDescriptor().getMessageType(24);
     internal_static_google_storage_control_v2_UpdateAnywhereCacheRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessage.FieldAccessorTable(
             internal_static_google_storage_control_v2_UpdateAnywhereCacheRequest_descriptor,
@@ -878,7 +923,7 @@ public final class StorageControlProto extends com.google.protobuf.GeneratedFile
               "AnywhereCache", "UpdateMask", "RequestId",
             });
     internal_static_google_storage_control_v2_DisableAnywhereCacheRequest_descriptor =
-        getDescriptor().getMessageType(23);
+        getDescriptor().getMessageType(25);
     internal_static_google_storage_control_v2_DisableAnywhereCacheRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessage.FieldAccessorTable(
             internal_static_google_storage_control_v2_DisableAnywhereCacheRequest_descriptor,
@@ -886,7 +931,7 @@ public final class StorageControlProto extends com.google.protobuf.GeneratedFile
               "Name", "RequestId",
             });
     internal_static_google_storage_control_v2_PauseAnywhereCacheRequest_descriptor =
-        getDescriptor().getMessageType(24);
+        getDescriptor().getMessageType(26);
     internal_static_google_storage_control_v2_PauseAnywhereCacheRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessage.FieldAccessorTable(
             internal_static_google_storage_control_v2_PauseAnywhereCacheRequest_descriptor,
@@ -894,7 +939,7 @@ public final class StorageControlProto extends com.google.protobuf.GeneratedFile
               "Name", "RequestId",
             });
     internal_static_google_storage_control_v2_ResumeAnywhereCacheRequest_descriptor =
-        getDescriptor().getMessageType(25);
+        getDescriptor().getMessageType(27);
     internal_static_google_storage_control_v2_ResumeAnywhereCacheRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessage.FieldAccessorTable(
             internal_static_google_storage_control_v2_ResumeAnywhereCacheRequest_descriptor,
@@ -902,7 +947,7 @@ public final class StorageControlProto extends com.google.protobuf.GeneratedFile
               "Name", "RequestId",
             });
     internal_static_google_storage_control_v2_GetAnywhereCacheRequest_descriptor =
-        getDescriptor().getMessageType(26);
+        getDescriptor().getMessageType(28);
     internal_static_google_storage_control_v2_GetAnywhereCacheRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessage.FieldAccessorTable(
             internal_static_google_storage_control_v2_GetAnywhereCacheRequest_descriptor,
@@ -910,7 +955,7 @@ public final class StorageControlProto extends com.google.protobuf.GeneratedFile
               "Name", "RequestId",
             });
     internal_static_google_storage_control_v2_ListAnywhereCachesRequest_descriptor =
-        getDescriptor().getMessageType(27);
+        getDescriptor().getMessageType(29);
     internal_static_google_storage_control_v2_ListAnywhereCachesRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessage.FieldAccessorTable(
             internal_static_google_storage_control_v2_ListAnywhereCachesRequest_descriptor,
@@ -918,7 +963,7 @@ public final class StorageControlProto extends com.google.protobuf.GeneratedFile
               "Parent", "PageSize", "PageToken", "RequestId",
             });
     internal_static_google_storage_control_v2_ListAnywhereCachesResponse_descriptor =
-        getDescriptor().getMessageType(28);
+        getDescriptor().getMessageType(30);
     internal_static_google_storage_control_v2_ListAnywhereCachesResponse_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessage.FieldAccessorTable(
             internal_static_google_storage_control_v2_ListAnywhereCachesResponse_descriptor,
@@ -926,7 +971,7 @@ public final class StorageControlProto extends com.google.protobuf.GeneratedFile
               "AnywhereCaches", "NextPageToken",
             });
     internal_static_google_storage_control_v2_IntelligenceConfig_descriptor =
-        getDescriptor().getMessageType(29);
+        getDescriptor().getMessageType(31);
     internal_static_google_storage_control_v2_IntelligenceConfig_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessage.FieldAccessorTable(
             internal_static_google_storage_control_v2_IntelligenceConfig_descriptor,
@@ -986,7 +1031,7 @@ public final class StorageControlProto extends com.google.protobuf.GeneratedFile
               "ExpireTime",
             });
     internal_static_google_storage_control_v2_UpdateOrganizationIntelligenceConfigRequest_descriptor =
-        getDescriptor().getMessageType(30);
+        getDescriptor().getMessageType(32);
     internal_static_google_storage_control_v2_UpdateOrganizationIntelligenceConfigRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessage.FieldAccessorTable(
             internal_static_google_storage_control_v2_UpdateOrganizationIntelligenceConfigRequest_descriptor,
@@ -994,7 +1039,7 @@ public final class StorageControlProto extends com.google.protobuf.GeneratedFile
               "IntelligenceConfig", "UpdateMask", "RequestId",
             });
     internal_static_google_storage_control_v2_UpdateFolderIntelligenceConfigRequest_descriptor =
-        getDescriptor().getMessageType(31);
+        getDescriptor().getMessageType(33);
     internal_static_google_storage_control_v2_UpdateFolderIntelligenceConfigRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessage.FieldAccessorTable(
             internal_static_google_storage_control_v2_UpdateFolderIntelligenceConfigRequest_descriptor,
@@ -1002,7 +1047,7 @@ public final class StorageControlProto extends com.google.protobuf.GeneratedFile
               "IntelligenceConfig", "UpdateMask", "RequestId",
             });
     internal_static_google_storage_control_v2_UpdateProjectIntelligenceConfigRequest_descriptor =
-        getDescriptor().getMessageType(32);
+        getDescriptor().getMessageType(34);
     internal_static_google_storage_control_v2_UpdateProjectIntelligenceConfigRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessage.FieldAccessorTable(
             internal_static_google_storage_control_v2_UpdateProjectIntelligenceConfigRequest_descriptor,
@@ -1010,7 +1055,7 @@ public final class StorageControlProto extends com.google.protobuf.GeneratedFile
               "IntelligenceConfig", "UpdateMask", "RequestId",
             });
     internal_static_google_storage_control_v2_GetOrganizationIntelligenceConfigRequest_descriptor =
-        getDescriptor().getMessageType(33);
+        getDescriptor().getMessageType(35);
     internal_static_google_storage_control_v2_GetOrganizationIntelligenceConfigRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessage.FieldAccessorTable(
             internal_static_google_storage_control_v2_GetOrganizationIntelligenceConfigRequest_descriptor,
@@ -1018,7 +1063,7 @@ public final class StorageControlProto extends com.google.protobuf.GeneratedFile
               "Name",
             });
     internal_static_google_storage_control_v2_GetFolderIntelligenceConfigRequest_descriptor =
-        getDescriptor().getMessageType(34);
+        getDescriptor().getMessageType(36);
     internal_static_google_storage_control_v2_GetFolderIntelligenceConfigRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessage.FieldAccessorTable(
             internal_static_google_storage_control_v2_GetFolderIntelligenceConfigRequest_descriptor,
@@ -1026,7 +1071,7 @@ public final class StorageControlProto extends com.google.protobuf.GeneratedFile
               "Name",
             });
     internal_static_google_storage_control_v2_GetProjectIntelligenceConfigRequest_descriptor =
-        getDescriptor().getMessageType(35);
+        getDescriptor().getMessageType(37);
     internal_static_google_storage_control_v2_GetProjectIntelligenceConfigRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessage.FieldAccessorTable(
             internal_static_google_storage_control_v2_GetProjectIntelligenceConfigRequest_descriptor,

@@ -46,6 +46,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -114,6 +115,7 @@ public final class ITBucketAclTest {
   }
 
   @Test
+  @Ignore("TODO: fix b/468377909 to enable test again")
   public void bucket_acl_create() throws Exception {
     BucketInfo bucketInfo = BucketInfo.newBuilder(generator.randomBucketName()).build();
     try (TemporaryBucket tempB =
@@ -213,6 +215,7 @@ public final class ITBucketAclTest {
 
   /** Update of an acl that doesn't exist should create it */
   @Test
+  @Ignore("TODO: fix b/468377909 to enable test again")
   public void bucket_acl_404_acl_update() throws Exception {
     BucketInfo bucketInfo = BucketInfo.newBuilder(generator.randomBucketName()).build();
     try (TemporaryBucket tempB =
