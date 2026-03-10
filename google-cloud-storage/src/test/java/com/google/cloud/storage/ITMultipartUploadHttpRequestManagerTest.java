@@ -30,6 +30,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.api.client.http.HttpResponseException;
+import com.google.api.gax.rpc.FixedHeaderProvider;
 import com.google.cloud.storage.FakeHttpServer.HttpRequestHandler;
 import com.google.cloud.storage.it.ChecksummedTestContent;
 import com.google.cloud.storage.it.runner.StorageITRunner;
@@ -61,7 +62,6 @@ import io.grpc.netty.shaded.io.netty.buffer.Unpooled;
 import io.grpc.netty.shaded.io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.grpc.netty.shaded.io.netty.handler.codec.http.FullHttpRequest;
 import io.grpc.netty.shaded.io.netty.handler.codec.http.FullHttpResponse;
-import com.google.api.gax.rpc.FixedHeaderProvider;
 import io.grpc.netty.shaded.io.netty.handler.codec.http.HttpResponseStatus;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -141,12 +141,14 @@ public final class ITMultipartUploadHttpRequestManagerTest {
   public void createFrom_withExistingUserAgent() throws Exception {
     HttpRequestHandler handler =
         req -> {
-          boolean hasCustom = req.headers().getAll("User-Agent").stream()
-              .anyMatch(agent -> agent.contains("my-custom-agent"));
+          boolean hasCustom =
+              req.headers().getAll("User-Agent").stream()
+                  .anyMatch(agent -> agent.contains("my-custom-agent"));
           assertThat(hasCustom).isTrue();
           // check that it does not also contain the gcloud-java generated header
-          boolean hasDefault = req.headers().getAll("User-Agent").stream()
-              .anyMatch(agent -> agent.contains("gcloud-java/"));
+          boolean hasDefault =
+              req.headers().getAll("User-Agent").stream()
+                  .anyMatch(agent -> agent.contains("gcloud-java/"));
           assertThat(hasDefault).isFalse();
 
           CreateMultipartUploadResponse response =
@@ -166,7 +168,8 @@ public final class ITMultipartUploadHttpRequestManagerTest {
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
       HttpStorageOptions options =
           fakeHttpServer.getHttpStorageOptions().toBuilder()
-              .setHeaderProvider(FixedHeaderProvider.create(ImmutableMap.of("User-Agent", "my-custom-agent")))
+              .setHeaderProvider(
+                  FixedHeaderProvider.create(ImmutableMap.of("User-Agent", "my-custom-agent")))
               .build();
 
       MultipartUploadHttpRequestManager multipartUploadHttpRequestManager =
@@ -186,8 +189,9 @@ public final class ITMultipartUploadHttpRequestManagerTest {
   public void createFrom_withoutExistingUserAgent() throws Exception {
     HttpRequestHandler handler =
         req -> {
-          boolean hasDefault = req.headers().getAll("User-Agent").stream()
-              .anyMatch(agent -> agent.startsWith("gcloud-java/"));
+          boolean hasDefault =
+              req.headers().getAll("User-Agent").stream()
+                  .anyMatch(agent -> agent.startsWith("gcloud-java/"));
           assertThat(hasDefault).isTrue();
 
           CreateMultipartUploadResponse response =
