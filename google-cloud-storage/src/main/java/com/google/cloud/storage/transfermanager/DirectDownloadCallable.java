@@ -24,6 +24,7 @@ import com.google.cloud.storage.Storage.BlobSourceOption;
 import com.google.cloud.storage.StorageException;
 import com.google.common.io.ByteStreams;
 import java.nio.channels.FileChannel;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.concurrent.Callable;
@@ -53,6 +54,11 @@ final class DirectDownloadCallable implements Callable<DownloadResult> {
 
   @Override
   public DownloadResult call() {
+    if (parallelDownloadConfig.isSkipIfExists() && Files.exists(destPath)) {
+      return DownloadResult.newBuilder(originalBlob, TransferStatus.SKIPPED)
+          .setOutputDestination(destPath)
+          .build();
+    }
     long bytesCopied = -1L;
     try (ReadChannel rc =
             storage.reader(
