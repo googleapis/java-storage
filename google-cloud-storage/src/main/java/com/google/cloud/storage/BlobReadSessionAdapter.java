@@ -48,6 +48,23 @@ final class BlobReadSessionAdapter implements BlobReadSession {
     return projection;
   }
 
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  @Override
+  public <Projection> java.util.List<Projection> readAllAs(
+      java.util.List<ReadProjectionConfig<Projection>> configs) {
+    java.util.List<Projection> projections = session.readAllAs(configs);
+    java.util.List<Projection> wrapped = new java.util.ArrayList<>(projections.size());
+    for (Projection projection : projections) {
+      if (projection instanceof ApiFuture) {
+        ApiFuture apiFuture = (ApiFuture) projection;
+        wrapped.add((Projection) StorageException.coalesceAsync(apiFuture));
+      } else {
+        wrapped.add(projection);
+      }
+    }
+    return wrapped;
+  }
+
   @Override
   public void close() throws IOException {
     session.close();
