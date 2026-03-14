@@ -16,14 +16,16 @@
 
 package com.google.cloud.storage.multipartupload.model;
 
+import com.google.api.core.BetaApi;
 import com.google.common.base.MoreObjects;
 import java.util.Objects;
 
 /**
  * Represents a request to list the parts of a multipart upload.
  *
- * @since 2.60.0
+ * @since 2.60.0 This new api is in preview and is subject to breaking changes.
  */
+@BetaApi
 public final class ListPartsRequest {
   private final String bucket;
 
@@ -35,23 +37,21 @@ public final class ListPartsRequest {
 
   private final Integer partNumberMarker;
 
-  private final String userProject;
-
   private ListPartsRequest(Builder builder) {
     this.bucket = builder.bucket;
     this.key = builder.key;
     this.uploadId = builder.uploadId;
     this.maxParts = builder.maxParts;
     this.partNumberMarker = builder.partNumberMarker;
-    this.userProject = builder.userProject;
   }
 
   /**
    * Returns the bucket name.
    *
    * @return the bucket name.
-   * @since 2.60.0
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public String bucket() {
     return bucket;
   }
@@ -60,8 +60,9 @@ public final class ListPartsRequest {
    * Returns the object name.
    *
    * @return the object name.
-   * @since 2.60.0
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public String key() {
     return key;
   }
@@ -70,8 +71,9 @@ public final class ListPartsRequest {
    * Returns the upload ID.
    *
    * @return the upload ID.
-   * @since 2.60.0
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public String uploadId() {
     return uploadId;
   }
@@ -80,9 +82,10 @@ public final class ListPartsRequest {
    * Returns the maximum number of parts to return.
    *
    * @return the maximum number of parts to return.
-   * @since 2.60.0
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
-  public Integer maxParts() {
+  @BetaApi
+  public Integer getMaxParts() {
     return maxParts;
   }
 
@@ -90,22 +93,11 @@ public final class ListPartsRequest {
    * Returns the part number marker.
    *
    * @return the part number marker.
-   * @since 2.60.0
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
-  public Integer partNumberMarker() {
+  @BetaApi
+  public Integer getPartNumberMarker() {
     return partNumberMarker;
-  }
-
-  /**
-   * Returns the user-project.
-   *
-   * @return the user-project.
-   * @see <a
-   *     href="https://docs.cloud.google.com/storage/docs/xml-api/reference-headers#xgooguserproject">x-goog-user-project</a>
-   * @since 2.61.0
-   */
-  public String userProject() {
-    return userProject;
   }
 
   @Override
@@ -121,13 +113,12 @@ public final class ListPartsRequest {
         && Objects.equals(key, that.key)
         && Objects.equals(uploadId, that.uploadId)
         && Objects.equals(maxParts, that.maxParts)
-        && Objects.equals(partNumberMarker, that.partNumberMarker)
-        && Objects.equals(userProject, that.userProject);
+        && Objects.equals(partNumberMarker, that.partNumberMarker);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(bucket, key, uploadId, maxParts, partNumberMarker, userProject);
+    return Objects.hash(bucket, key, uploadId, maxParts, partNumberMarker);
   }
 
   @Override
@@ -138,7 +129,6 @@ public final class ListPartsRequest {
         .add("uploadId", uploadId)
         .add("maxParts", maxParts)
         .add("partNumberMarker", partNumberMarker)
-        .add("userProject", userProject)
         .toString();
   }
 
@@ -146,8 +136,9 @@ public final class ListPartsRequest {
    * Returns a new builder for this class.
    *
    * @return a new builder for this class.
-   * @since 2.60.0
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public static Builder builder() {
     return new Builder();
   }
@@ -155,15 +146,15 @@ public final class ListPartsRequest {
   /**
    * A builder for {@link ListPartsRequest}.
    *
-   * @since 2.60.0
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public static class Builder {
     private String bucket;
     private String key;
     private String uploadId;
     private Integer maxParts;
     private Integer partNumberMarker;
-    private String userProject;
 
     private Builder() {}
 
@@ -172,8 +163,9 @@ public final class ListPartsRequest {
      *
      * @param bucket the bucket name.
      * @return this builder.
-     * @since 2.60.0
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public Builder bucket(String bucket) {
       this.bucket = bucket;
       return this;
@@ -184,8 +176,9 @@ public final class ListPartsRequest {
      *
      * @param key the object name.
      * @return this builder.
-     * @since 2.60.0
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public Builder key(String key) {
       this.key = key;
       return this;
@@ -196,8 +189,9 @@ public final class ListPartsRequest {
      *
      * @param uploadId the upload ID.
      * @return this builder.
-     * @since 2.60.0
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public Builder uploadId(String uploadId) {
       this.uploadId = uploadId;
       return this;
@@ -208,8 +202,9 @@ public final class ListPartsRequest {
      *
      * @param maxParts the maximum number of parts to return.
      * @return this builder.
-     * @since 2.60.0
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public Builder maxParts(Integer maxParts) {
       this.maxParts = maxParts;
       return this;
@@ -220,24 +215,11 @@ public final class ListPartsRequest {
      *
      * @param partNumberMarker the part number marker.
      * @return this builder.
-     * @since 2.60.0
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public Builder partNumberMarker(Integer partNumberMarker) {
       this.partNumberMarker = partNumberMarker;
-      return this;
-    }
-
-    /**
-     * Sets the user-project.
-     *
-     * @param userProject The user-project.
-     * @return This builder.
-     * @see <a
-     *     href="https://docs.cloud.google.com/storage/docs/xml-api/reference-headers#xgooguserproject">x-goog-user-project</a>
-     * @since 2.61.0
-     */
-    public Builder userProject(String userProject) {
-      this.userProject = userProject;
       return this;
     }
 
@@ -245,8 +227,9 @@ public final class ListPartsRequest {
      * Builds a new {@link ListPartsRequest} object.
      *
      * @return a new {@link ListPartsRequest} object.
-     * @since 2.60.0
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public ListPartsRequest build() {
       return new ListPartsRequest(this);
     }

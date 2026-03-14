@@ -790,12 +790,6 @@ public class Bucket extends BucketInfo {
     }
 
     @Override
-    public Builder setIsUnreachable(Boolean isUnreachable) {
-      infoBuilder.setIsUnreachable(isUnreachable);
-      return this;
-    }
-
-    @Override
     public Bucket build() {
       return new Bucket(storage, infoBuilder);
     }
@@ -1001,12 +995,6 @@ public class Bucket extends BucketInfo {
     @Override
     public Builder clearCustomerSuppliedEncryptionEnforcementConfig() {
       infoBuilder.clearCustomerSuppliedEncryptionEnforcementConfig();
-      return this;
-    }
-
-    @Override
-    Builder clearIsUnreachable() {
-      infoBuilder.clearIsUnreachable();
       return this;
     }
   }

@@ -1561,13 +1561,13 @@ final class OtelStorageDecorator implements Storage {
     return String.format(Locale.US, "gs://%s/", bucket);
   }
 
-  static final class TracerDecorator implements Tracer {
+  private static final class TracerDecorator implements Tracer {
     @Nullable private final Context parentContextOverride;
     private final Tracer delegate;
     private final Attributes baseAttributes;
     private final String spanNamePrefix;
 
-    TracerDecorator(
+    private TracerDecorator(
         @Nullable Context parentContextOverride,
         Tracer delegate,
         Attributes baseAttributes,
@@ -1578,7 +1578,7 @@ final class OtelStorageDecorator implements Storage {
       this.spanNamePrefix = spanNamePrefix;
     }
 
-    static TracerDecorator decorate(
+    private static TracerDecorator decorate(
         @Nullable Context parentContextOverride,
         OpenTelemetry otel,
         Attributes baseAttributes,

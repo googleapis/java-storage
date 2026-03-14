@@ -57,13 +57,11 @@ final class HttpWritableByteChannelSessionBuilder {
     @NonNull private final HttpClientContext httpClientContext;
     private RetrierWithAlg retrier;
     private LongConsumer committedBytesCallback;
-    private Hasher hasher;
 
     ResumableUploadBuilder(@NonNull HttpClientContext httpClientContext) {
       this.httpClientContext = httpClientContext;
       this.retrier = RetrierWithAlg.attemptOnce();
       this.committedBytesCallback = l -> {};
-      this.hasher = Hasher.defaultHasher();
     }
 
     ResumableUploadBuilder setCommittedBytesCallback(@NonNull LongConsumer committedBytesCallback) {
@@ -74,11 +72,6 @@ final class HttpWritableByteChannelSessionBuilder {
 
     ResumableUploadBuilder withRetryConfig(@NonNull RetrierWithAlg retrier) {
       this.retrier = requireNonNull(retrier, "retrier must be non null");
-      return this;
-    }
-
-    ResumableUploadBuilder setHasher(@NonNull Hasher hasher) {
-      this.hasher = requireNonNull(hasher, "hasher must be non null");
       return this;
     }
 

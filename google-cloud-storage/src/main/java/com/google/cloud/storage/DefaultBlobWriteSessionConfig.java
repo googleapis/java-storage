@@ -193,12 +193,7 @@ public final class DefaultBlobWriteSessionConfig extends BlobWriteSessionConfig
                       ApiFuture<JsonResumableWrite> startAsync =
                           ApiFutures.immediateFuture(
                               JsonResumableWrite.of(
-                                  encode,
-                                  optionsMap,
-                                  uploadIdSupplier.get(),
-                                  0L,
-                                  opts.getHasher(),
-                                  opts.getHasher().initialValue()));
+                                  encode, optionsMap, uploadIdSupplier.get(), 0L));
 
                       return ResumableMedia.http()
                           .write()

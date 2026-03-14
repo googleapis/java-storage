@@ -16,6 +16,7 @@
 
 package com.google.cloud.storage.multipartupload.model;
 
+import com.google.api.core.BetaApi;
 import com.google.cloud.storage.Storage.PredefinedAcl;
 import com.google.cloud.storage.StorageClass;
 import com.google.common.base.MoreObjects;
@@ -27,49 +28,41 @@ import java.util.Objects;
  * Represents a request to initiate a multipart upload. This class holds all the necessary
  * information to create a new multipart upload session.
  *
- * @since 2.60.0
+ * @since 2.60.0 This new api is in preview and is subject to breaking changes.
  */
+@BetaApi
 public final class CreateMultipartUploadRequest {
   private final String bucket;
   private final String key;
   private final PredefinedAcl cannedAcl;
   private final String contentType;
-  private final String contentDisposition;
-  private final String contentEncoding;
-  private final String contentLanguage;
-  private final String cacheControl;
   private final Map<String, String> metadata;
   private final StorageClass storageClass;
   private final OffsetDateTime customTime;
   private final String kmsKeyName;
   private final ObjectLockMode objectLockMode;
   private final OffsetDateTime objectLockRetainUntilDate;
-  private final String userProject;
 
   private CreateMultipartUploadRequest(Builder builder) {
     this.bucket = builder.bucket;
     this.key = builder.key;
     this.cannedAcl = builder.cannedAcl;
     this.contentType = builder.contentType;
-    this.contentDisposition = builder.contentDisposition;
-    this.contentEncoding = builder.contentEncoding;
-    this.contentLanguage = builder.contentLanguage;
-    this.cacheControl = builder.cacheControl;
     this.metadata = builder.metadata;
     this.storageClass = builder.storageClass;
     this.customTime = builder.customTime;
     this.kmsKeyName = builder.kmsKeyName;
     this.objectLockMode = builder.objectLockMode;
     this.objectLockRetainUntilDate = builder.objectLockRetainUntilDate;
-    this.userProject = builder.userProject;
   }
 
   /**
    * Returns the name of the bucket to which the object is being uploaded.
    *
    * @return The bucket name
-   * @since 2.60.0
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public String bucket() {
     return bucket;
   }
@@ -79,8 +72,9 @@ public final class CreateMultipartUploadRequest {
    *
    * @see <a href="https://cloud.google.com/storage/docs/objects#naming">Object Naming</a>
    * @return The object name
-   * @since 2.60.0
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public String key() {
     return key;
   }
@@ -89,9 +83,10 @@ public final class CreateMultipartUploadRequest {
    * Returns a canned ACL to apply to the object.
    *
    * @return The canned ACL
-   * @since 2.60.0
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
-  public PredefinedAcl cannedAcl() {
+  @BetaApi
+  public PredefinedAcl getCannedAcl() {
     return cannedAcl;
   }
 
@@ -99,60 +94,21 @@ public final class CreateMultipartUploadRequest {
    * Returns the MIME type of the data you are uploading.
    *
    * @return The Content-Type
-   * @since 2.60.0
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
-  public String contentType() {
+  @BetaApi
+  public String getContentType() {
     return contentType;
-  }
-
-  /**
-   * Returns the presentational information about how the object data is to be transmitted.
-   *
-   * @return The Content-Disposition
-   * @since 2.61.0
-   */
-  public String contentDisposition() {
-    return contentDisposition;
-  }
-
-  /**
-   * Returns the compression algorithm that was used to compress the data being uploaded.
-   *
-   * @return The Content-Encoding
-   * @since 2.61.0
-   */
-  public String contentEncoding() {
-    return contentEncoding;
-  }
-
-  /**
-   * Returns the language code of the content.
-   *
-   * @return The Content-Language
-   * @since 2.61.0
-   */
-  public String contentLanguage() {
-    return contentLanguage;
-  }
-
-  /**
-   * Returns the conditions under which the resulting object should be cached if it is publicly
-   * accessible.
-   *
-   * @return The Cache-Control
-   * @since 2.61.0
-   */
-  public String cacheControl() {
-    return cacheControl;
   }
 
   /**
    * Returns the custom metadata of the object.
    *
    * @return The custom metadata
-   * @since 2.60.0
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
-  public Map<String, String> metadata() {
+  @BetaApi
+  public Map<String, String> getMetadata() {
     return metadata;
   }
 
@@ -160,9 +116,10 @@ public final class CreateMultipartUploadRequest {
    * Returns the storage class for the object.
    *
    * @return The Storage-Class
-   * @since 2.60.0
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
-  public StorageClass storageClass() {
+  @BetaApi
+  public StorageClass getStorageClass() {
     return storageClass;
   }
 
@@ -170,9 +127,10 @@ public final class CreateMultipartUploadRequest {
    * Returns a user-specified date and time.
    *
    * @return The custom time
-   * @since 2.60.0
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
-  public OffsetDateTime customTime() {
+  @BetaApi
+  public OffsetDateTime getCustomTime() {
     return customTime;
   }
 
@@ -180,9 +138,10 @@ public final class CreateMultipartUploadRequest {
    * Returns the customer-managed encryption key to use to encrypt the object.
    *
    * @return The Cloud KMS key
-   * @since 2.60.0
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
-  public String kmsKeyName() {
+  @BetaApi
+  public String getKmsKeyName() {
     return kmsKeyName;
   }
 
@@ -190,9 +149,10 @@ public final class CreateMultipartUploadRequest {
    * Returns the mode of the object's retention configuration.
    *
    * @return The object lock mode
-   * @since 2.60.0
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
-  public ObjectLockMode objectLockMode() {
+  @BetaApi
+  public ObjectLockMode getObjectLockMode() {
     return objectLockMode;
   }
 
@@ -200,20 +160,11 @@ public final class CreateMultipartUploadRequest {
    * Returns the date that determines the time until which the object is retained as immutable.
    *
    * @return The object lock retention until date
-   * @since 2.60.0
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
-  public OffsetDateTime objectLockRetainUntilDate() {
+  @BetaApi
+  public OffsetDateTime getObjectLockRetainUntilDate() {
     return objectLockRetainUntilDate;
-  }
-
-  /**
-   * Returns the project to be billed for charges associated with this request.
-   *
-   * @return The user project
-   * @since 2.61.0
-   */
-  public String userProject() {
-    return userProject;
   }
 
   @Override
@@ -229,17 +180,12 @@ public final class CreateMultipartUploadRequest {
         && Objects.equals(key, that.key)
         && cannedAcl == that.cannedAcl
         && Objects.equals(contentType, that.contentType)
-        && Objects.equals(contentDisposition, that.contentDisposition)
-        && Objects.equals(contentEncoding, that.contentEncoding)
-        && Objects.equals(contentLanguage, that.contentLanguage)
-        && Objects.equals(cacheControl, that.cacheControl)
         && Objects.equals(metadata, that.metadata)
         && Objects.equals(storageClass, that.storageClass)
         && Objects.equals(customTime, that.customTime)
         && Objects.equals(kmsKeyName, that.kmsKeyName)
         && objectLockMode == that.objectLockMode
-        && Objects.equals(objectLockRetainUntilDate, that.objectLockRetainUntilDate)
-        && Objects.equals(userProject, that.userProject);
+        && Objects.equals(objectLockRetainUntilDate, that.objectLockRetainUntilDate);
   }
 
   @Override
@@ -249,17 +195,12 @@ public final class CreateMultipartUploadRequest {
         key,
         cannedAcl,
         contentType,
-        contentDisposition,
-        contentEncoding,
-        contentLanguage,
-        cacheControl,
         metadata,
         storageClass,
         customTime,
         kmsKeyName,
         objectLockMode,
-        objectLockRetainUntilDate,
-        userProject);
+        objectLockRetainUntilDate);
   }
 
   @Override
@@ -269,17 +210,12 @@ public final class CreateMultipartUploadRequest {
         .add("key", key)
         .add("cannedAcl", cannedAcl)
         .add("contentType", contentType)
-        .add("contentDisposition", contentDisposition)
-        .add("contentEncoding", contentEncoding)
-        .add("contentLanguage", contentLanguage)
-        .add("cacheControl", cacheControl)
         .add("metadata", metadata)
         .add("storageClass", storageClass)
         .add("customTime", customTime)
         .add("kmsKeyName", kmsKeyName)
         .add("objectLockMode", objectLockMode)
         .add("objectLockRetainUntilDate", objectLockRetainUntilDate)
-        .add("userProject", userProject)
         .toString();
   }
 
@@ -287,8 +223,9 @@ public final class CreateMultipartUploadRequest {
    * Returns a new {@link Builder} for creating a {@link CreateMultipartUploadRequest}.
    *
    * @return a new builder
-   * @since 2.60.0
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public static Builder builder() {
     return new Builder();
   }
@@ -296,24 +233,20 @@ public final class CreateMultipartUploadRequest {
   /**
    * A builder for {@link CreateMultipartUploadRequest}.
    *
-   * @since 2.60.0
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public static final class Builder {
     private String bucket;
     private String key;
     private PredefinedAcl cannedAcl;
     private String contentType;
-    private String contentDisposition;
-    private String contentEncoding;
-    private String contentLanguage;
-    private String cacheControl;
     private Map<String, String> metadata;
     private StorageClass storageClass;
     private OffsetDateTime customTime;
     private String kmsKeyName;
     private ObjectLockMode objectLockMode;
     private OffsetDateTime objectLockRetainUntilDate;
-    private String userProject;
 
     private Builder() {}
 
@@ -322,8 +255,9 @@ public final class CreateMultipartUploadRequest {
      *
      * @param bucket The bucket name
      * @return this builder
-     * @since 2.60.0
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public Builder bucket(String bucket) {
       this.bucket = bucket;
       return this;
@@ -335,8 +269,9 @@ public final class CreateMultipartUploadRequest {
      * @see <a href="https://cloud.google.com/storage/docs/objects#naming">Object Naming</a>
      * @param key The object name
      * @return this builder
-     * @since 2.60.0
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public Builder key(String key) {
       this.key = key;
       return this;
@@ -347,8 +282,9 @@ public final class CreateMultipartUploadRequest {
      *
      * @param cannedAcl The canned ACL
      * @return this builder
-     * @since 2.60.0
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public Builder cannedAcl(PredefinedAcl cannedAcl) {
       this.cannedAcl = cannedAcl;
       return this;
@@ -359,58 +295,11 @@ public final class CreateMultipartUploadRequest {
      *
      * @param contentType The Content-Type
      * @return this builder
-     * @since 2.60.0
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public Builder contentType(String contentType) {
       this.contentType = contentType;
-      return this;
-    }
-
-    /**
-     * Specifies presentational information about the object data.
-     *
-     * @param contentDisposition The content disposition for the object.
-     * @return this builder
-     * @since 2.61.0
-     */
-    public Builder contentDisposition(String contentDisposition) {
-      this.contentDisposition = contentDisposition;
-      return this;
-    }
-
-    /**
-     * Specifies the compression algorithm that was used to compress the object data.
-     *
-     * @param contentEncoding The content encoding for the object.
-     * @return this builder
-     * @since 2.61.0
-     */
-    public Builder contentEncoding(String contentEncoding) {
-      this.contentEncoding = contentEncoding;
-      return this;
-    }
-
-    /**
-     * Specifies the language of the object's content.
-     *
-     * @param contentLanguage The content language for the object.
-     * @return this builder
-     * @since 2.61.0
-     */
-    public Builder contentLanguage(String contentLanguage) {
-      this.contentLanguage = contentLanguage;
-      return this;
-    }
-
-    /**
-     * Specifies the caching behavior for the object when it is publicly accessible.
-     *
-     * @param cacheControl The cache control settings for the object.
-     * @return this builder
-     * @since 2.61.0
-     */
-    public Builder cacheControl(String cacheControl) {
-      this.cacheControl = cacheControl;
       return this;
     }
 
@@ -419,8 +308,9 @@ public final class CreateMultipartUploadRequest {
      *
      * @param metadata The custom metadata
      * @return this builder
-     * @since 2.60.0
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public Builder metadata(Map<String, String> metadata) {
       this.metadata = metadata;
       return this;
@@ -432,8 +322,9 @@ public final class CreateMultipartUploadRequest {
      *
      * @param storageClass The Storage-Class
      * @return this builder
-     * @since 2.60.0
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public Builder storageClass(StorageClass storageClass) {
       this.storageClass = storageClass;
       return this;
@@ -444,8 +335,9 @@ public final class CreateMultipartUploadRequest {
      *
      * @param customTime The custom time
      * @return this builder
-     * @since 2.60.0
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public Builder customTime(OffsetDateTime customTime) {
       this.customTime = customTime;
       return this;
@@ -458,8 +350,9 @@ public final class CreateMultipartUploadRequest {
      *
      * @param kmsKeyName The Cloud KMS key
      * @return this builder
-     * @since 2.60.0
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public Builder kmsKeyName(String kmsKeyName) {
       this.kmsKeyName = kmsKeyName;
       return this;
@@ -471,8 +364,9 @@ public final class CreateMultipartUploadRequest {
      *
      * @param objectLockMode The object lock mode
      * @return this builder
-     * @since 2.60.0
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public Builder objectLockMode(ObjectLockMode objectLockMode) {
       this.objectLockMode = objectLockMode;
       return this;
@@ -483,22 +377,11 @@ public final class CreateMultipartUploadRequest {
      *
      * @param objectLockRetainUntilDate The object lock retention until date
      * @return this builder
-     * @since 2.60.0
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public Builder objectLockRetainUntilDate(OffsetDateTime objectLockRetainUntilDate) {
       this.objectLockRetainUntilDate = objectLockRetainUntilDate;
-      return this;
-    }
-
-    /**
-     * Specifies the project to be billed for this request.
-     *
-     * @param userProject The project ID to bill for this request.
-     * @return this builder
-     * @since 2.61.0
-     */
-    public Builder userProject(String userProject) {
-      this.userProject = userProject;
       return this;
     }
 
@@ -506,8 +389,9 @@ public final class CreateMultipartUploadRequest {
      * Creates a new {@link CreateMultipartUploadRequest} object.
      *
      * @return a new {@link CreateMultipartUploadRequest} object
-     * @since 2.60.0
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public CreateMultipartUploadRequest build() {
       return new CreateMultipartUploadRequest(this);
     }

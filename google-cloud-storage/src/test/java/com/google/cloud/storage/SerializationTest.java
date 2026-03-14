@@ -266,9 +266,7 @@ public class SerializationTest extends BaseSerializationTest {
                 Conversions.json().blobInfo().encode(BlobInfo.newBuilder("b", "n").build()),
                 ImmutableMap.of(),
                 "upload-id",
-                0,
-                Hasher.enabled(),
-                Crc32cValue.zero()));
+                0));
     return new Restorable<?>[] {readerV2, writer};
   }
 

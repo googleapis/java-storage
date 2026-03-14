@@ -22,9 +22,6 @@
             "DeleteFolder": {
               "methods": ["deleteFolder", "deleteFolder", "deleteFolder", "deleteFolderCallable"]
             },
-            "DeleteFolderRecursive": {
-              "methods": ["deleteFolderRecursiveAsync", "deleteFolderRecursiveAsync", "deleteFolderRecursiveAsync", "deleteFolderRecursiveOperationCallable", "deleteFolderRecursiveCallable"]
-            },
             "DeleteManagedFolder": {
               "methods": ["deleteManagedFolder", "deleteManagedFolder", "deleteManagedFolder", "deleteManagedFolderCallable"]
             },

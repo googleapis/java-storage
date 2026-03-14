@@ -93,7 +93,6 @@ enum UploadFailureScenario {
           .or(matches("Range"))
           .or(startsWith("X-Goog-Stored-"))
           .or(matches("X-Goog-GCS-Idempotency-Token"))
-          .or(matches("X-Goog-Hash"))
           .or(matches("X-Goog-request-params"))
           .or(matches("X-GUploader-UploadID"));
 

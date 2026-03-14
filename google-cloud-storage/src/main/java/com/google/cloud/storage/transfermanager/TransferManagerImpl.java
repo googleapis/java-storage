@@ -145,20 +145,15 @@ final class TransferManagerImpl implements TransferManager {
     Storage.BlobSourceOption[] opts =
         config.getOptionsPerRequest().toArray(new Storage.BlobSourceOption[0]);
     List<ApiFuture<DownloadResult>> downloadTasks = new ArrayList<>();
-    for (BlobInfo blob : blobs) {
-      Path destPath = TransferManagerUtils.createAndValidateDestPath(config, blob);
-      if (destPath == null) {
-        DownloadResult skipped =
-            DownloadResult.newBuilder(blob, TransferStatus.FAILED_TO_START)
-                .setException(
-                    new PathTraversalBlockedException(
-                        blob.getName(), config.getDownloadDirectory()))
-                .build();
-        downloadTasks.add(ApiFutures.immediateFuture(skipped));
-        continue;
+    if (!transferManagerConfig.isAllowDivideAndConquerDownload()) {
+      for (BlobInfo blob : blobs) {
+        DirectDownloadCallable callable = new DirectDownloadCallable(storage, blob, config, opts);
+        downloadTasks.add(convert(executor.submit(callable)));
       }
-      if (transferManagerConfig.isAllowDivideAndConquerDownload()) {
+    } else {
+      for (BlobInfo blob : blobs) {
         BlobInfo validatedBlob = retrieveSizeAndGeneration(storage, blob, config.getBucketName());
+        Path destPath = TransferManagerUtils.createDestPath(config, blob);
         if (validatedBlob != null && qos.divideAndConquer(validatedBlob.getSize())) {
           DownloadResult optimisticResult =
               DownloadResult.newBuilder(validatedBlob, TransferStatus.SUCCESS)
@@ -186,14 +181,12 @@ final class TransferManagerImpl implements TransferManager {
                               DownloadSegment::reduce,
                               BinaryOperator.minBy(DownloadResult.COMPARATOR)),
                   MoreExecutors.directExecutor()));
-          continue;
+        } else {
+          DirectDownloadCallable callable = new DirectDownloadCallable(storage, blob, config, opts);
+          downloadTasks.add(convert(executor.submit(callable)));
         }
       }
-      DirectDownloadCallable callable =
-          new DirectDownloadCallable(storage, blob, config, opts, destPath);
-      downloadTasks.add(convert(executor.submit(callable)));
     }
-
     return DownloadJob.newBuilder()
         .setDownloadResults(downloadTasks)
         .setParallelDownloadConfig(config)

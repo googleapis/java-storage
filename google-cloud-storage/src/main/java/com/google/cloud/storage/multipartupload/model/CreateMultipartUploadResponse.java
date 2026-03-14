@@ -18,6 +18,7 @@ package com.google.cloud.storage.multipartupload.model;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+import com.google.api.core.BetaApi;
 import com.google.common.base.MoreObjects;
 import java.util.Objects;
 
@@ -25,9 +26,10 @@ import java.util.Objects;
  * Represents the response from a CreateMultipartUpload request. This class encapsulates the details
  * of the initiated multipart upload, including the bucket, key, and the unique upload ID.
  *
- * @since 2.60.0
+ * @since 2.60.0 This new api is in preview and is subject to breaking changes.
  */
 @JacksonXmlRootElement(localName = "InitiateMultipartUploadResult")
+@BetaApi
 public final class CreateMultipartUploadResponse {
 
   @JacksonXmlProperty(localName = "Bucket")
@@ -51,8 +53,9 @@ public final class CreateMultipartUploadResponse {
    * Returns the name of the bucket where the multipart upload was initiated.
    *
    * @return The bucket name.
-   * @since 2.60.0
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public String bucket() {
     return bucket;
   }
@@ -61,8 +64,9 @@ public final class CreateMultipartUploadResponse {
    * Returns the key (object name) for which the multipart upload was initiated.
    *
    * @return The object key.
-   * @since 2.60.0
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public String key() {
     return key;
   }
@@ -72,8 +76,9 @@ public final class CreateMultipartUploadResponse {
    * subsequent requests related to this upload (e.g., uploading parts, completing the upload).
    *
    * @return The upload ID.
-   * @since 2.60.0
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public String uploadId() {
     return uploadId;
   }
@@ -110,8 +115,9 @@ public final class CreateMultipartUploadResponse {
    * Creates a new builder for {@link CreateMultipartUploadResponse}.
    *
    * @return A new builder.
-   * @since 2.60.0
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public static Builder builder() {
     return new Builder();
   }
@@ -119,8 +125,9 @@ public final class CreateMultipartUploadResponse {
   /**
    * A builder for {@link CreateMultipartUploadResponse} objects.
    *
-   * @since 2.60.0
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public static final class Builder {
     private String bucket;
     private String key;
@@ -133,8 +140,9 @@ public final class CreateMultipartUploadResponse {
      *
      * @param bucket The bucket name.
      * @return This builder.
-     * @since 2.60.0
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public Builder bucket(String bucket) {
       this.bucket = bucket;
       return this;
@@ -145,8 +153,9 @@ public final class CreateMultipartUploadResponse {
      *
      * @param key The object key.
      * @return This builder.
-     * @since 2.60.0
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public Builder key(String key) {
       this.key = key;
       return this;
@@ -157,8 +166,9 @@ public final class CreateMultipartUploadResponse {
      *
      * @param uploadId The upload ID.
      * @return This builder.
-     * @since 2.60.0
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public Builder uploadId(String uploadId) {
       this.uploadId = uploadId;
       return this;
@@ -168,8 +178,9 @@ public final class CreateMultipartUploadResponse {
      * Builds a new {@link CreateMultipartUploadResponse} object.
      *
      * @return A new {@link CreateMultipartUploadResponse} object.
-     * @since 2.60.0
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public CreateMultipartUploadResponse build() {
       return new CreateMultipartUploadResponse(this);
     }

@@ -15,31 +15,33 @@
  */
 package com.google.cloud.storage.multipartupload.model;
 
+import com.google.api.core.BetaApi;
+
 /**
  * Represents a request to abort a multipart upload. This request is used to stop an in-progress
  * multipart upload, deleting any previously uploaded parts.
  *
- * @since 2.60.0
+ * @since 2.60.0 This new api is in preview and is subject to breaking changes.
  */
+@BetaApi
 public final class AbortMultipartUploadRequest {
   private final String bucket;
   private final String key;
   private final String uploadId;
-  private final String userProject;
 
   private AbortMultipartUploadRequest(Builder builder) {
     this.bucket = builder.bucket;
     this.key = builder.key;
     this.uploadId = builder.uploadId;
-    this.userProject = builder.userProject;
   }
 
   /**
    * Returns the name of the bucket in which the multipart upload is stored.
    *
    * @return The bucket name.
-   * @since 2.60.0
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public String bucket() {
     return bucket;
   }
@@ -48,8 +50,9 @@ public final class AbortMultipartUploadRequest {
    * Returns the name of the object that is being uploaded.
    *
    * @return The object name.
-   * @since 2.60.0
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public String key() {
     return key;
   }
@@ -58,30 +61,20 @@ public final class AbortMultipartUploadRequest {
    * Returns the upload ID of the multipart upload to abort.
    *
    * @return The upload ID.
-   * @since 2.60.0
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public String uploadId() {
     return uploadId;
-  }
-
-  /**
-   * Returns the user-project.
-   *
-   * @return the user-project.
-   * @see <a
-   *     href="https://docs.cloud.google.com/storage/docs/xml-api/reference-headers#xgooguserproject">x-goog-user-project</a>
-   * @since 2.61.0
-   */
-  public String userProject() {
-    return userProject;
   }
 
   /**
    * Returns a new builder for creating {@link AbortMultipartUploadRequest} instances.
    *
    * @return A new {@link Builder}.
-   * @since 2.60.0
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public static Builder builder() {
     return new Builder();
   }
@@ -89,13 +82,13 @@ public final class AbortMultipartUploadRequest {
   /**
    * A builder for creating {@link AbortMultipartUploadRequest} instances.
    *
-   * @since 2.60.0
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public static class Builder {
     private String bucket;
     private String key;
     private String uploadId;
-    private String userProject;
 
     private Builder() {}
 
@@ -104,8 +97,9 @@ public final class AbortMultipartUploadRequest {
      *
      * @param bucket The bucket name.
      * @return This builder.
-     * @since 2.60.0
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public Builder bucket(String bucket) {
       this.bucket = bucket;
       return this;
@@ -116,8 +110,9 @@ public final class AbortMultipartUploadRequest {
      *
      * @param key The object name.
      * @return This builder.
-     * @since 2.60.0
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public Builder key(String key) {
       this.key = key;
       return this;
@@ -128,24 +123,11 @@ public final class AbortMultipartUploadRequest {
      *
      * @param uploadId The upload ID.
      * @return This builder.
-     * @since 2.60.0
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public Builder uploadId(String uploadId) {
       this.uploadId = uploadId;
-      return this;
-    }
-
-    /**
-     * Sets the user-project.
-     *
-     * @param userProject The user-project.
-     * @return This builder.
-     * @see <a
-     *     href="https://docs.cloud.google.com/storage/docs/xml-api/reference-headers#xgooguserproject">x-goog-user-project</a>
-     * @since 2.61.0
-     */
-    public Builder userProject(String userProject) {
-      this.userProject = userProject;
       return this;
     }
 
@@ -153,8 +135,9 @@ public final class AbortMultipartUploadRequest {
      * Builds a new {@link AbortMultipartUploadRequest} instance.
      *
      * @return A new {@link AbortMultipartUploadRequest}.
-     * @since 2.60.0
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public AbortMultipartUploadRequest build() {
       return new AbortMultipartUploadRequest(this);
     }

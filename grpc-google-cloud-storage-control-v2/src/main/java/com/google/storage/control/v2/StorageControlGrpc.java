@@ -1,5 +1,5 @@
 /*
- * Copyright 2026 Google LLC
+ * Copyright 2025 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,9 @@ import static io.grpc.MethodDescriptor.generateFullMethodName;
  * StorageControl service includes selected control plane operations.
  * </pre>
  */
+@javax.annotation.Generated(
+    value = "by gRPC proto compiler",
+    comments = "Source: google/storage/control/v2/storage_control.proto")
 @io.grpc.stub.annotations.GrpcGenerated
 public final class StorageControlGrpc {
 
@@ -247,55 +250,6 @@ public final class StorageControlGrpc {
       }
     }
     return getRenameFolderMethod;
-  }
-
-  private static volatile io.grpc.MethodDescriptor<
-          com.google.storage.control.v2.DeleteFolderRecursiveRequest,
-          com.google.longrunning.Operation>
-      getDeleteFolderRecursiveMethod;
-
-  @io.grpc.stub.annotations.RpcMethod(
-      fullMethodName = SERVICE_NAME + '/' + "DeleteFolderRecursive",
-      requestType = com.google.storage.control.v2.DeleteFolderRecursiveRequest.class,
-      responseType = com.google.longrunning.Operation.class,
-      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<
-          com.google.storage.control.v2.DeleteFolderRecursiveRequest,
-          com.google.longrunning.Operation>
-      getDeleteFolderRecursiveMethod() {
-    io.grpc.MethodDescriptor<
-            com.google.storage.control.v2.DeleteFolderRecursiveRequest,
-            com.google.longrunning.Operation>
-        getDeleteFolderRecursiveMethod;
-    if ((getDeleteFolderRecursiveMethod = StorageControlGrpc.getDeleteFolderRecursiveMethod)
-        == null) {
-      synchronized (StorageControlGrpc.class) {
-        if ((getDeleteFolderRecursiveMethod = StorageControlGrpc.getDeleteFolderRecursiveMethod)
-            == null) {
-          StorageControlGrpc.getDeleteFolderRecursiveMethod =
-              getDeleteFolderRecursiveMethod =
-                  io.grpc.MethodDescriptor
-                      .<com.google.storage.control.v2.DeleteFolderRecursiveRequest,
-                          com.google.longrunning.Operation>
-                          newBuilder()
-                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-                      .setFullMethodName(
-                          generateFullMethodName(SERVICE_NAME, "DeleteFolderRecursive"))
-                      .setSampledToLocalTracing(true)
-                      .setRequestMarshaller(
-                          io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.google.storage.control.v2.DeleteFolderRecursiveRequest
-                                  .getDefaultInstance()))
-                      .setResponseMarshaller(
-                          io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.google.longrunning.Operation.getDefaultInstance()))
-                      .setSchemaDescriptor(
-                          new StorageControlMethodDescriptorSupplier("DeleteFolderRecursive"))
-                      .build();
-        }
-      }
-    }
-    return getDeleteFolderRecursiveMethod;
   }
 
   private static volatile io.grpc.MethodDescriptor<
@@ -1450,21 +1404,6 @@ public final class StorageControlGrpc {
      *
      *
      * <pre>
-     * Deletes a folder recursively. This operation is only applicable to a
-     * hierarchical namespace enabled bucket.
-     * </pre>
-     */
-    default void deleteFolderRecursive(
-        com.google.storage.control.v2.DeleteFolderRecursiveRequest request,
-        io.grpc.stub.StreamObserver<com.google.longrunning.Operation> responseObserver) {
-      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
-          getDeleteFolderRecursiveMethod(), responseObserver);
-    }
-
-    /**
-     *
-     *
-     * <pre>
      * Returns the storage layout configuration for a given bucket.
      * </pre>
      */
@@ -1907,23 +1846,6 @@ public final class StorageControlGrpc {
      *
      *
      * <pre>
-     * Deletes a folder recursively. This operation is only applicable to a
-     * hierarchical namespace enabled bucket.
-     * </pre>
-     */
-    public void deleteFolderRecursive(
-        com.google.storage.control.v2.DeleteFolderRecursiveRequest request,
-        io.grpc.stub.StreamObserver<com.google.longrunning.Operation> responseObserver) {
-      io.grpc.stub.ClientCalls.asyncUnaryCall(
-          getChannel().newCall(getDeleteFolderRecursiveMethod(), getCallOptions()),
-          request,
-          responseObserver);
-    }
-
-    /**
-     *
-     *
-     * <pre>
      * Returns the storage layout configuration for a given bucket.
      * </pre>
      */
@@ -2312,8 +2234,8 @@ public final class StorageControlGrpc {
      * </pre>
      */
     public com.google.storage.control.v2.Folder createFolder(
-        com.google.storage.control.v2.CreateFolderRequest request) throws io.grpc.StatusException {
-      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+        com.google.storage.control.v2.CreateFolderRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getCreateFolderMethod(), getCallOptions(), request);
     }
 
@@ -2326,8 +2248,8 @@ public final class StorageControlGrpc {
      * </pre>
      */
     public com.google.protobuf.Empty deleteFolder(
-        com.google.storage.control.v2.DeleteFolderRequest request) throws io.grpc.StatusException {
-      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+        com.google.storage.control.v2.DeleteFolderRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getDeleteFolderMethod(), getCallOptions(), request);
     }
 
@@ -2340,8 +2262,8 @@ public final class StorageControlGrpc {
      * </pre>
      */
     public com.google.storage.control.v2.Folder getFolder(
-        com.google.storage.control.v2.GetFolderRequest request) throws io.grpc.StatusException {
-      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+        com.google.storage.control.v2.GetFolderRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetFolderMethod(), getCallOptions(), request);
     }
 
@@ -2354,8 +2276,8 @@ public final class StorageControlGrpc {
      * </pre>
      */
     public com.google.storage.control.v2.ListFoldersResponse listFolders(
-        com.google.storage.control.v2.ListFoldersRequest request) throws io.grpc.StatusException {
-      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+        com.google.storage.control.v2.ListFoldersRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getListFoldersMethod(), getCallOptions(), request);
     }
 
@@ -2370,24 +2292,9 @@ public final class StorageControlGrpc {
      * </pre>
      */
     public com.google.longrunning.Operation renameFolder(
-        com.google.storage.control.v2.RenameFolderRequest request) throws io.grpc.StatusException {
-      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+        com.google.storage.control.v2.RenameFolderRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getRenameFolderMethod(), getCallOptions(), request);
-    }
-
-    /**
-     *
-     *
-     * <pre>
-     * Deletes a folder recursively. This operation is only applicable to a
-     * hierarchical namespace enabled bucket.
-     * </pre>
-     */
-    public com.google.longrunning.Operation deleteFolderRecursive(
-        com.google.storage.control.v2.DeleteFolderRecursiveRequest request)
-        throws io.grpc.StatusException {
-      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
-          getChannel(), getDeleteFolderRecursiveMethod(), getCallOptions(), request);
     }
 
     /**
@@ -2398,9 +2305,8 @@ public final class StorageControlGrpc {
      * </pre>
      */
     public com.google.storage.control.v2.StorageLayout getStorageLayout(
-        com.google.storage.control.v2.GetStorageLayoutRequest request)
-        throws io.grpc.StatusException {
-      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+        com.google.storage.control.v2.GetStorageLayoutRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetStorageLayoutMethod(), getCallOptions(), request);
     }
 
@@ -2412,9 +2318,8 @@ public final class StorageControlGrpc {
      * </pre>
      */
     public com.google.storage.control.v2.ManagedFolder createManagedFolder(
-        com.google.storage.control.v2.CreateManagedFolderRequest request)
-        throws io.grpc.StatusException {
-      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+        com.google.storage.control.v2.CreateManagedFolderRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getCreateManagedFolderMethod(), getCallOptions(), request);
     }
 
@@ -2426,9 +2331,8 @@ public final class StorageControlGrpc {
      * </pre>
      */
     public com.google.protobuf.Empty deleteManagedFolder(
-        com.google.storage.control.v2.DeleteManagedFolderRequest request)
-        throws io.grpc.StatusException {
-      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+        com.google.storage.control.v2.DeleteManagedFolderRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getDeleteManagedFolderMethod(), getCallOptions(), request);
     }
 
@@ -2440,9 +2344,8 @@ public final class StorageControlGrpc {
      * </pre>
      */
     public com.google.storage.control.v2.ManagedFolder getManagedFolder(
-        com.google.storage.control.v2.GetManagedFolderRequest request)
-        throws io.grpc.StatusException {
-      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+        com.google.storage.control.v2.GetManagedFolderRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetManagedFolderMethod(), getCallOptions(), request);
     }
 
@@ -2454,9 +2357,8 @@ public final class StorageControlGrpc {
      * </pre>
      */
     public com.google.storage.control.v2.ListManagedFoldersResponse listManagedFolders(
-        com.google.storage.control.v2.ListManagedFoldersRequest request)
-        throws io.grpc.StatusException {
-      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+        com.google.storage.control.v2.ListManagedFoldersRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getListManagedFoldersMethod(), getCallOptions(), request);
     }
 
@@ -2468,9 +2370,8 @@ public final class StorageControlGrpc {
      * </pre>
      */
     public com.google.longrunning.Operation createAnywhereCache(
-        com.google.storage.control.v2.CreateAnywhereCacheRequest request)
-        throws io.grpc.StatusException {
-      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+        com.google.storage.control.v2.CreateAnywhereCacheRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getCreateAnywhereCacheMethod(), getCallOptions(), request);
     }
 
@@ -2483,9 +2384,8 @@ public final class StorageControlGrpc {
      * </pre>
      */
     public com.google.longrunning.Operation updateAnywhereCache(
-        com.google.storage.control.v2.UpdateAnywhereCacheRequest request)
-        throws io.grpc.StatusException {
-      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+        com.google.storage.control.v2.UpdateAnywhereCacheRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getUpdateAnywhereCacheMethod(), getCallOptions(), request);
     }
 
@@ -2500,9 +2400,8 @@ public final class StorageControlGrpc {
      * </pre>
      */
     public com.google.storage.control.v2.AnywhereCache disableAnywhereCache(
-        com.google.storage.control.v2.DisableAnywhereCacheRequest request)
-        throws io.grpc.StatusException {
-      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+        com.google.storage.control.v2.DisableAnywhereCacheRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getDisableAnywhereCacheMethod(), getCallOptions(), request);
     }
 
@@ -2514,9 +2413,8 @@ public final class StorageControlGrpc {
      * </pre>
      */
     public com.google.storage.control.v2.AnywhereCache pauseAnywhereCache(
-        com.google.storage.control.v2.PauseAnywhereCacheRequest request)
-        throws io.grpc.StatusException {
-      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+        com.google.storage.control.v2.PauseAnywhereCacheRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getPauseAnywhereCacheMethod(), getCallOptions(), request);
     }
 
@@ -2528,9 +2426,8 @@ public final class StorageControlGrpc {
      * </pre>
      */
     public com.google.storage.control.v2.AnywhereCache resumeAnywhereCache(
-        com.google.storage.control.v2.ResumeAnywhereCacheRequest request)
-        throws io.grpc.StatusException {
-      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+        com.google.storage.control.v2.ResumeAnywhereCacheRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getResumeAnywhereCacheMethod(), getCallOptions(), request);
     }
 
@@ -2542,9 +2439,8 @@ public final class StorageControlGrpc {
      * </pre>
      */
     public com.google.storage.control.v2.AnywhereCache getAnywhereCache(
-        com.google.storage.control.v2.GetAnywhereCacheRequest request)
-        throws io.grpc.StatusException {
-      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+        com.google.storage.control.v2.GetAnywhereCacheRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetAnywhereCacheMethod(), getCallOptions(), request);
     }
 
@@ -2556,9 +2452,8 @@ public final class StorageControlGrpc {
      * </pre>
      */
     public com.google.storage.control.v2.ListAnywhereCachesResponse listAnywhereCaches(
-        com.google.storage.control.v2.ListAnywhereCachesRequest request)
-        throws io.grpc.StatusException {
-      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+        com.google.storage.control.v2.ListAnywhereCachesRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getListAnywhereCachesMethod(), getCallOptions(), request);
     }
 
@@ -2570,9 +2465,8 @@ public final class StorageControlGrpc {
      * </pre>
      */
     public com.google.storage.control.v2.IntelligenceConfig getProjectIntelligenceConfig(
-        com.google.storage.control.v2.GetProjectIntelligenceConfigRequest request)
-        throws io.grpc.StatusException {
-      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+        com.google.storage.control.v2.GetProjectIntelligenceConfigRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetProjectIntelligenceConfigMethod(), getCallOptions(), request);
     }
 
@@ -2584,9 +2478,8 @@ public final class StorageControlGrpc {
      * </pre>
      */
     public com.google.storage.control.v2.IntelligenceConfig updateProjectIntelligenceConfig(
-        com.google.storage.control.v2.UpdateProjectIntelligenceConfigRequest request)
-        throws io.grpc.StatusException {
-      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+        com.google.storage.control.v2.UpdateProjectIntelligenceConfigRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getUpdateProjectIntelligenceConfigMethod(), getCallOptions(), request);
     }
 
@@ -2598,9 +2491,8 @@ public final class StorageControlGrpc {
      * </pre>
      */
     public com.google.storage.control.v2.IntelligenceConfig getFolderIntelligenceConfig(
-        com.google.storage.control.v2.GetFolderIntelligenceConfigRequest request)
-        throws io.grpc.StatusException {
-      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+        com.google.storage.control.v2.GetFolderIntelligenceConfigRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetFolderIntelligenceConfigMethod(), getCallOptions(), request);
     }
 
@@ -2612,9 +2504,8 @@ public final class StorageControlGrpc {
      * </pre>
      */
     public com.google.storage.control.v2.IntelligenceConfig updateFolderIntelligenceConfig(
-        com.google.storage.control.v2.UpdateFolderIntelligenceConfigRequest request)
-        throws io.grpc.StatusException {
-      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+        com.google.storage.control.v2.UpdateFolderIntelligenceConfigRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getUpdateFolderIntelligenceConfigMethod(), getCallOptions(), request);
     }
 
@@ -2626,9 +2517,8 @@ public final class StorageControlGrpc {
      * </pre>
      */
     public com.google.storage.control.v2.IntelligenceConfig getOrganizationIntelligenceConfig(
-        com.google.storage.control.v2.GetOrganizationIntelligenceConfigRequest request)
-        throws io.grpc.StatusException {
-      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+        com.google.storage.control.v2.GetOrganizationIntelligenceConfigRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetOrganizationIntelligenceConfigMethod(), getCallOptions(), request);
     }
 
@@ -2640,9 +2530,8 @@ public final class StorageControlGrpc {
      * </pre>
      */
     public com.google.storage.control.v2.IntelligenceConfig updateOrganizationIntelligenceConfig(
-        com.google.storage.control.v2.UpdateOrganizationIntelligenceConfigRequest request)
-        throws io.grpc.StatusException {
-      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+        com.google.storage.control.v2.UpdateOrganizationIntelligenceConfigRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getUpdateOrganizationIntelligenceConfigMethod(), getCallOptions(), request);
     }
 
@@ -2657,9 +2546,8 @@ public final class StorageControlGrpc {
      * for a managed folder.
      * </pre>
      */
-    public com.google.iam.v1.Policy getIamPolicy(com.google.iam.v1.GetIamPolicyRequest request)
-        throws io.grpc.StatusException {
-      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+    public com.google.iam.v1.Policy getIamPolicy(com.google.iam.v1.GetIamPolicyRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetIamPolicyMethod(), getCallOptions(), request);
     }
 
@@ -2674,9 +2562,8 @@ public final class StorageControlGrpc {
      * for a managed folder.
      * </pre>
      */
-    public com.google.iam.v1.Policy setIamPolicy(com.google.iam.v1.SetIamPolicyRequest request)
-        throws io.grpc.StatusException {
-      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+    public com.google.iam.v1.Policy setIamPolicy(com.google.iam.v1.SetIamPolicyRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getSetIamPolicyMethod(), getCallOptions(), request);
     }
 
@@ -2694,8 +2581,8 @@ public final class StorageControlGrpc {
      * </pre>
      */
     public com.google.iam.v1.TestIamPermissionsResponse testIamPermissions(
-        com.google.iam.v1.TestIamPermissionsRequest request) throws io.grpc.StatusException {
-      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+        com.google.iam.v1.TestIamPermissionsRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getTestIamPermissionsMethod(), getCallOptions(), request);
     }
   }
@@ -2789,20 +2676,6 @@ public final class StorageControlGrpc {
         com.google.storage.control.v2.RenameFolderRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getRenameFolderMethod(), getCallOptions(), request);
-    }
-
-    /**
-     *
-     *
-     * <pre>
-     * Deletes a folder recursively. This operation is only applicable to a
-     * hierarchical namespace enabled bucket.
-     * </pre>
-     */
-    public com.google.longrunning.Operation deleteFolderRecursive(
-        com.google.storage.control.v2.DeleteFolderRecursiveRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
-          getChannel(), getDeleteFolderRecursiveMethod(), getCallOptions(), request);
     }
 
     /**
@@ -3191,20 +3064,6 @@ public final class StorageControlGrpc {
      *
      *
      * <pre>
-     * Deletes a folder recursively. This operation is only applicable to a
-     * hierarchical namespace enabled bucket.
-     * </pre>
-     */
-    public com.google.common.util.concurrent.ListenableFuture<com.google.longrunning.Operation>
-        deleteFolderRecursive(com.google.storage.control.v2.DeleteFolderRecursiveRequest request) {
-      return io.grpc.stub.ClientCalls.futureUnaryCall(
-          getChannel().newCall(getDeleteFolderRecursiveMethod(), getCallOptions()), request);
-    }
-
-    /**
-     *
-     *
-     * <pre>
      * Returns the storage layout configuration for a given bucket.
      * </pre>
      */
@@ -3524,28 +3383,27 @@ public final class StorageControlGrpc {
   private static final int METHODID_GET_FOLDER = 2;
   private static final int METHODID_LIST_FOLDERS = 3;
   private static final int METHODID_RENAME_FOLDER = 4;
-  private static final int METHODID_DELETE_FOLDER_RECURSIVE = 5;
-  private static final int METHODID_GET_STORAGE_LAYOUT = 6;
-  private static final int METHODID_CREATE_MANAGED_FOLDER = 7;
-  private static final int METHODID_DELETE_MANAGED_FOLDER = 8;
-  private static final int METHODID_GET_MANAGED_FOLDER = 9;
-  private static final int METHODID_LIST_MANAGED_FOLDERS = 10;
-  private static final int METHODID_CREATE_ANYWHERE_CACHE = 11;
-  private static final int METHODID_UPDATE_ANYWHERE_CACHE = 12;
-  private static final int METHODID_DISABLE_ANYWHERE_CACHE = 13;
-  private static final int METHODID_PAUSE_ANYWHERE_CACHE = 14;
-  private static final int METHODID_RESUME_ANYWHERE_CACHE = 15;
-  private static final int METHODID_GET_ANYWHERE_CACHE = 16;
-  private static final int METHODID_LIST_ANYWHERE_CACHES = 17;
-  private static final int METHODID_GET_PROJECT_INTELLIGENCE_CONFIG = 18;
-  private static final int METHODID_UPDATE_PROJECT_INTELLIGENCE_CONFIG = 19;
-  private static final int METHODID_GET_FOLDER_INTELLIGENCE_CONFIG = 20;
-  private static final int METHODID_UPDATE_FOLDER_INTELLIGENCE_CONFIG = 21;
-  private static final int METHODID_GET_ORGANIZATION_INTELLIGENCE_CONFIG = 22;
-  private static final int METHODID_UPDATE_ORGANIZATION_INTELLIGENCE_CONFIG = 23;
-  private static final int METHODID_GET_IAM_POLICY = 24;
-  private static final int METHODID_SET_IAM_POLICY = 25;
-  private static final int METHODID_TEST_IAM_PERMISSIONS = 26;
+  private static final int METHODID_GET_STORAGE_LAYOUT = 5;
+  private static final int METHODID_CREATE_MANAGED_FOLDER = 6;
+  private static final int METHODID_DELETE_MANAGED_FOLDER = 7;
+  private static final int METHODID_GET_MANAGED_FOLDER = 8;
+  private static final int METHODID_LIST_MANAGED_FOLDERS = 9;
+  private static final int METHODID_CREATE_ANYWHERE_CACHE = 10;
+  private static final int METHODID_UPDATE_ANYWHERE_CACHE = 11;
+  private static final int METHODID_DISABLE_ANYWHERE_CACHE = 12;
+  private static final int METHODID_PAUSE_ANYWHERE_CACHE = 13;
+  private static final int METHODID_RESUME_ANYWHERE_CACHE = 14;
+  private static final int METHODID_GET_ANYWHERE_CACHE = 15;
+  private static final int METHODID_LIST_ANYWHERE_CACHES = 16;
+  private static final int METHODID_GET_PROJECT_INTELLIGENCE_CONFIG = 17;
+  private static final int METHODID_UPDATE_PROJECT_INTELLIGENCE_CONFIG = 18;
+  private static final int METHODID_GET_FOLDER_INTELLIGENCE_CONFIG = 19;
+  private static final int METHODID_UPDATE_FOLDER_INTELLIGENCE_CONFIG = 20;
+  private static final int METHODID_GET_ORGANIZATION_INTELLIGENCE_CONFIG = 21;
+  private static final int METHODID_UPDATE_ORGANIZATION_INTELLIGENCE_CONFIG = 22;
+  private static final int METHODID_GET_IAM_POLICY = 23;
+  private static final int METHODID_SET_IAM_POLICY = 24;
+  private static final int METHODID_TEST_IAM_PERMISSIONS = 25;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -3588,11 +3446,6 @@ public final class StorageControlGrpc {
         case METHODID_RENAME_FOLDER:
           serviceImpl.renameFolder(
               (com.google.storage.control.v2.RenameFolderRequest) request,
-              (io.grpc.stub.StreamObserver<com.google.longrunning.Operation>) responseObserver);
-          break;
-        case METHODID_DELETE_FOLDER_RECURSIVE:
-          serviceImpl.deleteFolderRecursive(
-              (com.google.storage.control.v2.DeleteFolderRecursiveRequest) request,
               (io.grpc.stub.StreamObserver<com.google.longrunning.Operation>) responseObserver);
           break;
         case METHODID_GET_STORAGE_LAYOUT:
@@ -3767,12 +3620,6 @@ public final class StorageControlGrpc {
                 new MethodHandlers<
                     com.google.storage.control.v2.RenameFolderRequest,
                     com.google.longrunning.Operation>(service, METHODID_RENAME_FOLDER)))
-        .addMethod(
-            getDeleteFolderRecursiveMethod(),
-            io.grpc.stub.ServerCalls.asyncUnaryCall(
-                new MethodHandlers<
-                    com.google.storage.control.v2.DeleteFolderRecursiveRequest,
-                    com.google.longrunning.Operation>(service, METHODID_DELETE_FOLDER_RECURSIVE)))
         .addMethod(
             getGetStorageLayoutMethod(),
             io.grpc.stub.ServerCalls.asyncUnaryCall(
@@ -3969,7 +3816,6 @@ public final class StorageControlGrpc {
                       .addMethod(getGetFolderMethod())
                       .addMethod(getListFoldersMethod())
                       .addMethod(getRenameFolderMethod())
-                      .addMethod(getDeleteFolderRecursiveMethod())
                       .addMethod(getGetStorageLayoutMethod())
                       .addMethod(getCreateManagedFolderMethod())
                       .addMethod(getDeleteManagedFolderMethod())

@@ -16,6 +16,7 @@
 
 package com.google.cloud.storage.multipartupload.model;
 
+import com.google.api.core.BetaApi;
 import com.google.common.base.MoreObjects;
 import java.util.Objects;
 
@@ -23,26 +24,26 @@ import java.util.Objects;
  * Represents the response from uploading a part in a multipart upload. It contains the ETag and
  * checksums of the uploaded part.
  *
- * @since 2.60.0
+ * @since 2.60.0 This new api is in preview and is subject to breaking changes.
  */
+@BetaApi
 public final class UploadPartResponse {
 
   private final String eTag;
   private final String md5;
-  private final String crc32c;
 
   private UploadPartResponse(Builder builder) {
     this.eTag = builder.etag;
     this.md5 = builder.md5;
-    this.crc32c = builder.crc32c;
   }
 
   /**
    * Returns the ETag of the uploaded part.
    *
    * @return The ETag.
-   * @since 2.60.0
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public String eTag() {
     return eTag;
   }
@@ -51,20 +52,11 @@ public final class UploadPartResponse {
    * Returns the MD5 hash of the uploaded part.
    *
    * @return The MD5 hash.
-   * @since 2.60.0
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public String md5() {
     return md5;
-  }
-
-  /**
-   * Returns the CRC32C checksum of the uploaded part.
-   *
-   * @return The CRC32C checksum.
-   * @since 2.61.0
-   */
-  public String crc32c() {
-    return crc32c;
   }
 
   @Override
@@ -76,31 +68,26 @@ public final class UploadPartResponse {
       return false;
     }
     UploadPartResponse that = (UploadPartResponse) o;
-    return Objects.equals(eTag, that.eTag)
-        && Objects.equals(md5, that.md5)
-        && Objects.equals(crc32c, that.crc32c);
+    return Objects.equals(eTag, that.eTag) && Objects.equals(md5, that.md5);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(eTag, md5, crc32c);
+    return Objects.hash(eTag, md5);
   }
 
   @Override
   public String toString() {
-    return MoreObjects.toStringHelper(this)
-        .add("etag", eTag)
-        .add("md5", md5)
-        .add("crc32c", crc32c)
-        .toString();
+    return MoreObjects.toStringHelper(this).add("etag", eTag).add("md5", md5).toString();
   }
 
   /**
    * Creates a new builder for creating an {@code UploadPartResponse}.
    *
    * @return A new builder.
-   * @since 2.60.0
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public static Builder builder() {
     return new Builder();
   }
@@ -108,12 +95,12 @@ public final class UploadPartResponse {
   /**
    * A builder for creating {@code UploadPartResponse} instances.
    *
-   * @since 2.60.0
+   * @since 2.60.0 This new api is in preview and is subject to breaking changes.
    */
+  @BetaApi
   public static class Builder {
     private String etag;
     private String md5;
-    private String crc32c;
 
     private Builder() {}
 
@@ -122,8 +109,9 @@ public final class UploadPartResponse {
      *
      * @param etag The ETag.
      * @return This builder.
-     * @since 2.60.0
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public Builder eTag(String etag) {
       this.etag = etag;
       return this;
@@ -134,22 +122,11 @@ public final class UploadPartResponse {
      *
      * @param md5 The MD5 hash.
      * @return This builder.
-     * @since 2.60.0
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public Builder md5(String md5) {
       this.md5 = md5;
-      return this;
-    }
-
-    /**
-     * Sets the CRC32C checksum for the uploaded part.
-     *
-     * @param crc32c The CRC32C checksum.
-     * @return This builder.
-     * @since 2.61.0
-     */
-    public Builder crc32c(String crc32c) {
-      this.crc32c = crc32c;
       return this;
     }
 
@@ -157,8 +134,9 @@ public final class UploadPartResponse {
      * Builds the {@code UploadPartResponse} object.
      *
      * @return The built {@code UploadPartResponse} object.
-     * @since 2.60.0
+     * @since 2.60.0 This new api is in preview and is subject to breaking changes.
      */
+    @BetaApi
     public UploadPartResponse build() {
       return new UploadPartResponse(this);
     }

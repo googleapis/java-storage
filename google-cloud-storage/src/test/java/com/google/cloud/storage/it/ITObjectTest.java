@@ -98,7 +98,6 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import javax.crypto.spec.SecretKeySpec;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -892,7 +891,6 @@ public class ITObjectTest {
   }
 
   @Test
-  @Ignore("TODO: fix b/468377909 to enable test again")
   public void testCopyBlobWithPredefinedAcl() {
 
     String sourceBlobName = generator.randomObjectName() + "-source";

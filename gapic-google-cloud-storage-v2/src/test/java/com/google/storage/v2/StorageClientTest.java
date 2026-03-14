@@ -1,5 +1,5 @@
 /*
- * Copyright 2026 Google LLC
+ * Copyright 2025 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1064,7 +1064,6 @@ public class StorageClientTest {
                     .toString())
             .setCommonObjectRequestParams(CommonObjectRequestParams.newBuilder().build())
             .setObjectChecksums(ObjectChecksums.newBuilder().build())
-            .setDeleteSourceObjects(true)
             .build();
 
     Object actualResponse = client.composeObject(request);
@@ -1085,7 +1084,6 @@ public class StorageClientTest {
     Assert.assertEquals(
         request.getCommonObjectRequestParams(), actualRequest.getCommonObjectRequestParams());
     Assert.assertEquals(request.getObjectChecksums(), actualRequest.getObjectChecksums());
-    Assert.assertEquals(request.getDeleteSourceObjects(), actualRequest.getDeleteSourceObjects());
     Assert.assertTrue(
         channelProvider.isHeaderSent(
             ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
@@ -1110,7 +1108,6 @@ public class StorageClientTest {
                       .toString())
               .setCommonObjectRequestParams(CommonObjectRequestParams.newBuilder().build())
               .setObjectChecksums(ObjectChecksums.newBuilder().build())
-              .setDeleteSourceObjects(true)
               .build();
       client.composeObject(request);
       Assert.fail("No exception raised");

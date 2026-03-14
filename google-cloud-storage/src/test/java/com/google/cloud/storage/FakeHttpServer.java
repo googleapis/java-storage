@@ -20,10 +20,6 @@ import static io.grpc.netty.shaded.io.netty.handler.codec.http.HttpHeaderNames.C
 import static io.grpc.netty.shaded.io.netty.handler.codec.http.HttpHeaderNames.CONTENT_LENGTH;
 import static io.grpc.netty.shaded.io.netty.handler.codec.http.HttpHeaderValues.CLOSE;
 
-import com.google.api.client.http.UriTemplate;
-import com.google.api.gax.retrying.RetrySettings;
-import com.google.cloud.NoCredentials;
-import com.google.cloud.storage.it.runner.registry.Registry;
 import io.grpc.netty.shaded.io.netty.bootstrap.ServerBootstrap;
 import io.grpc.netty.shaded.io.netty.buffer.ByteBuf;
 import io.grpc.netty.shaded.io.netty.channel.Channel;
@@ -48,42 +44,21 @@ import io.grpc.netty.shaded.io.netty.handler.logging.LogLevel;
 import io.grpc.netty.shaded.io.netty.handler.logging.LoggingHandler;
 import java.net.InetSocketAddress;
 import java.net.URI;
-import java.time.Duration;
-import java.util.Map;
 
 final class FakeHttpServer implements AutoCloseable {
 
   private final URI endpoint;
   private final Channel channel;
   private final Runnable shutdown;
-  private final HttpStorageOptions httpStorageOptions;
 
-  private FakeHttpServer(
-      URI endpoint, Channel channel, Runnable shutdown, HttpStorageOptions httpStorageOptions) {
+  private FakeHttpServer(URI endpoint, Channel channel, Runnable shutdown) {
     this.endpoint = endpoint;
     this.channel = channel;
     this.shutdown = shutdown;
-    this.httpStorageOptions = httpStorageOptions;
   }
 
-  /**
-   * overload which calls {@link #createUri(String, Map, boolean)} with {@code createUri(template,
-   * params, false)}
-   */
-  public URI createUri(String template, Map<String, String> params) {
-    return createUri(template, params, false);
-  }
-
-  /** Decorator for {@link UriTemplate#expand(String, String, Object, boolean)} */
-  public URI createUri(
-      String template, Map<String, String> params, boolean addUnusedParamsAsQueryParams) {
-    String expand =
-        UriTemplate.expand(endpoint.toString(), template, params, addUnusedParamsAsQueryParams);
-    return URI.create(expand);
-  }
-
-  public HttpStorageOptions getHttpStorageOptions() {
-    return httpStorageOptions;
+  public URI getEndpoint() {
+    return endpoint;
   }
 
   @Override
@@ -93,10 +68,6 @@ final class FakeHttpServer implements AutoCloseable {
   }
 
   static FakeHttpServer of(HttpRequestHandler server) {
-    return of(server, true);
-  }
-
-  static FakeHttpServer of(HttpRequestHandler server, boolean trailingSlash) {
     // based on
     // https://github.com/netty/netty/blob/59aa6e635b9996cf21cd946e64353270679adc73/example/src/main/java/io/netty/example/http/helloworld/HttpHelloWorldServer.java
     InetSocketAddress address = new InetSocketAddress("localhost", 0);
@@ -128,35 +99,13 @@ final class FakeHttpServer implements AutoCloseable {
     Channel channel = b.bind(address).syncUninterruptibly().channel();
 
     InetSocketAddress socketAddress = (InetSocketAddress) channel.localAddress();
-    String suffix = trailingSlash ? "/" : "";
-    URI endpoint = URI.create("http://localhost:" + socketAddress.getPort() + suffix);
-    HttpStorageOptions httpStorageOptions =
-        HttpStorageOptions.http()
-            .setHost(endpoint.toString())
-            .setProjectId("test-proj")
-            .setCredentials(NoCredentials.getInstance())
-            .setOpenTelemetry(Registry.getInstance().otelSdk.get().get())
-            // cut most retry settings by half. we're hitting an in process server.
-            .setRetrySettings(
-                RetrySettings.newBuilder()
-                    .setTotalTimeoutDuration(Duration.ofSeconds(25))
-                    .setInitialRetryDelayDuration(Duration.ofMillis(250))
-                    .setRetryDelayMultiplier(1.2)
-                    .setMaxRetryDelayDuration(Duration.ofSeconds(16))
-                    .setMaxAttempts(6)
-                    .setInitialRpcTimeoutDuration(Duration.ofSeconds(25))
-                    .setRpcTimeoutMultiplier(1.0)
-                    .setMaxRpcTimeoutDuration(Duration.ofSeconds(25))
-                    .build())
-            .build();
     return new FakeHttpServer(
-        endpoint,
+        URI.create("http://localhost:" + socketAddress.getPort()),
         channel,
         () -> {
           bossGroup.shutdownGracefully();
           workerGroup.shutdownGracefully();
-        },
-        httpStorageOptions);
+        });
   }
 
   interface HttpRequestHandler {
