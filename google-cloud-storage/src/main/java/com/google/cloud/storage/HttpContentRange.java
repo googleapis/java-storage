@@ -210,7 +210,7 @@ abstract class HttpContentRange {
 
     @Override
     public boolean endOffsetEquals(long e) {
-      return false;
+      return e == Math.max(0, size - 1);
     }
 
     @Override

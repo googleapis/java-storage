@@ -54,6 +54,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -246,6 +247,59 @@ public final class ITMultipartUploadClientTest {
     }
   }
 
+  @Test
+  public void testUploadPart_withCustomChecksum() throws IOException {
+    BlobInfo info = BlobInfo.newBuilder(bucket, generator.randomObjectName()).build();
+    CreateMultipartUploadResponse createResponse = createMultipartUpload(info);
+    String uploadId = createResponse.uploadId();
+
+    ChecksummedTestContent content =
+        ChecksummedTestContent.of("hello world".getBytes(StandardCharsets.UTF_8));
+
+    UploadPartRequest request =
+        UploadPartRequest.builder()
+            .bucket(info.getBucket())
+            .key(info.getName())
+            .uploadId(uploadId)
+            .partNumber(1)
+            .crc32c(content.getCrc32cBase64())
+            .build();
+    UploadPartResponse response =
+        multipartUploadClient.uploadPart(request, RequestBody.of(content.asByteBuffer()));
+    assertThat(response).isNotNull();
+    assertThat(response.eTag()).isNotNull();
+
+    abortMultipartUpload(info, uploadId);
+  }
+
+  @Test
+  public void testUploadPart_withCustomChecksum_fail() throws IOException {
+    BlobInfo info = BlobInfo.newBuilder(bucket, generator.randomObjectName()).build();
+    CreateMultipartUploadResponse createResponse = createMultipartUpload(info);
+    String uploadId = createResponse.uploadId();
+
+    ChecksummedTestContent content =
+        ChecksummedTestContent.of("hello world".getBytes(StandardCharsets.UTF_8));
+
+    UploadPartRequest request =
+        UploadPartRequest.builder()
+            .bucket(info.getBucket())
+            .key(info.getName())
+            .uploadId(uploadId)
+            .partNumber(1)
+            .crc32c("1234") // Invalid checksum
+            .build();
+    try {
+      multipartUploadClient.uploadPart(request, RequestBody.of(content.asByteBuffer()));
+      fail("Expected StorageException");
+    } catch (StorageException e) {
+      assertThat(e.getMessage())
+          .contains("The CRC32C you specified did not match what we computed.");
+    } finally {
+      abortMultipartUpload(info, uploadId);
+    }
+  }
+
   private void doTest(int objectSizeBytes) throws IOException {
     BlobInfo info = BlobInfo.newBuilder(bucket, generator.randomObjectName()).build();
 
@@ -268,7 +322,7 @@ public final class ITMultipartUploadClientTest {
     ListPartsRequest.Builder listPartsBuilder =
         ListPartsRequest.builder().bucket(info.getBucket()).key(info.getName()).uploadId(uploadId);
     ListPartsResponse listPartsResponse = multipartUploadClient.listParts(listPartsBuilder.build());
-    assertThat(listPartsResponse.getParts()).hasSize(completedParts.size());
+    assertThat(listPartsResponse.parts()).hasSize(completedParts.size());
 
     completeMultipartUpload(info, uploadId, completedParts);
 

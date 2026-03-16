@@ -2195,6 +2195,45 @@ public final class BidiUploadTest {
 
       assertThat(recordErrorCalled.get()).isTrue();
     }
+
+    @Test
+    public void onResponse_resetsRetryContextToEnsureRetriesArePossibleForLongWrites() {
+      AtomicBoolean resetCalled = new AtomicBoolean(false);
+      AtomicBoolean recordErrorCalled = new AtomicBoolean(false);
+      StreamingResponseObserver obs =
+          new StreamingResponseObserver(
+              new BidiUploadState(name.getMethodName()) {
+                @Override
+                StorageException onResponse(BidiWriteObjectResponse response) {
+                  return null;
+                }
+              },
+              new RetryContext() {
+                @Override
+                public boolean inBackoff() {
+                  return false;
+                }
+
+                @Override
+                public void reset() {
+                  resetCalled.set(true);
+                }
+
+                @Override
+                public <T extends Throwable> void recordError(
+                    T t, OnSuccess onSuccess, OnFailure<T> onFailure) {
+                  recordErrorCalled.set(true);
+                }
+              },
+              RetryContextTest.failOnSuccess(),
+              RetryContextTest.failOnFailure());
+
+      obs.onStart(TestUtils.nullStreamController());
+      obs.onResponse(resourceWithSize(0));
+
+      assertThat(resetCalled.get()).isTrue();
+      assertThat(recordErrorCalled.get()).isFalse();
+    }
   }
 
   static BidiWriteObjectRequest flushOffset(long offset) {

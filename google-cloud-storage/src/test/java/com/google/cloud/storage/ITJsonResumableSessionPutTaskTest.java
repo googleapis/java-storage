@@ -48,7 +48,6 @@ import java.math.BigInteger;
 import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.util.Locale;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -95,14 +94,14 @@ public final class ITJsonResumableSessionPutTaskTest {
         };
 
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
-      URI endpoint = fakeHttpServer.getEndpoint();
-      String uploadUrl =
-          String.format(Locale.US, "%s/upload/%s", endpoint.toString(), UUID.randomUUID());
+      URI uri =
+          fakeHttpServer.createUri(
+              "/upload/{uploadId}", ImmutableMap.of("uploadId", UUID.randomUUID().toString()));
 
       JsonResumableSessionPutTask task =
           new JsonResumableSessionPutTask(
               httpClientContext,
-              jsonResumableWrite(uploadUrl),
+              jsonResumableWrite(uri),
               RewindableContent.empty(),
               HttpContentRange.of(ByteRangeSpec.explicitClosed(0L, 0L), 0));
 
@@ -142,16 +141,16 @@ public final class ITJsonResumableSessionPutTaskTest {
         };
 
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
-      URI endpoint = fakeHttpServer.getEndpoint();
-      String uploadUrl =
-          String.format(Locale.US, "%s/upload/%s", endpoint.toString(), UUID.randomUUID());
+      URI uri =
+          fakeHttpServer.createUri(
+              "/upload/{uploadId}", ImmutableMap.of("uploadId", UUID.randomUUID().toString()));
 
       AtomicLong confirmedBytes = new AtomicLong(-1L);
 
       JsonResumableSessionPutTask task =
           new JsonResumableSessionPutTask(
               httpClientContext,
-              jsonResumableWrite(uploadUrl),
+              jsonResumableWrite(uri),
               RewindableContent.empty(),
               HttpContentRange.of(ByteRangeSpec.explicitClosed(0L, 10L)));
 
@@ -224,16 +223,16 @@ public final class ITJsonResumableSessionPutTaskTest {
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler);
         TmpFile tmpFile =
             DataGenerator.base64Characters().tempFile(temp.newFolder().toPath(), _256KiBL)) {
-      URI endpoint = fakeHttpServer.getEndpoint();
-      String uploadUrl =
-          String.format(Locale.US, "%s/upload/%s", endpoint.toString(), UUID.randomUUID());
+      URI uri =
+          fakeHttpServer.createUri(
+              "/upload/{uploadId}", ImmutableMap.of("uploadId", UUID.randomUUID().toString()));
 
       AtomicLong confirmedBytes = new AtomicLong(-1L);
 
       JsonResumableSessionPutTask task =
           new JsonResumableSessionPutTask(
               httpClientContext,
-              jsonResumableWrite(uploadUrl),
+              jsonResumableWrite(uri),
               RewindableContent.of(tmpFile.getPath()),
               HttpContentRange.of(ByteRangeSpec.explicit(0L, _256KiBL)));
 
@@ -294,16 +293,16 @@ public final class ITJsonResumableSessionPutTaskTest {
         };
 
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
-      URI endpoint = fakeHttpServer.getEndpoint();
-      String uploadUrl =
-          String.format(Locale.US, "%s/upload/%s", endpoint.toString(), UUID.randomUUID());
+      URI uri =
+          fakeHttpServer.createUri(
+              "/upload/{uploadId}", ImmutableMap.of("uploadId", UUID.randomUUID().toString()));
 
       AtomicLong confirmedBytes = new AtomicLong(-1L);
 
       JsonResumableSessionPutTask task =
           new JsonResumableSessionPutTask(
               httpClientContext,
-              jsonResumableWrite(uploadUrl),
+              jsonResumableWrite(uri),
               RewindableContent.empty(),
               HttpContentRange.of(_256KiBL));
 
@@ -364,16 +363,16 @@ public final class ITJsonResumableSessionPutTaskTest {
         };
 
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
-      URI endpoint = fakeHttpServer.getEndpoint();
-      String uploadUrl =
-          String.format(Locale.US, "%s/upload/%s", endpoint.toString(), UUID.randomUUID());
+      URI uri =
+          fakeHttpServer.createUri(
+              "/upload/{uploadId}", ImmutableMap.of("uploadId", UUID.randomUUID().toString()));
 
       AtomicLong confirmedBytes = new AtomicLong(-1L);
 
       JsonResumableSessionPutTask task =
           new JsonResumableSessionPutTask(
               httpClientContext,
-              jsonResumableWrite(uploadUrl),
+              jsonResumableWrite(uri),
               RewindableContent.empty(),
               HttpContentRange.of(_512KiBL));
 
@@ -445,22 +444,21 @@ public final class ITJsonResumableSessionPutTaskTest {
         };
 
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
-      URI endpoint = fakeHttpServer.getEndpoint();
-      String uploadUrl =
-          String.format(Locale.US, "%s/upload/%s", endpoint.toString(), UUID.randomUUID());
+      URI uri =
+          fakeHttpServer.createUri(
+              "/upload/{uploadId}", ImmutableMap.of("uploadId", UUID.randomUUID().toString()));
 
       JsonResumableSessionPutTask task =
           new JsonResumableSessionPutTask(
               httpClientContext,
-              jsonResumableWrite(uploadUrl),
+              jsonResumableWrite(uri),
               RewindableContent.empty(),
               HttpContentRange.of(_256KiBL));
 
       ResumableOperationResult<@Nullable StorageObject> operationResult = task.call();
       StorageObject call = operationResult.getObject();
       assertThat(call).isNotNull();
-      assertThat(call.getMetadata())
-          .containsEntry("upload_id", uploadUrl.substring(endpoint.toString().length()));
+      assertThat(call.getMetadata()).containsEntry("upload_id", uri.getPath());
       assertThat(operationResult.getPersistedSize()).isEqualTo(_256KiBL);
     }
   }
@@ -526,16 +524,16 @@ public final class ITJsonResumableSessionPutTaskTest {
         };
 
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
-      URI endpoint = fakeHttpServer.getEndpoint();
-      String uploadUrl =
-          String.format(Locale.US, "%s/upload/%s", endpoint.toString(), UUID.randomUUID());
+      URI uri =
+          fakeHttpServer.createUri(
+              "/upload/{uploadId}", ImmutableMap.of("uploadId", UUID.randomUUID().toString()));
 
       AtomicLong confirmedBytes = new AtomicLong(-1L);
 
       JsonResumableSessionPutTask task =
           new JsonResumableSessionPutTask(
               httpClientContext,
-              jsonResumableWrite(uploadUrl),
+              jsonResumableWrite(uri),
               RewindableContent.empty(),
               HttpContentRange.of(_512KiBL));
 
@@ -607,16 +605,16 @@ public final class ITJsonResumableSessionPutTaskTest {
         };
 
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
-      URI endpoint = fakeHttpServer.getEndpoint();
-      String uploadUrl =
-          String.format(Locale.US, "%s/upload/%s", endpoint.toString(), UUID.randomUUID());
+      URI uri =
+          fakeHttpServer.createUri(
+              "/upload/{uploadId}", ImmutableMap.of("uploadId", UUID.randomUUID().toString()));
 
       AtomicLong confirmedBytes = new AtomicLong(-1L);
 
       JsonResumableSessionPutTask task =
           new JsonResumableSessionPutTask(
               httpClientContext,
-              jsonResumableWrite(uploadUrl),
+              jsonResumableWrite(uri),
               RewindableContent.empty(),
               HttpContentRange.of(_128KiBL));
 
@@ -686,16 +684,16 @@ public final class ITJsonResumableSessionPutTaskTest {
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler);
         TmpFile tmpFile =
             DataGenerator.base64Characters().tempFile(temp.newFolder().toPath(), _256KiBL)) {
-      URI endpoint = fakeHttpServer.getEndpoint();
-      String uploadUrl =
-          String.format(Locale.US, "%s/upload/%s", endpoint.toString(), UUID.randomUUID());
+      URI uri =
+          fakeHttpServer.createUri(
+              "/upload/{uploadId}", ImmutableMap.of("uploadId", UUID.randomUUID().toString()));
 
       AtomicLong confirmedBytes = new AtomicLong(-1L);
 
       JsonResumableSessionPutTask task =
           new JsonResumableSessionPutTask(
               httpClientContext,
-              jsonResumableWrite(uploadUrl),
+              jsonResumableWrite(uri),
               RewindableContent.of(tmpFile.getPath()),
               HttpContentRange.of(ByteRangeSpec.explicit(_512KiBL, _768KiBL)));
 
@@ -719,16 +717,16 @@ public final class ITJsonResumableSessionPutTaskTest {
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler);
         TmpFile tmpFile =
             DataGenerator.base64Characters().tempFile(temp.newFolder().toPath(), _256KiBL)) {
-      URI endpoint = fakeHttpServer.getEndpoint();
-      String uploadUrl =
-          String.format(Locale.US, "%s/upload/%s", endpoint.toString(), UUID.randomUUID());
+      URI uri =
+          fakeHttpServer.createUri(
+              "/upload/{uploadId}", ImmutableMap.of("uploadId", UUID.randomUUID().toString()));
 
       AtomicLong confirmedBytes = new AtomicLong(-1L);
 
       JsonResumableSessionPutTask task =
           new JsonResumableSessionPutTask(
               httpClientContext,
-              jsonResumableWrite(uploadUrl),
+              jsonResumableWrite(uri),
               RewindableContent.of(tmpFile.getPath()),
               HttpContentRange.of(ByteRangeSpec.explicit(_512KiBL, _768KiBL)));
 
@@ -761,16 +759,16 @@ public final class ITJsonResumableSessionPutTaskTest {
         };
 
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
-      URI endpoint = fakeHttpServer.getEndpoint();
-      String uploadUrl =
-          String.format(Locale.US, "%s/upload/%s", endpoint.toString(), UUID.randomUUID());
+      URI uri =
+          fakeHttpServer.createUri(
+              "/upload/{uploadId}", ImmutableMap.of("uploadId", UUID.randomUUID().toString()));
 
       AtomicLong confirmedBytes = new AtomicLong(-1L);
 
       JsonResumableSessionPutTask task =
           new JsonResumableSessionPutTask(
               httpClientContext,
-              jsonResumableWrite(uploadUrl),
+              jsonResumableWrite(uri),
               RewindableContent.empty(),
               HttpContentRange.of(0));
 
@@ -802,14 +800,14 @@ public final class ITJsonResumableSessionPutTaskTest {
         };
 
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
-      URI endpoint = fakeHttpServer.getEndpoint();
-      String uploadUrl =
-          String.format(Locale.US, "%s/upload/%s", endpoint.toString(), UUID.randomUUID());
+      URI uri =
+          fakeHttpServer.createUri(
+              "/upload/{uploadId}", ImmutableMap.of("uploadId", UUID.randomUUID().toString()));
 
       JsonResumableSessionPutTask task =
           new JsonResumableSessionPutTask(
               httpClientContext,
-              jsonResumableWrite(uploadUrl),
+              jsonResumableWrite(uri),
               RewindableContent.empty(),
               HttpContentRange.of(0));
 
@@ -878,7 +876,7 @@ public final class ITJsonResumableSessionPutTaskTest {
     assertThat(buf2.position()).isEqualTo(13);
   }
 
-  static @NonNull JsonResumableWrite jsonResumableWrite(String uploadUrl) {
-    return JsonResumableWrite.of(new StorageObject(), ImmutableMap.of(), uploadUrl, 0);
+  static @NonNull JsonResumableWrite jsonResumableWrite(URI uploadUrl) {
+    return JsonResumableWrite.of(new StorageObject(), ImmutableMap.of(), uploadUrl.toString(), 0);
   }
 }

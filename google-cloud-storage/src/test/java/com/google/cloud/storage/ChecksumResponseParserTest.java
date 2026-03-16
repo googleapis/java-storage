@@ -43,6 +43,7 @@ public final class ChecksumResponseParserTest {
 
     assertThat(uploadPartResponse.eTag()).isEqualTo("\"test-etag\"");
     assertThat(uploadPartResponse.md5()).isEqualTo("rL0Y20zC+Fzt72VPzMSk2A==");
+    assertThat(uploadPartResponse.crc32c()).isEqualTo("AAAAAA==");
   }
 
   @Test
@@ -85,13 +86,34 @@ public final class ChecksumResponseParserTest {
     assertThat(hashes).isEmpty();
   }
 
-  private HttpResponse createHttpResponse(String etag, String googHash) throws IOException {
+  @Test
+  public void testExtractHashesFromHeader_multipleHeaders() throws IOException {
+    HttpResponse response =
+        createHttpResponse(null, "crc32c=AAAAAA==", "md5=rL0Y20zC+Fzt72VPzMSk2A==");
+    Map<String, String> hashes = ChecksumResponseParser.extractHashesFromHeader(response);
+    assertThat(hashes).containsEntry("crc32c", "AAAAAA==");
+    assertThat(hashes).containsEntry("md5", "rL0Y20zC+Fzt72VPzMSk2A==");
+  }
+
+  @Test
+  public void testExtractHashesFromHeader_multipleHeadersAndCsv() throws IOException {
+    HttpResponse response =
+        createHttpResponse(null, "crc32c=AAAAAA==", "md5=rL0Y20zC+Fzt72VPzMSk2A==,extra=value");
+    Map<String, String> hashes = ChecksumResponseParser.extractHashesFromHeader(response);
+    assertThat(hashes).containsEntry("crc32c", "AAAAAA==");
+    assertThat(hashes).containsEntry("md5", "rL0Y20zC+Fzt72VPzMSk2A==");
+    assertThat(hashes).hasSize(2);
+  }
+
+  private HttpResponse createHttpResponse(String etag, String... googHash) throws IOException {
     MockLowLevelHttpResponse lowLevelResponse = new MockLowLevelHttpResponse();
     if (etag != null) {
       lowLevelResponse.addHeader("ETag", etag);
     }
     if (googHash != null) {
-      lowLevelResponse.addHeader("x-goog-hash", googHash);
+      for (String hash : googHash) {
+        lowLevelResponse.addHeader("x-goog-hash", hash);
+      }
     }
     HttpTransport transport =
         new MockHttpTransport.Builder().setLowLevelHttpResponse(lowLevelResponse).build();

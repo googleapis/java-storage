@@ -1,5 +1,129 @@
 # Changelog
 
+## [2.64.0](https://github.com/googleapis/java-storage/compare/v2.63.0...v2.64.0) (2026-02-27)
+
+
+### Features
+
+* Adding Otel for MPU ([#3387](https://github.com/googleapis/java-storage/issues/3387)) ([2fef010](https://github.com/googleapis/java-storage/commit/2fef01016bede7892340b3434e1c229ddfa83904))
+
+
+### Bug Fixes
+
+* **deps:** Update the Java code generator (gapic-generator-java) to 2.67.0 ([ce2e03a](https://github.com/googleapis/java-storage/commit/ce2e03a80ea4308ac1365697306071e3abd92a88))
+
+
+### Dependencies
+
+* Update dependency com.google.cloud:sdk-platform-java-config to v3.57.0 ([#3500](https://github.com/googleapis/java-storage/issues/3500)) ([1617b39](https://github.com/googleapis/java-storage/commit/1617b39bdca6bedb8a5e909794acb00eebcdbbcd))
+* Update dependency node to v24 ([#3492](https://github.com/googleapis/java-storage/issues/3492)) ([0ae3315](https://github.com/googleapis/java-storage/commit/0ae3315c1f06547de3308704c772a72645c9ab88))
+* Update googleapis/sdk-platform-java action to v2.67.0 ([#3501](https://github.com/googleapis/java-storage/issues/3501)) ([f1ff0c9](https://github.com/googleapis/java-storage/commit/f1ff0c9e061e38d2c0414bc6a82b53123e59c106))
+
+## [2.63.0](https://github.com/googleapis/java-storage/compare/v2.62.1...v2.63.0) (2026-02-12)
+
+
+### Features
+
+* Add a DeleteFolderRecursive API definition ([87642bd](https://github.com/googleapis/java-storage/commit/87642bd58759a61f5fdf04b1765b77297ea443ea))
+* Added a new field `ComposeObjectRequest.delete_source_objects` field ([87642bd](https://github.com/googleapis/java-storage/commit/87642bd58759a61f5fdf04b1765b77297ea443ea))
+* Next release from main branch is 2.63.0 ([#3486](https://github.com/googleapis/java-storage/issues/3486)) ([412b5fb](https://github.com/googleapis/java-storage/commit/412b5fbe7e724e1220561f04a59251746c8a99a2))
+
+
+### Bug Fixes
+
+* **deps:** Update the Java code generator (gapic-generator-java) to 2.66.1 ([87642bd](https://github.com/googleapis/java-storage/commit/87642bd58759a61f5fdf04b1765b77297ea443ea))
+* Validate blob paths to prevent directory traversal in TransferManager downloads ([#3455](https://github.com/googleapis/java-storage/issues/3455)) ([49abf75](https://github.com/googleapis/java-storage/commit/49abf7559028d890e1c4848a5a356f266f6788be))
+
+
+### Dependencies
+
+* Update dependency com.google.cloud:sdk-platform-java-config to v3.56.1 ([#3484](https://github.com/googleapis/java-storage/issues/3484)) ([3a5deee](https://github.com/googleapis/java-storage/commit/3a5deee364175fc8c879cb22f176354a62117d22))
+* Update dependency node to v24 ([#3368](https://github.com/googleapis/java-storage/issues/3368)) ([ed2ddb7](https://github.com/googleapis/java-storage/commit/ed2ddb79c215fb7a9400e4168d10a7516ca2e664))
+
+## [2.62.1](https://github.com/googleapis/java-storage/compare/v2.62.0...v2.62.1) (2026-01-28)
+
+
+### Bug Fixes
+
+* **deps:** Update the Java code generator (gapic-generator-java) to 2.66.0 ([557be35](https://github.com/googleapis/java-storage/commit/557be35b220bdb8b732fb593e5abf869a0c2bb53))
+
+
+### Dependencies
+
+* Update dependency com.google.cloud:sdk-platform-java-config to v3.56.0 ([#3468](https://github.com/googleapis/java-storage/issues/3468)) ([d2a1a3a](https://github.com/googleapis/java-storage/commit/d2a1a3a661f42f1327a53dd14295ccaa4cd19e4e))
+* Update gcr.io/cloud-devrel-public-resources/storage-testbench docker tag to v0.60.0 ([#3466](https://github.com/googleapis/java-storage/issues/3466)) ([2b860e3](https://github.com/googleapis/java-storage/commit/2b860e356fba0037d40ba0eaa1320fb3e4a9e0ae))
+* Update googleapis/sdk-platform-java action to v2.66.0 ([#3469](https://github.com/googleapis/java-storage/issues/3469)) ([bd2f0c6](https://github.com/googleapis/java-storage/commit/bd2f0c6c881db6b1cf41c85c5bd4bb7df11bc7a6))
+
+## [2.62.0](https://github.com/googleapis/java-storage/compare/v2.61.0...v2.62.0) (2026-01-15)
+
+
+### Features
+
+* Add default e2e checksum validation in the final call of resumable uploads ([#3450](https://github.com/googleapis/java-storage/issues/3450)) ([37d2bba](https://github.com/googleapis/java-storage/commit/37d2bba93dfbdc9a81195aff9325a66883b6795f))
+
+
+### Bug Fixes
+
+* Update appendable upload retry logic to be able to more gracefully handle slow uploads ([#3438](https://github.com/googleapis/java-storage/issues/3438)) ([e660e5a](https://github.com/googleapis/java-storage/commit/e660e5a24f35798c6fcd6c9b30cf0a8324e5f5f8))
+
+
+### Dependencies
+
+* Update dependency com.google.cloud:sdk-platform-java-config to v3.55.1 ([#3461](https://github.com/googleapis/java-storage/issues/3461)) ([7e45b9e](https://github.com/googleapis/java-storage/commit/7e45b9e6f03ddea3e0fce31b95f5b54c37799be4))
+* Update googleapis/sdk-platform-java action to v2.65.1 ([#3460](https://github.com/googleapis/java-storage/issues/3460)) ([2a42131](https://github.com/googleapis/java-storage/commit/2a42131d3850e661a53a93dd36b87fd58acd2a4f))
+
+## [2.61.0](https://github.com/googleapis/java-storage/compare/v2.60.0...v2.61.0) (2025-12-15)
+
+
+### Features
+
+* Add support for partial success in ListBuckets for json ([#3415](https://github.com/googleapis/java-storage/issues/3415)) ([37ef7f3](https://github.com/googleapis/java-storage/commit/37ef7f3894a867257d5366ab36129043b9a884f8))
+* Modifying getters and setters to be more inline with s3 interface. ([0a8bbea](https://github.com/googleapis/java-storage/commit/0a8bbeaf8babd296fce0690421d2e480b361ca7e))
+* **mpu:** Breaking change modifying getters and setters in MPU to be more inline with s3 interface. ([66d54e2](https://github.com/googleapis/java-storage/commit/66d54e2dc36d90853bae4d529a620f45a7001487))
+
+
+### Bug Fixes
+
+* **deps:** Update the Java code generator (gapic-generator-java) to 2.64.1 ([511ff51](https://github.com/googleapis/java-storage/commit/511ff514410e55425e968ab900ac1b8825fe507a))
+
+
+### Dependencies
+
+* Update actions/checkout action to v6 ([d934ad9](https://github.com/googleapis/java-storage/commit/d934ad91aa1bf50e04870b1af747f1947fb2cbea))
+* Update actions/checkout action to v6 ([d99dd53](https://github.com/googleapis/java-storage/commit/d99dd53a0401f5460a63be7a6b927a27cdad0997))
+* Update dependency com.google.apis:google-api-services-storage to v1-rev20251118-2.0.0 ([f48fa3f](https://github.com/googleapis/java-storage/commit/f48fa3f1dc5feabd89be063b138804b83f722c0c))
+* Update dependency com.google.apis:google-api-services-storage to v1-rev20251118-2.0.0 ([#3427](https://github.com/googleapis/java-storage/issues/3427)) ([4612e72](https://github.com/googleapis/java-storage/commit/4612e72051d35b22135811a8723a65646a90d45e))
+* Update dependency com.google.cloud:sdk-platform-java-config to v3.54.2 ([90a71be](https://github.com/googleapis/java-storage/commit/90a71be0899d06995b515d875c65cdc5f852c7b0))
+* Update dependency com.google.cloud:sdk-platform-java-config to v3.54.2 ([#3424](https://github.com/googleapis/java-storage/issues/3424)) ([c989dc3](https://github.com/googleapis/java-storage/commit/c989dc3e65386e55bc25d2f6f63e499deda3fc69))
+* Update gcr.io/cloud-devrel-public-resources/storage-testbench docker tag to v0.59.0 ([f5d8337](https://github.com/googleapis/java-storage/commit/f5d8337ad556770a55cc260975e44e85e8e831b0))
+* Update gcr.io/cloud-devrel-public-resources/storage-testbench docker tag to v0.59.0 ([5480ce3](https://github.com/googleapis/java-storage/commit/5480ce347493ec425b675f462a42f45c22b06c28))
+* Update googleapis/sdk-platform-java action to v2.64.2 ([23494d7](https://github.com/googleapis/java-storage/commit/23494d79d3a2785c30c75f50fd3b0a03598c3599))
+* Update googleapis/sdk-platform-java action to v2.64.2 ([#3425](https://github.com/googleapis/java-storage/issues/3425)) ([fad2d7a](https://github.com/googleapis/java-storage/commit/fad2d7a780a084acd8ccdf2bb2f97a335c438594))
+
+## [2.60.0](https://github.com/googleapis/java-storage/compare/v2.59.0...v2.60.0) (2025-11-07)
+
+
+### Features
+
+* Add preview MultipartUploadClient#abortMultipartUpload https://github.com/googleapis/java-storage/pull/3361 ([160fa9a](https://github.com/googleapis/java-storage/commit/160fa9af7aa492373a9d9b40f65a6c56d7cab5ef))
+* Add preview MultipartUploadClient#completeMultipartUpload https://github.com/googleapis/java-storage/pull/3372 ([160fa9a](https://github.com/googleapis/java-storage/commit/160fa9af7aa492373a9d9b40f65a6c56d7cab5ef))
+* Add preview MultipartUploadClient#createMultipartUpload https://github.com/googleapis/java-storage/pull/3356 ([160fa9a](https://github.com/googleapis/java-storage/commit/160fa9af7aa492373a9d9b40f65a6c56d7cab5ef))
+* Add preview MultipartUploadClient#listParts https://github.com/googleapis/java-storage/pull/3359 ([160fa9a](https://github.com/googleapis/java-storage/commit/160fa9af7aa492373a9d9b40f65a6c56d7cab5ef))
+* Add preview MultipartUploadClient#uploadPart https://github.com/googleapis/java-storage/pull/3375 ([160fa9a](https://github.com/googleapis/java-storage/commit/160fa9af7aa492373a9d9b40f65a6c56d7cab5ef))
+* Add preview MultipartUploadSettings ([160fa9a](https://github.com/googleapis/java-storage/commit/160fa9af7aa492373a9d9b40f65a6c56d7cab5ef))
+
+
+### Bug Fixes
+
+* Add new system property (com.google.cloud.storage.grpc.bound_token) to allow disabling bound token use with grpc ([#3365](https://github.com/googleapis/java-storage/issues/3365)) ([ebf5e6d](https://github.com/googleapis/java-storage/commit/ebf5e6d30d8dc197ab388a70cc0d465c0f740496))
+* Call response.disconnect() after resolving resumable upload url ([#3385](https://github.com/googleapis/java-storage/issues/3385)) ([ac3be4b](https://github.com/googleapis/java-storage/commit/ac3be4b7e82d9340ede7d527a26ffe3e2ba58909))
+* **deps:** Update the Java code generator (gapic-generator-java) to 2.63.0 ([c1a8968](https://github.com/googleapis/java-storage/commit/c1a8968799c1cf5a970fe9f303adccdad0a117c8))
+
+
+### Dependencies
+
+* Update dependency com.google.cloud:sdk-platform-java-config to v3.54.1 ([#3381](https://github.com/googleapis/java-storage/issues/3381)) ([e3d3700](https://github.com/googleapis/java-storage/commit/e3d3700e06de2b0113e1cb01e99ef4aeed3c62c9))
+
 ## [2.59.0](https://github.com/googleapis/java-storage/compare/v2.58.1...v2.59.0) (2025-10-21)
 
 

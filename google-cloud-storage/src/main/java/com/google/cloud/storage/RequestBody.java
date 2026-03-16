@@ -16,7 +16,6 @@
 
 package com.google.cloud.storage;
 
-import com.google.api.core.BetaApi;
 import com.google.api.core.InternalExtensionOnly;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -30,7 +29,6 @@ import java.nio.file.Path;
  * @see <a
  *     href="https://cloud.google.com/storage/docs/multipart-uploads#upload_parts">https://cloud.google.com/storage/docs/multipart-uploads#upload_parts</a>
  */
-@BetaApi
 @InternalExtensionOnly
 public final class RequestBody {
 
@@ -45,25 +43,21 @@ public final class RequestBody {
   }
 
   /** Create a new empty RequestBody. */
-  @BetaApi
   public static RequestBody empty() {
     return new RequestBody(RewindableContent.empty());
   }
 
   /** Create a new RequestBody from the given {@link ByteBuffer}s. */
-  @BetaApi
   public static RequestBody of(ByteBuffer... buffers) {
     return new RequestBody(RewindableContent.of(buffers));
   }
 
   /** Create a new RequestBody from the given {@link ByteBuffer}s. */
-  @BetaApi
   public static RequestBody of(ByteBuffer[] srcs, int srcsOffset, int srcsLength) {
     return new RequestBody(RewindableContent.of(srcs, srcsOffset, srcsLength));
   }
 
   /** Create a new RequestBody from the given {@link Path}. */
-  @BetaApi
   public static RequestBody of(Path path) throws IOException {
     return new RequestBody(RewindableContent.of(path));
   }
