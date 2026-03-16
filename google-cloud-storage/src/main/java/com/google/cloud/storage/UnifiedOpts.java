@@ -463,6 +463,10 @@ final class UnifiedOpts {
     return new PageToken(pageToken);
   }
 
+  static ReturnPartialSuccess returnPartialSuccess(boolean returnPartialSuccess) {
+    return new ReturnPartialSuccess(returnPartialSuccess);
+  }
+
   static PredefinedAcl predefinedAcl(Storage.@NonNull PredefinedAcl predefinedAcl) {
     requireNonNull(predefinedAcl, "predefinedAcl must be non null");
     return new PredefinedAcl(predefinedAcl.getEntry());
@@ -1636,6 +1640,19 @@ final class UnifiedOpts {
     @Override
     public Mapper<ListObjectsRequest.Builder> listObjects() {
       return b -> b.setPageToken(val);
+    }
+  }
+
+  static final class ReturnPartialSuccess extends RpcOptVal<Boolean> implements BucketListOpt {
+    private static final long serialVersionUID = -1370658416509499277L;
+
+    private ReturnPartialSuccess(boolean val) {
+      super(StorageRpc.Option.RETURN_PARTIAL_SUCCESS, val);
+    }
+
+    @Override
+    public Mapper<ListBucketsRequest.Builder> listBuckets() {
+      return b -> b.setReturnPartialSuccess(val);
     }
   }
 

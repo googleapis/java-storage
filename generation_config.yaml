@@ -1,6 +1,6 @@
-gapic_generator_version: 2.63.0
-googleapis_commitish: 72e7439c8e7e9986cf1865e337fc7c64ca5bda1f
-libraries_bom_version: 26.71.0
+gapic_generator_version: 2.67.0
+googleapis_commitish: dd3d17addb94bd4a392a5270795c11a27a1334fc
+libraries_bom_version: 26.76.0
 libraries:
   - api_shortname: storage
     name_pretty: Cloud Storage
@@ -13,7 +13,7 @@ libraries:
     repo: googleapis/java-storage
     repo_short: java-storage
     distribution_name: com.google.cloud:google-cloud-storage
-    codeowner_team: '@googleapis/gcs-sdk-team'
+    codeowner_team: '@googleapis/gcs-team'
     api_id: storage.googleapis.com
     requires_billing: true
     library_type: GAPIC_COMBO

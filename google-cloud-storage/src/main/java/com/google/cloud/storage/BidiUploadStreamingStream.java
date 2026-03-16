@@ -408,6 +408,8 @@ final class BidiUploadStreamingStream {
         @Nullable StorageException se = state.onResponse(response);
         if (se != null) {
           retryContext.recordError(se, onSuccess, onFailure);
+        } else {
+          retryContext.reset();
         }
       } catch (Throwable t) {
         // catch an error that might happen while processing and forward it to our retry context

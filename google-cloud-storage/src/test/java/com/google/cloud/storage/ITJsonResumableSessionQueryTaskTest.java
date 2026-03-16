@@ -32,6 +32,7 @@ import com.google.cloud.storage.it.runner.StorageITRunner;
 import com.google.cloud.storage.it.runner.annotations.Backend;
 import com.google.cloud.storage.it.runner.annotations.ParallelFriendly;
 import com.google.cloud.storage.it.runner.annotations.SingleBackend;
+import com.google.common.collect.ImmutableMap;
 import io.grpc.netty.shaded.io.netty.buffer.ByteBuf;
 import io.grpc.netty.shaded.io.netty.buffer.Unpooled;
 import io.grpc.netty.shaded.io.netty.handler.codec.http.DefaultFullHttpResponse;
@@ -41,7 +42,6 @@ import io.grpc.netty.shaded.io.netty.handler.codec.http.HttpResponseStatus;
 import java.math.BigInteger;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.util.Locale;
 import java.util.UUID;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.Before;
@@ -82,12 +82,12 @@ public final class ITJsonResumableSessionQueryTaskTest {
         };
 
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
-      URI endpoint = fakeHttpServer.getEndpoint();
-      String uploadUrl =
-          String.format(Locale.US, "%s/upload/%s", endpoint.toString(), UUID.randomUUID());
+      URI uri =
+          fakeHttpServer.createUri(
+              "/upload/{uploadId}", ImmutableMap.of("uploadId", UUID.randomUUID().toString()));
 
       JsonResumableSessionQueryTask task =
-          new JsonResumableSessionQueryTask(httpClientContext, jsonResumableWrite(uploadUrl));
+          new JsonResumableSessionQueryTask(httpClientContext, jsonResumableWrite(uri));
 
       ResumableOperationResult<@Nullable StorageObject> result = task.call();
       StorageObject object = result.getObject();
@@ -106,12 +106,12 @@ public final class ITJsonResumableSessionQueryTaskTest {
         };
 
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
-      URI endpoint = fakeHttpServer.getEndpoint();
-      String uploadUrl =
-          String.format(Locale.US, "%s/upload/%s", endpoint.toString(), UUID.randomUUID());
+      URI uri =
+          fakeHttpServer.createUri(
+              "/upload/{uploadId}", ImmutableMap.of("uploadId", UUID.randomUUID().toString()));
 
       JsonResumableSessionQueryTask task =
-          new JsonResumableSessionQueryTask(httpClientContext, jsonResumableWrite(uploadUrl));
+          new JsonResumableSessionQueryTask(httpClientContext, jsonResumableWrite(uri));
 
       ResumableOperationResult<@Nullable StorageObject> result = task.call();
       StorageObject object = result.getObject();
@@ -134,12 +134,12 @@ public final class ITJsonResumableSessionQueryTaskTest {
           return response;
         };
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
-      URI endpoint = fakeHttpServer.getEndpoint();
-      String uploadUrl =
-          String.format(Locale.US, "%s/upload/%s", endpoint.toString(), UUID.randomUUID());
+      URI uri =
+          fakeHttpServer.createUri(
+              "/upload/{uploadId}", ImmutableMap.of("uploadId", UUID.randomUUID().toString()));
 
       JsonResumableSessionQueryTask task =
-          new JsonResumableSessionQueryTask(httpClientContext, jsonResumableWrite(uploadUrl));
+          new JsonResumableSessionQueryTask(httpClientContext, jsonResumableWrite(uri));
 
       ResumableOperationResult<@Nullable StorageObject> result = task.call();
       assertThat(result.getPersistedSize()).isEqualTo(_256KiBL);
@@ -151,12 +151,12 @@ public final class ITJsonResumableSessionQueryTaskTest {
     HttpRequestHandler handler =
         req -> new DefaultFullHttpResponse(req.protocolVersion(), RESUME_INCOMPLETE);
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
-      URI endpoint = fakeHttpServer.getEndpoint();
-      String uploadUrl =
-          String.format(Locale.US, "%s/upload/%s", endpoint.toString(), UUID.randomUUID());
+      URI uri =
+          fakeHttpServer.createUri(
+              "/upload/{uploadId}", ImmutableMap.of("uploadId", UUID.randomUUID().toString()));
 
       JsonResumableSessionQueryTask task =
-          new JsonResumableSessionQueryTask(httpClientContext, jsonResumableWrite(uploadUrl));
+          new JsonResumableSessionQueryTask(httpClientContext, jsonResumableWrite(uri));
 
       ResumableOperationResult<@Nullable StorageObject> result = task.call();
       assertThat(result.getPersistedSize()).isEqualTo(0);
@@ -169,12 +169,12 @@ public final class ITJsonResumableSessionQueryTaskTest {
     HttpRequestHandler handler = req -> new DefaultFullHttpResponse(req.protocolVersion(), OK);
 
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
-      URI endpoint = fakeHttpServer.getEndpoint();
-      String uploadUrl =
-          String.format(Locale.US, "%s/upload/%s", endpoint.toString(), UUID.randomUUID());
+      URI uri =
+          fakeHttpServer.createUri(
+              "/upload/{uploadId}", ImmutableMap.of("uploadId", UUID.randomUUID().toString()));
 
       JsonResumableSessionQueryTask task =
-          new JsonResumableSessionQueryTask(httpClientContext, jsonResumableWrite(uploadUrl));
+          new JsonResumableSessionQueryTask(httpClientContext, jsonResumableWrite(uri));
 
       StorageException se = assertThrows(StorageException.class, task::call);
       assertThat(se.getCode()).isEqualTo(0);
@@ -196,12 +196,12 @@ public final class ITJsonResumableSessionQueryTaskTest {
         };
 
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
-      URI endpoint = fakeHttpServer.getEndpoint();
-      String uploadUrl =
-          String.format(Locale.US, "%s/upload/%s", endpoint.toString(), UUID.randomUUID());
+      URI uri =
+          fakeHttpServer.createUri(
+              "/upload/{uploadId}", ImmutableMap.of("uploadId", UUID.randomUUID().toString()));
 
       JsonResumableSessionQueryTask task =
-          new JsonResumableSessionQueryTask(httpClientContext, jsonResumableWrite(uploadUrl));
+          new JsonResumableSessionQueryTask(httpClientContext, jsonResumableWrite(uri));
 
       StorageException se = assertThrows(StorageException.class, task::call);
       assertThat(se.getCode()).isEqualTo(0);
@@ -225,12 +225,12 @@ public final class ITJsonResumableSessionQueryTaskTest {
         };
 
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
-      URI endpoint = fakeHttpServer.getEndpoint();
-      String uploadUrl =
-          String.format(Locale.US, "%s/upload/%s", endpoint.toString(), UUID.randomUUID());
+      URI uri =
+          fakeHttpServer.createUri(
+              "/upload/{uploadId}", ImmutableMap.of("uploadId", UUID.randomUUID().toString()));
 
       JsonResumableSessionQueryTask task =
-          new JsonResumableSessionQueryTask(httpClientContext, jsonResumableWrite(uploadUrl));
+          new JsonResumableSessionQueryTask(httpClientContext, jsonResumableWrite(uri));
 
       StorageException se = assertThrows(StorageException.class, task::call);
       assertThat(se.getCode()).isEqualTo(0);
@@ -249,12 +249,12 @@ public final class ITJsonResumableSessionQueryTaskTest {
         };
 
     try (FakeHttpServer fakeHttpServer = FakeHttpServer.of(handler)) {
-      URI endpoint = fakeHttpServer.getEndpoint();
-      String uploadUrl =
-          String.format(Locale.US, "%s/upload/%s", endpoint.toString(), UUID.randomUUID());
+      URI uri =
+          fakeHttpServer.createUri(
+              "/upload/{uploadId}", ImmutableMap.of("uploadId", UUID.randomUUID().toString()));
 
       JsonResumableSessionQueryTask task =
-          new JsonResumableSessionQueryTask(httpClientContext, jsonResumableWrite(uploadUrl));
+          new JsonResumableSessionQueryTask(httpClientContext, jsonResumableWrite(uri));
 
       StorageException se = assertThrows(StorageException.class, task::call);
       assertThat(se.getCode()).isEqualTo(503);
