@@ -794,30 +794,45 @@ public class ITBucketSnippets {
 
   @Test
   public void testUpdateEncryptionEnforcementConfig() throws Throwable {
-    // Setup: Initial state - CMEK fully restricted, GMEK not restricted
+    String tempBucketName = RemoteStorageHelper.generateBucketName();
+    // Setup: Create the bucket with initial enforcement configs
     BucketInfo initialInfo =
-        storage.get(BUCKET).toBuilder()
+        BucketInfo.newBuilder(tempBucketName)
             .setCustomerManagedEncryptionEnforcementConfig(
                 CustomerManagedEncryptionEnforcementConfig.of(
                     EncryptionEnforcementRestrictionMode.FULLY_RESTRICTED))
+            .setGoogleManagedEncryptionEnforcementConfig(
+                GoogleManagedEncryptionEnforcementConfig.of(
+                    EncryptionEnforcementRestrictionMode.NOT_RESTRICTED))
             .build();
-    storage.update(initialInfo);
 
-    TestUtils.retryAssert(
-        RETRY_SETTINGS,
-        () -> {
-          // Call the update snippet
-          UpdateEncryptionEnforcementConfig.updateEncryptionEnforcementConfig(PROJECT_ID, BUCKET);
+    storage.create(initialInfo);
 
-          Bucket bucket = storage.get(BUCKET);
-          // Verify GMEK was updated to FULLY_RESTRICTED
-          assertEquals(
-              EncryptionEnforcementRestrictionMode.FULLY_RESTRICTED,
-              bucket.getGoogleManagedEncryptionEnforcementConfig().getRestrictionMode());
-          // Verify CMEK was removed (set to null)
-          assertEquals(
-              EncryptionEnforcementRestrictionMode.NOT_RESTRICTED,
-              bucket.getCustomerManagedEncryptionEnforcementConfig().getRestrictionMode());
-        });
+    try {
+      // Execution: Call the update snippet
+      // This snippet should update GMEK to FULLY_RESTRICTED and reset CMEK
+      UpdateEncryptionEnforcementConfig.updateEncryptionEnforcementConfig(
+          PROJECT_ID, tempBucketName);
+
+      TestUtils.retryAssert(
+          RETRY_SETTINGS,
+          () -> {
+            Bucket bucket = storage.get(tempBucketName);
+            assertNotNull(bucket);
+
+            // Verify GMEK was updated to FULLY_RESTRICTED
+            assertEquals(
+                EncryptionEnforcementRestrictionMode.FULLY_RESTRICTED,
+                bucket.getGoogleManagedEncryptionEnforcementConfig().getRestrictionMode());
+
+            // Verify CMEK was reverted/reset (defaults back to NOT_RESTRICTED)
+            assertEquals(
+                EncryptionEnforcementRestrictionMode.NOT_RESTRICTED,
+                bucket.getCustomerManagedEncryptionEnforcementConfig().getRestrictionMode());
+          });
+
+    } finally {
+      storage.delete(tempBucketName);
+    }
   }
 }
