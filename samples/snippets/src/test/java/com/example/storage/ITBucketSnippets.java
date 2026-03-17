@@ -49,6 +49,7 @@ import com.example.storage.bucket.EnableUniformBucketLevelAccess;
 import com.example.storage.bucket.GetBucketMetadata;
 import com.example.storage.bucket.GetBucketRpo;
 import com.example.storage.bucket.GetDefaultEventBasedHold;
+import com.example.storage.bucket.GetEncryptionEnforcementConfig;
 import com.example.storage.bucket.GetPublicAccessPrevention;
 import com.example.storage.bucket.GetRetentionPolicy;
 import com.example.storage.bucket.GetUniformBucketLevelAccess;
@@ -64,6 +65,7 @@ import com.example.storage.bucket.RemoveBucketLabel;
 import com.example.storage.bucket.RemoveRetentionPolicy;
 import com.example.storage.bucket.SetAsyncTurboRpo;
 import com.example.storage.bucket.SetBucketDefaultKmsKey;
+import com.example.storage.bucket.SetBucketEncryptionEnforcementConfig;
 import com.example.storage.bucket.SetBucketWebsiteInfo;
 import com.example.storage.bucket.SetClientEndpoint;
 import com.example.storage.bucket.SetDefaultRpo;
@@ -71,6 +73,7 @@ import com.example.storage.bucket.SetPublicAccessPreventionEnforced;
 import com.example.storage.bucket.SetPublicAccessPreventionInherited;
 import com.example.storage.bucket.SetRetentionPolicy;
 import com.example.storage.bucket.SetSoftDeletePolicy;
+import com.example.storage.bucket.UpdateEncryptionEnforcementConfig;
 import com.example.storage.object.DownloadRequesterPaysObject;
 import com.example.storage.object.ReleaseEventBasedHold;
 import com.example.storage.object.ReleaseTemporaryHold;
@@ -83,6 +86,9 @@ import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo;
+import com.google.cloud.storage.BucketInfo.CustomerManagedEncryptionEnforcementConfig;
+import com.google.cloud.storage.BucketInfo.EncryptionEnforcementRestrictionMode;
+import com.google.cloud.storage.BucketInfo.GoogleManagedEncryptionEnforcementConfig;
 import com.google.cloud.storage.BucketInfo.PublicAccessPrevention;
 import com.google.cloud.storage.Cors;
 import com.google.cloud.storage.HttpMethod;
@@ -711,5 +717,107 @@ public class ITBucketSnippets {
     } finally {
       storage.delete(tempBucket);
     }
+  }
+
+  @Test
+  public void testSetEncryptionEnforcementConfig() throws Throwable {
+    String tempBucket = RemoteStorageHelper.generateBucketName();
+    String gmekOnly = "g-" + BUCKET;
+    String cmekOnly = "c-" + BUCKET;
+    String restrictCsek = "rc-" + BUCKET;
+
+    try {
+      SetBucketEncryptionEnforcementConfig.setBucketEncryptionEnforcementConfig(PROJECT_ID, BUCKET);
+
+      TestUtils.retryAssert(
+          RETRY_SETTINGS,
+          () -> {
+            // Case 1: GMEK Only
+            Bucket b1 = storage.get(gmekOnly);
+            assertNotNull(b1);
+            assertEquals(
+                EncryptionEnforcementRestrictionMode.NOT_RESTRICTED,
+                b1.getGoogleManagedEncryptionEnforcementConfig().getRestrictionMode());
+            assertEquals(
+                EncryptionEnforcementRestrictionMode.FULLY_RESTRICTED,
+                b1.getCustomerManagedEncryptionEnforcementConfig().getRestrictionMode());
+
+            // Case 2: CMEK Only
+            Bucket b2 = storage.get(cmekOnly);
+            assertNotNull(b2);
+            assertEquals(
+                EncryptionEnforcementRestrictionMode.FULLY_RESTRICTED,
+                b2.getGoogleManagedEncryptionEnforcementConfig().getRestrictionMode());
+            assertEquals(
+                EncryptionEnforcementRestrictionMode.NOT_RESTRICTED,
+                b2.getCustomerManagedEncryptionEnforcementConfig().getRestrictionMode());
+
+            // Case 3: Restrict CSEK
+            Bucket b3 = storage.get(restrictCsek);
+            assertNotNull(b3);
+            assertEquals(
+                EncryptionEnforcementRestrictionMode.FULLY_RESTRICTED,
+                b3.getCustomerSuppliedEncryptionEnforcementConfig().getRestrictionMode());
+          });
+    } finally {
+      // Cleanup all three buckets
+      storage.delete(gmekOnly);
+      storage.delete(cmekOnly);
+      storage.delete(restrictCsek);
+    }
+  }
+
+  @Test
+  public void testGetEncryptionEnforcementConfig() throws Throwable {
+    // Setup: Set a specific config to verify retrieval
+    GoogleManagedEncryptionEnforcementConfig gmekConfig =
+        GoogleManagedEncryptionEnforcementConfig.of(
+            EncryptionEnforcementRestrictionMode.FULLY_RESTRICTED);
+    BucketInfo bucketInfo =
+        storage.get(BUCKET).toBuilder()
+            .setGoogleManagedEncryptionEnforcementConfig(gmekConfig)
+            .build();
+    storage.update(bucketInfo);
+
+    TestUtils.retryAssert(
+        RETRY_SETTINGS,
+        () -> {
+          try {
+            GetEncryptionEnforcementConfig.getEncryptionEnforcementConfig(PROJECT_ID, BUCKET);
+            String snippetOutput = stdOutCaptureRule.getCapturedOutputAsUtf8String();
+            assertTrue(snippetOutput.contains("GMEK Enforcement: Mode: FullyRestricted"));
+          } catch (Exception e) {
+            throw new RuntimeException(e);
+          }
+        });
+  }
+
+  @Test
+  public void testUpdateEncryptionEnforcementConfig() throws Throwable {
+    // Setup: Initial state - CMEK fully restricted, GMEK not restricted
+    BucketInfo initialInfo =
+        storage.get(BUCKET).toBuilder()
+            .setCustomerManagedEncryptionEnforcementConfig(
+                CustomerManagedEncryptionEnforcementConfig.of(
+                    EncryptionEnforcementRestrictionMode.FULLY_RESTRICTED))
+            .build();
+    storage.update(initialInfo);
+
+    TestUtils.retryAssert(
+        RETRY_SETTINGS,
+        () -> {
+          // Call the update snippet
+          UpdateEncryptionEnforcementConfig.updateEncryptionEnforcementConfig(PROJECT_ID, BUCKET);
+
+          Bucket bucket = storage.get(BUCKET);
+          // Verify GMEK was updated to FULLY_RESTRICTED
+          assertEquals(
+              EncryptionEnforcementRestrictionMode.FULLY_RESTRICTED,
+              bucket.getGoogleManagedEncryptionEnforcementConfig().getRestrictionMode());
+          // Verify CMEK was removed (set to null)
+          assertEquals(
+              EncryptionEnforcementRestrictionMode.NOT_RESTRICTED,
+              bucket.getCustomerManagedEncryptionEnforcementConfig().getRestrictionMode());
+        });
   }
 }

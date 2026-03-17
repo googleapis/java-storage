@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Google LLC
+ * Copyright 2026 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package com.example.storage.bucket;
 
-// [START storage_set_encryption_enforcement_config]
+// [START storage_set_bucket_encryption_enforcement_config]
 
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo;
@@ -40,13 +40,13 @@ public class SetBucketEncryptionEnforcementConfig {
         StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
 
       // Example 1: Enforce GMEK Only
-      setGmekEnforcedPolicy(storage, bucketName + "_gmek_only");
+      setGmekEnforcedPolicy(storage, "g-" + bucketName);
 
       // Example 2: Enforce CMEK Only
-      setCmekEnforcedPolicy(storage, bucketName + "_cmek_only");
+      setCmekEnforcedPolicy(storage, "c-" + bucketName);
 
       // Example 3: Restrict CSEK (Ransomware Protection)
-      restrictCsekPolicy(storage, bucketName + "_restrict_csek");
+      restrictCsekPolicy(storage, "rc-" + bucketName);
     }
   }
 
@@ -110,4 +110,4 @@ public class SetBucketEncryptionEnforcementConfig {
     System.out.println("Bucket " + bucket.getName() + " created with a policy to restrict CSEK.");
   }
 }
-// [END storage_set_encryption_enforcement_config]
+// [END storage_set_bucket_encryption_enforcement_config]

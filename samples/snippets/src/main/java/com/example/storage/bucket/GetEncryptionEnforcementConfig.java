@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Google LLC
+ * Copyright 2026 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package com.example.storage.bucket;
 
-// [START storage_get_encryption_enforcement_config]
+// [START storage_get_bucket_encryption_enforcement_config]
 
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo.CustomerManagedEncryptionEnforcementConfig;
@@ -79,4 +79,4 @@ public class GetEncryptionEnforcementConfig {
     }
   }
 }
-// [END storage_get_encryption_enforcement_config]
+// [END storage_get_bucket_encryption_enforcement_config]
