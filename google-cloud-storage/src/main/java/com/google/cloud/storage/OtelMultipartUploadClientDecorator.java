@@ -62,7 +62,7 @@ final class OtelMultipartUploadClientDecorator extends MultipartUploadClient {
         tracer
             .spanBuilder("createMultipartUpload")
             .setAttribute(
-                "gsutil.uri", String.format("gs://%s/%s", request.bucket(), request.key()))
+                "gcloud.storage.uri", String.format("gs://%s/%s", request.bucket(), request.key()))
             .startSpan();
     try (Scope ignore = span.makeCurrent()) {
       return delegate.createMultipartUpload(request);
@@ -81,7 +81,7 @@ final class OtelMultipartUploadClientDecorator extends MultipartUploadClient {
         tracer
             .spanBuilder("listParts")
             .setAttribute(
-                "gsutil.uri", String.format("gs://%s/%s", request.bucket(), request.key()))
+                "gcloud.storage.uri", String.format("gs://%s/%s", request.bucket(), request.key()))
             .startSpan();
     try (Scope ignore = span.makeCurrent()) {
       return delegate.listParts(request);
@@ -100,7 +100,7 @@ final class OtelMultipartUploadClientDecorator extends MultipartUploadClient {
         tracer
             .spanBuilder("abortMultipartUpload")
             .setAttribute(
-                "gsutil.uri", String.format("gs://%s/%s", request.bucket(), request.key()))
+                "gcloud.storage.uri", String.format("gs://%s/%s", request.bucket(), request.key()))
             .startSpan();
     try (Scope ignore = span.makeCurrent()) {
       return delegate.abortMultipartUpload(request);
@@ -120,7 +120,7 @@ final class OtelMultipartUploadClientDecorator extends MultipartUploadClient {
         tracer
             .spanBuilder("completeMultipartUpload")
             .setAttribute(
-                "gsutil.uri", String.format("gs://%s/%s", request.bucket(), request.key()))
+                "gcloud.storage.uri", String.format("gs://%s/%s", request.bucket(), request.key()))
             .startSpan();
     try (Scope ignore = span.makeCurrent()) {
       return delegate.completeMultipartUpload(request);
@@ -139,7 +139,7 @@ final class OtelMultipartUploadClientDecorator extends MultipartUploadClient {
         tracer
             .spanBuilder("uploadPart")
             .setAttribute(
-                "gsutil.uri", String.format("gs://%s/%s", request.bucket(), request.key()))
+                "gcloud.storage.uri", String.format("gs://%s/%s", request.bucket(), request.key()))
             .setAttribute("partNumber", request.partNumber())
             .startSpan();
     try (Scope ignore = span.makeCurrent()) {
@@ -158,7 +158,7 @@ final class OtelMultipartUploadClientDecorator extends MultipartUploadClient {
     Span span =
         tracer
             .spanBuilder("listMultipartUploads")
-            .setAttribute("gsutil.uri", String.format("gs://%s/", request.bucket()))
+            .setAttribute("gcloud.storage.uri", String.format("gs://%s/", request.bucket()))
             .startSpan();
     try (Scope ignore = span.makeCurrent()) {
       return delegate.listMultipartUploads(request);
