@@ -25,8 +25,8 @@ import com.google.cloud.storage.BucketInfo.GoogleManagedEncryptionEnforcementCon
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 
-public class GetEncryptionEnforcementConfig {
-  public static void getEncryptionEnforcementConfig(String projectId, String bucketName)
+public class GetBucketEncryptionEnforcementConfig {
+  public static void getBucketEncryptionEnforcementConfig(String projectId, String bucketName)
       throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";

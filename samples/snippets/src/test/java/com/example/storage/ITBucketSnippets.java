@@ -46,10 +46,10 @@ import com.example.storage.bucket.EnableDefaultEventBasedHold;
 import com.example.storage.bucket.EnableLifecycleManagement;
 import com.example.storage.bucket.EnableRequesterPays;
 import com.example.storage.bucket.EnableUniformBucketLevelAccess;
+import com.example.storage.bucket.GetBucketEncryptionEnforcementConfig;
 import com.example.storage.bucket.GetBucketMetadata;
 import com.example.storage.bucket.GetBucketRpo;
 import com.example.storage.bucket.GetDefaultEventBasedHold;
-import com.example.storage.bucket.GetEncryptionEnforcementConfig;
 import com.example.storage.bucket.GetPublicAccessPrevention;
 import com.example.storage.bucket.GetRetentionPolicy;
 import com.example.storage.bucket.GetUniformBucketLevelAccess;
@@ -73,7 +73,7 @@ import com.example.storage.bucket.SetPublicAccessPreventionEnforced;
 import com.example.storage.bucket.SetPublicAccessPreventionInherited;
 import com.example.storage.bucket.SetRetentionPolicy;
 import com.example.storage.bucket.SetSoftDeletePolicy;
-import com.example.storage.bucket.UpdateEncryptionEnforcementConfig;
+import com.example.storage.bucket.UpdateBucketEncryptionEnforcementConfig;
 import com.example.storage.object.DownloadRequesterPaysObject;
 import com.example.storage.object.ReleaseEventBasedHold;
 import com.example.storage.object.ReleaseTemporaryHold;
@@ -783,7 +783,8 @@ public class ITBucketSnippets {
         RETRY_SETTINGS,
         () -> {
           try {
-            GetEncryptionEnforcementConfig.getEncryptionEnforcementConfig(PROJECT_ID, BUCKET);
+            GetBucketEncryptionEnforcementConfig.getBucketEncryptionEnforcementConfig(
+                PROJECT_ID, BUCKET);
             String snippetOutput = stdOutCaptureRule.getCapturedOutputAsUtf8String();
             assertTrue(snippetOutput.contains("GMEK Enforcement: Mode: FullyRestricted"));
           } catch (Exception e) {
@@ -811,7 +812,7 @@ public class ITBucketSnippets {
     try {
       // Execution: Call the update snippet
       // This snippet should update GMEK to FULLY_RESTRICTED and reset CMEK
-      UpdateEncryptionEnforcementConfig.updateEncryptionEnforcementConfig(
+      UpdateBucketEncryptionEnforcementConfig.updateBucketEncryptionEnforcementConfig(
           PROJECT_ID, tempBucketName);
 
       TestUtils.retryAssert(

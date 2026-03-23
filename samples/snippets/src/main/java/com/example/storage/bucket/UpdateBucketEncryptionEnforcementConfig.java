@@ -16,22 +16,23 @@
 
 package com.example.storage.bucket;
 
-// [START storage_update_encryption_enforcement_config]
+// [START storage_update_bucket_encryption_enforcement_config]
 
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo.CustomerManagedEncryptionEnforcementConfig;
+import com.google.cloud.storage.BucketInfo.CustomerSuppliedEncryptionEnforcementConfig;
 import com.google.cloud.storage.BucketInfo.EncryptionEnforcementRestrictionMode;
 import com.google.cloud.storage.BucketInfo.GoogleManagedEncryptionEnforcementConfig;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 
-public class UpdateEncryptionEnforcementConfig {
-  public static void updateEncryptionEnforcementConfig(String projectId, String bucketName)
+public class UpdateBucketEncryptionEnforcementConfig {
+  public static void updateBucketEncryptionEnforcementConfig(String projectId, String bucketName)
       throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
-    // The ID of your GCS bucket with CMEK restricted
+    // The ID of your GCS bucket with CMEK and CSEK restricted
     // String bucketName = "your-unique-bucket-name";
 
     try (Storage storage =
@@ -48,14 +49,20 @@ public class UpdateEncryptionEnforcementConfig {
           GoogleManagedEncryptionEnforcementConfig.of(
               EncryptionEnforcementRestrictionMode.FULLY_RESTRICTED);
 
+      // 2. Remove a specific type (e.g., remove CMEK enforcement)
       CustomerManagedEncryptionEnforcementConfig newCmekConfig =
           CustomerManagedEncryptionEnforcementConfig.of(
               EncryptionEnforcementRestrictionMode.NOT_RESTRICTED);
 
-      // 2. Remove a specific type (e.g., remove CMEK enforcement)
+      // For the update, need to specify all three configs, so keeping this same as before
+      CustomerSuppliedEncryptionEnforcementConfig sameCsekConfig =
+          CustomerSuppliedEncryptionEnforcementConfig.of(
+              EncryptionEnforcementRestrictionMode.FULLY_RESTRICTED);
+
       bucket.toBuilder()
           .setGoogleManagedEncryptionEnforcementConfig(newGmekConfig)
           .setCustomerManagedEncryptionEnforcementConfig(newCmekConfig)
+          .setCustomerSuppliedEncryptionEnforcementConfig(sameCsekConfig)
           .build()
           .update();
 
@@ -64,4 +71,4 @@ public class UpdateEncryptionEnforcementConfig {
     }
   }
 }
-// [END storage_update_encryption_enforcement_config]
+// [END storage_update_bucket_encryption_enforcement_config]
