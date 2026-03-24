@@ -721,7 +721,6 @@ public class ITBucketSnippets {
 
   @Test
   public void testSetEncryptionEnforcementConfig() throws Throwable {
-    String tempBucket = RemoteStorageHelper.generateBucketName();
     String gmekOnly = "g-" + BUCKET;
     String cmekOnly = "c-" + BUCKET;
     String restrictCsek = "rc-" + BUCKET;
