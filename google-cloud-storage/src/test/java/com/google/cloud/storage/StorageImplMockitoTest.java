@@ -52,7 +52,6 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -1040,8 +1039,12 @@ public class StorageImplMockitoTest {
   public void testCompose() {
     List<StorageObject> sources =
         ImmutableList.of(
-            Conversions.json().blobInfo().encode(BlobInfo.newBuilder(BUCKET_NAME1, BLOB_NAME2).build()),
-            Conversions.json().blobInfo().encode(BlobInfo.newBuilder(BUCKET_NAME1, BLOB_NAME3).build()));
+            Conversions.json()
+                .blobInfo()
+                .encode(BlobInfo.newBuilder(BUCKET_NAME1, BLOB_NAME2).build()),
+            Conversions.json()
+                .blobInfo()
+                .encode(BlobInfo.newBuilder(BUCKET_NAME1, BLOB_NAME3).build()));
     StorageObject target = Conversions.json().blobInfo().encode(BLOB_INFO1);
     Map<StorageRpc.Option, Object> targetOptions = new HashMap<>();
     targetOptions.put(StorageRpc.Option.DELETE_SOURCE_OBJECTS, true);
@@ -1058,8 +1061,12 @@ public class StorageImplMockitoTest {
   public void testComposeDeleteSourceObjectsFalse() {
     List<StorageObject> sources =
         ImmutableList.of(
-            Conversions.json().blobInfo().encode(BlobInfo.newBuilder(BUCKET_NAME1, BLOB_NAME2).build()),
-            Conversions.json().blobInfo().encode(BlobInfo.newBuilder(BUCKET_NAME1, BLOB_NAME3).build()));
+            Conversions.json()
+                .blobInfo()
+                .encode(BlobInfo.newBuilder(BUCKET_NAME1, BLOB_NAME2).build()),
+            Conversions.json()
+                .blobInfo()
+                .encode(BlobInfo.newBuilder(BUCKET_NAME1, BLOB_NAME3).build()));
     StorageObject target = Conversions.json().blobInfo().encode(BLOB_INFO1);
     Map<StorageRpc.Option, Object> targetOptions = new HashMap<>();
     doReturn(target)
