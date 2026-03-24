@@ -361,6 +361,20 @@ public class SerializationTest extends BaseSerializationTest {
     }
   }
 
+  @Test
+  public void testComposeRequestSerialization() throws Exception {
+    Storage.ComposeRequest request =
+        Storage.ComposeRequest.newBuilder()
+            .setTarget(BLOB_INFO)
+            .addSource("s1", "s2")
+            .setDeleteSourceObjects(true)
+            .build();
+    Storage.ComposeRequest copy = serializeAndDeserialize(request);
+    assertThat(copy.getTarget()).isEqualTo(request.getTarget());
+    assertThat(copy.getSourceBlobs().size()).isEqualTo(request.getSourceBlobs().size());
+    assertThat(copy.deleteSourceObjects()).isTrue();
+  }
+
   /**
    * Here we override the super classes implementation to remove the "assertNotSame".
    *

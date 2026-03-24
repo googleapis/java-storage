@@ -52,6 +52,8 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.crypto.spec.SecretKeySpec;
@@ -134,6 +136,12 @@ public class StorageImplMockitoTest {
       Storage.BlobTargetOption.doesNotExist();
   private static final Storage.BlobTargetOption BLOB_TARGET_PREDEFINED_ACL =
       Storage.BlobTargetOption.predefinedAcl(Storage.PredefinedAcl.PRIVATE);
+  private static final Storage.ComposeRequest COMPOSE_REQUEST =
+      Storage.ComposeRequest.newBuilder()
+          .setTarget(BLOB_INFO1)
+          .addSource(BLOB_NAME2, BLOB_NAME3)
+          .setDeleteSourceObjects(true)
+          .build();
   private static final Map<StorageRpc.Option, ?> BLOB_TARGET_OPTIONS_CREATE =
       ImmutableMap.of(
           StorageRpc.Option.IF_METAGENERATION_MATCH, BLOB_INFO1.getMetageneration(),
@@ -1026,6 +1034,47 @@ public class StorageImplMockitoTest {
     initializeService();
     Boolean isDeleted = storage.deleteNotification(BUCKET_NAME1, GENERATED_ID);
     assertEquals(isDeleted, Boolean.TRUE);
+  }
+
+  @Test
+  public void testCompose() {
+    List<StorageObject> sources =
+        ImmutableList.of(
+            Conversions.json().blobInfo().encode(BlobInfo.newBuilder(BUCKET_NAME1, BLOB_NAME2).build()),
+            Conversions.json().blobInfo().encode(BlobInfo.newBuilder(BUCKET_NAME1, BLOB_NAME3).build()));
+    StorageObject target = Conversions.json().blobInfo().encode(BLOB_INFO1);
+    Map<StorageRpc.Option, Object> targetOptions = new HashMap<>();
+    targetOptions.put(StorageRpc.Option.DELETE_SOURCE_OBJECTS, true);
+    doReturn(target)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .compose(sources, target, targetOptions);
+    initializeService();
+    Blob blob = storage.compose(COMPOSE_REQUEST);
+    assertEquals(expectedBlob1, blob);
+  }
+
+  @Test
+  public void testComposeDeleteSourceObjectsFalse() {
+    List<StorageObject> sources =
+        ImmutableList.of(
+            Conversions.json().blobInfo().encode(BlobInfo.newBuilder(BUCKET_NAME1, BLOB_NAME2).build()),
+            Conversions.json().blobInfo().encode(BlobInfo.newBuilder(BUCKET_NAME1, BLOB_NAME3).build()));
+    StorageObject target = Conversions.json().blobInfo().encode(BLOB_INFO1);
+    Map<StorageRpc.Option, Object> targetOptions = new HashMap<>();
+    doReturn(target)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .compose(sources, target, targetOptions);
+    initializeService();
+    Storage.ComposeRequest request =
+        Storage.ComposeRequest.newBuilder()
+            .setTarget(BLOB_INFO1)
+            .addSource(BLOB_NAME2, BLOB_NAME3)
+            .setDeleteSourceObjects(false)
+            .build();
+    Blob blob = storage.compose(request);
+    assertEquals(expectedBlob1, blob);
   }
 
   private void verifyBucketNotification(Notification value) {
