@@ -60,7 +60,7 @@ public final class BlobId implements Serializable {
   }
 
   /**
-   * Returns this blob's Storage url which can be used with gcloud storage. If {@link #generation} is
+   * Returns this blob's Storage url which can be used with gsutil. If {@link #generation} is
    * non-null it will not be included in the uri.
    */
   public String toGsUtilUri() {
@@ -68,7 +68,7 @@ public final class BlobId implements Serializable {
   }
 
   /**
-   * Returns this blob's Storage url which can be used with gcloud storage. If {@link #generation} is
+   * Returns this blob's Storage url which can be used with gsutil. If {@link #generation} is
    * non-null it will be included in the uri
    *
    * @since 2.22.1
