@@ -17,8 +17,6 @@ package com.google.cloud.storage;
 
 /**
  * Settings for configuring the {@link MultipartUploadClient}.
- *
- * <p>This class is for internal use only and is not intended for public consumption.
  */
 public final class MultipartUploadSettings {
   private final HttpStorageOptions options;
