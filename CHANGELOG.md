@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.64.2](https://github.com/googleapis/java-storage/compare/v2.64.1...v2.64.2) (2026-04-20)
+
+
+### Bug Fixes
+
+* Update renovate config check to use npx ([#3541](https://github.com/googleapis/java-storage/issues/3541)) ([679cddd](https://github.com/googleapis/java-storage/commit/679cddd5aa91bc7446b365c40dc3cf74824d6421))
+
 ## [2.64.1](https://github.com/googleapis/java-storage/compare/v2.64.0...v2.64.1) (2026-03-24)
 
 
