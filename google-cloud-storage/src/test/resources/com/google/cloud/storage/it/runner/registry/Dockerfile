@@ -1,1 +1,1 @@
-FROM gcr.io/cloud-devrel-public-resources/storage-testbench:v0.62.0
+FROM gcr.io/cloud-devrel-public-resources/storage-testbench:v0.63.0
